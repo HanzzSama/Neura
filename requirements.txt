@@ -14,9 +14,14 @@ scikit-learn>=1.3.0
 PyYAML>=6.0
 python-dotenv>=1.0.0
 
+# Web Server
+flask>=3.0.0
+flask-cors>=4.0.0
+
 # Visualization & Output
 matplotlib>=3.7.0
 rich>=13.0.0          # Beautiful terminal output
 
 # Utilities
 tqdm>=4.65.0          # Progress bars
+
