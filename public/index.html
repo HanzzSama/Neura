@@ -131,9 +131,87 @@
        ======================================================================== -->
   <main class="main-view">
 
-    <!-- Top Navigation Bar -->
+    <!-- =====================================================================    <!-- ========================================================================
+         DYNAMIC ISLAND NOTCH (Top Center Ceiling-Mounted Dropdown)
+         ======================================================================== -->
+    <div class="dynamic-island-wrapper">
+      <div class="dynamic-island" id="dynamic-island">
+        <!-- Compact Notch State (As shown in screenshot) -->
+        <div class="island-notch-compact">
+          <div class="island-notch-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="island-notch-content">
+            <span class="island-notch-label">informasi status</span>
+            <span class="island-notch-main" id="island-compact-val">Show</span>
+          </div>
+        </div>
+
+        <!-- Expanded Dropdown State (Hover with smooth drop) -->
+        <div class="island-expanded">
+          <div class="island-expanded-header">
+            <div class="island-header-left">
+              <div class="island-logo-mini">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="island-model-name">Neura AI &bull; MLP Architecture</div>
+                <div class="island-model-sub" id="island-env-tag">BaseNeuralNetwork &bull; development</div>
+              </div>
+            </div>
+            <span class="island-badge-live">Live TF 2.x</span>
+          </div>
+
+          <div class="island-metrics-row">
+            <div class="island-stat-box">
+              <span class="island-stat-num" id="island-stat-features">128</span>
+              <span class="island-stat-lbl">Input Dims</span>
+            </div>
+            <div class="island-stat-box">
+              <span class="island-stat-num" id="island-stat-classes">10</span>
+              <span class="island-stat-lbl">Classes</span>
+            </div>
+            <div class="island-stat-box">
+              <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">Ready</span>
+              <span class="island-stat-lbl">Weights</span>
+            </div>
+          </div>
+
+          <div class="island-quick-actions">
+            <button class="island-btn" onclick="submitCommand('/train 5')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
+              </svg>
+              <span>Train 5</span>
+            </button>
+            <button class="island-btn" onclick="submitCommand('/predict')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
+              </svg>
+              <span>Predict</span>
+            </button>
+            <button class="island-btn" onclick="submitCommand('/eval')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
+              </svg>
+              <span>Eval</span>
+            </button>
+            <button class="island-btn" onclick="openModelModal()">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <span>Specs</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Navigation Bar (Header in Image) -->
     <header class="top-nav">
-      <div class="top-nav-left">
+      <div class="top-nav-brand">
         <button class="open-sidebar-btn" id="open-sidebar-btn" title="Open sidebar" onclick="toggleSidebar()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -141,22 +219,46 @@
           </svg>
         </button>
 
-        <!-- Claude Style Model Pill Selector -->
-        <button class="model-selector-btn" onclick="openModelModal()">
-          <span style="font-family:'Newsreader', serif; font-size:16px;">Neura</span>
-          <span style="font-weight:600">BaseNeuralNetwork</span>
-          <span class="model-badge-tag" id="top-model-badge">Ready</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
+        <div class="brand-badge-group" onclick="openModelModal()" title="Neura Machine Learning">
+          <!-- 4-Square Gradient Tiles Logo -->
+          <div class="brand-logo-tiles">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+              <rect x="3" y="3" width="11" height="11" rx="3.5" stroke="url(#g-orange)" stroke-width="2.2" fill="rgba(251, 146, 60, 0.08)"/>
+              <rect x="18" y="3" width="11" height="11" rx="3.5" stroke="url(#g-yellow)" stroke-width="2.2" fill="rgba(250, 204, 21, 0.08)"/>
+              <rect x="3" y="18" width="11" height="11" rx="3.5" stroke="url(#g-cyan)" stroke-width="2.2" fill="rgba(56, 189, 248, 0.08)"/>
+              <rect x="18" y="18" width="11" height="11" rx="3.5" stroke="url(#g-purple)" stroke-width="2.2" fill="rgba(192, 132, 252, 0.08)"/>
+              <defs>
+                <linearGradient id="g-orange" x1="3" y1="3" x2="14" y2="14" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FB923C"/><stop offset="1" stop-color="#EA580C"/>
+                </linearGradient>
+                <linearGradient id="g-yellow" x1="18" y1="3" x2="29" y2="14" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FDE047"/><stop offset="1" stop-color="#EAB308"/>
+                </linearGradient>
+                <linearGradient id="g-cyan" x1="3" y1="18" x2="14" y2="29" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#38BDF8"/><stop offset="1" stop-color="#0284C7"/>
+                </linearGradient>
+                <linearGradient id="g-purple" x1="18" y1="18" x2="29" y2="29" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#C084FC"/><stop offset="1" stop-color="#9333EA"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="brand-text-col">
+            <span class="brand-title">Neura</span>
+            <span class="brand-subtitle">Skrining awal daya ingat Anda</span>
+          </div>
+        </div>
       </div>
 
       <div class="top-nav-right">
+        <button class="top-login-pill-btn" onclick="openModelModal()" title="Login / Specifications">Login</button>
         <button class="nav-icon-btn" title="Start new chat" onclick="startNewChat()">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
           </svg>
         </button>
-        <button class="nav-icon-btn" title="Theme" onclick="toggleTheme()">
+        <button class="nav-icon-btn" title="Toggle Theme" onclick="toggleTheme()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
@@ -228,16 +330,35 @@
 
         <div class="input-bottom-bar">
           <div class="input-actions-left">
-            <span class="cmd-pill" onclick="submitCommand('/train 5')">🏋️ /train 5</span>
-            <span class="cmd-pill" onclick="submitCommand('/predict')">🔮 /predict</span>
-            <span class="cmd-pill" onclick="submitCommand('/eval')">📊 /eval</span>
-            <span class="cmd-pill" onclick="submitCommand('/status')">🔍 /status</span>
+            <span class="cmd-pill" onclick="submitCommand('/train 5')">
+              <svg class="pill-icon pill-icon-train" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
+              </svg>
+              <span>/train 5</span>
+            </span>
+            <span class="cmd-pill" onclick="submitCommand('/predict')">
+              <svg class="pill-icon pill-icon-predict" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
+              </svg>
+              <span>/predict</span>
+            </span>
+            <span class="cmd-pill" onclick="submitCommand('/eval')">
+              <svg class="pill-icon pill-icon-eval" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
+              </svg>
+              <span>/eval</span>
+            </span>
+            <span class="cmd-pill" onclick="submitCommand('/status')">
+              <svg class="pill-icon pill-icon-status" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>/status</span>
+            </span>
           </div>
 
           <button class="send-icon-btn" id="send-msg-btn" title="Send message" onclick="handleSendClick()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="19" x2="12" y2="5"/>
-              <polyline points="5 12 12 5 19 12"/>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.5a1.2 1.2 0 0 1 .85.35l6 6a1.2 1.2 0 1 1-1.7 1.7L13.2 6.55V20a1.2 1.2 0 1 1-2.4 0V6.55L6.85 10.55a1.2 1.2 0 1 1-1.7-1.7l6-6a1.2 1.2 0 0 1 .85-.35z"/>
             </svg>
           </button>
         </div>

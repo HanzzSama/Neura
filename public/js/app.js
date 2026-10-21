@@ -33,9 +33,8 @@ function setGeneratingState(generating) {
     btn.classList.remove('is-generating');
     btn.title = 'Send message';
     btn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="19" x2="12" y2="5"/>
-        <polyline points="5 12 12 5 19 12"/>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2.5a1.2 1.2 0 0 1 .85.35l6 6a1.2 1.2 0 1 1-1.7 1.7L13.2 6.55V20a1.2 1.2 0 1 1-2.4 0V6.55L6.85 10.55a1.2 1.2 0 1 1-1.7-1.7l6-6a1.2 1.2 0 0 1 .85-.35z"/>
       </svg>
     `;
   }
@@ -986,6 +985,42 @@ function updateUIModelStatus(data) {
     if (dot) dot.className = 'status-dot dot-offline';
     if (text) text.textContent = 'No Checkpoint';
     if (badge) { badge.textContent = 'Not Trained'; badge.style.color = 'var(--text-muted)'; }
+  }
+
+  // Dynamic Island synchronization
+  const islandDot = document.getElementById('island-status-dot');
+  const islandTag = document.getElementById('island-compact-tag');
+  const islandStat = document.getElementById('island-stat-status');
+  const islandEnv = document.getElementById('island-env-tag');
+
+  if (islandDot && islandTag) {
+    if (data.training_running) {
+      islandDot.className = 'island-dot dot-training';
+      islandTag.textContent = 'Training';
+      islandTag.style.color = 'var(--accent-terracotta)';
+    } else if (data.model_ready) {
+      islandDot.className = 'island-dot dot-ready';
+      islandTag.textContent = 'Active';
+      islandTag.style.color = '#22c55e';
+    } else {
+      islandDot.className = 'island-dot dot-offline';
+      islandTag.textContent = 'Idle';
+      islandTag.style.color = '#94a3b8';
+    }
+  }
+
+  const islandCompactVal = document.getElementById('island-compact-val');
+  if (islandCompactVal) {
+    islandCompactVal.textContent = data.training_running ? 'Training' : 'Show';
+  }
+
+  if (islandStat) {
+    islandStat.textContent = data.training_running ? 'Training' : data.model_ready ? 'Ready' : 'Not Loaded';
+    islandStat.style.color = data.training_running ? 'var(--accent-terracotta)' : data.model_ready ? '#22c55e' : '#f87171';
+  }
+
+  if (islandEnv) {
+    islandEnv.textContent = `${data.model_name || 'BaseNeuralNetwork'} \u2022 ${data.environment || 'development'}`;
   }
 
   // Modal fields
