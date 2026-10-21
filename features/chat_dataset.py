@@ -1,0 +1,621 @@
+"""
+chat_dataset.py
+===============
+Kumpulan dataset percakapan (chat dataset) untuk Neura AI.
+Terbagi ke dalam berbagai kategori terstruktur dengan array percakapan
+yang mencakup informasi AI, machine learning, training model, evaluasi,
+prediksi, troubleshooting, sapaan, dan perintah sistem.
+"""
+
+CATEGORIES = [
+    "informasi",
+    "pelatihan_model",
+    "evaluasi_metrik",
+    "prediksi_inferensi",
+    "troubleshooting",
+    "sapaan_dan_interaksi",
+    "panduan_perintah"
+]
+
+CHAT_DATASET = {
+    # =========================================================================
+    # KATEGORI: INFORMASI (General AI, ML, Deep Learning & Neura Knowledge)
+    # =========================================================================
+    "informasi": [
+        {
+            "id": "info_001",
+            "topik": "Pengenalan Neura AI",
+            "kata_kunci": ["apa itu neura", "tentang neura", "siapa neura", "arsitektur neura"],
+            "tags": ["neura", "overview", "mvc"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bisa jelaskan apa itu Neura AI?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Neura AI adalah platform asisten Machine Learning interaktif berbasis TensorFlow yang dibangun menggunakan arsitektur MVC (Model-View-Controller) modular. Neura menyediakan antarmuka web modern bergaya Claude AI yang memungkinkan Anda melatih model, menjalankan inferensi, dan memantau evaluasi metrik secara real-time melalui percakapan."
+                }
+            ]
+        },
+        {
+            "id": "info_002",
+            "topik": "Pengenalan TensorFlow",
+            "kata_kunci": ["apa itu tensorflow", "fungsi tensorflow", "google tensorflow"],
+            "tags": ["tensorflow", "framework", "deep_learning"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa itu TensorFlow dan apa fungsinya di dalam Neura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "TensorFlow adalah pustaka open-source buatan Google untuk komputasi numerik berkinerja tinggi dan machine learning skala besar. Di dalam Neura, TensorFlow dan Keras digunakan sebagai core engine untuk mendefinisikan arsitektur Multi-Layer Perceptron (MLP), menghitung gradient loss, memperbarui bobot (weights), dan mengeksekusi inferensi tensor."
+                }
+            ]
+        },
+        {
+            "id": "info_003",
+            "topik": "Perbedaan AI, Machine Learning, dan Deep Learning",
+            "kata_kunci": ["perbedaan ai dan ml", "apa beda machine learning deep learning", "hierarki ai"],
+            "tags": ["ai", "machine_learning", "deep_learning", "dasar"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa perbedaan mendasar antara Artificial Intelligence, Machine Learning, dan Deep Learning?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Artificial Intelligence (AI) adalah payung luas untuk menciptakan mesin cerdas yang mampu meniru perilaku manusia. Machine Learning (ML) adalah cabang AI di mana sistem belajar dari data secara statistik tanpa diprogram secara eksplisit. Deep Learning (DL) adalah subset dari ML yang memanfaatkan jaringan saraf tiruan berlapis (Deep Neural Networks) untuk mempelajari representasi hierarkis data yang kompleks."
+                }
+            ]
+        },
+        {
+            "id": "info_004",
+            "topik": "Arsitektur Multi-Layer Perceptron (MLP)",
+            "kata_kunci": ["arsitektur mlp", "multi layer perceptron", "dense layer", "hidden layer"],
+            "tags": ["neural_network", "mlp", "arsitektur"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana struktur jaringan neural network yang digunakan oleh Neura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Model default Neura (BaseNeuralNetwork) menggunakan arsitektur feedforward MLP dengan konfigurasi:\n1. Input Layer: 128 fitur continuous (Float32 tensor)\n2. Hidden Layer 1: Dense 64 neuron dengan aktivasi ReLU\n3. Hidden Layer 2: Dense 32 neuron dengan aktivasi ReLU\n4. Output Layer: Dense 10 neuron dengan aktivasi Softmax untuk distribusi probabilitas multi-kelas."
+                }
+            ]
+        },
+        {
+            "id": "info_005",
+            "topik": "Fungsi Aktivasi ReLU dan Softmax",
+            "kata_kunci": ["apa itu relu", "fungsi softmax", "fungsi aktivasi"],
+            "tags": ["activation", "relu", "softmax", "matematika"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Mengapa kita menggunakan aktivasi ReLU pada hidden layer dan Softmax pada output layer?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "ReLU (Rectified Linear Unit) menghitung f(x) = max(0, x), yang efektif mengatasi vanishing gradient problem dan sangat cepat dihitung secara komputasi. Sedangkan Softmax menormalkan vektor output logit menjadi probabilitas dengan total nilai tepat 1.0, sehingga sangat ideal untuk klasifikasi multi-kelas."
+                }
+            ]
+        },
+        {
+            "id": "info_006",
+            "topik": "Konsep Backpropagation dan Gradient Descent",
+            "kata_kunci": ["apa itu backprop", "gradient descent", "cara belajar neural network"],
+            "tags": ["backpropagation", "optimasi", "training"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara kerja backpropagation dalam melatih model?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Backpropagation bekerja dengan menghitung gradien parsial fungsi loss terhadap setiap bobot jaringan menggunakan aturan rantai kalkulus (chain rule). Gradien ini kemudian digunakan oleh optimizer (seperti Adam) melalui proses Gradient Descent untuk memperbarui bobot ke arah yang meminimalkan nilai loss secara bertahap."
+                }
+            ]
+        },
+        {
+            "id": "info_007",
+            "topik": "Mengatasi Overfitting dan Underfitting",
+            "kata_kunci": ["apa itu overfitting", "cara mengatasi underfitting", "generalisasi model"],
+            "tags": ["overfitting", "regularization", "best_practices"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa tanda-tanda model mengalami overfitting dan bagaimana cara mengatasinya?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Overfitting terjadi ketika training loss terus menurun namun validation loss mulai naik drastis (model menghafal noise data latih). Cara mengatasinya meliputi:\n1. Menambahkan Dropout layer (misal Dropout 0.2 - 0.3)\n2. Menggunakan L1/L2 Weight Regularization\n3. Menerapkan Early Stopping saat validation loss tidak lagi membaik\n4. Menambah jumlah dan keragaman data pelatihan."
+                }
+            ]
+        },
+        {
+            "id": "info_008",
+            "topik": "Arsitektur MVC dalam Neura",
+            "kata_kunci": ["mvc neura", "struktur mvc", "kenapa pakai mvc"],
+            "tags": ["mvc", "software_engineering", "arsitektur"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Kenapa Neura membagi kodenya ke dalam pola MVC?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pola Model-View-Controller (MVC) memisahkan tanggung jawab sistem dengan jelas:\n- Model (app/models): Bertanggung jawab atas definisi neural network, kompilasi, pelatihan, dan checkpoint.\n- View (public/ & app/views): Bertanggung jawab atas visualisasi antarmuka web Claude UI dan output CLI.\n- Controller (server.py & app/controllers): Bertindak sebagai penghubung logika bisnis antara permintaan klien dan eksekusi model TensorFlow.\nPemisahan ini memudahkan pemeliharaan, modularitas pengujian, dan skalabilitas tim."
+                }
+            ]
+        },
+        {
+            "id": "info_009",
+            "topik": "Optimizer Adam",
+            "kata_kunci": ["apa itu adam optimizer", "kelebihan adam", "adaptive moment"],
+            "tags": ["optimizer", "adam", "gradient_descent"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Mengapa optimizer Adam paling sering digunakan pada neural network?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Adam (Adaptive Moment Estimation) menggabungkan keunggulan AdaGrad dan RMSProp. Adam memelihara estimasi rata-rata eksponensial dari gradien (momentum orde pertama) serta kuadrat gradien (orde kedua). Hal ini membuat laju pembelajaran (learning rate) beradaptasi secara dinamis untuk setiap parameter, menghasilkan konvergensi yang lebih cepat dan stabil."
+                }
+            ]
+        },
+        {
+            "id": "info_010",
+            "topik": "Categorical Crossentropy Loss",
+            "kata_kunci": ["categorical crossentropy", "fungsi loss klasifikasi", "rumus crossentropy"],
+            "tags": ["loss", "matematika", "klasifikasi"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa itu Categorical Crossentropy dan kapan digunakan?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Categorical Crossentropy adalah fungsi kerugian (loss function) standar untuk masalah klasifikasi multi-kelas di mana setiap sampel hanya memiliki satu label yang benar. Fungsi ini mengukur divergensi antara distribusi probabilitas prediksi model dengan label target one-hot encoded. Semakin mendekati 1 probabilitas kelas yang benar, semakin kecil nilai loss-nya."
+                }
+            ]
+        }
+    ],
+
+    # =========================================================================
+    # KATEGORI: PELATIHAN MODEL (Model Training & Epochs)
+    # =========================================================================
+    "pelatihan_model": [
+        {
+            "id": "train_001",
+            "topik": "Cara Melatih Model",
+            "kata_kunci": ["cara train model", "perintah training", "latih model"],
+            "tags": ["training", "command", "tutorial"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara melatih model di Neura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Anda dapat melatih model dengan mengetik perintah `/train [jumlah_epoch]`. Contohnya:\n- `/train 5` untuk melatih selama 5 epoch (standar)\n- `/train 10` untuk pelatihan yang lebih konvergen.\nProses training berjalan secara asynchronous di background sehingga web UI tetap responsif dengan progress bar real-time."
+                }
+            ]
+        },
+        {
+            "id": "train_002",
+            "topik": "Pemilihan Jumlah Epoch",
+            "kata_kunci": ["berapa epoch", "epoch yang bagus", "rekomendasi epoch"],
+            "tags": ["epoch", "hyperparameter", "tuning"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Berapa jumlah epoch yang ideal untuk dataset ini?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Untuk dataset klasifikasi sintetis 128-fitur pada Neura, 5 hingga 15 epoch biasanya sudah cukup untuk mencapai akurasi di atas 70%-80%. Memulai dengan 5 epoch disarankan untuk verifikasi cepat (`/train 5`), lalu naikkan ke 10-20 epoch jika validation loss masih terus menurun."
+                }
+            ]
+        },
+        {
+            "id": "train_003",
+            "topik": "Pengaruh Batch Size",
+            "kata_kunci": ["apa itu batch size", "pengaruh ukuran batch", "batch 32 vs 64"],
+            "tags": ["batch_size", "memory", "gradient"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa pengaruh batch size terhadap proses training model?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Batch size menentukan berapa banyak sampel yang diproses sebelum bobot model diperbarui:\n- Batch kecil (misal 16 atau 32): Menghasilkan update gradien yang lebih bervariasi (noisy), yang dapat membantu model keluar dari local minima, namun komputasinya lebih lambat pada GPU.\n- Batch besar (misal 128 atau 256): Menghitung gradien lebih stabil dan efisien dalam paralelisasi perangkat keras, namun memerlukan memori lebih besar."
+                }
+            ]
+        },
+        {
+            "id": "train_004",
+            "topik": "Memahami Learning Rate",
+            "kata_kunci": ["apa itu learning rate", "laju belajar", "learning rate terlalu besar"],
+            "tags": ["learning_rate", "hyperparameter", "optimasi"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa yang terjadi jika learning rate diset terlalu besar atau terlalu kecil?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Learning rate adalah laju langkah optimizer dalam memperbarui bobot:\n- Terlalu besar (misal > 0.1): Langkah pembaruan dapat melompati titik minimum global (overshooting) atau menyebabkan nilai loss meledak (NaN/divergen).\n- Terlalu kecil (misal < 0.00001): Proses belajar berjalan sangat lambat dan berisiko terjebak pada plateau atau local minima.\nNilai default standar yang baik untuk optimizer Adam adalah 0.001."
+                }
+            ]
+        },
+        {
+            "id": "train_005",
+            "topik": "Pelatihan Asynchronous pada Neura",
+            "kata_kunci": ["async training", "training background", "apakah ui ngefreeze"],
+            "tags": ["architecture", "threading", "server"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apakah UI Neura akan freeze saat model sedang dilatih?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Tidak. Neura mengimplementasikan daemon thread worker terpisah di `server.py` yang dilindungi dengan mutex lock (`threading.Lock`). Klien web memantau kemajuan melalui endpoint `/api/train/progress` dengan interval polling otomatis, sehingga antarmuka tetap sepenuhnya interaktif."
+                }
+            ]
+        },
+        {
+            "id": "train_006",
+            "topik": "Penyimpanan Checkpoint Model",
+            "kata_kunci": ["dimana model disimpan", "checkpoint keras", "save model"],
+            "tags": ["checkpoint", "io", "storage"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Di mana checkpoint model tersimpan setelah proses training selesai?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Model tersimpan secara otomatis dalam format Keras 3 modern di path:\n`public/checkpoints/NeuralNetwork.keras`\nFile ini memuat arsitektur, bobot teroptimasi, konfigurasi kompilasi, serta state optimizer sehingga dapat langsung dimuat kembali untuk evaluasi atau inferensi."
+                }
+            ]
+        },
+        {
+            "id": "train_007",
+            "topik": "Mengecek Progres Training yang Sedang Berjalan",
+            "kata_kunci": ["cek progres training", "perintah progress", "apakah masih training"],
+            "tags": ["progress", "monitoring", "command"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara melihat progres epoch saat pelatihan sedang berlangsung?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Ketik perintah `/progress` di kolom chat. Neura akan menampilkan tabel riwayat epoch yang memuat metrik Loss, Val Loss, Training Accuracy, dan Validation Accuracy secara terperinci."
+                }
+            ]
+        }
+    ],
+
+    # =========================================================================
+    # KATEGORI: EVALUASI & METRIK (Evaluation, Metrics & Reports)
+    # =========================================================================
+    "evaluasi_metrik": [
+        {
+            "id": "eval_001",
+            "topik": "Cara Evaluasi Model",
+            "kata_kunci": ["cara eval model", "perintah evaluate", "tes akurasi"],
+            "tags": ["eval", "accuracy", "command"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara mengevaluasi akurasi model Neura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Cukup ketik perintah `/eval` atau klik kartu 'Evaluate Metrics' pada halaman utama. Neura akan mengevaluasi checkpoint model terhadap dataset uji (test split) dan menampilkan metrik Test Loss dan Test Accuracy dalam bentuk kartu statistik minimalis."
+                }
+            ]
+        },
+        {
+            "id": "eval_002",
+            "topik": "Perbedaan Accuracy, Precision, dan Recall",
+            "kata_kunci": ["beda precision recall", "apa itu f1 score", "metrik evaluasi"],
+            "tags": ["precision", "recall", "f1_score", "teori"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Kapan akurasi saja tidak cukup dan kita membutuhkan Precision dan Recall?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Akurasi kurang representatif ketika dataset memiliki ketimpangan kelas (class imbalance):\n- Precision: Mengukur proporsi prediksi positif yang benar-benar positif (penting saat false positive berbiaya tinggi, misal spam filter).\n- Recall (Sensitivity): Mengukur proporsi seluruh kasus positif nyata yang berhasil dideteksi (kritis saat false negative berbahaya, misal diagnosis penyakit).\n- F1-Score: Rata-rata harmonik antara Precision dan Recall untuk keseimbangan evaluasi."
+                }
+            ]
+        },
+        {
+            "id": "eval_003",
+            "topik": "Lokasi Laporan Evaluasi",
+            "kata_kunci": ["dimana laporan evaluasi", "report json", "folder report"],
+            "tags": ["reports", "json", "filesystem"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Di mana file hasil evaluasi tersimpan?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Setiap eksekusi evaluasi menghasilkan laporan berbasis JSON terstruktur yang disimpan di folder:\n`public/reports/evaluation_report.json`\nLaporan ini memuat timestamp, konfigurasi model, serta ringkasan metrik evaluasi lengkap."
+                }
+            ]
+        },
+        {
+            "id": "eval_004",
+            "topik": "Membaca Nilai Loss",
+            "kata_kunci": ["arti nilai loss", "kenapa loss penting", "loss yang baik berapa"],
+            "tags": ["loss", "interpretation", "metrics"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara mengartikan nilai loss yang baik?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Loss merepresentasikan seberapa jauh probabilitas prediksi model dari label sebenarnya. Nilai loss yang baik adalah yang mendekati 0. Jika model memiliki 10 kelas dan menebak secara acak, nilai awal Categorical Crossentropy berkisar di ln(10) ≈ 2.30. Nilai loss di bawah 1.0 menunjukkan model telah mempelajari pola dengan baik."
+                }
+            ]
+        }
+    ],
+
+    # =========================================================================
+    # KATEGORI: PREDIKSI & INFERENSI (Inference & Class Probabilities)
+    # =========================================================================
+    "prediksi_inferensi": [
+        {
+            "id": "pred_001",
+            "topik": "Menjalankan Prediksi",
+            "kata_kunci": ["cara prediksi", "jalankan inferensi", "predict"],
+            "tags": ["predict", "inference", "command"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara menjalankan prediksi pada Neura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Ketik perintah `/predict` atau klik tombol chip '🔮 /predict'. Neura akan membuat sampel vektor 128-dimensi secara acak, mengumpankannya ke jaringan neural network, lalu menampilkan kelas prediksi teratas serta progress bar probabilitas top 5 kelas."
+                }
+            ]
+        },
+        {
+            "id": "pred_002",
+            "topik": "Arti Softmax Probability Bar",
+            "kata_kunci": ["apa arti probabilitas prediksi", "confidence score", "tingkat keyakinan"],
+            "tags": ["probability", "softmax", "confidence"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa arti nilai persentase confidence pada hasil prediksi?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Nilai persentase tersebut dihasilkan dari fungsi aktivasi Softmax di output layer. Nilai 85% pada Class_3 berarti model memiliki keyakinan 85% bahwa vektor masukan termasuk ke dalam Class_3 dibandingkan 9 kelas lainnya. Total seluruh probabilitas dari ke-10 kelas selalu bernilai 100%."
+                }
+            ]
+        },
+        {
+            "id": "pred_003",
+            "topik": "Input Dimensi Model",
+            "kata_kunci": ["berapa dimensi input", "bentuk tensor input", "input shape"],
+            "tags": ["tensor", "dimensions", "shape"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Berapa dimensi data masukan yang dibutuhkan model Neura untuk melakukan inferensi?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Model menerima tensor dengan dimensi input `[None, 128]`, yang berarti batch data kontinu dengan 128 fitur per baris sampel berformat Float32."
+                }
+            ]
+        }
+    ],
+
+    # =========================================================================
+    # KATEGORI: TROUBLESHOOTING & SOLUSI ERROR (Debugging & Diagnostics)
+    # =========================================================================
+    "troubleshooting": [
+        {
+            "id": "err_001",
+            "topik": "Status No Checkpoint / Model Not Trained",
+            "kata_kunci": ["no checkpoint", "model belum dilatih", "checkpoint tidak ditemukan"],
+            "tags": ["checkpoint", "error", "solution"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Kenapa status model saya menunjukkan 'No Checkpoint'?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Status 'No Checkpoint' berarti file bobot `public/checkpoints/NeuralNetwork.keras` belum ditemukan. Solusinya sangat mudah: cukup jalankan perintah `/train 5` untuk melatih model pertama kali. Setelah pelatihan selesai, checkpoint akan tersimpan otomatis dan status berubah menjadi 'Model Ready'."
+                }
+            ]
+        },
+        {
+            "id": "err_002",
+            "topik": "Mengatasi Port 5000 Sudah Digunakan",
+            "kata_kunci": ["port 5000 in use", "address already in use", "gagal jalankan server"],
+            "tags": ["port", "networking", "server_error"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa yang harus dilakukan jika server gagal running karena port 5000 sudah terpakai?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Pada Windows PowerShell, Anda dapat mengecek dan mematikan proses yang memakai port 5000 dengan:\n```powershell\nGet-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess | Stop-Process -Force\n```\nAtau ganti port default di file `server.py` pada baris `app.run(port=5001)`."
+                }
+            ]
+        },
+        {
+            "id": "err_003",
+            "topik": "Error Loss bernilai NaN",
+            "kata_kunci": ["loss nan", "loss meledak", "exploding gradient"],
+            "tags": ["nan", "gradient", "numerical_stability"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Mengapa nilai loss pada training bisa menghasilkan angka NaN?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Loss bernilai NaN biasanya disebabkan oleh Exploding Gradients atau ketidakstabilan numerik:\n1. Learning rate terlalu besar (coba turunkan dari 0.01 ke 0.001)\n2. Data masukan belum dinormalisasi (nilai fitur terlalu besar tanpa scikit StandardScaler)\n3. Pembagian dengan nol pada rumus logaritma loss."
+                }
+            ]
+        },
+        {
+            "id": "err_004",
+            "topik": "Script Execution Disabled di Windows PowerShell",
+            "kata_kunci": ["activate.ps1 cannot be loaded", "execution of scripts is disabled"],
+            "tags": ["powershell", "windows", "venv"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Kenapa saya tidak bisa mengaktifkan virtual environment di PowerShell?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Windows secara default membatasi eksekusi skrip PowerShell. Buka PowerShell dan jalankan perintah kebijakan berikut:\n```powershell\nSet-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser\n```\nSetelah itu, jalankan kembali skrip aktivasi: `venv\\Scripts\\Activate.ps1`."
+                }
+            ]
+        }
+    ],
+
+    # =========================================================================
+    # KATEGORI: SAPAAN & INTERAKSI KASUAL (Greetings & Casual Dialogue)
+    # =========================================================================
+    "sapaan_dan_interaksi": [
+        {
+            "id": "greet_001",
+            "topik": "Sapaan Pagi, Siang, Malam",
+            "kata_kunci": ["halo", "hai", "selamat pagi", "selamat malam", "hi"],
+            "tags": ["greeting", "casual"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Halo Neura, selamat pagi!"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Halo! Selamat pagi. Senang bertemu dengan Anda. Ada proyek machine learning atau eksperimen TensorFlow yang ingin kita kerjakan hari ini?"
+                }
+            ]
+        },
+        {
+            "id": "greet_002",
+            "topik": "Menanyakan Kemampuan",
+            "kata_kunci": ["apa yang bisa kamu lakukan", "kemampuan kamu apa", "fitur kamu"],
+            "tags": ["capabilities", "overview"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa saja hal yang bisa kamu bantu untuk saya?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Saya bisa membantu Anda:\n1. Melatih model neural network (`/train [n]`)\n2. Mengevaluasi metrik akurasi dan loss (`/eval`)\n3. Menjalankan inferensi dan menghitung probabilitas softmax (`/predict`)\n4. Memeriksa status dan arsitektur model (`/status`)\n5. Menjawab pertanyaan seputar teori AI, Deep Learning, dan arsitektur kode MVC."
+                }
+            ]
+        },
+        {
+            "id": "greet_003",
+            "topik": "Ucapan Terima Kasih",
+            "kata_kunci": ["terima kasih", "makasih", "thanks", "thank you"],
+            "tags": ["gratitude", "polite"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Terima kasih banyak atas bantuannya!"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Sama-sama! Senang bisa membantu Anda. Jika ada pertanyaan atau eksperimen model lainnya, silakan tanyakan kapan saja!"
+                }
+            ]
+        },
+        {
+            "id": "greet_004",
+            "topik": "Pamitan / Sampai Jumpa",
+            "kata_kunci": ["sampai jumpa", "dadah", "bye", "selamat tinggal"],
+            "tags": ["farewell", "polite"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Sampai jumpa nanti, Neura!"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Sampai jumpa! Selamat melanjutkan aktivitas Anda dan semoga eksperimen machine learning Anda berjalan sukses!"
+                }
+            ]
+        }
+    ],
+
+    # =========================================================================
+    # KATEGORI: PANDUAN & PERINTAH SISTEM (System Commands & Shortcuts)
+    # =========================================================================
+    "panduan_perintah": [
+        {
+            "id": "cmd_001",
+            "topik": "Daftar Semua Perintah Chat",
+            "kata_kunci": ["daftar perintah", "list command", "/help", "perintah apa saja"],
+            "tags": ["commands", "help", "guide"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Tampilkan semua perintah yang bisa saya gunakan."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Berikut adalah perintah utama yang didukung oleh Neura:\n- `/status` : Memeriksa kesiapan checkpoint, environment, dan nama model.\n- `/train [N]` : Melatih model selama N epoch (default: 5).\n- `/eval` : Menghitung loss dan akurasi model pada test data.\n- `/predict` : Menjalankan inferensi pada sampel 128-dimensi.\n- `/progress` : Melihat log progres pelatihan real-time.\n- `/help` : Menampilkan ringkasan bantuan."
+                }
+            ]
+        },
+        {
+            "id": "cmd_002",
+            "topik": "Shortcut Keyboard & Mode Gelap",
+            "kata_kunci": ["shortcut keyboard", "cara ganti tema", "dark mode", "ctrl k"],
+            "tags": ["shortcuts", "theme", "ui"],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apakah ada shortcut keyboard dan opsi mode gelap di Neura?"
+                },
+                {
+                    "role": "assistant",
+                    "content": "Ya, Neura mendukung:\n- `Ctrl + K` (atau `Cmd + K` di Mac): Membuka percakapan baru secara instan.\n- `Enter`: Mengirim pesan.\n- `Shift + Enter`: Membuat baris baru di kolom teks.\n- Mode Gelap: Klik ikon bulan/matahari di pojok kanan atas atau sidebar bawah untuk beralih antara tema Warm Linen dan Obsidian Dark."
+                }
+            ]
+        }
+    ]
+}
+
+
+def get_all_categories():
+    """Mengembalikan daftar semua kategori yang tersedia."""
+    return list(CHAT_DATASET.keys())
+
+
+def get_conversations_by_category(category):
+    """Mengambil array percakapan berdasarkan nama kategori."""
+    return CHAT_DATASET.get(category, [])
+
+
+def get_total_count():
+    """Menghitung total percakapan di seluruh kategori."""
+    return sum(len(items) for items in CHAT_DATASET.values())

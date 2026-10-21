@@ -41,6 +41,11 @@ Neura/
 │   ├── assets/                   # Logo & favicon aset
 │   ├── checkpoints/              # Checkpoint model terlatih (.keras)
 │   └── reports/                  # Log & laporan evaluasi (.json)
+├── features/                     # Modul fitur & dataset percakapan
+│   ├── __init__.py               # Package export
+│   ├── chat_dataset.py           # Kumpulan array percakapan terklasifikasi
+│   ├── chat_dataset.json         # Export JSON dataset percakapan
+│   └── chat_manager.py           # Manager pencarian, filter, & intent matcher
 ├── src/
 │   ├── dev/                      # Core backend & modul machine learning
 │   │   ├── controllers/          # Business logic & command handler
@@ -104,6 +109,9 @@ Anda dapat mengetik perintah berikut di kolom chat:
 | `GET` | `/api/train/progress` | Mendapatkan progres training real-time |
 | `POST` | `/api/evaluate` | Menjalankan evaluasi test metrics |
 | `POST` | `/api/predict` | Menjalankan inferensi pada sampel data |
+| `GET` | `/api/features/categories` | Mendapatkan daftar kategori dataset & statistik |
+| `GET` | `/api/features/chat-dataset` | Query dataset percakapan (filter `?category=` atau `?q=`) |
+| `POST` | `/api/chat` | Memproses percakapan cerdas berbasis dataset (`{"message": "..."}`) |
 
 ---
 

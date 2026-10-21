@@ -680,12 +680,12 @@ html, body {
 .message-row {
   display: flex;
   width: 100%;
-  animation: msg-appear 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: msg-appear 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes msg-appear {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* User Message — Rounded warm bubble on the right */
@@ -835,6 +835,12 @@ html, body {
   padding: 16px;
   margin: 12px 0;
   box-shadow: var(--shadow-sm);
+  animation: card-appear 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes card-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .claude-stats-grid {
@@ -957,6 +963,7 @@ html, body {
   height: 100%;
   background-color: var(--accent-terracotta);
   border-radius: 4px;
+  transition: width 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .prob-fill.is-top {
@@ -971,29 +978,102 @@ html, body {
   color: var(--text-primary);
 }
 
-/* Typing Indicator (Claude 3-dot pulse) */
-.claude-typing-row {
+/* Typing Indicator (Claude AI Signature Load Animation) */
+.claude-loading-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 8px 0 12px 0;
+  animation: typing-appear 0.2s ease-out;
+}
+
+@keyframes typing-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.claude-loading-sparkle {
+  color: var(--accent-terracotta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: claude-sparkle-spin 2.6s ease-in-out infinite;
+}
+
+@keyframes claude-sparkle-spin {
+  0%   { transform: rotate(0deg) scale(0.85); opacity: 0.55; }
+  50%  { transform: rotate(90deg) scale(1.12); opacity: 1; }
+  100% { transform: rotate(180deg) scale(0.85); opacity: 0.55; }
+}
+
+.claude-loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
 }
 
 .claude-typing-dot {
-  width: 6px;
-  height: 6px;
+  width: 5.5px;
+  height: 5.5px;
   background-color: var(--accent-terracotta);
   border-radius: 50%;
-  opacity: 0.35;
-  animation: claude-dot-pulse 1.4s infinite ease-in-out;
+  animation: claude-dot-pulse 1.35s infinite ease-in-out both;
 }
 
-.claude-typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.claude-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+.claude-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.claude-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+.claude-typing-dot:nth-child(3) { animation-delay: 0s; }
 
 @keyframes claude-dot-pulse {
-  0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1.15); }
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.25;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Typewriter Cursor & Streaming Caret (Claude AI Minimalist Caret) */
+.streaming-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.18em;
+  background-color: var(--accent-terracotta);
+  margin-left: 2.5px;
+  vertical-align: -2.5px;
+  border-radius: 1px;
+  animation: claude-caret-blink 0.75s infinite;
+}
+
+@keyframes claude-caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Stop Generating Button State (Claude AI) */
+.send-icon-btn.is-generating {
+  background-color: var(--text-primary) !important;
+  color: var(--bg-surface) !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  transform: scale(1.02);
+}
+
+.send-icon-btn.is-generating:hover {
+  transform: scale(1.08);
+  opacity: 0.92 !important;
+}
+
+.assistant-prose.fade-in {
+  animation: prose-fade 0.35s ease-out;
+}
+
+@keyframes prose-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ==========================================================================

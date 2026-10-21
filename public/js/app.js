@@ -8,8 +8,41 @@
 
 const API = '';
 let isTyping = false;
+let stopRequested = false;
 let trainingPollInterval = null;
 let activeModelData = null;
+
+function setGeneratingState(generating) {
+  isTyping = generating;
+  const btn = document.getElementById('send-msg-btn');
+  if (!btn) return;
+  if (generating) {
+    btn.classList.add('is-generating');
+    btn.title = 'Stop generating';
+    btn.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="5" y="5" width="14" height="14" rx="2.5"/>
+      </svg>
+    `;
+  } else {
+    btn.classList.remove('is-generating');
+    btn.title = 'Send message';
+    btn.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="19" x2="12" y2="5"/>
+        <polyline points="5 12 12 5 19 12"/>
+      </svg>
+    `;
+  }
+}
+
+function handleSendClick() {
+  if (isTyping) {
+    stopRequested = true;
+    return;
+  }
+  sendUserMessage();
+}
 
 // --------------------------------------------------------------------------
 // Initialization & Dynamic Greeting
@@ -143,10 +176,26 @@ function submitCommand(cmd) {
 // --------------------------------------------------------------------------
 // Message Sending & Pipeline
 // --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Message Sending & Pipeline
+// --------------------------------------------------------------------------
+async function waitLoad(startTime, minMs = 450) {
+  const elapsed = Date.now() - startTime;
+  if (elapsed < minMs) {
+    await new Promise(r => setTimeout(r, minMs - elapsed));
+  }
+}
+
 async function sendUserMessage() {
   const input = document.getElementById('chat-input-textarea');
   const text = input.value.trim();
-  if (!text || isTyping) return;
+  if (!text) return;
+  if (isTyping) {
+    stopRequested = true;
+    return;
+  }
+
+  stopRequested = false;
 
   // Clear input
   input.value = '';
@@ -161,33 +210,36 @@ async function sendUserMessage() {
 
   // Show Claude typing dots
   const typingId = showTypingIndicator();
-  isTyping = true;
-  document.getElementById('send-msg-btn').disabled = true;
+  setGeneratingState(true);
+
+  const startTime = Date.now();
 
   try {
-    await processMLInput(text, typingId);
+    await processMLInput(text, typingId, startTime);
   } catch(err) {
+    await waitLoad(startTime, 350);
     removeTypingIndicator(typingId);
-    appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(err.message)}</p>`);
+    appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(err.message)}</p>`, { stream: false });
   } finally {
-    isTyping = false;
-    document.getElementById('send-msg-btn').disabled = false;
+    setGeneratingState(false);
   }
 }
 
 // --------------------------------------------------------------------------
 // Command Execution & Processing
 // --------------------------------------------------------------------------
-async function processMLInput(rawText, typingId) {
+async function processMLInput(rawText, typingId, startTime) {
   const text = rawText.trim();
   const lower = text.toLowerCase();
 
   if (lower === '/help') {
+    await waitLoad(startTime, 400);
     removeTypingIndicator(typingId);
     renderHelpOutput();
 
   } else if (lower === '/status') {
     const data = await fetchJSON('/api/status');
+    await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
     renderStatusOutput(data);
 
@@ -195,10 +247,11 @@ async function processMLInput(rawText, typingId) {
     const parts = text.split(/\s+/);
     const epochs = parseInt(parts[1]) || 5;
     const data = await fetchJSON('/api/train', 'POST', { epochs });
+    await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
 
     if (data.error) {
-      appendAssistantMessage(`<p style="color:var(--accent-red)">Training Error: ${escapeHtml(data.error)}</p>`);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Training Error: ${escapeHtml(data.error)}</p>`, { stream: false });
     } else {
       appendAssistantMessage(`
         <h4>Training Initialized</h4>
@@ -213,37 +266,56 @@ async function processMLInput(rawText, typingId) {
           </div>
         </div>
         <p style="font-size:12px;color:var(--text-muted);margin-top:8px">Background daemon active. Polling live status...</p>
-      `);
+      `, { stream: false });
       startProgressPolling(epochs);
     }
 
   } else if (lower === '/eval') {
     const data = await fetchJSON('/api/evaluate', 'POST');
+    await waitLoad(startTime, 500);
     removeTypingIndicator(typingId);
     if (data.error) {
-      appendAssistantMessage(`<p style="color:var(--accent-red)">Evaluation Error: ${escapeHtml(data.error)}</p>`);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Evaluation Error: ${escapeHtml(data.error)}</p>`, { stream: false });
     } else {
       renderEvaluationOutput(data.metrics || {});
     }
 
   } else if (lower === '/predict') {
     const data = await fetchJSON('/api/predict', 'POST', {});
+    await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
     if (data.error) {
-      appendAssistantMessage(`<p style="color:var(--accent-red)">Prediction Error: ${escapeHtml(data.error)}</p>`);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Prediction Error: ${escapeHtml(data.error)}</p>`, { stream: false });
     } else {
       renderPredictionOutput(data);
     }
 
   } else if (lower === '/progress') {
     const data = await fetchJSON('/api/train/progress');
+    await waitLoad(startTime, 400);
     removeTypingIndicator(typingId);
     renderProgressOutput(data);
 
   } else {
-    // Natural Language Assistant Response
-    removeTypingIndicator(typingId);
-    appendAssistantMessage(generateConversationalReply(text));
+    // Natural Language Assistant Response powered by Chat Dataset
+    try {
+      const chatRes = await fetchJSON('/api/chat', 'POST', { message: text });
+      await waitLoad(startTime, 500);
+      removeTypingIndicator(typingId);
+      if (chatRes && chatRes.matched && chatRes.reply) {
+        const formatted = escapeHtml(chatRes.reply)
+          .replace(/\n\n/g, '</p><p>')
+          .replace(/\n/g, '<br>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>');
+        appendAssistantMessage(`<p>${formatted}</p>`, { stream: true });
+      } else {
+        appendAssistantMessage(generateConversationalReply(text), { stream: true });
+      }
+    } catch(e) {
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(generateConversationalReply(text), { stream: true });
+    }
   }
 }
 
@@ -388,7 +460,7 @@ function renderPredictionOutput(data) {
       <div class="prob-row">
         <span class="prob-name">${escapeHtml(item.class)}</span>
         <div class="prob-track">
-          <div class="prob-fill ${isTop ? 'is-top' : ''}" style="width: ${pct}%"></div>
+          <div class="prob-fill ${isTop ? 'is-top' : ''}" data-target-width="${pct}%" style="width: 0%"></div>
         </div>
         <span class="prob-percent">${pct}%</span>
       </div>
@@ -517,7 +589,8 @@ function appendUserBubble(text) {
   scrollToBottom();
 }
 
-function appendAssistantMessage(html) {
+function appendAssistantMessage(html, options = {}) {
+  const { stream = false } = options;
   const container = document.getElementById('chat-content-container');
   const row = document.createElement('div');
   row.className = 'message-row assistant';
@@ -527,8 +600,8 @@ function appendAssistantMessage(html) {
       <span class="assistant-name">Neura</span>
       <span class="assistant-model-tag">&bull; BaseNeuralNetwork</span>
     </div>
-    <div class="assistant-prose">${html}</div>
-    <div class="msg-actions-row">
+    <div class="assistant-prose fade-in"></div>
+    <div class="msg-actions-row" style="display:none">
       <button class="msg-action-btn" title="Copy response" onclick="copyMessageText(this)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <span>Copy</span>
@@ -537,6 +610,79 @@ function appendAssistantMessage(html) {
   `;
   container.appendChild(row);
   scrollToBottom();
+
+  const proseEl = row.querySelector('.assistant-prose');
+  const actionRow = row.querySelector('.msg-actions-row');
+
+  if (stream) {
+    streamTypewriter(proseEl, html, () => {
+      if (actionRow) actionRow.style.display = 'flex';
+      scrollToBottom();
+    });
+  } else {
+    proseEl.innerHTML = html;
+    if (actionRow) actionRow.style.display = 'flex';
+    
+    // Animate probability bars
+    const bars = proseEl.querySelectorAll('.prob-fill');
+    if (bars.length > 0) {
+      setTimeout(() => {
+        bars.forEach(b => {
+          const target = b.getAttribute('data-target-width');
+          if (target) b.style.width = target;
+        });
+      }, 60);
+    }
+    scrollToBottom();
+  }
+}
+
+function streamTypewriter(targetElement, fullHtml, onComplete) {
+  // If html has tables, cards, lists or code blocks, render directly with smooth fade to prevent breaking HTML tags
+  if (fullHtml.includes('<table') || fullHtml.includes('claude-card') || fullHtml.includes('progress-bar') || fullHtml.includes('<pre>') || fullHtml.includes('<ul') || fullHtml.includes('<ol')) {
+    targetElement.innerHTML = fullHtml;
+    const bars = targetElement.querySelectorAll('.prob-fill');
+    if (bars.length > 0) {
+      setTimeout(() => {
+        bars.forEach(b => {
+          const target = b.getAttribute('data-target-width');
+          if (target) b.style.width = target;
+        });
+      }, 60);
+    }
+    if (onComplete) onComplete();
+    return;
+  }
+
+  // Word/tag tokenizer for fluid progressive streaming
+  const tokens = fullHtml.split(/(\s+|<[^>]+>)/).filter(Boolean);
+  let idx = 0;
+  let accumulated = '';
+  const cursor = '<span class="streaming-cursor"></span>';
+
+  function renderNext() {
+    if (stopRequested) {
+      targetElement.innerHTML = accumulated;
+      if (onComplete) onComplete();
+      return;
+    }
+
+    const count = Math.min(2, tokens.length - idx);
+    for (let i = 0; i < count; i++) {
+      accumulated += tokens[idx++];
+    }
+    targetElement.innerHTML = accumulated + cursor;
+    scrollToBottom();
+
+    if (idx < tokens.length) {
+      setTimeout(renderNext, 18);
+    } else {
+      targetElement.innerHTML = accumulated;
+      if (onComplete) onComplete();
+    }
+  }
+
+  renderNext();
 }
 
 function showTypingIndicator() {
@@ -549,11 +695,19 @@ function showTypingIndicator() {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
+      <span class="assistant-model-tag">&bull; BaseNeuralNetwork</span>
     </div>
-    <div class="claude-typing-row">
-      <div class="claude-typing-dot"></div>
-      <div class="claude-typing-dot"></div>
-      <div class="claude-typing-dot"></div>
+    <div class="claude-loading-row">
+      <div class="claude-loading-sparkle" title="Neura is thinking...">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
+        </svg>
+      </div>
+      <div class="claude-loading-dots">
+        <div class="claude-typing-dot"></div>
+        <div class="claude-typing-dot"></div>
+        <div class="claude-typing-dot"></div>
+      </div>
     </div>
   `;
   container.appendChild(row);

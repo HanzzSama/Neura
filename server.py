@@ -274,6 +274,68 @@ def api_predict():
 
 
 # -----------------------------------------------------------------------
+# API — Features & Chat Dataset
+# -----------------------------------------------------------------------
+
+@app.route("/api/features/categories", methods=["GET"])
+def api_chat_categories():
+    try:
+        from features.chat_manager import ChatDatasetManager
+        mgr = ChatDatasetManager()
+        return jsonify({
+            "categories": mgr.get_categories(),
+            "stats": mgr.get_statistics(),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/features/chat-dataset", methods=["GET"])
+def api_chat_dataset():
+    try:
+        from features.chat_manager import ChatDatasetManager
+        mgr = ChatDatasetManager()
+        category = request.args.get("category", None)
+        query = request.args.get("q", None)
+
+        if query:
+            results = mgr.search(query, category=category)
+            return jsonify({"query": query, "count": len(results), "results": results})
+
+        if category:
+            data = mgr.get_by_category(category)
+            return jsonify({"category": category, "count": len(data), "items": data})
+
+        return jsonify({
+            "stats": mgr.get_statistics(),
+            "data": mgr.dataset,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat_message():
+    try:
+        from features.chat_manager import ChatDatasetManager
+        body = request.get_json(silent=True) or {}
+        message = body.get("message", "").strip()
+
+        if not message:
+            return jsonify({"error": "Empty message"}), 400
+
+        mgr = ChatDatasetManager()
+        matched_reply = mgr.find_best_response(message)
+
+        return jsonify({
+            "matched": matched_reply is not None,
+            "reply": matched_reply,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# -----------------------------------------------------------------------
 # Run
 # -----------------------------------------------------------------------
 
