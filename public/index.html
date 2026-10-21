@@ -1,1068 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Neura AI — Machine Learning Chat</title>
-  <meta name="description" content="Neura AI — Interactive machine learning assistant powered by TensorFlow. Train, evaluate, and predict with a conversational interface." />
+  <title>Claude &bull; Neura AI</title>
+  <meta name="description" content="Neura AI — Interactive machine learning assistant powered by TensorFlow, featuring Claude's warm and intuitive interface." />
+  
+  <!-- Claude AI Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    /* ===================================================
-       CSS RESET & TOKENS
-    =================================================== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    :root {
-      --bg-base:        #070b14;
-      --bg-surface:     #0d1424;
-      --bg-elevated:    #111827;
-      --bg-glass:       rgba(17, 24, 39, 0.7);
-      --bg-glass-light: rgba(255,255,255,0.04);
-      --bg-input:       rgba(255,255,255,0.06);
-
-      --accent-1:  #5b7cfa;   /* blue-indigo  */
-      --accent-2:  #a259f7;   /* violet       */
-      --accent-3:  #38bdf8;   /* sky           */
-      --accent-4:  #34d399;   /* emerald       */
-      --accent-err:#f87171;   /* red           */
-
-      --gradient-primary: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-      --gradient-glow:    linear-gradient(135deg, #5b7cfa22, #a259f722);
-
-      --text-primary:   #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted:     #475569;
-      --text-accent:    #a5b4fc;
-
-      --border:       rgba(255,255,255,0.08);
-      --border-focus: rgba(91,124,250,0.5);
-
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --radius-xl: 28px;
-
-      --shadow-sm: 0 2px 12px rgba(0,0,0,0.4);
-      --shadow-md: 0 8px 32px rgba(0,0,0,0.5);
-      --shadow-glow: 0 0 40px rgba(91,124,250,0.15);
-
-      --sidebar-w: 280px;
-      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg-base); color: var(--text-primary); overflow: hidden; }
-
-    /* ===================================================
-       ANIMATED BACKGROUND
-    =================================================== */
-    .bg-orb {
-      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-      filter: blur(80px); opacity: 0.12;
-      animation: pulse-orb 8s ease-in-out infinite;
-    }
-    .bg-orb-1 { width: 600px; height: 600px; background: var(--accent-1); top: -200px; left: -100px; animation-delay: 0s; }
-    .bg-orb-2 { width: 400px; height: 400px; background: var(--accent-2); bottom: -100px; right: -100px; animation-delay: -4s; }
-    .bg-orb-3 { width: 300px; height: 300px; background: var(--accent-3); top: 40%; left: 30%; animation-delay: -2s; }
-
-    @keyframes pulse-orb {
-      0%,100% { transform: scale(1) translate(0,0); opacity: 0.10; }
-      50%      { transform: scale(1.1) translate(20px,-20px); opacity: 0.16; }
-    }
-
-    /* ===================================================
-       LAYOUT
-    =================================================== */
-    .app { display: flex; height: 100vh; position: relative; z-index: 1; }
-
-    /* ===================================================
-       SIDEBAR
-    =================================================== */
-    .sidebar {
-      width: var(--sidebar-w); flex-shrink: 0;
-      background: var(--bg-glass);
-      border-right: 1px solid var(--border);
-      backdrop-filter: blur(20px);
-      display: flex; flex-direction: column;
-      padding: 0;
-      transition: transform var(--transition);
-    }
-
-    .sidebar-header {
-      padding: 24px 20px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .logo-img {
-      width: 36px; height: 36px; border-radius: 10px; object-fit: cover;
-      box-shadow: 0 0 12px rgba(91,124,250,0.4);
-    }
-    .logo-text { font-size: 18px; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .logo-badge { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; color: var(--accent-4); text-transform: uppercase; margin-top: 1px; }
-
-    /* New chat button */
-    .btn-new-chat {
-      margin: 16px 20px 0;
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px 16px;
-      background: var(--gradient-primary);
-      border: none; border-radius: var(--radius-md);
-      color: white; font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all var(--transition);
-      box-shadow: 0 2px 12px rgba(91,124,250,0.3);
-    }
-    .btn-new-chat:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(91,124,250,0.45); }
-    .btn-new-chat svg { flex-shrink: 0; }
-
-    /* Model status card */
-    .status-card {
-      margin: 16px 12px 0;
-      padding: 14px;
-      background: var(--bg-glass-light);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-    }
-    .status-card-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
-    .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
-    .status-row:last-child { margin-bottom: 0; }
-    .status-label { color: var(--text-secondary); }
-    .status-value { font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-    .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
-    .dot-ready { background: var(--accent-4); box-shadow: 0 0 6px var(--accent-4); }
-    .dot-offline { background: var(--text-muted); }
-    .dot-training { background: var(--accent-1); box-shadow: 0 0 6px var(--accent-1); animation: blink 1s ease infinite; }
-
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    /* Quick Commands */
-    .sidebar-section { padding: 16px 12px 0; flex: 1; overflow-y: auto; }
-    .sidebar-section::-webkit-scrollbar { width: 4px; }
-    .sidebar-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-    .section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 0 8px; margin-bottom: 6px; }
-
-    .cmd-btn {
-      width: 100%; display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; margin-bottom: 2px;
-      background: transparent; border: none; border-radius: var(--radius-sm);
-      color: var(--text-secondary); font-size: 13px; cursor: pointer;
-      transition: all var(--transition); text-align: left;
-    }
-    .cmd-btn:hover { background: var(--bg-glass-light); color: var(--text-primary); }
-    .cmd-btn .cmd-icon { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; font-size: 14px; flex-shrink: 0; }
-    .cmd-btn .cmd-tag { margin-left: auto; font-size: 9px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); background: var(--bg-glass-light); padding: 2px 6px; border-radius: 4px; }
-
-    .sidebar-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      font-size: 11px; color: var(--text-muted);
-    }
-    .sidebar-footer span { display: flex; align-items: center; gap: 6px; }
-
-    /* ===================================================
-       MAIN CHAT AREA
-    =================================================== */
-    .main {
-      flex: 1; display: flex; flex-direction: column;
-      min-width: 0;
-    }
-
-    /* Header */
-    .chat-header {
-      height: 60px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-    }
-    .chat-header-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-    .chat-header-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-    .header-actions { display: flex; gap: 8px; }
-    .header-btn {
-      width: 32px; height: 32px; display: grid; place-items: center;
-      background: var(--bg-glass-light); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); cursor: pointer; color: var(--text-secondary);
-      transition: all var(--transition);
-    }
-    .header-btn:hover { color: var(--text-primary); background: var(--bg-elevated); }
-
-    /* Messages */
-    .messages {
-      flex: 1; overflow-y: auto; padding: 24px;
-      display: flex; flex-direction: column; gap: 20px;
-      scroll-behavior: smooth;
-    }
-    .messages::-webkit-scrollbar { width: 5px; }
-    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-    /* Message bubbles */
-    .message { display: flex; gap: 14px; animation: msg-in 0.3s cubic-bezier(0.34,1.56,0.64,1); max-width: 820px; }
-    .message.user { flex-direction: row-reverse; align-self: flex-end; }
-    .message.assistant { align-self: flex-start; }
-
-    @keyframes msg-in {
-      from { opacity: 0; transform: translateY(12px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .avatar {
-      width: 36px; height: 36px; border-radius: 10px;
-      display: grid; place-items: center; flex-shrink: 0;
-      font-size: 16px; font-weight: 700;
-    }
-    .avatar-ai {
-      background: var(--gradient-primary);
-      box-shadow: 0 0 12px rgba(91,124,250,0.3);
-      overflow: hidden;
-    }
-    .avatar-ai img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar-user { background: linear-gradient(135deg, #334155, #1e293b); font-size: 13px; color: var(--text-secondary); }
-
-    .bubble {
-      padding: 14px 18px; border-radius: var(--radius-lg);
-      line-height: 1.65; font-size: 14px;
-      max-width: 100%;
-    }
-    .message.assistant .bubble {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-top-left-radius: 4px;
-      color: var(--text-primary);
-    }
-    .message.user .bubble {
-      background: var(--gradient-primary);
-      border-top-right-radius: 4px;
-      color: white;
-    }
-
-    /* Rich content inside bubbles */
-    .bubble h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-accent); }
-    .bubble code {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px;
-      background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;
-      color: var(--accent-3);
-    }
-    .bubble pre {
-      background: rgba(0,0,0,0.4); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 10px;
-      overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px;
-      line-height: 1.6; color: #e2e8f0;
-    }
-    .bubble ul { padding-left: 18px; margin-top: 6px; }
-    .bubble li { margin-bottom: 4px; }
-
-    /* Metric cards */
-    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-    .metric-card {
-      background: rgba(91,124,250,0.08); border: 1px solid rgba(91,124,250,0.2);
-      border-radius: var(--radius-sm); padding: 10px 12px;
-    }
-    .metric-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
-    .metric-value { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-1); margin-top: 2px; }
-    .metric-value.good { color: var(--accent-4); }
-    .metric-value.warn { color: #fbbf24; }
-
-    /* Progress bar */
-    .progress-wrap { margin-top: 10px; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
-    .progress-track { height: 4px; background: var(--bg-glass-light); border-radius: 2px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--gradient-primary); border-radius: 2px; transition: width 0.4s ease; }
-
-    /* Probability bars */
-    .prob-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
-    .prob-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-    .prob-class { width: 56px; flex-shrink: 0; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-    .prob-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
-    .prob-bar-fill { height: 100%; border-radius: 3px; background: var(--gradient-primary); transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
-    .prob-bar-fill.top { background: linear-gradient(90deg, var(--accent-4), var(--accent-3)); }
-    .prob-pct { width: 38px; text-align: right; color: var(--text-secondary); font-size: 11px; }
-
-    /* Epoch table */
-    .epoch-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
-    .epoch-table th { text-align: left; padding: 6px 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-    .epoch-table td { padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-    .epoch-table tr:hover td { background: var(--bg-glass-light); }
-    .val-good { color: var(--accent-4); }
-    .val-med  { color: #fbbf24; }
-
-    /* Typing indicator */
-    .typing-indicator {
-      display: flex; align-items: center; gap: 14px;
-      animation: msg-in 0.3s ease;
-    }
-    .typing-dots { display: flex; gap: 5px; padding: 14px 18px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); border-top-left-radius: 4px; }
-    .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-1); animation: dot-bounce 1.2s ease infinite; }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dot-bounce { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
-
-    /* Empty state */
-    .empty-state {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 16px;
-      padding: 40px; text-align: center;
-    }
-    .empty-icon {
-      width: 80px; height: 80px; border-radius: 24px;
-      background: var(--gradient-primary);
-      display: grid; place-items: center;
-      box-shadow: 0 0 40px rgba(91,124,250,0.3);
-      margin-bottom: 8px; overflow: hidden;
-    }
-    .empty-icon img { width: 100%; height: 100%; object-fit: cover; }
-    .empty-title { font-size: 22px; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .empty-sub { font-size: 14px; color: var(--text-secondary); max-width: 380px; line-height: 1.6; }
-    .suggestion-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
-    .chip {
-      padding: 8px 16px; background: var(--bg-glass-light); border: 1px solid var(--border);
-      border-radius: 999px; font-size: 13px; color: var(--text-secondary);
-      cursor: pointer; transition: all var(--transition);
-    }
-    .chip:hover { background: var(--gradient-primary); border-color: transparent; color: white; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(91,124,250,0.35); }
-
-    /* ===================================================
-       INPUT AREA
-    =================================================== */
-    .input-area {
-      padding: 16px 24px 20px;
-      border-top: 1px solid var(--border);
-      background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-    }
-    .input-wrap {
-      display: flex; align-items: flex-end; gap: 10px;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 10px 10px 10px 20px;
-      transition: border-color var(--transition), box-shadow var(--transition);
-    }
-    .input-wrap:focus-within {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(91,124,250,0.12), var(--shadow-glow);
-    }
-    #chat-input {
-      flex: 1; background: transparent; border: none; outline: none;
-      color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;
-      resize: none; line-height: 1.5; max-height: 140px;
-      scrollbar-width: thin;
-    }
-    #chat-input::placeholder { color: var(--text-muted); }
-    .send-btn {
-      width: 38px; height: 38px; flex-shrink: 0;
-      border-radius: 12px; border: none; cursor: pointer;
-      background: var(--gradient-primary);
-      display: grid; place-items: center;
-      transition: all var(--transition);
-      box-shadow: 0 2px 10px rgba(91,124,250,0.3);
-    }
-    .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 18px rgba(91,124,250,0.5); }
-    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-    .send-btn svg { color: white; }
-
-    .input-hint {
-      margin-top: 8px; text-align: center;
-      font-size: 11px; color: var(--text-muted);
-    }
-    .input-hint code {
-      font-family: 'JetBrains Mono', monospace;
-      background: var(--bg-glass-light); padding: 1px 5px; border-radius: 3px;
-      color: var(--text-secondary);
-    }
-
-    /* ===================================================
-       TOAST NOTIFICATION
-    =================================================== */
-    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
-    .toast {
-      background: var(--bg-elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-md); padding: 12px 16px;
-      font-size: 13px; color: var(--text-primary);
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: var(--shadow-md);
-      animation: toast-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
-      min-width: 240px;
-    }
-    .toast.success .toast-icon { color: var(--accent-4); }
-    .toast.error   .toast-icon { color: var(--accent-err); }
-    .toast.info    .toast-icon { color: var(--accent-1); }
-    @keyframes toast-in { from{opacity:0;transform:translateX(100%)} to{opacity:1;transform:translateX(0)} }
-
-    /* Scrollbar global */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-    /* Responsive */
-    @media (max-width: 680px) {
-      .sidebar { position: fixed; z-index: 50; height: 100%; transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .metric-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
 
-<!-- Ambient orbs -->
-<div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
+<div class="claude-layout">
 
-<!-- Toast container -->
-<div class="toast-container" id="toasts"></div>
-
-<div class="app">
-
-  <!-- ================================================
+  <!-- ========================================================================
        SIDEBAR
-  ================================================ -->
+       ======================================================================== -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <img src="/assets/neura_logo.jpg" alt="Neura" class="logo-img" onerror="this.style.display='none'" />
-        <div>
-          <div class="logo-text">Neura</div>
-          <div class="logo-badge">AI Assistant</div>
+    <div class="sidebar-top">
+      <div class="brand-row">
+        <div class="brand-link" onclick="startNewChat()">
+          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="neura-logo-img" onerror="this.style.display='none'" />
+          <div>
+            <span class="brand-title">Neura</span>
+            <span class="brand-sub">ML</span>
+          </div>
+        </div>
+
+        <button class="sidebar-collapse-btn" title="Close sidebar" onclick="toggleSidebar()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- New Chat Button -->
+      <button class="new-chat-btn" onclick="startNewChat()">
+        <div class="new-chat-left">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Start new chat</span>
+        </div>
+        <span class="shortcut-badge">Ctrl K</span>
+      </button>
+    </div>
+
+    <!-- Sidebar Body -->
+    <div class="sidebar-body">
+      <div>
+        <div class="nav-group-title">Recent Chats</div>
+        <div class="chat-history-list" id="chat-history-list">
+          <div class="chat-history-item active" onclick="activateChat(this, 'Current Session')">
+            <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style="overflow:hidden;text-overflow:ellipsis">TensorFlow Training & Eval</span>
+          </div>
+          <div class="chat-history-item" onclick="activateChat(this, 'Inference & Probabilities')">
+            <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style="overflow:hidden;text-overflow:ellipsis">Model Inference & Probs</span>
+          </div>
+          <div class="chat-history-item" onclick="activateChat(this, 'Architecture Inspector')">
+            <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style="overflow:hidden;text-overflow:ellipsis">Weights & Architecture</span>
+          </div>
         </div>
       </div>
+
+      <!-- Quick ML Commands -->
+      <div>
+        <div class="nav-group-title">ML Commands</div>
+        <button class="ml-command-item" onclick="submitCommand('/status')">
+          <span>Check Status</span>
+          <span class="ml-tag">/status</span>
+        </button>
+        <button class="ml-command-item" onclick="submitCommand('/train 5')">
+          <span>Train 5 Epochs</span>
+          <span class="ml-tag">/train 5</span>
+        </button>
+        <button class="ml-command-item" onclick="submitCommand('/eval')">
+          <span>Evaluate Model</span>
+          <span class="ml-tag">/eval</span>
+        </button>
+        <button class="ml-command-item" onclick="submitCommand('/predict')">
+          <span>Run Prediction</span>
+          <span class="ml-tag">/predict</span>
+        </button>
+        <button class="ml-command-item" onclick="submitCommand('/progress')">
+          <span>Live Progress</span>
+          <span class="ml-tag">/progress</span>
+        </button>
+        <button class="ml-command-item" onclick="submitCommand('/help')">
+          <span>Command List</span>
+          <span class="ml-tag">/help</span>
+        </button>
+      </div>
     </div>
 
-    <button class="btn-new-chat" onclick="newChat()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      New Chat
-    </button>
-
-    <!-- Model Status -->
-    <div class="status-card">
-      <div class="status-card-title">Model Status</div>
-      <div class="status-row">
-        <span class="status-label">Status</span>
-        <span class="status-value" id="sidebar-status">
-          <span class="status-dot dot-offline" id="status-dot"></span>
-          <span id="status-text">Checking...</span>
-        </span>
-      </div>
-      <div class="status-row">
-        <span class="status-label">Model</span>
-        <span class="status-value" id="model-name-sb">--</span>
-      </div>
-      <div class="status-row">
-        <span class="status-label">Env</span>
-        <span class="status-value" id="env-sb">--</span>
-      </div>
-    </div>
-
-    <!-- Quick Commands -->
-    <div class="sidebar-section">
-      <div class="section-label" style="margin-top:16px">Quick Commands</div>
-
-      <button class="cmd-btn" onclick="sendCommand('/status')">
-        <span class="cmd-icon" style="background:rgba(91,124,250,0.15)">🔍</span>
-        Check Status
-        <span class="cmd-tag">/status</span>
-      </button>
-      <button class="cmd-btn" onclick="sendCommand('/train')">
-        <span class="cmd-icon" style="background:rgba(52,211,153,0.15)">🏋️</span>
-        Train Model
-        <span class="cmd-tag">/train</span>
-      </button>
-      <button class="cmd-btn" onclick="sendCommand('/eval')">
-        <span class="cmd-icon" style="background:rgba(162,89,247,0.15)">📊</span>
-        Evaluate
-        <span class="cmd-tag">/eval</span>
-      </button>
-      <button class="cmd-btn" onclick="sendCommand('/predict')">
-        <span class="cmd-icon" style="background:rgba(56,189,248,0.15)">🔮</span>
-        Predict
-        <span class="cmd-tag">/predict</span>
-      </button>
-      <button class="cmd-btn" onclick="sendCommand('/progress')">
-        <span class="cmd-icon" style="background:rgba(251,191,36,0.15)">📈</span>
-        Training Progress
-        <span class="cmd-tag">/progress</span>
-      </button>
-      <button class="cmd-btn" onclick="sendCommand('/help')">
-        <span class="cmd-icon" style="background:rgba(255,255,255,0.07)">❓</span>
-        Help
-        <span class="cmd-tag">/help</span>
-      </button>
-    </div>
-
+    <!-- Sidebar Bottom Strip -->
     <div class="sidebar-footer">
-      <span>⚡ Powered by TensorFlow</span>
+      <div class="model-status-strip" onclick="openModelModal()">
+        <div class="model-status-left">
+          <span class="status-dot dot-offline" id="sb-status-dot"></span>
+          <span id="sb-status-text" style="font-weight:500">Checking model...</span>
+        </div>
+        <span style="font-size:11px;color:var(--text-muted)">Info ℹ</span>
+      </div>
+
+      <div class="user-profile-row">
+        <div class="user-info">
+          <div class="user-avatar-circle">H</div>
+          <div>
+            <div class="user-meta-name">Hanzz</div>
+            <div class="user-meta-role">TensorFlow Dev</div>
+          </div>
+        </div>
+        <button class="nav-icon-btn" title="Toggle Light / Dark mode" onclick="toggleTheme()">
+          <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </aside>
 
-  <!-- ================================================
-       MAIN CHAT
-  ================================================ -->
-  <main class="main">
+  <!-- ========================================================================
+       MAIN VIEW CONTAINER
+       ======================================================================== -->
+  <main class="main-view">
 
-    <!-- Chat Header -->
-    <header class="chat-header">
-      <div>
-        <div class="chat-header-title">Neura AI Assistant</div>
-        <div class="chat-header-sub" id="header-sub">Neural Network &mdash; Interactive Mode</div>
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="top-nav-left">
+        <button class="open-sidebar-btn" id="open-sidebar-btn" title="Open sidebar" onclick="toggleSidebar()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+        </button>
+
+        <!-- Claude Style Model Pill Selector -->
+        <button class="model-selector-btn" onclick="openModelModal()">
+          <span style="font-family:'Newsreader', serif; font-size:16px;">Neura</span>
+          <span style="font-weight:600">BaseNeuralNetwork</span>
+          <span class="model-badge-tag" id="top-model-badge">Ready</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
       </div>
-      <div class="header-actions">
-        <button class="header-btn" title="Clear chat" onclick="newChat()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+
+      <div class="top-nav-right">
+        <button class="nav-icon-btn" title="Start new chat" onclick="startNewChat()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </button>
+        <button class="nav-icon-btn" title="Theme" onclick="toggleTheme()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
         </button>
       </div>
     </header>
 
-    <!-- Messages -->
-    <div class="messages" id="messages">
+    <!-- Scrollable Chat Stream -->
+    <div class="chat-scroll-area" id="chat-scroll-area">
+      <div class="chat-content-container" id="chat-content-container">
 
-      <!-- Welcome / empty state -->
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon">
-          <img src="/assets/neura_logo.jpg" alt="Neura" onerror="this.parentElement.innerHTML='🧠'" />
+        <!-- Claude Hero State (shown when chat is new) -->
+        <div class="claude-hero" id="claude-hero">
+          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo" onerror="this.style.display='none'" />
+          <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
+          <p class="hero-subhead">How can Neura assist you with your TensorFlow machine learning workflows today?</p>
+
+          <!-- 4 Action Cards -->
+          <div class="hero-cards-grid">
+            <div class="hero-card" onclick="submitCommand('/train 5')">
+              <div class="hero-card-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span>Train Neural Network</span>
+              </div>
+              <div class="hero-card-desc">Execute 5 epochs of backpropagation on synthetic data</div>
+            </div>
+
+            <div class="hero-card" onclick="submitCommand('/predict')">
+              <div class="hero-card-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <span>Run Inference</span>
+              </div>
+              <div class="hero-card-desc">Sample a 128-dim input and inspect top class probabilities</div>
+            </div>
+
+            <div class="hero-card" onclick="submitCommand('/eval')">
+              <div class="hero-card-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Evaluate Metrics</span>
+              </div>
+              <div class="hero-card-desc">Compute test loss and test accuracy against validation sets</div>
+            </div>
+
+            <div class="hero-card" onclick="submitCommand('/status')">
+              <div class="hero-card-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                <span>Model Architecture</span>
+              </div>
+              <div class="hero-card-desc">Verify checkpoints, weights readiness, and server health</div>
+            </div>
+          </div>
         </div>
-        <div class="empty-title">Hello, I'm Neura</div>
-        <div class="empty-sub">Your interactive TensorFlow machine learning assistant. Train models, run predictions, and explore AI — all through conversation.</div>
-        <div class="suggestion-chips">
-          <div class="chip" onclick="sendCommand('/status')">🔍 Check model status</div>
-          <div class="chip" onclick="sendCommand('/train 5')">🏋️ Train for 5 epochs</div>
-          <div class="chip" onclick="sendCommand('/eval')">📊 Evaluate model</div>
-          <div class="chip" onclick="sendCommand('/predict')">🔮 Run a prediction</div>
-          <div class="chip" onclick="sendCommand('/help')">❓ Show all commands</div>
-        </div>
+
       </div>
-
     </div>
 
-    <!-- Input Area -->
-    <div class="input-area">
-      <div class="input-wrap">
+    <!-- ========================================================================
+         FLOATING BOTTOM INPUT (Claude Signature Aesthetic)
+         ======================================================================== -->
+    <div class="floating-input-container">
+      <div class="input-box-wrapper">
         <textarea
-          id="chat-input"
+          id="chat-input-textarea"
           rows="1"
-          placeholder="Type a message or try /train, /eval, /predict..."
-          onkeydown="handleKey(event)"
-          oninput="autoResize(this)"
+          placeholder="Reply to Neura or type /train, /eval, /predict..."
+          onkeydown="handleTextareaKey(event)"
+          oninput="handleTextareaInput(this)"
         ></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-        </button>
+
+        <div class="input-bottom-bar">
+          <div class="input-actions-left">
+            <span class="cmd-pill" onclick="submitCommand('/train 5')">🏋️ /train 5</span>
+            <span class="cmd-pill" onclick="submitCommand('/predict')">🔮 /predict</span>
+            <span class="cmd-pill" onclick="submitCommand('/eval')">📊 /eval</span>
+            <span class="cmd-pill" onclick="submitCommand('/status')">🔍 /status</span>
+          </div>
+
+          <button class="send-icon-btn" id="send-msg-btn" title="Send message" onclick="sendUserMessage()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/>
+              <polyline points="5 12 12 5 19 12"/>
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="input-hint">
-        Try <code>/train 10</code> &bull; <code>/predict</code> &bull; <code>/eval</code> &bull; <code>/help</code>
+
+      <div class="disclaimer-caption">
+        Neura can make mistakes. Verify important machine learning evaluations and checkpoints.
       </div>
     </div>
 
   </main>
 </div>
 
-<script>
-/* ==============================================
-   NEURA CHAT — Frontend Logic
-============================================== */
-
-const API = '';  // Same origin
-let isTyping = false;
-let trainingPollInterval = null;
-
-// -----------------------------------------------
-// Init
-// -----------------------------------------------
-window.addEventListener('DOMContentLoaded', () => {
-  checkStatus(false);
-  setInterval(() => checkStatus(false), 15000);
-});
-
-// -----------------------------------------------
-// Auto-resize textarea
-// -----------------------------------------------
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}
-
-// -----------------------------------------------
-// New chat
-// -----------------------------------------------
-function newChat() {
-  document.getElementById('messages').innerHTML = '';
-  document.getElementById('messages').appendChild(buildEmptyState());
-  showToast('New chat started', 'info');
-}
-
-function buildEmptyState() {
-  const div = document.createElement('div');
-  div.className = 'empty-state';
-  div.id = 'empty-state';
-  div.innerHTML = `
-    <div class="empty-icon">
-      <img src="/assets/neura_logo.jpg" alt="Neura" onerror="this.parentElement.innerHTML='🧠'" />
+<!-- ==========================================================================
+     MODEL ARCHITECTURE MODAL
+     ========================================================================== -->
+<div class="modal-overlay" id="model-modal" onclick="closeModelModalOnBackdrop(event)">
+  <div class="claude-modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="modal-neura-logo" onerror="this.style.display='none'" />
+        <span class="modal-title">Model Specifications</span>
+      </div>
+      <button class="modal-close-btn" onclick="closeModelModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="empty-title">Hello, I'm Neura</div>
-    <div class="empty-sub">Your interactive TensorFlow machine learning assistant. Train models, run predictions, and explore AI — all through conversation.</div>
-    <div class="suggestion-chips">
-      <div class="chip" onclick="sendCommand('/status')">🔍 Check model status</div>
-      <div class="chip" onclick="sendCommand('/train 5')">🏋️ Train for 5 epochs</div>
-      <div class="chip" onclick="sendCommand('/eval')">📊 Evaluate model</div>
-      <div class="chip" onclick="sendCommand('/predict')">🔮 Run a prediction</div>
-      <div class="chip" onclick="sendCommand('/help')">❓ Show all commands</div>
-    </div>`;
-  return div;
-}
 
-// -----------------------------------------------
-// Send message
-// -----------------------------------------------
-function sendCommand(cmd) {
-  document.getElementById('chat-input').value = cmd;
-  sendMessage();
-}
-
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text || isTyping) return;
-
-  removeEmptyState();
-  appendUserMessage(text);
-  input.value = '';
-  input.style.height = 'auto';
-
-  const typingId = showTyping();
-  isTyping = true;
-  document.getElementById('send-btn').disabled = true;
-
-  try {
-    await processCommand(text, typingId);
-  } catch(e) {
-    removeTyping(typingId);
-    appendAIMessage(`<span style="color:var(--accent-err)">Error: ${escHtml(e.message)}</span>`);
-  } finally {
-    isTyping = false;
-    document.getElementById('send-btn').disabled = false;
-  }
-}
-
-// -----------------------------------------------
-// Command router
-// -----------------------------------------------
-async function processCommand(text, typingId) {
-  const lower = text.toLowerCase().trim();
-
-  if (lower === '/help') {
-    removeTyping(typingId);
-    appendHelpMessage();
-
-  } else if (lower === '/status') {
-    const data = await fetchJSON('/api/status');
-    removeTyping(typingId);
-    appendStatusMessage(data);
-
-  } else if (lower.startsWith('/train')) {
-    const parts = text.split(/\s+/);
-    const epochs = parseInt(parts[1]) || 5;
-    const data = await fetchJSON('/api/train', 'POST', { epochs });
-    removeTyping(typingId);
-    if (data.error) {
-      appendAIMessage(`<span style="color:var(--accent-err)">⚠️ ${escHtml(data.error)}</span>`);
-    } else {
-      appendAIMessage(`
-        <h4>🏋️ Training Started</h4>
-        <p>Running <strong style="color:var(--accent-1)">${epochs} epoch${epochs>1?'s':''}</strong> of training on the NeuralNetwork model.</p>
-        <div class="progress-wrap" id="live-progress">
-          <div class="progress-label"><span>Progress</span><span id="epoch-counter">Epoch 0 / ${epochs}</span></div>
-          <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-        </div>
-        <p style="margin-top:10px;font-size:12px;color:var(--text-muted)">Use <code>/progress</code> to check live training status.</p>
-      `);
-      startTrainingPoll(epochs);
-    }
-
-  } else if (lower === '/eval') {
-    const data = await fetchJSON('/api/evaluate', 'POST');
-    removeTyping(typingId);
-    if (data.error) {
-      appendAIMessage(`<span style="color:var(--accent-err)">⚠️ ${escHtml(data.error)}</span>`);
-    } else {
-      appendEvalMessage(data.metrics);
-    }
-
-  } else if (lower === '/predict') {
-    const data = await fetchJSON('/api/predict', 'POST', {});
-    removeTyping(typingId);
-    if (data.error) {
-      appendAIMessage(`<span style="color:var(--accent-err)">⚠️ ${escHtml(data.error)}</span>`);
-    } else {
-      appendPredictMessage(data);
-    }
-
-  } else if (lower === '/progress') {
-    const data = await fetchJSON('/api/train/progress');
-    removeTyping(typingId);
-    appendProgressMessage(data);
-
-  } else {
-    // Natural language fallback
-    removeTyping(typingId);
-    appendAIMessage(naturalResponse(text));
-  }
-}
-
-// -----------------------------------------------
-// Natural language responses
-// -----------------------------------------------
-function naturalResponse(text) {
-  const t = text.toLowerCase();
-  if (t.includes('hello') || t.includes('hi') || t.includes('halo'))
-    return `Hello! 👋 I'm <strong>Neura</strong>, your AI assistant for TensorFlow. I can help you train models, run predictions, and evaluate performance. Try <code>/help</code> to see all commands.`;
-  if (t.includes('train'))
-    return `To train the model, use the command <code>/train [epochs]</code>. For example, <code>/train 10</code> will run training for 10 epochs.`;
-  if (t.includes('predict') || t.includes('inference'))
-    return `Run inference with <code>/predict</code>. The model will process a sample and return class probabilities.`;
-  if (t.includes('eval') || t.includes('accuracy') || t.includes('performance'))
-    return `Evaluate the model with <code>/eval</code>. This runs on a test dataset and returns metrics like loss and accuracy.`;
-  if (t.includes('how') || t.includes('what'))
-    return `I'm a TensorFlow-powered neural network assistant. I support these commands:<br><br>
-      <code>/status</code> — Model status<br>
-      <code>/train [n]</code> — Train for n epochs<br>
-      <code>/eval</code> — Evaluate model<br>
-      <code>/predict</code> — Run inference<br>
-      <code>/progress</code> — Training progress<br>
-      <code>/help</code> — Full help`;
-  return `I understand you're interested in "<em>${escHtml(text)}</em>". Try one of these commands: <code>/status</code>, <code>/train</code>, <code>/eval</code>, <code>/predict</code>, or <code>/help</code>.`;
-}
-
-// -----------------------------------------------
-// Message renderers
-// -----------------------------------------------
-function appendHelpMessage() {
-  appendAIMessage(`
-    <h4>📖 Available Commands</h4>
-    <ul style="margin-top:10px;line-height:2">
-      <li><code>/status</code> — Check model readiness and server info</li>
-      <li><code>/train [N]</code> — Train model for N epochs (default: 5)</li>
-      <li><code>/eval</code> — Evaluate model on test data</li>
-      <li><code>/predict</code> — Run inference on a random sample</li>
-      <li><code>/progress</code> — View live training progress</li>
-      <li><code>/help</code> — Show this help message</li>
-    </ul>
-    <p style="margin-top:12px;font-size:12px;color:var(--text-muted)">You can also type naturally — I'll try to understand what you need.</p>
-  `);
-}
-
-function appendStatusMessage(data) {
-  const ready = data.model_ready;
-  const training = data.training_running;
-  const dotCls = training ? 'dot-training' : ready ? 'dot-ready' : 'dot-offline';
-  const statusLabel = training ? 'Training...' : ready ? 'Ready' : 'No Checkpoint';
-  const statusColor = training ? 'var(--accent-1)' : ready ? 'var(--accent-4)' : 'var(--accent-err)';
-
-  appendAIMessage(`
-    <h4>🔍 Model Status</h4>
-    <div class="metric-grid" style="margin-top:10px">
-      <div class="metric-card">
-        <div class="metric-label">Status</div>
-        <div class="metric-value" style="color:${statusColor};font-size:15px">
-          <span class="status-dot ${dotCls}"></span>${statusLabel}
-        </div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Environment</div>
-        <div class="metric-value" style="font-size:14px">${escHtml(data.environment || '--')}</div>
-      </div>
-      <div class="metric-card" style="grid-column:1/-1">
-        <div class="metric-label">Model</div>
-        <div class="metric-value" style="font-size:14px">${escHtml(data.model_name || '--')}</div>
-      </div>
+    <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;">
+      Neura is running an MVC-structured multi-layer perceptron (MLP) built on top of TensorFlow &amp; Keras.
     </div>
-    ${data.checkpoint ? `<p style="margin-top:10px;font-size:11px;color:var(--text-muted)">Checkpoint: <code>${escHtml(data.checkpoint)}</code></p>` : ''}
-    ${!ready ? `<p style="margin-top:10px;color:var(--accent-err);font-size:13px">⚠️ No trained model found. Run <code>/train</code> first.</p>` : ''}
-  `);
 
-  // Update sidebar
-  updateSidebarStatus(data);
-}
-
-function appendEvalMessage(metrics) {
-  const loss = metrics.loss ?? metrics.val_loss ?? 0;
-  const acc  = metrics.accuracy ?? metrics.compile_metrics ?? metrics.acc ?? 0;
-  const lossClass = loss < 1 ? 'good' : loss < 2 ? '' : 'warn';
-  const accClass  = acc > 0.7 ? 'good' : acc > 0.4 ? '' : 'warn';
-
-  const rows = Object.entries(metrics).map(([k,v]) =>
-    `<tr><td>${escHtml(k)}</td><td class="${v > 0.5 && k.includes('acc') ? 'val-good' : ''}">${v.toFixed(4)}</td></tr>`
-  ).join('');
-
-  appendAIMessage(`
-    <h4>📊 Evaluation Results</h4>
-    <div class="metric-grid">
-      <div class="metric-card">
-        <div class="metric-label">Loss</div>
-        <div class="metric-value ${lossClass}">${loss.toFixed(4)}</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Accuracy</div>
-        <div class="metric-value ${accClass}">${(acc*100).toFixed(1)}%</div>
-      </div>
-    </div>
-    <table class="epoch-table" style="margin-top:12px">
-      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
-      <tbody>${rows}</tbody>
+    <table class="claude-table">
+      <tr><td>Architecture</td><td id="modal-model-name">BaseNeuralNetwork</td></tr>
+      <tr><td>Framework</td><td>TensorFlow / Keras 3</td></tr>
+      <tr><td>Input Features</td><td>128 (Float32 tensor)</td></tr>
+      <tr><td>Hidden Layers</td><td>Dense(64, ReLU) &bull; Dense(32, ReLU)</td></tr>
+      <tr><td>Output Classes</td><td>10 (Softmax distribution)</td></tr>
+      <tr><td>Environment</td><td id="modal-env">development</td></tr>
+      <tr><td>Checkpoint Path</td><td id="modal-checkpoint" style="font-size:11px">public/checkpoints/NeuralNetwork.keras</td></tr>
+      <tr><td>Model Status</td><td id="modal-status" style="color:var(--accent-green);font-weight:600">Ready</td></tr>
     </table>
-    <p style="margin-top:10px;font-size:11px;color:var(--text-muted)">Evaluation report saved to <code>public/reports/</code></p>
-  `);
-}
 
-function appendPredictMessage(data) {
-  const probs = data.probabilities || [];
-  const topClass = data.predicted_class;
-  const conf = (data.confidence * 100).toFixed(1);
-
-  const top5 = [...probs].sort((a,b) => b.prob - a.prob).slice(0, 5);
-
-  const bars = top5.map((p, i) => {
-    const pct = (p.prob * 100).toFixed(1);
-    const fillCls = i === 0 ? 'top' : '';
-    return `
-      <div class="prob-item">
-        <span class="prob-class">${escHtml(p.class)}</span>
-        <div class="prob-bar-track">
-          <div class="prob-bar-fill ${fillCls}" style="width:${pct}%"></div>
-        </div>
-        <span class="prob-pct">${pct}%</span>
-      </div>`;
-  }).join('');
-
-  appendAIMessage(`
-    <h4>🔮 Prediction Result</h4>
-    <div class="metric-grid" style="margin-top:10px">
-      <div class="metric-card">
-        <div class="metric-label">Predicted Class</div>
-        <div class="metric-value" style="font-size:16px">${escHtml(topClass)}</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Confidence</div>
-        <div class="metric-value ${parseFloat(conf) > 50 ? 'good' : ''}">${conf}%</div>
-      </div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="cmd-pill" style="padding:6px 14px;background:var(--accent-terracotta);color:#fff;border:none;" onclick="closeModelModal()">
+        Close
+      </button>
     </div>
-    <div class="prob-list" style="margin-top:14px">
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Top 5 Probabilities</div>
-      ${bars}
-    </div>
-  `);
-}
+  </div>
+</div>
 
-function appendProgressMessage(data) {
-  if (!data.progress || data.progress.length === 0) {
-    appendAIMessage(data.running
-      ? `<p>Training is running but no epoch data yet. Please wait...</p>`
-      : `<p>No training progress found. Start with <code>/train [n]</code>.</p>`);
-    return;
-  }
+<!-- Toast Container -->
+<div class="toast-box" id="toast-box"></div>
 
-  const rows = data.progress.map(ep => `
-    <tr>
-      <td>${ep.epoch}</td>
-      <td>${ep.loss.toFixed(4)}</td>
-      <td class="${ep.val_loss < 1.5 ? 'val-good' : ''}">${ep.val_loss.toFixed(4)}</td>
-      <td>${(ep.accuracy*100).toFixed(1)}%</td>
-      <td class="${ep.val_accuracy > 0.5 ? 'val-good' : 'val-med'}">${(ep.val_accuracy*100).toFixed(1)}%</td>
-    </tr>`).join('');
+<!-- External JavaScript -->
+<script src="/js/app.js"></script>
 
-  const status = data.running ? '🔄 Still running...' : data.report ? '✅ Training complete!' : '⏸️ Stopped';
-
-  appendAIMessage(`
-    <h4>📈 Training Progress — ${status}</h4>
-    ${data.report ? `
-    <div class="metric-grid" style="margin-top:10px">
-      <div class="metric-card"><div class="metric-label">Best Val Loss</div><div class="metric-value">${data.report.best_val_loss}</div></div>
-      <div class="metric-card"><div class="metric-card"><div class="metric-label">Best Val Acc</div><div class="metric-value good">${(data.report.best_val_acc*100).toFixed(1)}%</div></div></div>
-    </div>` : ''}
-    <table class="epoch-table" style="margin-top:12px">
-      <thead><tr><th>Epoch</th><th>Loss</th><th>Val Loss</th><th>Acc</th><th>Val Acc</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `);
-}
-
-// -----------------------------------------------
-// Append helpers
-// -----------------------------------------------
-function removeEmptyState() {
-  const es = document.getElementById('empty-state');
-  if (es) es.remove();
-}
-
-function appendUserMessage(text) {
-  const div = document.createElement('div');
-  div.className = 'message user';
-  div.innerHTML = `
-    <div class="avatar avatar-user">You</div>
-    <div class="bubble">${escHtml(text)}</div>
-  `;
-  document.getElementById('messages').appendChild(div);
-  scrollToBottom();
-}
-
-function appendAIMessage(html) {
-  const div = document.createElement('div');
-  div.className = 'message assistant';
-  div.innerHTML = `
-    <div class="avatar avatar-ai">
-      <img src="/assets/neura_logo.jpg" alt="N" onerror="this.parentElement.innerHTML='N'" />
-    </div>
-    <div class="bubble">${html}</div>
-  `;
-  document.getElementById('messages').appendChild(div);
-  scrollToBottom();
-}
-
-function showTyping() {
-  const id = 'typing-' + Date.now();
-  const div = document.createElement('div');
-  div.className = 'typing-indicator';
-  div.id = id;
-  div.innerHTML = `
-    <div class="avatar avatar-ai">
-      <img src="/assets/neura_logo.jpg" alt="N" onerror="this.parentElement.innerHTML='N'" />
-    </div>
-    <div class="typing-dots">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>`;
-  document.getElementById('messages').appendChild(div);
-  scrollToBottom();
-  return id;
-}
-
-function removeTyping(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-}
-
-function scrollToBottom() {
-  const msgs = document.getElementById('messages');
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-// -----------------------------------------------
-// Training poll
-// -----------------------------------------------
-function startTrainingPoll(totalEpochs) {
-  if (trainingPollInterval) clearInterval(trainingPollInterval);
-  trainingPollInterval = setInterval(async () => {
-    const data = await fetchJSON('/api/train/progress');
-    const progress = data.progress || [];
-    const done = progress.length;
-    const pct = Math.round((done / totalEpochs) * 100);
-
-    const fill = document.getElementById('progress-fill');
-    const counter = document.getElementById('epoch-counter');
-    if (fill) fill.style.width = pct + '%';
-    if (counter) counter.textContent = `Epoch ${done} / ${totalEpochs}`;
-
-    if (!data.running) {
-      clearInterval(trainingPollInterval);
-      updateSidebarStatus({ model_ready: true });
-      showToast('Training complete!', 'success');
-      if (data.report) {
-        appendAIMessage(`
-          <h4>✅ Training Complete!</h4>
-          <div class="metric-grid" style="margin-top:10px">
-            <div class="metric-card"><div class="metric-label">Epochs</div><div class="metric-value">${data.report.epochs_run}</div></div>
-            <div class="metric-card"><div class="metric-label">Best Val Acc</div><div class="metric-value good">${(data.report.best_val_acc*100).toFixed(1)}%</div></div>
-            <div class="metric-card"><div class="metric-label">Best Val Loss</div><div class="metric-value">${data.report.best_val_loss}</div></div>
-            <div class="metric-card"><div class="metric-label">Train Acc</div><div class="metric-value">${(data.report.final_train_acc*100).toFixed(1)}%</div></div>
-          </div>
-          <p style="margin-top:10px;font-size:12px;color:var(--text-muted)">Model saved to <code>public/checkpoints/</code>. Try <code>/predict</code> or <code>/eval</code> next.</p>
-        `);
-      }
-    }
-  }, 1500);
-}
-
-// -----------------------------------------------
-// Status polling
-// -----------------------------------------------
-async function checkStatus(notify=true) {
-  try {
-    const data = await fetchJSON('/api/status');
-    updateSidebarStatus(data);
-    if (notify) appendStatusMessage(data);
-  } catch(e) {
-    setStatusDot('offline', 'Offline');
-  }
-}
-
-function updateSidebarStatus(data) {
-  const dot = document.getElementById('status-dot');
-  const txt = document.getElementById('status-text');
-  const mn  = document.getElementById('model-name-sb');
-  const env = document.getElementById('env-sb');
-
-  if (mn) mn.textContent = data.model_name || '--';
-  if (env) env.textContent = data.environment || '--';
-
-  if (data.training_running) {
-    dot.className = 'status-dot dot-training';
-    txt.textContent = 'Training';
-  } else if (data.model_ready) {
-    dot.className = 'status-dot dot-ready';
-    txt.textContent = 'Ready';
-  } else {
-    dot.className = 'status-dot dot-offline';
-    txt.textContent = 'No Model';
-  }
-
-  document.getElementById('header-sub').textContent =
-    data.model_ready ? `${data.model_name} — Ready` : 'No model trained yet';
-}
-
-function setStatusDot(state, label) {
-  const dot = document.getElementById('status-dot');
-  const txt = document.getElementById('status-text');
-  dot.className = `status-dot dot-${state}`;
-  txt.textContent = label;
-}
-
-// -----------------------------------------------
-// Toast notifications
-// -----------------------------------------------
-function showToast(message, type = 'info') {
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<span class="toast-icon">${icons[type]}</span>${escHtml(message)}`;
-  document.getElementById('toasts').appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
-}
-
-// -----------------------------------------------
-// Utilities
-// -----------------------------------------------
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-async function fetchJSON(url, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (body !== null) opts.body = JSON.stringify(body);
-  const res = await fetch(API + url, opts);
-  return res.json();
-}
-</script>
 </body>
 </html>

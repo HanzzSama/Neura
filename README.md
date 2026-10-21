@@ -1,305 +1,113 @@
-# 🚀 Neura — Setup Guide
+# 🧠 Neura — Machine Learning Chat Assistant
 
-Panduan lengkap dari **git clone** hingga **running** untuk semua OS.
+Neura adalah platform asisten Machine Learning interaktif berbasis **TensorFlow** dan arsitektur **MVC (Model-View-Controller)** yang modular, dilengkapi dengan antarmuka web modern bergaya **Claude AI** (Anthropic) dengan akurasi visual tinggi.
 
----
-
-## 📋 Prerequisites
-
-Pastikan tools berikut sudah terinstall sebelum memulai:
-
-| Tool | Versi Minimum | Cek |
-|------|--------------|-----|
-| Python | 3.10+ | `python --version` |
-| pip | 23+ | `pip --version` |
-| Git | 2.0+ | `git --version` |
-
-> **Windows Users:** Gunakan **PowerShell** atau **Command Prompt** (bukan Git Bash untuk langkah venv).
+![Neura Claude UI](public/assets/neura_logo.jpg)
 
 ---
 
-## ⚡ Langkah-Langkah Setup
+## ✨ Fitur Utama
 
-### 1. Clone Repository
+- **🎨 Claude AI Interface (~95% Visual Fidelity):**
+  - Palet warna hangat *Warm Linen* (`#FAF9F5`) dan *Oat Sidebar* (`#F0EEE6`).
+  - Aksen warna *Terracotta / Burnt Orange* (`#D97757`) khas Anthropic Claude.
+  - Tipografi elegan kombinasi *Newsreader* (serif) & *Inter* (sans-serif).
+  - Tampilan *Hero Greeting* dinamis ("Good morning", "Good afternoon", "Good evening").
+  - Hero action cards untuk training, prediksi, evaluasi, dan inspeksi arsitektur.
+  - Floating bottom input card dengan auto-grow textarea dan quick-command pills.
+  - Mode ganda: **Warm Linen (Light)** dan **Obsidian (Dark)**.
+  - Model architecture modal / popover.
 
-```bash
-git clone https://github.com/YOUR_USERNAME/Neura.git
-cd Neura
+- **🤖 TensorFlow Machine Learning Backend:**
+  - Multi-Layer Perceptron (MLP) dengan Keras 3 / TensorFlow.
+  - 128 input features $\rightarrow$ Dense(64, ReLU) $\rightarrow$ Dense(32, ReLU) $\rightarrow$ 10 output classes (Softmax).
+  - Training asynchronous (thread-safe) dengan progress tracking real-time.
+  - Evaluasi metrik (loss, accuracy) tersimpan otomatis ke `public/reports/`.
+  - Inferensi sample dengan visualisasi probabilitas top 5 kelas.
+
+- **🏛️ Arsitektur MVC Modular:**
+  - Pemisahan ketat antara `public/` (asset produksi, checkpoint, reports, frontend) dan `src/dev/` (kode sumber, model, controller, data pipeline).
+
+---
+
+## 📁 Struktur Direktori
+
+```
+Neura/
+├── public/                       # Aset publik & frontend produksi
+│   ├── index.html                # Claude AI Chat Interface
+│   ├── css/                      # Stylesheet eksternal (style.css)
+│   ├── js/                       # Client-side scripts (app.js)
+│   ├── assets/                   # Logo & favicon aset
+│   ├── checkpoints/              # Checkpoint model terlatih (.keras)
+│   └── reports/                  # Log & laporan evaluasi (.json)
+├── src/
+│   ├── dev/                      # Core backend & modul machine learning
+│   │   ├── controllers/          # Business logic & command handler
+│   │   ├── models/               # Model neural network & abstract base
+│   │   ├── views/                # CLI view & formatter
+│   │   ├── data/                 # Dataset loader & synthetic generator
+│   │   └── utils/                # Config loader & logging
+│   ├── data/                     # Raw & processed data
+│   └── public/                   # Shared public library
+├── server.py                     # Flask web server & REST API
+├── main.py                       # CLI entry point
+├── requirements.txt              # Dependencies produksi
+├── requirements-dev.txt          # Dependencies development & testing
+├── SETUP.md                      # Panduan lengkap setup dari nol
+└── README.md                     # Dokumentasi project
 ```
 
 ---
 
-### 2. Buat Virtual Environment
+## 🚀 Quick Start
 
-**Windows (PowerShell):**
+Untuk panduan instalasi langkah-demi-langkah dari `git clone` hingga running di Windows, Linux, dan macOS, silakan baca [SETUP.md](file:///d:/JupyterHanzz/Neura/SETUP.md).
+
+### Ringkasan Menjalankan Web UI:
+
 ```powershell
-python -m venv venv
-venv\Scripts\Activate.ps1
-```
+# 1. Aktifkan virtual environment
+venv\Scripts\activate
 
-> Jika muncul error *"execution of scripts is disabled"*, jalankan dulu:
-> ```powershell
-> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-> ```
-
-**Windows (Command Prompt):**
-```cmd
-python -m venv venv
-venv\Scripts\activate.bat
-```
-
-**Linux / macOS:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-Setelah aktif, prompt akan berubah menjadi `(venv)`.
-
----
-
-### 3. Install Dependencies
-
-**Untuk production/normal use:**
-```bash
-pip install -r requirements.txt
-```
-
-**Untuk development (+ testing, linting, Jupyter):**
-```bash
-pip install -r requirements-dev.txt
-```
-
-> Proses ini bisa memakan waktu 3–10 menit karena TensorFlow cukup besar (~500MB).
-
----
-
-### 4. Setup Konfigurasi
-
-Salin file environment template:
-
-**Windows:**
-```powershell
-copy .env.example .env
-```
-
-**Linux / macOS:**
-```bash
-cp .env.example .env
-```
-
-Edit `.env` jika diperlukan (opsional untuk penggunaan dasar):
-```env
-NEURA_ENV=development
-```
-
----
-
-### 5. Pilih Mode Running
-
-Ada **dua cara** menjalankan Neura:
-
----
-
-#### Mode A — Web Chat UI (Direkomendasikan)
-
-Menjalankan server Flask dengan antarmuka chat berbasis browser.
-
-```bash
+# 2. Jalankan Flask server
 python server.py
 ```
 
-Lalu buka browser ke:
-```
-http://localhost:5000
-```
-
-Fitur yang tersedia di Web UI:
-- `/status` — Cek status model
-- `/train 10` — Train model 10 epoch
-- `/eval` — Evaluasi model
-- `/predict` — Jalankan inferensi
-- `/progress` — Progress training live
-- `/help` — Semua command
+Buka browser di:
+👉 **[http://localhost:5000](http://localhost:5000)**
 
 ---
 
-#### Mode B — Command Line (CLI)
+## 💬 Perintah Chat Interaktif (ML Commands)
 
-**Training model:**
-```bash
-python main.py --mode train --config configs/development.yaml
-```
+Anda dapat mengetik perintah berikut di kolom chat:
 
-**Evaluasi model (butuh checkpoint):**
-```bash
-python main.py --mode eval
-```
-
-**Prediksi / Inferensi:**
-```bash
-python main.py --mode predict
-```
-
-**Menggunakan script terpisah:**
-```bash
-python scripts/train.py --config configs/development.yaml
-python scripts/evaluate.py --checkpoint public/checkpoints/NeuralNetwork
-python scripts/predict.py
-```
+| Perintah | Deskripsi |
+|---|---|
+| `/status` | Cek status model, kesiapan checkpoint, dan environment |
+| `/train [N]` | Melatih model selama N epoch (default: 5) |
+| `/eval` | Evaluasi model pada dataset pengujian (test loss & accuracy) |
+| `/predict` | Menjalankan inferensi dan menampilkan top 5 probabilitas kelas |
+| `/progress` | Menampilkan progres dan log epoch pelatihan terbaru |
+| `/help` | Menampilkan panduan seluruh perintah |
 
 ---
 
-### 6. (Opsional) TensorBoard
+## 🔌 REST API Endpoints
 
-Untuk memantau training secara visual:
-
-```bash
-# Di terminal terpisah (setelah training berjalan sekali)
-tensorboard --logdir public/logs/tensorboard
-```
-
-Buka browser ke `http://localhost:6006`
-
-> **Catatan:** TensorBoard dinonaktifkan di development secara default.
-> Aktifkan di `configs/development.yaml`:
-> ```yaml
-> logging:
->   tensorboard: true
-> ```
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/` | Melayani web chat UI (`public/index.html`) |
+| `GET` | `/api/status` | Informasi status model & server |
+| `POST` | `/api/train` | Memulai training model secara async (`{"epochs": 5}`) |
+| `GET` | `/api/train/progress` | Mendapatkan progres training real-time |
+| `POST` | `/api/evaluate` | Menjalankan evaluasi test metrics |
+| `POST` | `/api/predict` | Menjalankan inferensi pada sampel data |
 
 ---
 
-## 📁 Struktur Output
+## 🛠️ Lisensi & Kredit
 
-Setelah training berjalan, folder `public/` akan berisi:
-
-```
-public/
-├── checkpoints/
-│   └── NeuralNetwork.keras      ← Model tersimpan
-├── logs/
-│   ├── neura.log                ← Application log
-│   └── tensorboard/             ← TensorBoard data
-├── reports/
-│   └── NeuralNetwork_eval.json  ← Hasil evaluasi
-└── assets/
-    ├── NeuralNetwork_loss.png     ← Plot loss
-    └── NeuralNetwork_accuracy.png ← Plot accuracy
-```
-
----
-
-## ⚙️ Konfigurasi
-
-Edit `configs/development.yaml` untuk mengubah hyperparameter training:
-
-```yaml
-training:
-  epochs: 10          # Jumlah epoch
-  batch_size: 32      # Ukuran batch
-  optimizer:
-    learning_rate: 0.001
-
-model:
-  input_shape: [128]  # Dimensi input
-  output_units: 10    # Jumlah kelas
-```
-
----
-
-## 🧪 Menjalankan Tests
-
-```bash
-# Pastikan venv aktif
-pip install -r requirements-dev.txt
-
-# Jalankan semua tests
-pytest tests/ -v
-
-# Dengan coverage report
-pytest tests/ --cov=app --cov=core -v
-```
-
----
-
-## ❗ Troubleshooting
-
-### `ModuleNotFoundError: No module named 'flask'`
-```bash
-pip install flask flask-cors
-# atau
-pip install -r requirements.txt
-```
-
-### `UnicodeEncodeError` di Windows
-```powershell
-# Set encoding sebelum menjalankan
-$env:PYTHONUTF8 = "1"
-python server.py
-```
-
-### TensorFlow CUDA / GPU Warning
-Pesan seperti `oneDNN custom operations` adalah **informasi**, bukan error. Aman diabaikan. Untuk menonaktifkan:
-```powershell
-$env:TF_ENABLE_ONEDNN_OPTS = "0"
-```
-
-### Port 5000 sudah dipakai
-```bash
-# Jalankan di port lain
-python server.py --port 8080
-# atau edit server.py baris terakhir: port=8080
-```
-
-### `CheckpointError: Checkpoint not found`
-Model belum pernah ditraining. Jalankan dulu:
-```bash
-python main.py --mode train
-# atau ketik /train di Web UI
-```
-
----
-
-## 🔄 Update Project
-
-```bash
-git pull origin main
-pip install -r requirements.txt  # update deps jika ada perubahan
-```
-
----
-
-## 📦 Menambah Model Baru
-
-1. Buat file baru di `app/models/`:
-
-```python
-# app/models/my_cnn.py
-from core.registry import ModelRegistry
-from app.models.base_model import BaseModel
-import tensorflow as tf
-
-@ModelRegistry.register("my_cnn")
-class MyCNN(BaseModel):
-    def build(self) -> tf.keras.Model:
-        # Definisikan arsitektur di sini
-        ...
-        return model
-```
-
-2. Import di `app/models/__init__.py`:
-```python
-from app.models.my_cnn import MyCNN
-```
-
-3. Ubah config:
-```yaml
-# configs/default.yaml
-model:
-  name: "my_cnn"
-```
-
----
-
-*Neura — TensorFlow MVC Machine Learning Project*
+- **Engine:** TensorFlow, Keras, Flask
+- **UI Design:** Terinspirasi dari [Claude AI](https://claude.ai) oleh Anthropic.
