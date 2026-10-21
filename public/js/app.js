@@ -7,6 +7,11 @@
  */
 
 const API = '';
+const CHAT_STORAGE_KEY = 'neura_recent_chats_v2';
+const ML_DROPDOWN_STORAGE_KEY = 'neura_ml_dropdown_collapsed';
+
+let chatSessions = [];
+let activeSessionId = null;
 let isTyping = false;
 let stopRequested = false;
 let trainingPollInterval = null;
@@ -49,6 +54,17 @@ function handleSendClick() {
 // --------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   setupGreeting();
+  loadChatSessions();
+  renderRecentChatsSidebar();
+  initMLCommandsDropdown();
+
+  // If there are existing saved sessions, open the most recent one; otherwise start fresh
+  if (chatSessions.length > 0) {
+    switchChatSession(chatSessions[0].id);
+  } else {
+    startNewChat();
+  }
+
   fetchModelStatus(false);
   setInterval(() => fetchModelStatus(false), 12000);
 
@@ -74,42 +90,186 @@ function setupGreeting() {
 }
 
 // --------------------------------------------------------------------------
-// Theme Switching (Claude Warm Linen <-> Claude Obsidian Dark)
+// ML Commands Dropdown (Accordion)
 // --------------------------------------------------------------------------
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme') || 'light';
-  const next = current === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', next);
-  showToast(`Switched to ${next === 'dark' ? 'Obsidian Dark' : 'Warm Linen'} mode`, 'info');
+function toggleMLCommandsDropdown() {
+  const list = document.getElementById('ml-commands-list');
+  const btn = document.getElementById('ml-commands-toggle-btn');
+  if (!list || !btn) return;
+
+  const isCollapsed = list.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed', isCollapsed);
+  btn.setAttribute('aria-expanded', !isCollapsed);
+
+  try {
+    localStorage.setItem(ML_DROPDOWN_STORAGE_KEY, isCollapsed ? 'true' : 'false');
+  } catch(e) {}
+}
+
+function initMLCommandsDropdown() {
+  try {
+    const saved = localStorage.getItem(ML_DROPDOWN_STORAGE_KEY);
+    // Default is collapsed (true), unless user explicitly opened it (saved === 'false')
+    const isCollapsed = saved !== 'false';
+    const list = document.getElementById('ml-commands-list');
+    const btn = document.getElementById('ml-commands-toggle-btn');
+    if (list) list.classList.toggle('collapsed', isCollapsed);
+    if (btn) {
+      btn.classList.toggle('collapsed', isCollapsed);
+      btn.setAttribute('aria-expanded', !isCollapsed);
+    }
+  } catch(e) {}
 }
 
 // --------------------------------------------------------------------------
-// Sidebar Controls
+// Recent Chats & Sessions Management
 // --------------------------------------------------------------------------
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const openBtn = document.getElementById('open-sidebar-btn');
-  sidebar.classList.toggle('collapsed');
-  if (sidebar.classList.contains('collapsed')) {
-    openBtn.style.display = 'grid';
+function loadChatSessions() {
+  try {
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (raw) {
+      chatSessions = JSON.parse(raw);
+    }
+  } catch(e) {
+    chatSessions = [];
+  }
+  if (!Array.isArray(chatSessions)) chatSessions = [];
+}
+
+function saveChatSessions() {
+  try {
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatSessions));
+  } catch(e) {}
+}
+
+/**
+ * Generate 1 single title based on user initial input
+ */
+function formatSessionTitle(text) {
+  const clean = String(text || '').trim();
+  const lower = clean.toLowerCase();
+
+  // Known quick commands mapping
+  if (lower === '/status') return 'Check Status';
+  if (lower.startsWith('/train')) {
+    const parts = clean.split(/\s+/);
+    return parts[1] ? `Train ${parts[1]} Epochs` : 'Train Neural Net';
+  }
+  if (lower === '/predict') return 'Inference Prediction';
+  if (lower === '/eval') return 'Model Evaluation';
+  if (lower === '/progress') return 'Live Progress';
+  if (lower === '/help') return 'Command List';
+
+  // Natural language: Capitalize first letter, truncate nicely if too long
+  const first = clean.charAt(0).toUpperCase() + clean.slice(1);
+  return first.length > 28 ? first.slice(0, 26) + '...' : first;
+}
+
+function renderRecentChatsSidebar() {
+  const listEl = document.getElementById('chat-history-list');
+  if (!listEl) return;
+
+  if (chatSessions.length === 0) {
+    listEl.innerHTML = `<div class="chat-history-empty">No recent chats yet</div>`;
+    return;
+  }
+
+  listEl.innerHTML = chatSessions.map(session => {
+    const isActive = session.id === activeSessionId;
+    return `
+      <div class="chat-history-item ${isActive ? 'active' : ''}" onclick="switchChatSession('${escapeHtml(session.id)}')">
+        <div class="chat-history-left">
+          <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="chat-history-title" title="${escapeHtml(session.title)}">${escapeHtml(session.title)}</span>
+        </div>
+        <button class="chat-item-del-btn" title="Delete chat" onclick="deleteChatSession(event, '${escapeHtml(session.id)}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function switchChatSession(sessionId) {
+  const session = chatSessions.find(s => s.id === sessionId);
+  if (!session) return;
+  activeSessionId = sessionId;
+  renderRecentChatsSidebar();
+  renderSessionMessages(session);
+}
+
+function deleteChatSession(e, sessionId) {
+  e.stopPropagation();
+  chatSessions = chatSessions.filter(s => s.id !== sessionId);
+  saveChatSessions();
+  if (activeSessionId === sessionId) {
+    activeSessionId = null;
+    startNewChat();
   } else {
-    openBtn.style.display = window.innerWidth <= 768 ? 'grid' : 'none';
+    renderRecentChatsSidebar();
+  }
+  showToast('Chat removed from history', 'info');
+}
+
+function addMessageToActiveSession(msgObj) {
+  if (!activeSessionId) return;
+  const session = chatSessions.find(s => s.id === activeSessionId);
+  if (session) {
+    if (!session.messages) session.messages = [];
+    session.messages.push(msgObj);
+    saveChatSessions();
   }
 }
 
-function activateChat(el, title) {
-  document.querySelectorAll('.chat-history-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-  showToast(`Loaded: ${title}`, 'info');
+function renderSessionMessages(session) {
+  const container = document.getElementById('chat-content-container');
+  container.innerHTML = '';
+
+  if (!session || !session.messages || session.messages.length === 0) {
+    container.innerHTML = getHeroHtml();
+    setupGreeting();
+    return;
+  }
+
+  session.messages.forEach(msg => {
+    if (msg.role === 'user') {
+      const row = document.createElement('div');
+      row.className = 'message-row user';
+      row.innerHTML = `<div class="user-bubble">${escapeHtml(msg.content)}</div>`;
+      container.appendChild(row);
+    } else if (msg.role === 'assistant') {
+      const row = document.createElement('div');
+      row.className = 'message-row assistant';
+      row.innerHTML = `
+        <div class="assistant-header">
+          <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
+          <span class="assistant-name">Neura</span>
+          <span class="assistant-model-tag">&bull; BaseNeuralNetwork</span>
+        </div>
+        <div class="assistant-prose">${msg.html}</div>
+        <div class="msg-actions-row">
+          <button class="msg-action-btn" title="Copy response" onclick="copyMessageText(this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>Copy</span>
+          </button>
+        </div>
+      `;
+      container.appendChild(row);
+
+      // Trigger probability bar fills if any
+      const bars = row.querySelectorAll('.prob-fill');
+      bars.forEach(b => {
+        const target = b.getAttribute('data-target-width');
+        if (target) b.style.width = target;
+      });
+    }
+  });
+
+  scrollToBottom();
 }
 
-// --------------------------------------------------------------------------
-// New Chat Action
-// --------------------------------------------------------------------------
-function startNewChat() {
-  const container = document.getElementById('chat-content-container');
-  container.innerHTML = `
+function getHeroHtml() {
+  return `
     <div class="claude-hero" id="claude-hero">
       <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo" onerror="this.style.display='none'" />
       <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
@@ -146,10 +306,52 @@ function startNewChat() {
       </div>
     </div>
   `;
+}
+
+// --------------------------------------------------------------------------
+// Start New Chat Action
+// --------------------------------------------------------------------------
+function startNewChat() {
+  activeSessionId = null;
+  renderRecentChatsSidebar();
+
+  const container = document.getElementById('chat-content-container');
+  container.innerHTML = getHeroHtml();
   setupGreeting();
-  document.getElementById('chat-input-textarea').value = '';
-  document.getElementById('chat-input-textarea').style.height = 'auto';
-  showToast('New conversation started', 'info');
+
+  const input = document.getElementById('chat-input-textarea');
+  if (input) {
+    input.value = '';
+    input.style.height = 'auto';
+    input.focus();
+  }
+
+  showToast('New conversation ready', 'info');
+}
+
+// --------------------------------------------------------------------------
+// Theme Switching (Claude Warm Linen <-> Claude Obsidian Dark)
+// --------------------------------------------------------------------------
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  showToast(`Switched to ${next === 'dark' ? 'Obsidian Dark' : 'Warm Linen'} mode`, 'info');
+}
+
+// --------------------------------------------------------------------------
+// Sidebar Controls
+// --------------------------------------------------------------------------
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const openBtn = document.getElementById('open-sidebar-btn');
+  sidebar.classList.toggle('collapsed');
+  if (sidebar.classList.contains('collapsed')) {
+    openBtn.style.display = 'grid';
+  } else {
+    openBtn.style.display = window.innerWidth <= 768 ? 'grid' : 'none';
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -196,6 +398,20 @@ async function sendUserMessage() {
   }
 
   stopRequested = false;
+
+  // If no active session exists, create a new one with title from this initial input!
+  if (!activeSessionId) {
+    const newSession = {
+      id: 'session_' + Date.now(),
+      title: formatSessionTitle(text),
+      createdAt: Date.now(),
+      messages: []
+    };
+    chatSessions.unshift(newSession);
+    activeSessionId = newSession.id;
+    saveChatSessions();
+    renderRecentChatsSidebar();
+  }
 
   // Clear input
   input.value = '';
@@ -581,6 +797,7 @@ function startProgressPolling(totalEpochs) {
 // DOM Message Appenders
 // --------------------------------------------------------------------------
 function appendUserBubble(text) {
+  addMessageToActiveSession({ role: 'user', content: text });
   const container = document.getElementById('chat-content-container');
   const row = document.createElement('div');
   row.className = 'message-row user';
@@ -590,6 +807,7 @@ function appendUserBubble(text) {
 }
 
 function appendAssistantMessage(html, options = {}) {
+  addMessageToActiveSession({ role: 'assistant', html: html });
   const { stream = false } = options;
   const container = document.getElementById('chat-content-container');
   const row = document.createElement('div');

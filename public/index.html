@@ -58,48 +58,44 @@
       <div>
         <div class="nav-group-title">Recent Chats</div>
         <div class="chat-history-list" id="chat-history-list">
-          <div class="chat-history-item active" onclick="activateChat(this, 'Current Session')">
-            <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span style="overflow:hidden;text-overflow:ellipsis">TensorFlow Training & Eval</span>
-          </div>
-          <div class="chat-history-item" onclick="activateChat(this, 'Inference & Probabilities')">
-            <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span style="overflow:hidden;text-overflow:ellipsis">Model Inference & Probs</span>
-          </div>
-          <div class="chat-history-item" onclick="activateChat(this, 'Architecture Inspector')">
-            <svg class="chat-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span style="overflow:hidden;text-overflow:ellipsis">Weights & Architecture</span>
-          </div>
+          <!-- Populated dynamically by JavaScript -->
         </div>
       </div>
 
-      <!-- Quick ML Commands -->
-      <div>
-        <div class="nav-group-title">ML Commands</div>
-        <button class="ml-command-item" onclick="submitCommand('/status')">
-          <span>Check Status</span>
-          <span class="ml-tag">/status</span>
+      <!-- Quick ML Commands (Collapsible Dropdown Accordion - Default Collapsed) -->
+      <div class="nav-group-section">
+        <button class="nav-group-header collapsed" id="ml-commands-toggle-btn" onclick="toggleMLCommandsDropdown()" aria-expanded="false">
+          <span class="nav-group-title" style="padding:0;margin:0">ML Commands</span>
+          <svg class="dropdown-chevron-icon" id="ml-commands-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
         </button>
-        <button class="ml-command-item" onclick="submitCommand('/train 5')">
-          <span>Train 5 Epochs</span>
-          <span class="ml-tag">/train 5</span>
-        </button>
-        <button class="ml-command-item" onclick="submitCommand('/eval')">
-          <span>Evaluate Model</span>
-          <span class="ml-tag">/eval</span>
-        </button>
-        <button class="ml-command-item" onclick="submitCommand('/predict')">
-          <span>Run Prediction</span>
-          <span class="ml-tag">/predict</span>
-        </button>
-        <button class="ml-command-item" onclick="submitCommand('/progress')">
-          <span>Live Progress</span>
-          <span class="ml-tag">/progress</span>
-        </button>
-        <button class="ml-command-item" onclick="submitCommand('/help')">
-          <span>Command List</span>
-          <span class="ml-tag">/help</span>
-        </button>
+        <div class="ml-commands-list collapsed" id="ml-commands-list">
+          <button class="ml-command-item" onclick="submitCommand('/status')">
+            <span>Check Status</span>
+            <span class="ml-tag">/status</span>
+          </button>
+          <button class="ml-command-item" onclick="submitCommand('/train 5')">
+            <span>Train 5 Epochs</span>
+            <span class="ml-tag">/train 5</span>
+          </button>
+          <button class="ml-command-item" onclick="submitCommand('/eval')">
+            <span>Evaluate Model</span>
+            <span class="ml-tag">/eval</span>
+          </button>
+          <button class="ml-command-item" onclick="submitCommand('/predict')">
+            <span>Run Prediction</span>
+            <span class="ml-tag">/predict</span>
+          </button>
+          <button class="ml-command-item" onclick="submitCommand('/progress')">
+            <span>Live Progress</span>
+            <span class="ml-tag">/progress</span>
+          </button>
+          <button class="ml-command-item" onclick="submitCommand('/help')">
+            <span>Command List</span>
+            <span class="ml-tag">/help</span>
+          </button>
+        </div>
       </div>
     </div>
 
