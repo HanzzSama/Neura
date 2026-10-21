@@ -1,0 +1,14 @@
+# ==========================================
+# Development Configuration (overrides default.yaml)
+# ==========================================
+
+project:
+  environment: "development"
+
+training:
+  epochs: 5           # Fewer epochs for quick dev testing
+  batch_size: 16
+
+logging:
+  level: "DEBUG"
+  tensorboard: false  # Disable for quick dev runs (install tensorboard for prod)

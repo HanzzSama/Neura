@@ -1,0 +1,22 @@
+# ==============================
+# Neura — Production Requirements
+# ==============================
+
+# Core ML Framework
+tensorflow>=2.13.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# Configuration & Environment
+PyYAML>=6.0
+python-dotenv>=1.0.0
+
+# Visualization & Output
+matplotlib>=3.7.0
+rich>=13.0.0          # Beautiful terminal output
+
+# Utilities
+tqdm>=4.65.0          # Progress bars

@@ -1,0 +1,14 @@
+# ==========================================
+# Production Configuration (overrides default.yaml)
+# ==========================================
+
+project:
+  environment: "production"
+
+training:
+  epochs: 100
+  batch_size: 64
+
+logging:
+  level: "WARNING"
+  log_to_file: true

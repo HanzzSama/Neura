@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment Variables
+.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# TensorFlow / Model Files
+*.h5
+*.keras
+*.pb
+*.tflite
+
+# Public outputs (uncomment to exclude from git)
+# public/checkpoints/
+# public/logs/
+# public/exports/
+
+# Keep public directories tracked (but not their contents)
+!public/checkpoints/.gitkeep
+!public/logs/.gitkeep
+!public/exports/.gitkeep
+!public/reports/.gitkeep
+!public/assets/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Typing
+.mypy_cache/
