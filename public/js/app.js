@@ -108,8 +108,8 @@ function toggleMLCommandsDropdown() {
 function initMLCommandsDropdown() {
   try {
     const saved = localStorage.getItem(ML_DROPDOWN_STORAGE_KEY);
-    // Default is collapsed (true), unless user explicitly opened it (saved === 'false')
-    const isCollapsed = saved !== 'false';
+    // Default is expanded (isCollapsed = false), unless user explicitly collapsed it (saved === 'true')
+    const isCollapsed = saved === 'true';
     const list = document.getElementById('ml-commands-list');
     const btn = document.getElementById('ml-commands-toggle-btn');
     if (list) list.classList.toggle('collapsed', isCollapsed);
@@ -667,7 +667,7 @@ function renderStatusOutput(data) {
           <div class="stat-val" style="font-size:13.5px">${escapeHtml(data.environment || 'development')}</div>
         </div>
       </div>
-      ${data.checkpoint ? `<p style="font-size:11.5px;color:var(--text-muted);margin-top:12px">Checkpoint: <code>${escapeHtml(data.checkpoint)}</code></p>` : ''}
+      ${data.checkpoint ? `<p class="checkpoint-path-note">Checkpoint: <code>${escapeHtml(data.checkpoint)}</code></p>` : ''}
     </div>
     ${!isReady ? `<p style="color:var(--accent-red);font-size:13px">Note: No trained checkpoint detected. Run <code>/train 5</code> to train the model first.</p>` : ''}
   `);
@@ -750,27 +750,27 @@ function renderPredictionOutput(data) {
       </div>
 
       <div style="margin-top:14px">
-        <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:8px">Primary Biomarkers &amp; Cognitive Scores</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;font-size:12px;">
-          <div style="background:var(--bg-hover);padding:6px 10px;border-radius:6px;">
-            <span style="color:var(--text-muted);display:block;font-size:10.5px">MMSE Score</span>
-            <strong style="color:var(--text-primary)">${markers.MMSE ?? 24.5} / 30</strong>
+        <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.06em;margin-bottom:8px">Primary Biomarkers &amp; Cognitive Scores</div>
+        <div class="biomarkers-grid">
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">MMSE Score</span>
+            <strong class="biomarker-val">${markers.MMSE ?? 24.5} / 30</strong>
           </div>
-          <div style="background:var(--bg-hover);padding:6px 10px;border-radius:6px;">
-            <span style="color:var(--text-muted);display:block;font-size:10.5px">ADL Score</span>
-            <strong style="color:var(--text-primary)">${markers.ADL ?? 6.2} / 10</strong>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">ADL Score</span>
+            <strong class="biomarker-val">${markers.ADL ?? 6.2} / 10</strong>
           </div>
-          <div style="background:var(--bg-hover);padding:6px 10px;border-radius:6px;">
-            <span style="color:var(--text-muted);display:block;font-size:10.5px">Functional Assessment</span>
-            <strong style="color:var(--text-primary)">${markers.FunctionalAssessment ?? 5.5} / 10</strong>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Functional Assessment</span>
+            <strong class="biomarker-val">${markers.FunctionalAssessment ?? 5.5} / 10</strong>
           </div>
-          <div style="background:var(--bg-hover);padding:6px 10px;border-radius:6px;">
-            <span style="color:var(--text-muted);display:block;font-size:10.5px">Memory Complaints</span>
-            <strong style="color:${markers.MemoryComplaints === 'Yes' ? 'var(--accent-red)' : 'var(--accent-green)'}">${markers.MemoryComplaints ?? 'No'}</strong>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Memory Complaints</span>
+            <strong class="biomarker-val" style="color:${markers.MemoryComplaints === 'Yes' ? 'var(--accent-red)' : 'var(--accent-green)'}">${markers.MemoryComplaints ?? 'No'}</strong>
           </div>
-          <div style="background:var(--bg-hover);padding:6px 10px;border-radius:6px;">
-            <span style="color:var(--text-muted);display:block;font-size:10.5px">Patient Demographics</span>
-            <strong style="color:var(--text-primary)">${markers.Age ?? 73} y.o. &bull; ${markers.Gender ?? 'Male'}</strong>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Demographics</span>
+            <strong class="biomarker-val">${markers.Age ?? 73} y.o. &bull; ${markers.Gender ?? 'Male'}</strong>
           </div>
         </div>
       </div>
@@ -842,34 +842,35 @@ function startProgressPolling(totalEpochs) {
         showToast('Training completed successfully', 'success');
 
         setDynamicIslandState('ready', {
-          sub: data.report ? `Training Complete \u2022 Val Acc: ${(data.report.best_val_acc * 100).toFixed(1)}%` : 'Training Complete',
+          sub: data.report ? `Training Complete \u2022 Accuracy: ${(data.report.accuracy * 100).toFixed(1)}%` : 'Training Complete',
           main: 'Trained',
           keepTimer: true
         });
 
         if (data.report) {
+          const totalRounds = data.progress ? data.progress.length : '—';
           appendAssistantMessage(`
             <h4>Training Session Completed</h4>
             <div class="claude-card">
               <div class="claude-stats-grid">
                 <div class="stat-pill">
-                  <div class="stat-label">Total Epochs</div>
-                  <div class="stat-val">${data.report.epochs_run}</div>
+                  <div class="stat-label">Total Rounds</div>
+                  <div class="stat-val">${totalRounds}</div>
                 </div>
                 <div class="stat-pill">
-                  <div class="stat-label">Best Val Accuracy</div>
-                  <div class="stat-val val-good">${(data.report.best_val_acc * 100).toFixed(1)}%</div>
+                  <div class="stat-label">Test Accuracy</div>
+                  <div class="stat-val val-good">${(data.report.accuracy * 100).toFixed(1)}%</div>
                 </div>
                 <div class="stat-pill">
-                  <div class="stat-label">Best Val Loss</div>
-                  <div class="stat-val">${data.report.best_val_loss}</div>
+                  <div class="stat-label">F1-Score</div>
+                  <div class="stat-val val-good">${(data.report.f1_score * 100).toFixed(1)}%</div>
                 </div>
                 <div class="stat-pill">
-                  <div class="stat-label">Train Accuracy</div>
-                  <div class="stat-val">${(data.report.final_train_acc * 100).toFixed(1)}%</div>
+                  <div class="stat-label">ROC-AUC</div>
+                  <div class="stat-val val-good">${(data.report.roc_auc * 100).toFixed(1)}%</div>
                 </div>
               </div>
-              <p style="font-size:12px;color:var(--text-muted);margin-top:12px">Checkpoint saved to <code>public/checkpoints/NeuralNetwork.keras</code>.</p>
+              <p class="checkpoint-path-note">Checkpoint saved to <code>public/checkpoints/xgboost_alzheimers.json</code></p>
             </div>
           `);
         }
@@ -1081,8 +1082,19 @@ function updateUIModelStatus(data) {
   const islandEnv = document.getElementById('island-env-tag');
 
   if (islandStat) {
-    islandStat.textContent = data.training_running ? 'Training' : data.model_ready ? 'Ready' : 'Not Loaded';
-    islandStat.style.color = data.training_running ? 'var(--accent-terracotta)' : data.model_ready ? '#4ade80' : '#f87171';
+    if (data.training_running) {
+      islandStat.textContent = 'Training';
+      islandStat.style.color = 'var(--accent-terracotta)';
+    } else if (data.model_ready && data.metrics && data.metrics.accuracy) {
+      islandStat.textContent = (data.metrics.accuracy * 100).toFixed(1) + '%';
+      islandStat.style.color = '#4ade80';
+    } else if (data.model_ready) {
+      islandStat.textContent = 'Ready';
+      islandStat.style.color = '#4ade80';
+    } else {
+      islandStat.textContent = 'N/A';
+      islandStat.style.color = '#f87171';
+    }
   }
 
   if (islandStatBox) {

@@ -355,7 +355,7 @@ html, body {
 
 /* Collapsible ML Commands Dropdown */
 .nav-group-section {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .nav-group-header {
@@ -363,13 +363,19 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 8px;
+  padding: 6px 10px;
   background: transparent;
   border: none;
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.15s ease;
   color: var(--text-muted);
+}
+
+.nav-group-header .nav-group-title {
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
 }
 
 .nav-group-header:hover {
@@ -408,16 +414,16 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 10px;
+  padding: 7.5px 10px;
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-secondary);
   background: transparent;
   border: none;
   width: 100%;
   text-align: left;
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.15s ease;
 }
 
 .ml-command-item:hover {
@@ -426,20 +432,34 @@ html, body {
 }
 
 .ml-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  padding: 1.5px 6px;
-  border-radius: 4px;
-  color: var(--text-muted);
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  background-color: rgba(217, 119, 87, 0.11);
+  color: var(--accent-terracotta);
+  border: 1px solid rgba(217, 119, 87, 0.12);
+  padding: 2.5px 7.5px;
+  border-radius: 5px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   transition: all 0.15s ease;
 }
 
+:root[data-theme="dark"] .ml-tag {
+  background-color: rgba(217, 119, 87, 0.18);
+  color: #E07A5F;
+  border-color: rgba(217, 119, 87, 0.22);
+}
+
 .ml-command-item:hover .ml-tag {
-  color: var(--text-primary);
-  border-color: var(--border-default);
-  background-color: var(--bg-hover);
+  background-color: rgba(217, 119, 87, 0.20);
+  color: var(--accent-terracotta-hover);
+  border-color: rgba(217, 119, 87, 0.28);
+}
+
+:root[data-theme="dark"] .ml-command-item:hover .ml-tag {
+  background-color: rgba(217, 119, 87, 0.28);
+  color: #FFA588;
 }
 
 /* Sidebar Footer */
@@ -457,17 +477,19 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
+  padding: 9px 12px;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: 8px;
+  font-size: 13px;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .model-status-strip:hover {
   border-color: var(--border-strong);
+  background-color: var(--bg-card-hover);
 }
 
 .model-status-left {
@@ -778,22 +800,23 @@ html, body {
 }
 
 .hero-card {
-  background-color: var(--bg-card);
+  background-color: transparent;
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 14px 16px;
   text-align: left;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .hero-card:hover {
+  background-color: var(--bg-hover);
   border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
@@ -971,55 +994,132 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* Claude Style In-Chat Metric Cards */
+/* Minimalist Anti-SLOP In-Chat Metric System (No Bulky White Container) */
 .claude-card {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 16px;
-  margin: 12px 0;
-  box-shadow: var(--shadow-sm);
-  animation: card-appear 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 12px 0 16px 0;
+  box-shadow: none;
+  animation: card-appear 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes card-appear {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .claude-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 12px;
-  margin-top: 10px;
+  gap: 1px;
+  background-color: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 10px 0;
+  box-shadow: none;
 }
 
 .stat-pill {
   background-color: var(--bg-app);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border: none;
+  border-radius: 0;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.stat-pill:hover {
+  background-color: var(--bg-hover);
 }
 
 .stat-label {
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10.5px;
+  font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
 }
 
 .stat-val {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.val-good { color: #16a34a !important; }
+:root[data-theme="dark"] .val-good { color: #4ade80 !important; }
+.val-warn { color: #d97706 !important; }
+:root[data-theme="dark"] .val-warn { color: #fbbf24 !important; }
+.val-err  { color: #dc2626 !important; }
+:root[data-theme="dark"] .val-err  { color: #f87171 !important; }
+
+.checkpoint-path-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.checkpoint-path-note code {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: 11px;
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: var(--text-secondary);
+}
+
+/* Precision Biomarkers Grid for Diagnosis */
+.biomarkers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1px;
+  background-color: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.biomarker-cell {
+  background-color: var(--bg-app);
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: background-color 0.15s ease;
+}
+
+.biomarker-cell:hover {
+  background-color: var(--bg-hover);
+}
+
+.biomarker-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.biomarker-val {
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--text-primary);
 }
-
-.val-good { color: var(--accent-green) !important; }
-.val-warn { color: var(--accent-amber) !important; }
-.val-err  { color: var(--accent-red) !important; }
 
 /* Elegant Hairline Tables */
 .claude-table {
