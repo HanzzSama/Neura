@@ -1,621 +1,705 @@
 """
 chat_dataset.py
 ===============
-Kumpulan dataset percakapan (chat dataset) untuk Neura AI.
-Terbagi ke dalam berbagai kategori terstruktur dengan array percakapan
-yang mencakup informasi AI, machine learning, training model, evaluasi,
-prediksi, troubleshooting, sapaan, dan perintah sistem.
+Dataset percakapan dan modul konsultasi klinis untuk Neura AI.
+Menyediakan basis pengetahuan komprehensif seputar skrining dini daya ingat,
+gejala penyakit Alzheimer dan demensia, tes kognitif (MMSE, ADL),
+biomarker medis, gaya hidup pencegahan, serta panduan model XGBoost.
 """
 
 CATEGORIES = [
-    "informasi",
-    "pelatihan_model",
-    "evaluasi_metrik",
-    "prediksi_inferensi",
-    "troubleshooting",
+    "konsultasi_skrining",
+    "gejala_dan_keluhan",
+    "biomarker_dan_tes",
+    "pencegahan_dan_gaya_hidup",
+    "penanganan_dan_ke_dokter",
     "sapaan_dan_interaksi",
-    "panduan_perintah"
+    "panduan_perintah_model"
 ]
 
 CHAT_DATASET = {
     # =========================================================================
-    # KATEGORI: INFORMASI (General AI, ML, Deep Learning & Neura Knowledge)
+    # KATEGORI: KONSULTASI SKRINING (Alur Konsultasi & Skrining Mandiri)
     # =========================================================================
-    "informasi": [
+    "konsultasi_skrining": [
         {
-            "id": "info_001",
-            "topik": "Pengenalan Neura AI",
-            "kata_kunci": ["apa itu neura", "tentang neura", "siapa neura", "arsitektur neura"],
-            "tags": ["neura", "overview", "mvc"],
+            "id": "konsul_001",
+            "topik": "Mulai Konsultasi & Skrining Awal Daya Ingat",
+            "kata_kunci": [
+                "konsultasi", "mulai konsultasi", "mau konsultasi", "skrining daya ingat",
+                "cek memori", "tes ingatan", "periksa daya ingat", "bantu skrining", "apakah saya pikun"
+            ],
+            "tags": ["konsultasi", "skrining", "daya_ingat", "awal"],
+            "suggestions": [
+                "Apa perbedaan pikun biasa vs Alzheimer?",
+                "Jelaskan 10 tanda awal Alzheimer",
+                "Apa itu tes kognitif MMSE?",
+                "Jalankan simulasi risiko /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Bisa jelaskan apa itu Neura AI?"
+                    "content": "Halo Neura, saya ingin konsultasi mengenai daya ingat saya / keluarga saya."
                 },
                 {
                     "role": "assistant",
-                    "content": "Neura AI adalah platform asisten Machine Learning interaktif berbasis TensorFlow yang dibangun menggunakan arsitektur MVC (Model-View-Controller) modular. Neura menyediakan antarmuka web modern bergaya Claude AI yang memungkinkan Anda melatih model, menjalankan inferensi, dan memantau evaluasi metrik secara real-time melalui percakapan."
+                    "content": (
+                        "Halo! Saya **Neura**, asisten cerdas untuk skrining awal kesehatan daya ingat dan deteksi dini risiko Alzheimer.\n\n"
+                        "Untuk memulai konsultasi awal, Anda dapat menceritakan keluhan yang dirasakan atau menjawab 3 pertanyaan panduan ini:\n"
+                        "1. **Berapa usia** Anda atau anggota keluarga yang dikonsultasikan?\n"
+                        "2. **Keluhan apa yang paling sering muncul?** *(Contoh: sering lupa nama kerabat dekat, mengulang pertanyaan yang sama, atau bingung arah jalan)*\n"
+                        "3. **Apakah keluhan tersebut mulai mengganggu kemandirian harian?** *(Contoh: kesulitan mengurus keuangan, minum obat, atau memasak sendiri)*\n\n"
+                        "Ceritakan keluhan Anda dengan santai, dan saya akan bantu menganalisis indikasi awal serta tingkat risikonya.\n\n"
+                        "*(💡 Catatan: Neura adalah alat skrining awal berbasis Machine Learning XGBoost dengan akurasi 95.3%, bukan pengganti diagnosis medis resmi dokter spesialis saraf)*"
+                    )
                 }
             ]
         },
         {
-            "id": "info_002",
-            "topik": "Pengenalan TensorFlow",
-            "kata_kunci": ["apa itu tensorflow", "fungsi tensorflow", "google tensorflow"],
-            "tags": ["tensorflow", "framework", "deep_learning"],
+            "id": "konsul_002",
+            "topik": "Langkah Skrining Mandiri di Rumah",
+            "kata_kunci": [
+                "cara skrining mandiri", "langkah skrining", "tes sendiri di rumah",
+                "cara periksa sendiri", "tahapan skrining"
+            ],
+            "tags": ["skrining_mandiri", "panduan", "tahapan"],
+            "suggestions": [
+                "Berapa skor normal tes MMSE?",
+                "Kapan waktu terbaik ke dokter saraf?",
+                "Jalankan diagnosis klinis /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Apa itu TensorFlow dan apa fungsinya di dalam Neura?"
+                    "content": "Bagaimana cara melakukan skrining awal daya ingat di rumah?"
                 },
                 {
                     "role": "assistant",
-                    "content": "TensorFlow adalah pustaka open-source buatan Google untuk komputasi numerik berkinerja tinggi dan machine learning skala besar. Di dalam Neura, TensorFlow dan Keras digunakan sebagai core engine untuk mendefinisikan arsitektur Multi-Layer Perceptron (MLP), menghitung gradient loss, memperbarui bobot (weights), dan mengeksekusi inferensi tensor."
-                }
-            ]
-        },
-        {
-            "id": "info_003",
-            "topik": "Perbedaan AI, Machine Learning, dan Deep Learning",
-            "kata_kunci": ["perbedaan ai dan ml", "apa beda machine learning deep learning", "hierarki ai"],
-            "tags": ["ai", "machine_learning", "deep_learning", "dasar"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Apa perbedaan mendasar antara Artificial Intelligence, Machine Learning, dan Deep Learning?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Artificial Intelligence (AI) adalah payung luas untuk menciptakan mesin cerdas yang mampu meniru perilaku manusia. Machine Learning (ML) adalah cabang AI di mana sistem belajar dari data secara statistik tanpa diprogram secara eksplisit. Deep Learning (DL) adalah subset dari ML yang memanfaatkan jaringan saraf tiruan berlapis (Deep Neural Networks) untuk mempelajari representasi hierarkis data yang kompleks."
-                }
-            ]
-        },
-        {
-            "id": "info_004",
-            "topik": "Arsitektur Multi-Layer Perceptron (MLP)",
-            "kata_kunci": ["arsitektur mlp", "multi layer perceptron", "dense layer", "hidden layer"],
-            "tags": ["neural_network", "mlp", "arsitektur"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Bagaimana struktur jaringan neural network yang digunakan oleh Neura?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Model default Neura (BaseNeuralNetwork) menggunakan arsitektur feedforward MLP dengan konfigurasi:\n1. Input Layer: 128 fitur continuous (Float32 tensor)\n2. Hidden Layer 1: Dense 64 neuron dengan aktivasi ReLU\n3. Hidden Layer 2: Dense 32 neuron dengan aktivasi ReLU\n4. Output Layer: Dense 10 neuron dengan aktivasi Softmax untuk distribusi probabilitas multi-kelas."
-                }
-            ]
-        },
-        {
-            "id": "info_005",
-            "topik": "Fungsi Aktivasi ReLU dan Softmax",
-            "kata_kunci": ["apa itu relu", "fungsi softmax", "fungsi aktivasi"],
-            "tags": ["activation", "relu", "softmax", "matematika"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Mengapa kita menggunakan aktivasi ReLU pada hidden layer dan Softmax pada output layer?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "ReLU (Rectified Linear Unit) menghitung f(x) = max(0, x), yang efektif mengatasi vanishing gradient problem dan sangat cepat dihitung secara komputasi. Sedangkan Softmax menormalkan vektor output logit menjadi probabilitas dengan total nilai tepat 1.0, sehingga sangat ideal untuk klasifikasi multi-kelas."
-                }
-            ]
-        },
-        {
-            "id": "info_006",
-            "topik": "Konsep Backpropagation dan Gradient Descent",
-            "kata_kunci": ["apa itu backprop", "gradient descent", "cara belajar neural network"],
-            "tags": ["backpropagation", "optimasi", "training"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Bagaimana cara kerja backpropagation dalam melatih model?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Backpropagation bekerja dengan menghitung gradien parsial fungsi loss terhadap setiap bobot jaringan menggunakan aturan rantai kalkulus (chain rule). Gradien ini kemudian digunakan oleh optimizer (seperti Adam) melalui proses Gradient Descent untuk memperbarui bobot ke arah yang meminimalkan nilai loss secara bertahap."
-                }
-            ]
-        },
-        {
-            "id": "info_007",
-            "topik": "Mengatasi Overfitting dan Underfitting",
-            "kata_kunci": ["apa itu overfitting", "cara mengatasi underfitting", "generalisasi model"],
-            "tags": ["overfitting", "regularization", "best_practices"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Apa tanda-tanda model mengalami overfitting dan bagaimana cara mengatasinya?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Overfitting terjadi ketika training loss terus menurun namun validation loss mulai naik drastis (model menghafal noise data latih). Cara mengatasinya meliputi:\n1. Menambahkan Dropout layer (misal Dropout 0.2 - 0.3)\n2. Menggunakan L1/L2 Weight Regularization\n3. Menerapkan Early Stopping saat validation loss tidak lagi membaik\n4. Menambah jumlah dan keragaman data pelatihan."
-                }
-            ]
-        },
-        {
-            "id": "info_008",
-            "topik": "Arsitektur MVC dalam Neura",
-            "kata_kunci": ["mvc neura", "struktur mvc", "kenapa pakai mvc"],
-            "tags": ["mvc", "software_engineering", "arsitektur"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Kenapa Neura membagi kodenya ke dalam pola MVC?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Pola Model-View-Controller (MVC) memisahkan tanggung jawab sistem dengan jelas:\n- Model (app/models): Bertanggung jawab atas definisi neural network, kompilasi, pelatihan, dan checkpoint.\n- View (public/ & app/views): Bertanggung jawab atas visualisasi antarmuka web Claude UI dan output CLI.\n- Controller (server.py & app/controllers): Bertindak sebagai penghubung logika bisnis antara permintaan klien dan eksekusi model TensorFlow.\nPemisahan ini memudahkan pemeliharaan, modularitas pengujian, dan skalabilitas tim."
-                }
-            ]
-        },
-        {
-            "id": "info_009",
-            "topik": "Optimizer Adam",
-            "kata_kunci": ["apa itu adam optimizer", "kelebihan adam", "adaptive moment"],
-            "tags": ["optimizer", "adam", "gradient_descent"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Mengapa optimizer Adam paling sering digunakan pada neural network?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Adam (Adaptive Moment Estimation) menggabungkan keunggulan AdaGrad dan RMSProp. Adam memelihara estimasi rata-rata eksponensial dari gradien (momentum orde pertama) serta kuadrat gradien (orde kedua). Hal ini membuat laju pembelajaran (learning rate) beradaptasi secara dinamis untuk setiap parameter, menghasilkan konvergensi yang lebih cepat dan stabil."
-                }
-            ]
-        },
-        {
-            "id": "info_010",
-            "topik": "Categorical Crossentropy Loss",
-            "kata_kunci": ["categorical crossentropy", "fungsi loss klasifikasi", "rumus crossentropy"],
-            "tags": ["loss", "matematika", "klasifikasi"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Apa itu Categorical Crossentropy dan kapan digunakan?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Categorical Crossentropy adalah fungsi kerugian (loss function) standar untuk masalah klasifikasi multi-kelas di mana setiap sampel hanya memiliki satu label yang benar. Fungsi ini mengukur divergensi antara distribusi probabilitas prediksi model dengan label target one-hot encoded. Semakin mendekati 1 probabilitas kelas yang benar, semakin kecil nilai loss-nya."
+                    "content": (
+                        "Skrining awal mandiri dapat dilakukan dengan mengamati 4 aspek klinis utama:\n\n"
+                        "1. **Uji Memori Jangka Pendek**: Perhatikan apakah seseorang sering melupakan percakapan atau janji yang baru saja terjadi beberapa jam lalu.\n"
+                        "2. **Uji Orientasi Waktu & Tempat**: Tanyakan hari, tanggal, bulan, serta lokasi saat ini tanpa melihat kalender.\n"
+                        "3. **Skrining Kemandirian Aktivitas (ADL)**: Amati apakah masih mandiri dalam mengelola obat harian, berhitung belanjaan, atau menggunakan telepon.\n"
+                        "4. **Perubahan Afek & Perilaku**: Amati apakah ada penurunan minat sosial, rasa curiga berlebihan, atau mudah frustrasi saat berpikir.\n\n"
+                        "Jika ditemukan lebih dari 2 tanda di atas, disarankan melakukan evaluasi kognitif standar (seperti tes MMSE) atau konsultasi langsung ke Dokter Spesialis Neurologi (Sp.N)."
+                    )
                 }
             ]
         }
     ],
 
     # =========================================================================
-    # KATEGORI: PELATIHAN MODEL (Model Training & Epochs)
+    # KATEGORI: GEJALA DAN KELUHAN (Symptom Consultation)
     # =========================================================================
-    "pelatihan_model": [
+    "gejala_dan_keluhan": [
         {
-            "id": "train_001",
-            "topik": "Cara Melatih Model",
-            "kata_kunci": ["cara train model", "perintah training", "latih model"],
-            "tags": ["training", "command", "tutorial"],
+            "id": "gejala_001",
+            "topik": "Perbedaan Pikun Wajar (Penuaan) vs Penyakit Alzheimer",
+            "kata_kunci": [
+                "beda pikun dan alzheimer", "perbedaan pikun biasa", "apakah pikun itu alzheimer",
+                "pikun normal", "perbedaan demensia dan pikun", "kapan pikun dianggap bahaya"
+            ],
+            "tags": ["pikun", "penuaan", "alzheimer", "perbedaan"],
+            "suggestions": [
+                "Sebutkan 10 tanda awal Alzheimer",
+                "Orang tua saya sering lupa jalan pulang",
+                "Bagaimana cara mencegah kepikunan?"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Bagaimana cara melatih model di Neura?"
+                    "content": "Apa perbedaan antara pikun biasa karena usia tua dengan penyakit Alzheimer?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Anda dapat melatih model dengan mengetik perintah `/train [jumlah_epoch]`. Contohnya:\n- `/train 5` untuk melatih selama 5 epoch (standar)\n- `/train 10` untuk pelatihan yang lebih konvergen.\nProses training berjalan secara asynchronous di background sehingga web UI tetap responsif dengan progress bar real-time."
+                    "content": (
+                        "Perbedaan utamanya terletak pada **frekuensi**, **sifat kelupaan**, dan **dampaknya pada kemandirian**:\n\n"
+                        "| Aspek | Pikun Wajar (Penuaan Normal) | Penyakit Alzheimer / Demensia |\n"
+                        "| :--- | :--- | :--- |\n"
+                        "| **Memori** | Lupa letak barang sesekali, lalu ingat kembali | Lupa informasi baru, nama orang dekat, dan tidak ingat lagi |\n"
+                        "| **Penggunaan Barang** | Lupa di mana kacamata ditaruh | Lupa fungsi dari kacamata atau benda sehari-hari |\n"
+                        "| **Aktivitas Harian** | Masih mandiri membayar tagihan & bepergian | Kesulitan mengikuti resep masakan akrab, bingung bayar uang |\n"
+                        "| **Orientasi** | Lupa tanggal hari ini tapi tahu bulannya | Bingung di mana mereka berada atau bagaimana sampai di sana |\n"
+                        "| **Percakapan** | Kadang sulit mencari padanan kata | Sering berhenti di tengah kalimat dan mengulang kata yang sama |\n\n"
+                        "Jika kelupaan mulai mengganggu tugas sehari-hari, itu bukan sekadar penuaan normal, melainkan indikasi perlunya evaluasi medis."
+                    )
                 }
             ]
         },
         {
-            "id": "train_002",
-            "topik": "Pemilihan Jumlah Epoch",
-            "kata_kunci": ["berapa epoch", "epoch yang bagus", "rekomendasi epoch"],
-            "tags": ["epoch", "hyperparameter", "tuning"],
+            "id": "gejala_002",
+            "topik": "10 Tanda Awal Penyakit Alzheimer",
+            "kata_kunci": [
+                "10 tanda alzheimer", "gejala awal alzheimer", "ciri ciri alzheimer",
+                "tanda tanda demensia", "gejala kepikunan parah", "ciri pikun alzheimer"
+            ],
+            "tags": ["gejala_awal", "10_tanda", "warning_signs"],
+            "suggestions": [
+                "Bagaimana skrining tes MMSE?",
+                "Apa faktor risiko Alzheimer?",
+                "Simulasikan data klinis /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Berapa jumlah epoch yang ideal untuk dataset ini?"
+                    "content": "Apa saja 10 tanda dan gejala awal penyakit Alzheimer yang harus diwaspadai?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Untuk dataset klasifikasi sintetis 128-fitur pada Neura, 5 hingga 15 epoch biasanya sudah cukup untuk mencapai akurasi di atas 70%-80%. Memulai dengan 5 epoch disarankan untuk verifikasi cepat (`/train 5`), lalu naikkan ke 10-20 epoch jika validation loss masih terus menurun."
+                    "content": (
+                        "Berdasarkan standar medis *Alzheimer's Association*, berikut 10 tanda awal yang patut diwaspadai:\n\n"
+                        "1. **Gangguan daya ingat** yang mengganggu rutinitas sehari-hari.\n"
+                        "2. **Kesulitan merencanakan** atau memecahkan masalah hitungan sederhana.\n"
+                        "3. **Kesulitan menyelesaikan tugas yang akrab** (seperti rute jalan ke pasar langganan).\n"
+                        "4. **Disorientasi waktu dan tempat** (tidak tahu musim, tahun, atau cara pulang).\n"
+                        "5. **Gangguan persepsi visual** dan hubungan spasial (sulit mengukur jarak).\n"
+                        "6. **Masalah komunikasi verbal** (kesulitan menemukan kata atau menamai benda).\n"
+                        "7. **Salah meletakkan barang** di tempat aneh (misal: dompet di dalam kulkas).\n"
+                        "8. **Penurunan daya pertimbangan** (gampang tertipu uang atau abai kebersihan diri).\n"
+                        "9. **Menarik diri** dari hobi, pekerjaan, dan interaksi sosial.\n"
+                        "10. **Perubahan suasana hati & kepribadian** (menjadi mudah cemas, curiga, atau bingung)."
+                    )
                 }
             ]
         },
         {
-            "id": "train_003",
-            "topik": "Pengaruh Batch Size",
-            "kata_kunci": ["apa itu batch size", "pengaruh ukuran batch", "batch 32 vs 64"],
-            "tags": ["batch_size", "memory", "gradient"],
+            "id": "gejala_003",
+            "topik": "Keluhan Disorientasi dan Tersesat pada Lansia",
+            "kata_kunci": [
+                "sering lupa jalan pulang", "tersesat", "orang tua lupa jalan", "disorientasi tempat",
+                "kakek sering bingung arah", "nenek lupa rumah"
+            ],
+            "tags": ["disorientasi", "tersesat", "lansia", "gejala_kritis"],
+            "suggestions": [
+                "Kapan harus membawa orang tua ke dokter?",
+                "Tips menjaga keamanan pasien Alzheimer di rumah",
+                "/status"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Apa pengaruh batch size terhadap proses training model?"
+                    "content": "Orang tua saya usia 70 tahun mulai sering lupa jalan pulang dan bingung arah. Apakah ini tanda bahaya?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Batch size menentukan berapa banyak sampel yang diproses sebelum bobot model diperbarui:\n- Batch kecil (misal 16 atau 32): Menghasilkan update gradien yang lebih bervariasi (noisy), yang dapat membantu model keluar dari local minima, namun komputasinya lebih lambat pada GPU.\n- Batch besar (misal 128 atau 256): Menghitung gradien lebih stabil dan efisien dalam paralelisasi perangkat keras, namun memerlukan memori lebih besar."
+                    "content": (
+                        "**Ya, keluhan sering lupa jalan pulang dan disorientasi spasial adalah tanda peringatan klinis yang signifikan.**\n\n"
+                        "Pada otak penderita Alzheimer, area **hippocampus** dan **korteks entorhinal** (yang bertanggung jawab atas pemetaan navigasi spasial) sering kali menjadi bagian pertama yang mengalami atrofi neurodegeneratif.\n\n"
+                        "**Langkah pencegahan darurat yang disarankan:**\n"
+                        "1. Pasang tanda pengenal (gelang identitas atau kartu nama dengan nomor telepon keluarga) pada saku atau pakaian beliau.\n"
+                        "2. Gunakan perangkat GPS tracker atau fitur pelacak lokasi pada smartphone.\n"
+                        "3. Segera jadwalkan pemeriksaan dengan **Dokter Spesialis Saraf (Sp.N)** untuk tes fungsi kognitif dan MRI otak jika diperlukan."
+                    )
                 }
             ]
         },
         {
-            "id": "train_004",
-            "topik": "Memahami Learning Rate",
-            "kata_kunci": ["apa itu learning rate", "laju belajar", "learning rate terlalu besar"],
-            "tags": ["learning_rate", "hyperparameter", "optimasi"],
+            "id": "gejala_004",
+            "topik": "Perubahan Perilaku dan Emosi (Mudah Curiga / Agitasi)",
+            "kata_kunci": [
+                "perubahan perilaku", "mudah marah", "sering curiga", "halusinasi pikun",
+                "tuduh orang mencuri", "emosi tidak stabil lansia", "gelisah malam hari", "sundowning"
+            ],
+            "tags": ["perilaku", "behavioral", "psikologis", "sundowning"],
+            "suggestions": [
+                "Bagaimana cara merawat pasien Alzheimer?",
+                "Jelaskan biomarker BehavioralProblems",
+                "Jalankan skrining pasien /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Apa yang terjadi jika learning rate diset terlalu besar atau terlalu kecil?"
+                    "content": "Mengapa lansia dengan kepikunan sering mudah curiga, menuduh orang mencuri, atau gelisah saat sore menjelang malam?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Learning rate adalah laju langkah optimizer dalam memperbarui bobot:\n- Terlalu besar (misal > 0.1): Langkah pembaruan dapat melompati titik minimum global (overshooting) atau menyebabkan nilai loss meledak (NaN/divergen).\n- Terlalu kecil (misal < 0.00001): Proses belajar berjalan sangat lambat dan berisiko terjebak pada plateau atau local minima.\nNilai default standar yang baik untuk optimizer Adam adalah 0.001."
-                }
-            ]
-        },
-        {
-            "id": "train_005",
-            "topik": "Pelatihan Asynchronous pada Neura",
-            "kata_kunci": ["async training", "training background", "apakah ui ngefreeze"],
-            "tags": ["architecture", "threading", "server"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Apakah UI Neura akan freeze saat model sedang dilatih?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Tidak. Neura mengimplementasikan daemon thread worker terpisah di `server.py` yang dilindungi dengan mutex lock (`threading.Lock`). Klien web memantau kemajuan melalui endpoint `/api/train/progress` dengan interval polling otomatis, sehingga antarmuka tetap sepenuhnya interaktif."
-                }
-            ]
-        },
-        {
-            "id": "train_006",
-            "topik": "Penyimpanan Checkpoint Model",
-            "kata_kunci": ["dimana model disimpan", "checkpoint keras", "save model"],
-            "tags": ["checkpoint", "io", "storage"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Di mana checkpoint model tersimpan setelah proses training selesai?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Model tersimpan secara otomatis dalam format Keras 3 modern di path:\n`public/checkpoints/NeuralNetwork.keras`\nFile ini memuat arsitektur, bobot teroptimasi, konfigurasi kompilasi, serta state optimizer sehingga dapat langsung dimuat kembali untuk evaluasi atau inferensi."
-                }
-            ]
-        },
-        {
-            "id": "train_007",
-            "topik": "Mengecek Progres Training yang Sedang Berjalan",
-            "kata_kunci": ["cek progres training", "perintah progress", "apakah masih training"],
-            "tags": ["progress", "monitoring", "command"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Bagaimana cara melihat progres epoch saat pelatihan sedang berlangsung?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Ketik perintah `/progress` di kolom chat. Neura akan menampilkan tabel riwayat epoch yang memuat metrik Loss, Val Loss, Training Accuracy, dan Validation Accuracy secara terperinci."
+                    "content": (
+                        "Perubahan perilaku tersebut merupakan gejala neuropsikiatri umum pada demensia/Alzheimer:\n\n"
+                        "1. **Daya Ingat Menurun Menyebabkan Konfabulasi**: Ketika pasien lupa di mana meletakkan barang berharga, otak mereka mencoba mengisi kekosongan ingatan dengan penjelasan bahwa ada orang yang memindahkannya atau mencurinya.\n"
+                        "2. **Sindrom Sundowning**: Fenomena meningkatnya rasa gelisah, bingung, dan agitasi di sore hingga malam hari akibat kelelahan mental dan penurunan intensitas cahaya alami.\n"
+                        "3. **Biomarker Klinis**: Di Neura AI, faktor `BehavioralProblems` dimasukkan sebagai salah satu dari 32 biomarker prediktif karena memiliki bobot korelasi kuat terhadap stadium demensia.\n\n"
+                        "**Tips untuk keluarga**: Hindari mendebat pasien secara langsung. Validasi perasaannya, alihkan perhatian ke hal yang menyenangkan, dan jaga pencahayaan ruangan tetap terang di sore hari."
+                    )
                 }
             ]
         }
     ],
 
     # =========================================================================
-    # KATEGORI: EVALUASI & METRIK (Evaluation, Metrics & Reports)
+    # KATEGORI: BIOMARKER DAN TES KOGNITIF (Medical Metrics & Biomarkers)
     # =========================================================================
-    "evaluasi_metrik": [
+    "biomarker_dan_tes": [
         {
-            "id": "eval_001",
-            "topik": "Cara Evaluasi Model",
-            "kata_kunci": ["cara eval model", "perintah evaluate", "tes akurasi"],
-            "tags": ["eval", "accuracy", "command"],
+            "id": "tes_001",
+            "topik": "Penjelasan Tes MMSE (Mini-Mental State Examination)",
+            "kata_kunci": [
+                "apa itu mmse", "tes mmse", "skor mmse", "mini mental state examination",
+                "berapa skor normal mmse", "interpretasi mmse", "nilai mmse"
+            ],
+            "tags": ["mmse", "kognitif", "skor", "biomarker_kunci"],
+            "suggestions": [
+                "Apa itu skor ADL?",
+                "Jelaskan 32 biomarker Neura",
+                "Simulasikan MMSE dengan /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Bagaimana cara mengevaluasi akurasi model Neura?"
+                    "content": "Bisa jelaskan apa itu tes MMSE dan berapa skor normalnya?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Cukup ketik perintah `/eval` atau klik kartu 'Evaluate Metrics' pada halaman utama. Neura akan mengevaluasi checkpoint model terhadap dataset uji (test split) dan menampilkan metrik Test Loss dan Test Accuracy dalam bentuk kartu statistik minimalis."
+                    "content": (
+                        "**MMSE (Mini-Mental State Examination)** adalah tes kognitif berstandar internasional dengan total skor maksimal **30 poin** untuk menilai fungsi memori, orientasi, perhatian, kalkulasi, bahasa, dan kemampuan visuospasial.\n\n"
+                        "**Interpretasi Skor MMSE:**\n"
+                        "• **24 – 30**: Fungsi kognitif Normal (tidak ada indikasi demensia signifikan).\n"
+                        "• **19 – 23**: Gangguan Kognitif Ringan (*Mild Cognitive Impairment / MCI*).\n"
+                        "• **10 – 18**: Demensia / Alzheimer Stadium Sedang (*Moderate*).\n"
+                        "• **< 10**: Demensia Berat (*Severe*).\n\n"
+                        "Pada model Neura XGBoost, skor MMSE merupakan salah satu **top-3 biomarker paling berpengaruh** dalam membedakan pasien sehat vs pasien terindikasi Alzheimer."
+                    )
                 }
             ]
         },
         {
-            "id": "eval_002",
-            "topik": "Perbedaan Accuracy, Precision, dan Recall",
-            "kata_kunci": ["beda precision recall", "apa itu f1 score", "metrik evaluasi"],
-            "tags": ["precision", "recall", "f1_score", "teori"],
+            "id": "tes_002",
+            "topik": "Penjelasan Skor ADL (Activities of Daily Living)",
+            "kata_kunci": [
+                "apa itu adl", "skor adl", "activities of daily living", "kemandirian harian",
+                "fungsi aktivitas sehari hari", "skor kemandirian"
+            ],
+            "tags": ["adl", "kemandirian", "fungsional", "biomarker"],
+            "suggestions": [
+                "Apa itu FunctionalAssessment?",
+                "Bagaimana Neura menganalisis ADL?",
+                "Evaluasi performa model /eval"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Kapan akurasi saja tidak cukup dan kita membutuhkan Precision dan Recall?"
+                    "content": "Apa yang dimaksud dengan skor ADL (Activities of Daily Living) pada pasien Alzheimer?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Akurasi kurang representatif ketika dataset memiliki ketimpangan kelas (class imbalance):\n- Precision: Mengukur proporsi prediksi positif yang benar-benar positif (penting saat false positive berbiaya tinggi, misal spam filter).\n- Recall (Sensitivity): Mengukur proporsi seluruh kasus positif nyata yang berhasil dideteksi (kritis saat false negative berbahaya, misal diagnosis penyakit).\n- F1-Score: Rata-rata harmonik antara Precision dan Recall untuk keseimbangan evaluasi."
+                    "content": (
+                        "**ADL (Activities of Daily Living)** mengukur tingkat kemandirian fungsional seseorang dalam menjalankan aktivitas hidup sehari-hari.\n\n"
+                        "ADL dibagi menjadi dua tingkatan:\n"
+                        "1. **Basic ADL**: Kemandirian dasar (makan, mandi, berpakaian, mobilitas di tempat tidur, dan kebersihan toilet).\n"
+                        "2. **Instrumental ADL (IADL)**: Kemandirian kompleks (mengelola uang, memasak, mencuci baju, minum obat sesuai resep, belanja, dan menggunakan transportasi).\n\n"
+                        "Pada penyakit Alzheimer tahap awal, IADL biasanya yang pertama kali menurun sebelum disusul oleh Basic ADL. Penurunan skor ADL secara konsisten adalah penanda klinis penting untuk evaluasi komprehensif."
+                    )
                 }
             ]
         },
         {
-            "id": "eval_003",
-            "topik": "Lokasi Laporan Evaluasi",
-            "kata_kunci": ["dimana laporan evaluasi", "report json", "folder report"],
-            "tags": ["reports", "json", "filesystem"],
+            "id": "tes_003",
+            "topik": "32 Biomarker yang Dianalisis oleh Neura AI",
+            "kata_kunci": [
+                "32 biomarker", "biomarker neura", "fitur apa saja yang dianalisis",
+                "parameter pemeriksaan", "data apa saja yang dipakai neura"
+            ],
+            "tags": ["biomarkers", "32_fitur", "dataset_klinis", "xgboost"],
+            "suggestions": [
+                "Lihat arsitektur lengkap /status",
+                "Evaluasi metrik akurasi /eval",
+                "Jalankan inferensi /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Di mana file hasil evaluasi tersimpan?"
+                    "content": "Parameter atau biomarker apa saja yang dianalisis oleh Neura untuk mendiagnosis Alzheimer?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Setiap eksekusi evaluasi menghasilkan laporan berbasis JSON terstruktur yang disimpan di folder:\n`public/reports/evaluation_report.json`\nLaporan ini memuat timestamp, konfigurasi model, serta ringkasan metrik evaluasi lengkap."
-                }
-            ]
-        },
-        {
-            "id": "eval_004",
-            "topik": "Membaca Nilai Loss",
-            "kata_kunci": ["arti nilai loss", "kenapa loss penting", "loss yang baik berapa"],
-            "tags": ["loss", "interpretation", "metrics"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Bagaimana cara mengartikan nilai loss yang baik?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Loss merepresentasikan seberapa jauh probabilitas prediksi model dari label sebenarnya. Nilai loss yang baik adalah yang mendekati 0. Jika model memiliki 10 kelas dan menebak secara acak, nilai awal Categorical Crossentropy berkisar di ln(10) ≈ 2.30. Nilai loss di bawah 1.0 menunjukkan model telah mempelajari pola dengan baik."
+                    "content": (
+                        "Model **XGBoost Classifier** pada Neura AI dilatih menggunakan **32 biomarker klinis** dari 2.149 catatan pasien, yang dikelompokkan ke dalam 5 domain utama:\n\n"
+                        "1. **Fungsi Kognitif & Fungsional**: MMSE, ADL, FunctionalAssessment, MemoryComplaints, BehavioralProblems.\n"
+                        "2. **Karakteristik Demografi**: Usia (Age), Jenis Kelamin (Gender), Etnisitas, Tingkat Pendidikan.\n"
+                        "3. **Riwayat Kesehatan & Komorbiditas**: Riwayat Keluarga Alzheimer, Kardiovaskular, Diabetes, Hipertensi, Cedera Kepala (HeadInjury).\n"
+                        "4. **Biomarker Medis & Laboratorium**: Tekanan Darah Sistolik/Diastolik, Kolesterol Total, HDL, LDL, Trigliserida, BMI.\n"
+                        "5. **Gaya Hidup**: Aktivitas Fisik (PhysicalActivity), Kualitas Tidur (SleepQuality), Merokok, Konsumsi Alkohol, Pola Diet.\n\n"
+                        "Kombinasi 32 dimensi ini memungkinkan Neura menghasilkan estimasi risiko dengan **Akurasi 95.35%** dan **ROC-AUC 94.11%**."
+                    )
                 }
             ]
         }
     ],
 
     # =========================================================================
-    # KATEGORI: PREDIKSI & INFERENSI (Inference & Class Probabilities)
+    # KATEGORI: PENCEGAHAN DAN GAYA HIDUP (Prevention & Brain Health)
     # =========================================================================
-    "prediksi_inferensi": [
+    "pencegahan_dan_gaya_hidup": [
         {
-            "id": "pred_001",
-            "topik": "Menjalankan Prediksi",
-            "kata_kunci": ["cara prediksi", "jalankan inferensi", "predict"],
-            "tags": ["predict", "inference", "command"],
+            "id": "cegah_001",
+            "topik": "Pola Makan dan Diet Ramah Otak (Diet MIND & Mediterania)",
+            "kata_kunci": [
+                "makanan pencegah alzheimer", "diet alzheimer", "diet mind", "diet mediterania",
+                "makanan untuk otak", "nutrisi cegah pikun", "cara menjaga otak sehat"
+            ],
+            "tags": ["diet", "nutrisi", "mind_diet", "pencegahan"],
+            "suggestions": [
+                "Olahraga apa yang baik untuk otak?",
+                "Apakah senam otak efektif?",
+                "Konsultasi awal daya ingat"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Bagaimana cara menjalankan prediksi pada Neura?"
+                    "content": "Makanan atau pola diet apa yang terbukti ilmiah dapat menurunkan risiko Alzheimer?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Ketik perintah `/predict` atau klik tombol chip '🔮 /predict'. Neura akan membuat sampel vektor 128-dimensi secara acak, mengumpankannya ke jaringan neural network, lalu menampilkan kelas prediksi teratas serta progress bar probabilitas top 5 kelas."
+                    "content": (
+                        "Penelitian klinis membuktikan bahwa **Diet MIND** (*Mediterranean-DASH Intervention for Neurodegenerative Delay*) dapat menurunkan risiko Alzheimer hingga 53% jika diterapkan secara konsisten.\n\n"
+                        "**10 Makanan yang Sangat Dianjurkan:**\n"
+                        "1. **Sayuran berdaun hijau** (bayam, kale, brokoli) — minimal 6 porsi/minggu.\n"
+                        "2. **Buah beri** (blueberry, strawberry) — kaya antioksidan antosianin.\n"
+                        "3. **Kacang-kacangan** (almond, walnut) — kaya vitamin E dan lemak sehat.\n"
+                        "4. **Ikan kaya Omega-3** (salmon, sarden, kembung) — minimal 1x per minggu.\n"
+                        "5. **Minyak zaitun murni** (*extra virgin olive oil*) sebagai minyak utama.\n"
+                        "6. **Biji-bijian utuh** (oatmeal, beras merah, quinoa).\n"
+                        "7. **Unggas tanpa kulit** (ayam, kalkun).\n\n"
+                        "**Makanan yang Perlu Dibatasi:** Makanan olahan tinggi gula, gorengan, mentega berlebih, dan daging merah berlemak tinggi."
+                    )
                 }
             ]
         },
         {
-            "id": "pred_002",
-            "topik": "Arti Softmax Probability Bar",
-            "kata_kunci": ["apa arti probabilitas prediksi", "confidence score", "tingkat keyakinan"],
-            "tags": ["probability", "softmax", "confidence"],
+            "id": "cegah_002",
+            "topik": "Aktivitas Fisik dan Senam Otak untuk Proteksi Kognitif",
+            "kata_kunci": [
+                "olahraga untuk otak", "senam otak", "latihan kognitif", "cara melatih memori",
+                "aktivitas fisik alzheimer", "mencegah kepikunan lansia"
+            ],
+            "tags": ["olahraga", "latihan_otak", "neuroplastisitas", "pencegahan"],
+            "suggestions": [
+                "Apa pentingnya tidur cukup untuk otak?",
+                "Tanda awal yang perlu diwaspadai",
+                "Jalankan prediksi /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Apa arti nilai persentase confidence pada hasil prediksi?"
+                    "content": "Bagaimana aktivitas fisik dan stimulasi mental membantu mencegah kepikunan pada lansia?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Nilai persentase tersebut dihasilkan dari fungsi aktivasi Softmax di output layer. Nilai 85% pada Class_3 berarti model memiliki keyakinan 85% bahwa vektor masukan termasuk ke dalam Class_3 dibandingkan 9 kelas lainnya. Total seluruh probabilitas dari ke-10 kelas selalu bernilai 100%."
+                    "content": (
+                        "Dua pilar ini merangsang pembentukan saraf baru (*neurogenesis*) dan memperkuat koneksi sinaps di otak:\n\n"
+                        "1. **Olahraga Aerobik Teratur (150 menit/minggu)**:\n"
+                        "   • Jalan cepat, berenang, bersepeda statis, atau senam lansia.\n"
+                        "   • Meningkatkan aliran darah ke otak dan menstimulasi pelepasan protein **BDNF** (*Brain-Derived Neurotrophic Factor*) yang melindungi sel saraf hippocampus dari kematian prematur.\n\n"
+                        "2. **Stimulasi Kognitif Berkelanjutan (Senam Otak)**:\n"
+                        "   • Belajar keterampilan baru (bahasa baru, instrumen musik, merajut, memasak resep baru).\n"
+                        "   • Membaca buku, mengisi teka-teki silang, bermain catur, atau puzzle logika.\n"
+                        "   • Interaksi sosial aktif (berkumpul bersama keluarga, komunitas relawan) terbukti signifikan memperlambat penuaan kognitif."
+                    )
                 }
             ]
         },
         {
-            "id": "pred_003",
-            "topik": "Input Dimensi Model",
-            "kata_kunci": ["berapa dimensi input", "bentuk tensor input", "input shape"],
-            "tags": ["tensor", "dimensions", "shape"],
+            "id": "cegah_003",
+            "topik": "Kualitas Tidur dan Pembersihan Plak Amiloid di Otak",
+            "kata_kunci": [
+                "pengaruh tidur pada alzheimer", "tidur malam dan pikun", "insomnia dan demensia",
+                "sistem glimfatik", "plak amiloid tidur"
+            ],
+            "tags": ["tidur", "sleep_quality", "glimfatik", "plak_amiloid"],
+            "suggestions": [
+                "Tips makanan ramah otak",
+                "Cek status kesiapan model /status",
+                "Mulai skrining daya ingat"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Berapa dimensi data masukan yang dibutuhkan model Neura untuk melakukan inferensi?"
+                    "content": "Apakah kurang tidur atau sering insomnia bisa memicu terjadinya penyakit Alzheimer?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Model menerima tensor dengan dimensi input `[None, 128]`, yang berarti batch data kontinu dengan 128 fitur per baris sampel berformat Float32."
+                    "content": (
+                        "**Ya, kualitas tidur memiliki hubungan kausal langsung dengan risiko Alzheimer.**\n\n"
+                        "Saat kita tidur nyenyak (*deep sleep / non-REM slow-wave sleep*), otak mengaktifkan **Sistem Glimfatik** (*Glymphatic System*):\n"
+                        "• Sistem glimfatik memompa cairan serebrospinal untuk 'membersihkan' racun metabolik otak yang menumpuk di siang hari, terutama **protein beta-amiloid** dan **tau** (dua penyebab utama kematian sel saraf pada Alzheimer).\n"
+                        "• Penelitian menunjukkan bahwa kurang tidur kronis menyebabkan penumpukan plak beta-amiloid meningkat hingga 30% lebih cepat.\n\n"
+                        "**Rekomendasi**: Pertahankan jadwal tidur teratur 7–8 jam per malam, batasi kafein setelah jam 2 siang, dan hindari layar gadget 1 jam sebelum tidur."
+                    )
                 }
             ]
         }
     ],
 
     # =========================================================================
-    # KATEGORI: TROUBLESHOOTING & SOLUSI ERROR (Debugging & Diagnostics)
+    # KATEGORI: PENANGANAN DAN KE DOKTER (Clinical Referral & Caregiving)
     # =========================================================================
-    "troubleshooting": [
+    "penanganan_dan_ke_dokter": [
         {
-            "id": "err_001",
-            "topik": "Status No Checkpoint / Model Not Trained",
-            "kata_kunci": ["no checkpoint", "model belum dilatih", "checkpoint tidak ditemukan"],
-            "tags": ["checkpoint", "error", "solution"],
+            "id": "dokter_001",
+            "topik": "Kapan Harus Segera Membawa Pasien ke Dokter Spesialis Saraf?",
+            "kata_kunci": [
+                "kapan ke dokter", "dokter apa untuk alzheimer", "periksa ke mana",
+                "spesialis saraf", "neurolog", "tanda bahaya pikun"
+            ],
+            "tags": ["rujukan", "dokter_saraf", "neurolog", "pemeriksaan_medis"],
+            "suggestions": [
+                "Apa saja yang perlu disiapkan ke dokter?",
+                "Apakah Alzheimer bisa disembuhkan?",
+                "Simulasikan data skrining /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Kenapa status model saya menunjukkan 'No Checkpoint'?"
+                    "content": "Kapan sebaiknya kita membawa anggota keluarga periksa ke dokter spesialis saraf?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Status 'No Checkpoint' berarti file bobot `public/checkpoints/NeuralNetwork.keras` belum ditemukan. Solusinya sangat mudah: cukup jalankan perintah `/train 5` untuk melatih model pertama kali. Setelah pelatihan selesai, checkpoint akan tersimpan otomatis dan status berubah menjadi 'Model Ready'."
+                    "content": (
+                        "Segera jadwalkan konsultasi dengan **Dokter Spesialis Neurologi / Saraf (Sp.N)** jika Anda melihat salah satu tanda bahaya (*red flags*) berikut:\n\n"
+                        "1. **Disorientasi parah**: Tidak mengenali rumah sendiri, tersesat di rute biasa, atau lupa nama anak/pasangan.\n"
+                        "2. **Kesulitan melakukan aktivitas dasar mandiri**: Tidak bisa lagi mengenakan pakaian sendiri, lupa cara makan, atau abai kebersihan.\n"
+                        "3. **Perubahan kepribadian mendadak**: Menjadi sangat paranoid, menuduh orang lain tanpa alasan, atau agresif.\n"
+                        "4. **Penurunan kognitif cepat**: Perburukan ingatan yang terjadi drastis dalam beberapa bulan.\n\n"
+                        "**Dokter yang tepat dikunjungi:**\n"
+                        "• Dokter Spesialis Saraf / Neurologi (Sp.N), khususnya konsultan Neurobehavior.\n"
+                        "• Dokter Spesialis Kedokteran Jiwa (Sp.KJ) / Psikiater Geriatri jika didominasi perubahan perilaku/emosi."
+                    )
                 }
             ]
         },
         {
-            "id": "err_002",
-            "topik": "Mengatasi Port 5000 Sudah Digunakan",
-            "kata_kunci": ["port 5000 in use", "address already in use", "gagal jalankan server"],
-            "tags": ["port", "networking", "server_error"],
+            "id": "dokter_002",
+            "topik": "Apakah Penyakit Alzheimer Bisa Disembuhkan?",
+            "kata_kunci": [
+                "apakah alzheimer bisa sembuh", "obat alzheimer", "apakah pikun bisa sembuh",
+                "terapi alzheimer", "pengobatan demensia"
+            ],
+            "tags": ["pengobatan", "prognosis", "terapi", "edukasi_medis"],
+            "suggestions": [
+                "Bagaimana cara memperlambat Alzheimer?",
+                "Tips merawat lansia dengan demensia",
+                "Cek status model /status"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Apa yang harus dilakukan jika server gagal running karena port 5000 sudah terpakai?"
+                    "content": "Apakah penyakit Alzheimer bisa disembuhkan total?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Pada Windows PowerShell, Anda dapat mengecek dan mematikan proses yang memakai port 5000 dengan:\n```powershell\nGet-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess | Stop-Process -Force\n```\nAtau ganti port default di file `server.py` pada baris `app.run(port=5001)`."
+                    "content": (
+                        "Hingga saat ini, **penyakit Alzheimer belum memiliki obat yang dapat menyembuhkannya secara total** karena merupakan penyakit neurodegeneratif progresif.\n\n"
+                        "Namun, **deteksi dini dan terapi medis yang tepat sangat penting** karena dapat:\n"
+                        "1. **Memperlambat perburukan gejala**: Obat golongan *Cholinesterase Inhibitors* (seperti Donepezil, Rivastigmine) dan *NMDA Receptor Antagonists* (Memantine) dapat membantu menjaga transmisi neurotransmiter otak lebih lama.\n"
+                        "2. **Menjaga kemandirian dan kualitas hidup**: Terapi stimulasi kognitif, fisioterapi, dan terapi okupasi membantu pasien tetap mandiri lebih lama.\n"
+                        "3. **Mempersiapkan keluarga & pengasuh (*caregiver*)**: Memberikan waktu bagi keluarga untuk menyusun perencanaan perawatan dan lingkungan yang aman.\n\n"
+                        "Itulah mengapa skrining dini menggunakan AI seperti Neura sangat krusial agar intervensi dapat dimulai pada stadium seringan mungkin."
+                    )
                 }
             ]
         },
         {
-            "id": "err_003",
-            "topik": "Error Loss bernilai NaN",
-            "kata_kunci": ["loss nan", "loss meledak", "exploding gradient"],
-            "tags": ["nan", "gradient", "numerical_stability"],
+            "id": "dokter_003",
+            "topik": "Tips Menjaga Keamanan Pasien Alzheimer di Rumah",
+            "kata_kunci": [
+                "tips menjaga keamanan pasien alzheimer di rumah", "keamanan pasien alzheimer",
+                "cara mengamankan rumah untuk lansia pikun", "mencegah pasien alzheimer tersesat",
+                "tips keselamatan lansia di rumah", "keamanan rumah lansia", "mencegah lansia kabur"
+            ],
+            "tags": ["keamanan", "keselamatan_rumah", "caregiver", "pencegahan_tersesat"],
+            "suggestions": [
+                "Panduan merawat pasien Alzheimer untuk caregiver",
+                "Kapan harus membawa orang tua ke dokter?",
+                "/predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Mengapa nilai loss pada training bisa menghasilkan angka NaN?"
+                    "content": "Bagaimana tips menjaga keamanan pasien Alzheimer di rumah agar tidak celaka atau tersesat?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Loss bernilai NaN biasanya disebabkan oleh Exploding Gradients atau ketidakstabilan numerik:\n1. Learning rate terlalu besar (coba turunkan dari 0.01 ke 0.001)\n2. Data masukan belum dinormalisasi (nilai fitur terlalu besar tanpa scikit StandardScaler)\n3. Pembagian dengan nol pada rumus logaritma loss."
+                    "content": (
+                        "Menjaga keselamatan fisik pasien Alzheimer di rumah memerlukan adaptasi lingkungan (*dementia-friendly environment*):\n\n"
+                        "1. **Pencegahan Tersesat (*Wandering Prevention*)**:\n"
+                        "   • Pasang kunci tambahan atau sensor pintu di luar jangkauan pandangan mata pasien (misalnya di bagian atas atau bawah pintu).\n"
+                        "   • Berikan gelang identitas medis anti-lepas atau sematkan GPS tracker pada sepatu/pakaian pasien.\n\n"
+                        "2. **Pencegahan Cedera & Jatuh (*Fall Prevention*)**:\n"
+                        "   • Pasang pegangan tangan (*grab bars*) di kamar mandi dan gunakan alas karet anti-selip.\n"
+                        "   • Singkirkan karpet lepas, kabel melintang, dan barang yang berpotensi menyebabkan tersandung.\n"
+                        "   • Pastikan penerangan rumah cukup terang, terutama lampu malam otomatis di jalur kamar tidur menuju toilet.\n\n"
+                        "3. **Keamanan Dapur & Obat-Obatan**:\n"
+                        "   • Simpan semua obat-obatan dalam kotak terkunci; berikan obat hanya dengan pengawasan langsung caregiver.\n"
+                        "   • Pasang pengaman kompor gas dan simpan pisau atau benda tajam di lemari khusus."
+                    )
                 }
             ]
         },
         {
-            "id": "err_004",
-            "topik": "Script Execution Disabled di Windows PowerShell",
-            "kata_kunci": ["activate.ps1 cannot be loaded", "execution of scripts is disabled"],
-            "tags": ["powershell", "windows", "venv"],
+            "id": "dokter_004",
+            "topik": "Panduan Merawat Pasien Alzheimer untuk Caregiver",
+            "kata_kunci": [
+                "panduan merawat pasien alzheimer untuk caregiver", "bagaimana cara merawat pasien alzheimer",
+                "tips merawat lansia dengan demensia", "cara menghadapi orang tua pikun",
+                "tips untuk caregiver alzheimer", "cara merawat alzheimer"
+            ],
+            "tags": ["caregiver", "panduan_perawatan", "komunikasi_empati", "kesejahteraan_pengasuh"],
+            "suggestions": [
+                "Tips menjaga keamanan pasien Alzheimer di rumah",
+                "Persiapan saat periksa ke dokter spesialis saraf",
+                "/status"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Kenapa saya tidak bisa mengaktifkan virtual environment di PowerShell?"
+                    "content": "Bagaimana panduan merawat pasien Alzheimer sehari-hari bagi kami sebagai caregiver?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Windows secara default membatasi eksekusi skrip PowerShell. Buka PowerShell dan jalankan perintah kebijakan berikut:\n```powershell\nSet-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser\n```\nSetelah itu, jalankan kembali skrip aktivasi: `venv\\Scripts\\Activate.ps1`."
+                    "content": (
+                        "Merawat penderita Alzheimer (*caregiving*) membutuhkan kesabaran, struktur rutin, dan empati komunikasi:\n\n"
+                        "1. **Teknik Komunikasi Efektif**:\n"
+                        "   • Bicara dengan nada tenang, tatap mata, gunakan kalimat pendek dan instruksi satu per satu.\n"
+                        "   • **Hindari berdebat**: Bila pasien bersikeras pada hal keliru (delusi ringan), jangan didebat. Validasi emosinya lalu alihkan perhatian (*distract & redirect*).\n\n"
+                        "2. **Bangun Rutinitas Terstruktur**:\n"
+                        "   • Jadwalkan jam bangun, makan, aktivitas santai, mandi, dan tidur pada waktu yang sama setiap hari untuk meminimalkan kebingungan (*confusion*).\n"
+                        "   • Libatkan pasien dalam aktivitas bermakna sederhana (melipat handuk, menyiram tanaman, mendengarkan lagu nostalgia masa muda).\n\n"
+                        "3. **Cegah Burnout pada Caregiver**:\n"
+                        "   • Bagi tugas perawatan dengan anggota keluarga lain secara bergantian.\n"
+                        "   • Luangkan waktu untuk istirahat pribadi (*respite care*), karena kesehatan mental caregiver sangat menentukan kualitas hidup pasien."
+                    )
+                }
+            ]
+        },
+        {
+            "id": "dokter_005",
+            "topik": "Persiapan Saat Membawa Pasien ke Dokter Spesialis Saraf",
+            "kata_kunci": [
+                "persiapan saat periksa ke dokter spesialis saraf", "apa saja yang perlu disiapkan ke dokter",
+                "persiapan saat membawa pasien ke dokter", "persiapan periksa saraf",
+                "apa yang harus dibawa ke dokter saraf", "catatan untuk dokter saraf"
+            ],
+            "tags": ["persiapan_konsultasi", "dokter_saraf", "rekam_medis", "asesmen_kognitif"],
+            "suggestions": [
+                "Kapan harus membawa orang tua ke dokter?",
+                "Penjelasan tes MMSE",
+                "/predict"
+            ],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Apa saja hal penting yang harus disiapkan keluarga sebelum membawa pasien periksa ke dokter spesialis saraf?"
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Agar pemeriksaan dengan **Dokter Spesialis Saraf (Sp.N)** berjalan optimal, siapkan beberapa hal penting berikut:\n\n"
+                        "1. **Catatan Kronologis Gejala (*Symptom Diary*)**:\n"
+                        "   • Kapan keluhan pertama kali disadari dan seberapa sering terjadi (misal: frekuensi tersesat, lupa meletakkan barang).\n"
+                        "   • Perubahan suasana hati, pola tidur, nafsu makan, atau perilaku agresif/curiga.\n\n"
+                        "2. **Daftar Obat-Obatan & Riwayat Medis Lengkap**:\n"
+                        "   • Bawa semua obat resep, suplemen, atau obat herbal yang sedang dikonsumsi pasien (untuk mengecek interaksi obat yang bisa memicu kebingungan).\n"
+                        "   • Riwayat penyakit terdahulu: hipertensi, stroke, diabetes, trauma kepala, atau riwayat keluarga dengan demensia.\n\n"
+                        "3. **Tingkat Kemandirian Harian (*Activities of Daily Living - ADL*)**:\n"
+                        "   • Catat apakah pasien masih mandiri mandi, makan, berpakaian, atau mengurus keuangan sendiri.\n\n"
+                        "Dokter saraf biasanya akan melakukan tes kognitif singkat (seperti MMSE atau MoCA) dan dapat merekomendasikan pemeriksaan penunjang seperti MRI otak atau tes laboratorium darah."
+                    )
                 }
             ]
         }
     ],
 
     # =========================================================================
-    # KATEGORI: SAPAAN & INTERAKSI KASUAL (Greetings & Casual Dialogue)
+    # KATEGORI: SAPAAN DAN INTERAKSI (Greetings & Interaction)
     # =========================================================================
     "sapaan_dan_interaksi": [
         {
-            "id": "greet_001",
-            "topik": "Sapaan Pagi, Siang, Malam",
-            "kata_kunci": ["halo", "hai", "selamat pagi", "selamat malam", "hi"],
-            "tags": ["greeting", "casual"],
+            "id": "salam_001",
+            "topik": "Sapaan dan Pengenalan Neura AI",
+            "kata_kunci": ["halo", "hai", "selamat pagi", "selamat siang", "selamat malam", "assalamualaikum", "hi neura"],
+            "tags": ["sapaan", "halo", "perkenalan"],
+            "suggestions": [
+                "Saya ingin konsultasi daya ingat",
+                "Apa saja gejala awal Alzheimer?",
+                "Jelaskan cara kerja Neura",
+                "Coba diagnosis pasien /predict"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Halo Neura, selamat pagi!"
+                    "content": "Halo Neura!"
                 },
                 {
                     "role": "assistant",
-                    "content": "Halo! Selamat pagi. Senang bertemu dengan Anda. Ada proyek machine learning atau eksperimen TensorFlow yang ingin kita kerjakan hari ini?"
+                    "content": (
+                        "Halo! Selamat datang di **Neura AI** — asisten cerdas untuk skrining kesehatan daya ingat dan deteksi dini risiko penyakit Alzheimer.\n\n"
+                        "Apa yang bisa saya bantu hari ini?\n"
+                        "• **Konsultasi & Skrining**: Anda bisa menceritakan keluhan daya ingat Anda atau anggota keluarga.\n"
+                        "• **Edukasi Medis**: Tanyakan mengenai gejala, tes kognitif MMSE, perbedaan pikun normal vs Alzheimer, atau tips pencegahan.\n"
+                        "• **Simulasi Klinis**: Ketik `/predict` untuk melihat demonstrasi analisis 32 biomarker klinis berbasis XGBoost."
+                    )
                 }
             ]
         },
         {
-            "id": "greet_002",
-            "topik": "Menanyakan Kemampuan",
-            "kata_kunci": ["apa yang bisa kamu lakukan", "kemampuan kamu apa", "fitur kamu"],
-            "tags": ["capabilities", "overview"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Apa saja hal yang bisa kamu bantu untuk saya?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Saya bisa membantu Anda:\n1. Melatih model neural network (`/train [n]`)\n2. Mengevaluasi metrik akurasi dan loss (`/eval`)\n3. Menjalankan inferensi dan menghitung probabilitas softmax (`/predict`)\n4. Memeriksa status dan arsitektur model (`/status`)\n5. Menjawab pertanyaan seputar teori AI, Deep Learning, dan arsitektur kode MVC."
-                }
-            ]
-        },
-        {
-            "id": "greet_003",
+            "id": "salam_002",
             "topik": "Ucapan Terima Kasih",
-            "kata_kunci": ["terima kasih", "makasih", "thanks", "thank you"],
-            "tags": ["gratitude", "polite"],
+            "kata_kunci": ["terima kasih", "makasih", "thanks", "thank you", "makasih ya neura"],
+            "tags": ["terima_kasih", "penutup"],
+            "suggestions": [
+                "Bagaimana cara menjaga kesehatan otak?",
+                "Jalankan evaluasi model /eval",
+                "Lihat panduan perintah /help"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Terima kasih banyak atas bantuannya!"
+                    "content": "Terima kasih banyak atas penjelasannya, Neura."
                 },
                 {
                     "role": "assistant",
-                    "content": "Sama-sama! Senang bisa membantu Anda. Jika ada pertanyaan atau eksperimen model lainnya, silakan tanyakan kapan saja!"
-                }
-            ]
-        },
-        {
-            "id": "greet_004",
-            "topik": "Pamitan / Sampai Jumpa",
-            "kata_kunci": ["sampai jumpa", "dadah", "bye", "selamat tinggal"],
-            "tags": ["farewell", "polite"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Sampai jumpa nanti, Neura!"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Sampai jumpa! Selamat melanjutkan aktivitas Anda dan semoga eksperimen machine learning Anda berjalan sukses!"
+                    "content": (
+                        "Sama-sama! Senang bisa membantu Anda memahami kesehatan kognitif dan pencegahan penyakit Alzheimer.\n\n"
+                        "Jaga selalu kesehatan otak dengan pola makan bernutrisi, istirahat cukup, dan tetap aktif secara mental serta sosial. Jika ada hal lain yang ingin dikonsultasikan, jangan ragu untuk bertanya lagi!"
+                    )
                 }
             ]
         }
     ],
 
     # =========================================================================
-    # KATEGORI: PANDUAN & PERINTAH SISTEM (System Commands & Shortcuts)
+    # KATEGORI: PANDUAN MODEL DAN PERINTAH (ML Engine & Commands)
     # =========================================================================
-    "panduan_perintah": [
+    "panduan_perintah_model": [
         {
-            "id": "cmd_001",
-            "topik": "Daftar Semua Perintah Chat",
-            "kata_kunci": ["daftar perintah", "list command", "/help", "perintah apa saja"],
-            "tags": ["commands", "help", "guide"],
+            "id": "model_001",
+            "topik": "Arsitektur Algoritma XGBoost pada Neura",
+            "kata_kunci": [
+                "arsitektur model", "algoritma apa yang dipakai", "bagaimana cara kerja neura",
+                "kenapa xgboost", "apa itu xgboost", "akurasi neura"
+            ],
+            "tags": ["xgboost", "arsitektur", "akurasi", "mesin_ml"],
+            "suggestions": [
+                "Cek status sistem /status",
+                "Evaluasi performa model /eval",
+                "Latih model /train 5"
+            ],
             "percakapan": [
                 {
                     "role": "user",
-                    "content": "Tampilkan semua perintah yang bisa saya gunakan."
+                    "content": "Bagaimana cara kerja algoritma Machine Learning yang digunakan oleh Neura?"
                 },
                 {
                     "role": "assistant",
-                    "content": "Berikut adalah perintah utama yang didukung oleh Neura:\n- `/status` : Memeriksa kesiapan checkpoint, environment, dan nama model.\n- `/train [N]` : Melatih model selama N epoch (default: 5).\n- `/eval` : Menghitung loss dan akurasi model pada test data.\n- `/predict` : Menjalankan inferensi pada sampel 128-dimensi.\n- `/progress` : Melihat log progres pelatihan real-time.\n- `/help` : Menampilkan ringkasan bantuan."
-                }
-            ]
-        },
-        {
-            "id": "cmd_002",
-            "topik": "Shortcut Keyboard & Mode Gelap",
-            "kata_kunci": ["shortcut keyboard", "cara ganti tema", "dark mode", "ctrl k"],
-            "tags": ["shortcuts", "theme", "ui"],
-            "percakapan": [
-                {
-                    "role": "user",
-                    "content": "Apakah ada shortcut keyboard dan opsi mode gelap di Neura?"
-                },
-                {
-                    "role": "assistant",
-                    "content": "Ya, Neura mendukung:\n- `Ctrl + K` (atau `Cmd + K` di Mac): Membuka percakapan baru secara instan.\n- `Enter`: Mengirim pesan.\n- `Shift + Enter`: Membuat baris baru di kolom teks.\n- Mode Gelap: Klik ikon bulan/matahari di pojok kanan atas atau sidebar bawah untuk beralih antara tema Warm Linen dan Obsidian Dark."
+                    "content": (
+                        "Neura didukung oleh algoritma **XGBoost (Extreme Gradient Boosting)** Classifier yang telah dioptimasi khusus untuk data klinis tabular:\n\n"
+                        "• **Dataset Latihan**: 2.149 rekam medis pasien Alzheimer (`alzheimers_disease_data.csv`).\n"
+                        "• **Dimensi Fitur**: 32 biomarker multi-domain (kognitif, demografi, laboratorium, gaya hidup).\n"
+                        "• **Performa Teruji**: **95.35% Test Accuracy**, **94.11% ROC-AUC**, dan **92.11% Sensitivity** pada 430 sampel holdout pasien.\n"
+                        "• **Keunggulan**: Mampu menangkap pola interaksi non-linear yang kompleks antar biomarker tanpa risiko overfitting berlebih.\n\n"
+                        "Gunakan perintah `/eval` untuk memeriksa matriks konfusi dan metrik presisi lengkap."
+                    )
                 }
             ]
         }
     ]
 }
-
-
-def get_all_categories():
-    """Mengembalikan daftar semua kategori yang tersedia."""
-    return list(CHAT_DATASET.keys())
-
-
-def get_conversations_by_category(category):
-    """Mengambil array percakapan berdasarkan nama kategori."""
-    return CHAT_DATASET.get(category, [])
-
-
-def get_total_count():
-    """Menghitung total percakapan di seluruh kategori."""
-    return sum(len(items) for items in CHAT_DATASET.values())

@@ -379,11 +379,14 @@ def api_chat_message():
             return jsonify({"error": "Empty message"}), 400
 
         mgr = ChatDatasetManager()
-        matched_reply = mgr.find_best_response(message)
+        res = mgr.find_consultation_response(message)
 
         return jsonify({
-            "matched": matched_reply is not None,
-            "reply": matched_reply,
+            "matched": res.get("matched", False),
+            "reply": res.get("reply", ""),
+            "category": res.get("category", "konsultasi_skrining"),
+            "topic": res.get("topic", "Konsultasi Neura AI"),
+            "suggestions": res.get("suggestions", []),
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

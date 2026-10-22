@@ -239,6 +239,10 @@ function renderSessionMessages(session) {
     } else if (msg.role === 'assistant') {
       const row = document.createElement('div');
       row.className = 'message-row assistant';
+      let suggestionsHtml = '';
+      if (Array.isArray(msg.suggestions) && msg.suggestions.length > 0) {
+        suggestionsHtml = `<div class="chat-suggestions-bar">${msg.suggestions.map(s => renderSuggestionChip(s)).join('')}</div>`;
+      }
       row.innerHTML = `
         <div class="assistant-header">
           <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
@@ -246,6 +250,7 @@ function renderSessionMessages(session) {
           <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
         </div>
         <div class="assistant-prose">${msg.html}</div>
+        <div class="assistant-suggestions-slot">${suggestionsHtml}</div>
         <div class="msg-actions-row">
           <button class="msg-action-btn" title="Copy response" onclick="copyMessageText(this)">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -368,15 +373,47 @@ function handleTextareaKey(e) {
   }
 }
 
-function submitCommand(cmd) {
-  const input = document.getElementById('chat-input-textarea');
-  input.value = cmd;
-  sendUserMessage();
+function renderSuggestionChip(text) {
+  const isCmd = text.includes('/') || /^(simulasi|jalankan|evaluasi|latih|cek status)/i.test(text);
+  const iconSvg = isCmd
+    ? `<svg class="chip-solid-icon chip-icon-cmd" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`
+    : `<svg class="chip-solid-icon chip-icon-msg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
+  const chipClass = isCmd ? 'suggestion-chip is-cmd' : 'suggestion-chip';
+  const cleanText = escapeHtml(text);
+  return `<button type="button" class="${chipClass}" data-cmd="${cleanText}" onclick="handleChipClick(this)">${iconSvg}<span>${cleanText}</span></button>`;
 }
 
-// --------------------------------------------------------------------------
-// Message Sending & Pipeline
-// --------------------------------------------------------------------------
+function handleChipClick(btn) {
+  if (!btn) return;
+  const cmd = btn.getAttribute('data-cmd') || btn.innerText;
+  if (!cmd) return;
+  submitCommand(cmd.trim());
+}
+
+function submitCommand(cmd) {
+  if (!cmd) return;
+
+  // If the suggestion chip contains a slash command (e.g. /status, /predict, /eval, /train 5, /help), extract and run it
+  const slashMatch = cmd.match(/\/(status|predict|eval|train(?:\s+\d+)?|help|progress)\b/i);
+  let finalCmd = cmd;
+  if (slashMatch && (cmd.startsWith('/') || cmd.includes('/'))) {
+    finalCmd = slashMatch[0];
+  }
+
+  // Force stop any ongoing typewriter streaming and clear input
+  stopRequested = true;
+  setGeneratingState(false);
+
+  const input = document.getElementById('chat-input-textarea');
+  if (input) {
+    input.value = '';
+    input.style.height = 'auto';
+  }
+
+  // Send message directly with the command
+  sendUserMessage(finalCmd);
+}
+
 // --------------------------------------------------------------------------
 // Message Sending & Pipeline
 // --------------------------------------------------------------------------
@@ -387,15 +424,16 @@ async function waitLoad(startTime, minMs = 450) {
   }
 }
 
-async function sendUserMessage() {
+async function sendUserMessage(textOverride = null) {
   const input = document.getElementById('chat-input-textarea');
-  const text = input.value.trim();
+  const text = (textOverride !== null ? String(textOverride) : (input ? input.value : '')).trim();
   if (!text) return;
+
+  // Reset states
   if (isTyping) {
     stopRequested = true;
-    return;
+    setGeneratingState(false);
   }
-
   stopRequested = false;
 
   // If no active session exists, create a new one with title from this initial input!
@@ -460,18 +498,18 @@ async function processMLInput(rawText, typingId, startTime) {
   const text = rawText.trim();
   const lower = text.toLowerCase();
 
-  if (lower === '/help') {
+  if (lower === '/help' || lower.endsWith('/help')) {
     await waitLoad(startTime, 400);
     removeTypingIndicator(typingId);
     renderHelpOutput();
 
-  } else if (lower === '/status') {
+  } else if (lower === '/status' || lower.endsWith('/status')) {
     const data = await fetchJSON('/api/status');
     await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
     renderStatusOutput(data);
 
-  } else if (lower.startsWith('/train')) {
+  } else if (lower.startsWith('/train') || lower.includes('/train')) {
     const parts = text.split(/\s+/);
     const epochs = parseInt(parts[1]) || 50;
     setDynamicIslandState('training', {
@@ -502,7 +540,7 @@ async function processMLInput(rawText, typingId, startTime) {
       startProgressPolling(epochs);
     }
 
-  } else if (lower === '/eval') {
+  } else if (lower === '/eval' || lower.endsWith('/eval')) {
     setDynamicIslandState('evaluating', {
       sub: 'Evaluating Alzheimer XGBoost on holdout test set...',
       main: 'Evaluating'
@@ -516,7 +554,7 @@ async function processMLInput(rawText, typingId, startTime) {
       renderEvaluationOutput(data);
     }
 
-  } else if (lower === '/predict') {
+  } else if (lower === '/predict' || lower.endsWith('/predict')) {
     setDynamicIslandState('predicting', {
       sub: 'Analyzing 32 clinical biomarkers \u2022 Alzheimer Inference',
       main: 'Diagnosing'
@@ -530,7 +568,7 @@ async function processMLInput(rawText, typingId, startTime) {
       renderPredictionOutput(data);
     }
 
-  } else if (lower === '/progress') {
+  } else if (lower === '/progress' || lower.endsWith('/progress')) {
     setDynamicIslandState('thinking', {
       sub: 'Fetching real-time training telemetry...',
       main: 'Inspecting'
@@ -550,77 +588,158 @@ async function processMLInput(rawText, typingId, startTime) {
       const chatRes = await fetchJSON('/api/chat', 'POST', { message: text });
       await waitLoad(startTime, 500);
       removeTypingIndicator(typingId);
-      if (chatRes && chatRes.matched && chatRes.reply) {
+      if (chatRes && chatRes.reply) {
         setDynamicIslandState('generating', {
-          sub: `Matched [${chatRes.category || 'chat_dataset'}] \u2022 Intent Verified`,
+          sub: `Konsultasi \u2022 ${chatRes.topic || 'Neura Clinical AI'}`,
           main: 'Generating'
         });
-        const formatted = escapeHtml(chatRes.reply)
-          .replace(/\n\n/g, '</p><p>')
-          .replace(/\n/g, '<br>')
-          .replace(/`([^`]+)`/g, '<code>$1</code>');
-        appendAssistantMessage(`<p>${formatted}</p>`, { stream: true });
+        const formatted = formatConsultationReply(chatRes.reply);
+        appendAssistantMessage(formatted, {
+          stream: true,
+          suggestions: chatRes.suggestions || []
+        });
       } else {
         setDynamicIslandState('generating', {
-          sub: 'Streaming response \u2022 AlzheimersXGBoost',
+          sub: 'Konsultasi Klinis \u2022 Neura XGBoost',
           main: 'Generating'
         });
-        appendAssistantMessage(generateConversationalReply(text), { stream: true });
+        const conv = generateConversationalReply(text);
+        appendAssistantMessage(conv, { stream: true });
       }
     } catch(e) {
       await waitLoad(startTime, 400);
       removeTypingIndicator(typingId);
       setDynamicIslandState('generating', {
-        sub: 'Streaming response \u2022 AlzheimersXGBoost',
+        sub: 'Konsultasi Klinis \u2022 Neura XGBoost',
         main: 'Generating'
       });
-      appendAssistantMessage(generateConversationalReply(text), { stream: true });
+      const conv = generateConversationalReply(text);
+      appendAssistantMessage(conv, { stream: true });
     }
   }
 }
 
 // --------------------------------------------------------------------------
-// Conversational Natural Language Engine
+// Conversational Consultation & Natural Language Engine
 // --------------------------------------------------------------------------
+function formatConsultationReply(rawText) {
+  if (!rawText) return '';
+
+  // Process markdown tables if present
+  if (rawText.includes('|')) {
+    const lines = rawText.split('\n');
+    let inTable = false;
+    let tableHtml = '';
+    let resultLines = [];
+
+    for (let line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        const cells = trimmed.split('|').slice(1, -1).map(c => c.trim());
+        if (cells.every(c => /^:?-+:?$/.test(c))) {
+          continue;
+        }
+        if (!inTable) {
+          inTable = true;
+          tableHtml = '<table class="claude-table" style="margin:10px 0"><thead><tr>' + cells.map(c => `<th>${escapeHtml(c)}</th>`).join('') + '</tr></thead><tbody>';
+        } else {
+          tableHtml += '<tr>' + cells.map(c => `<td>${escapeHtml(c)}</td>`).join('') + '</tr>';
+        }
+      } else {
+        if (inTable) {
+          tableHtml += '</tbody></table>';
+          resultLines.push(tableHtml);
+          inTable = false;
+          tableHtml = '';
+        }
+        resultLines.push(line);
+      }
+    }
+    if (inTable) {
+      tableHtml += '</tbody></table>';
+      resultLines.push(tableHtml);
+    }
+    rawText = resultLines.join('\n');
+  }
+
+  // Parse markdown formatting
+  let html = rawText
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+
+  return `<p>${html}</p>`;
+}
+
 function generateConversationalReply(text) {
   const t = text.toLowerCase();
-  if (t.includes('hello') || t.includes('hi') || t.includes('halo')) {
-    return `
-      <p>Hello! I'm <strong>Neura</strong>, an interactive TensorFlow neural network assistant. I can train models, run live predictions, evaluate validation metrics, and inspect neural architecture.</p>
-      <p>Try running <code>/status</code>, <code>/train 5</code>, or <code>/predict</code> to get started.</p>
-    `;
+  if (t.includes('hello') || t.includes('hi') || t.includes('halo') || t.includes('pagi') || t.includes('siang') || t.includes('malam')) {
+    return {
+      html: `
+        <p>Halo! Saya <strong>Neura AI</strong>, asisten cerdas untuk skrining kesehatan daya ingat dan deteksi dini risiko penyakit Alzheimer berbasis XGBoost.</p>
+        <p>Anda bisa berkonsultasi seputar keluhan daya ingat, menanyakan perbedaan pikun biasa vs Alzheimer, atau memulai skrining mandiri.</p>
+      `,
+      suggestions: [
+        'Saya ingin konsultasi daya ingat',
+        'Apa perbedaan pikun biasa vs Alzheimer?',
+        '/predict'
+      ]
+    };
+  }
+  if (t.includes('konsultasi') || t.includes('skrining') || t.includes('periksa') || t.includes('lupa') || t.includes('pikun')) {
+    return {
+      html: `
+        <p>Terima kasih sudah berkonsultasi dengan <strong>Neura</strong>.</p>
+        <p>Untuk membantu skrining awal daya ingat Anda atau anggota keluarga, ceritakan keluhan Anda atau jawab pertanyaan panduan ini:</p>
+        <p>1. <strong>Berapa usia</strong> pasien yang dikonsultasikan?</p>
+        <p>2. <strong>Keluhan apa yang sering dialami?</strong> (Misal: sering lupa nama kerabat dekat, salah meletakkan barang, mengulang pertanyaan yang sama).</p>
+        <p>3. <strong>Apakah mulai mempengaruhi kemandirian harian?</strong> (Misal: kesulitan mengelola uang, minum obat, atau bepergian sendiri).</p>
+        <p>Anda juga dapat mengetik <code>/predict</code> untuk melihat simulasi analisis 32 biomarker klinis kami.</p>
+      `,
+      suggestions: [
+        'Apa saja 10 tanda awal Alzheimer?',
+        'Kapan harus membawa orang tua ke dokter?',
+        '/predict'
+      ]
+    };
   }
   if (t.includes('train')) {
-    return `
-      <p>You can train the underlying neural network using the command <code>/train [epochs]</code>. For instance, running <code>/train 10</code> will launch 10 epochs of backpropagation on our classification dataset.</p>
-    `;
+    return {
+      html: `
+        <p>Anda dapat melatih model <strong>XGBoost Classifier</strong> menggunakan perintah <code>/train [rounds]</code>. Contoh: <code>/train 5</code> untuk mengeksekusi 5 boosting rounds dengan monitoring log-loss dan akurasi real-time.</p>
+      `,
+      suggestions: ['/train 5', '/status']
+    };
   }
-  if (t.includes('predict') || t.includes('inference')) {
-    return `
-      <p>To run inference on a sample 128-dimensional vector, execute <code>/predict</code>. The model will calculate softmax probabilities across all 10 target classes.</p>
-    `;
+  if (t.includes('predict') || t.includes('inferensi') || t.includes('diagnosis')) {
+    return {
+      html: `
+        <p>Untuk menjalankan inferensi klinis pada pasien, ketik <code>/predict</code>. Model XGBoost akan menganalisis 32 biomarker (MMSE, ADL, memori, demografi) dan menghitung probabilitas risiko Alzheimer.</p>
+      `,
+      suggestions: ['/predict', '/status']
+    };
   }
-  if (t.includes('eval') || t.includes('metric') || t.includes('accuracy')) {
-    return `
-      <p>Use <code>/eval</code> to run test evaluations on your saved checkpoint. It calculates categorical crossentropy loss and accuracy metrics.</p>
-    `;
+  if (t.includes('eval') || t.includes('metric') || t.includes('akurasi')) {
+    return {
+      html: `
+        <p>Gunakan <code>/eval</code> untuk memeriksa metrik evaluasi model XGBoost terhadap 430 sampel holdout uji: Akurasi 95.35%, ROC-AUC 94.11%, dan sensitivitas 92.11%.</p>
+      `,
+      suggestions: ['/eval', '/predict']
+    };
   }
-  if (t.includes('who') || t.includes('what') || t.includes('architecture')) {
-    return `
-      <p>Neura is running an advanced <strong>XGBoost (Extreme Gradient Boosting) Classifier</strong> trained on clinical patient records for high-accuracy Alzheimer's disease diagnosis:</p>
-      <ul style="margin:8px 0 12px 20px;line-height:1.7">
-        <li><strong>Dataset:</strong> datasets/alzheimers_disease_data.csv (2,149 records)</li>
-        <li><strong>Input Features:</strong> 32 clinical biomarkers (MMSE, ADL, Memory, Functional Assessment, etc.)</li>
-        <li><strong>Algorithm:</strong> XGBoost Gradient Boosted Decision Trees</li>
-        <li><strong>Performance:</strong> 95.35% Accuracy &bull; 94.11% ROC-AUC &bull; 92.11% Sensitivity</li>
-      </ul>
-      <p>Type <code>/help</code> to see all available commands.</p>
-    `;
-  }
-  return `
-    <p>I received your message: <em>"${escapeHtml(text)}"</em>.</p>
-    <p>As an Alzheimer's ML assistant, you can control me with these commands: <code>/status</code>, <code>/train [rounds]</code>, <code>/predict</code>, <code>/eval</code>, <code>/progress</code>, or <code>/help</code>.</p>
-  `;
+  return {
+    html: `
+      <p>Saya menerima pesan Anda: <em>"${escapeHtml(text)}"</em>.</p>
+      <p>Sebagai asisten skrining daya ingat Neura, Anda dapat berkonsultasi seputar gejala Alzheimer, tes MMSE, pencegahan kepikunan, atau menggunakan perintah: <code>/predict</code>, <code>/train 5</code>, <code>/eval</code>, <code>/status</code>, dan <code>/help</code>.</p>
+    `,
+    suggestions: [
+      'Saya ingin konsultasi daya ingat',
+      'Apa saja 10 tanda awal Alzheimer?',
+      '/predict'
+    ]
+  };
 }
 
 // --------------------------------------------------------------------------
@@ -895,7 +1014,14 @@ function appendUserBubble(text) {
 }
 
 function appendAssistantMessage(html, options = {}) {
-  addMessageToActiveSession({ role: 'assistant', html: html });
+  let contentHtml = html;
+  let suggestionsList = options.suggestions || [];
+  if (typeof html === 'object' && html !== null && html.html) {
+    contentHtml = html.html;
+    if (html.suggestions) suggestionsList = html.suggestions;
+  }
+
+  addMessageToActiveSession({ role: 'assistant', html: contentHtml, suggestions: suggestionsList });
   const { stream = false } = options;
   const container = document.getElementById('chat-content-container');
   const row = document.createElement('div');
@@ -907,6 +1033,7 @@ function appendAssistantMessage(html, options = {}) {
       <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
     </div>
     <div class="assistant-prose fade-in"></div>
+    <div class="assistant-suggestions-slot"></div>
     <div class="msg-actions-row" style="display:none">
       <button class="msg-action-btn" title="Copy response" onclick="copyMessageText(this)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -918,18 +1045,31 @@ function appendAssistantMessage(html, options = {}) {
   scrollToBottom();
 
   const proseEl = row.querySelector('.assistant-prose');
+  const suggestionsSlot = row.querySelector('.assistant-suggestions-slot');
   const actionRow = row.querySelector('.msg-actions-row');
 
-  if (stream) {
-    streamTypewriter(proseEl, html, () => {
-      if (actionRow) actionRow.style.display = 'flex';
-      scrollToBottom();
-    });
-  } else {
-    proseEl.innerHTML = html;
+  // Build suggestions HTML if any
+  let suggestionsHtml = '';
+  if (Array.isArray(suggestionsList) && suggestionsList.length > 0) {
+    const chips = suggestionsList.map(s => renderSuggestionChip(s)).join('');
+    suggestionsHtml = `<div class="chat-suggestions-bar">${chips}</div>`;
+  }
+
+  function revealFooter() {
+    if (suggestionsSlot && suggestionsHtml) {
+      suggestionsSlot.innerHTML = suggestionsHtml;
+    }
     if (actionRow) actionRow.style.display = 'flex';
+    scrollToBottom();
+  }
+
+  if (stream) {
+    streamTypewriter(proseEl, contentHtml, revealFooter);
+  } else {
+    proseEl.innerHTML = contentHtml;
+    revealFooter();
     
-    // Animate probability bars
+    // Animate probability bars if present
     const bars = proseEl.querySelectorAll('.prob-fill');
     if (bars.length > 0) {
       setTimeout(() => {
@@ -944,8 +1084,8 @@ function appendAssistantMessage(html, options = {}) {
 }
 
 function streamTypewriter(targetElement, fullHtml, onComplete) {
-  // If html has tables, cards, lists or code blocks, render directly with smooth fade to prevent breaking HTML tags
-  if (fullHtml.includes('<table') || fullHtml.includes('claude-card') || fullHtml.includes('progress-bar') || fullHtml.includes('<pre>') || fullHtml.includes('<ul') || fullHtml.includes('<ol')) {
+  // Only bypass full typewriter for ML card outputs with progress bars and complex stat grids
+  if (fullHtml.includes('claude-card') || fullHtml.includes('terracotta-progress-wrap')) {
     targetElement.innerHTML = fullHtml;
     const bars = targetElement.querySelectorAll('.prob-fill');
     if (bars.length > 0) {
@@ -960,15 +1100,15 @@ function streamTypewriter(targetElement, fullHtml, onComplete) {
     return;
   }
 
-  // Word/tag tokenizer for fluid progressive streaming
-  const tokens = fullHtml.split(/(\s+|<[^>]+>)/).filter(Boolean);
+  // Word/tag tokenizer for fluid progressive streaming: tables and tags stay atomic
+  const tokens = fullHtml.split(/(\s+|<table[\s\S]*?<\/table>|<[^>]+>)/i).filter(Boolean);
   let idx = 0;
   let accumulated = '';
   const cursor = '<span class="streaming-cursor"></span>';
 
   function renderNext() {
     if (stopRequested) {
-      targetElement.innerHTML = accumulated;
+      targetElement.innerHTML = fullHtml;
       if (onComplete) onComplete();
       return;
     }
@@ -983,7 +1123,7 @@ function streamTypewriter(targetElement, fullHtml, onComplete) {
     if (idx < tokens.length) {
       setTimeout(renderNext, 18);
     } else {
-      targetElement.innerHTML = accumulated;
+      targetElement.innerHTML = fullHtml;
       if (onComplete) onComplete();
     }
   }
@@ -1113,7 +1253,7 @@ function updateUIModelStatus(data) {
     } else {
       const subEl = document.getElementById('island-sub-text');
       const mainEl = document.getElementById('island-main-text');
-      if (subEl) subEl.textContent = data.model_ready ? `${data.model_name || "Alzheimer's AI"} \u2022 32 Biomarkers` : 'No Model Checkpoint';
+      if (subEl) subEl.textContent = data.model_ready ? 'XGBoost \u2022 32 Biomarkers' : 'No Model Checkpoint';
       if (mainEl) mainEl.textContent = data.model_ready ? 'Ready' : 'Idle';
       if (!data.model_ready) {
         setDynamicIslandState('idle', { sub: 'No Model Checkpoint \u2022 Standby', main: 'Idle' });
