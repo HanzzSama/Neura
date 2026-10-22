@@ -190,6 +190,19 @@ Anda dapat mengetik perintah berikut di kolom chat:
 
 ---
 
+## 📊 Dataset CSV (`datasets/` & `data/raw/`)
+
+Folder khusus dataset berekstensi `.csv` yang terintegrasi dengan `DataLoader` dan konfigurasi `configs/default.yaml`:
+
+- **`train.csv`**: Dataset training berformat 128 fitur (`feature_0` s/d `feature_127`) dan kolom `label` (kelas 0–9).
+- **`test.csv`**: Dataset evaluasi/validasi model.
+- **`sample_predict.csv`**: Sampel data untuk pengujian inferensi mandiri.
+- **`chat_intents.csv`**: Dataset pola dan respons chatbot AI.
+
+Dokumentasi lengkap mengenai struktur data dapat dilihat pada [**`datasets/README.md`**](file:///d:/JupyterHanzz/Neura/datasets/README.md).
+
+---
+
 ## 🛠️ Lisensi & Kredit
 
 - **Engine:** TensorFlow, Keras, Flask

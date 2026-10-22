@@ -1,0 +1,6 @@
+intent,pattern,response
+greeting,"halo, hai, assalamualaikum, hello, hei","Halo! Saya Neura AI, asisten cerdas untuk deteksi dan diagnosis klinis Alzheimer berbasis XGBoost."
+status,"status model, cek status, cek model, apakah model aktif","Model saat ini berarsitektur AlzheimersXGBoost (XGBoost Classifier) dengan 32 biomarker klinis dan diagnosis biner (Non-Alzheimer's vs Alzheimer's Disease)."
+training,"latih model, train model, mulai training, cara training","Anda dapat melatih model XGBoost menggunakan tombol Train di Dynamic Island atau mengetik /train [epochs]."
+prediction,"prediksi, klasifikasi, run prediction, coba predict","Gunakan perintah /predict untuk menjalankan diagnosis klinis Alzheimer dan menganalisis probabilitas serta tingkat risiko pasien."
+help,"bantuan, command list, apa saja fungsinya, menu","Perintah yang tersedia: /status, /train [epochs], /eval, /predict, /progress, /help."

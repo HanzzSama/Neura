@@ -135,15 +135,27 @@
          DYNAMIC ISLAND NOTCH (Top Center Ceiling-Mounted Dropdown)
          ======================================================================== -->
     <div class="dynamic-island-wrapper">
-      <div class="dynamic-island" id="dynamic-island">
-        <!-- Compact Notch State (As shown in screenshot) -->
-        <div class="island-notch-compact">
-          <div class="island-notch-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="island-notch-content">
-            <span class="island-notch-label">informasi status</span>
-            <span class="island-notch-main" id="island-compact-val">Show</span>
+      <div class="dynamic-island theme-green" id="dynamic-island">
+        <!-- Compact Notch State (Claude Pixel Loader & Dynamic Context) -->
+        <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
+          <span class="island-notch-sub" id="island-sub-text">Alzheimer's AI &bull; 32 Clinical Biomarkers</span>
+          <div class="island-notch-main-row">
+            <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
+              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
+                <!-- 3x3 Matrix with 0 Gap -->
+                <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
+                <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
+                <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
+                <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
+                <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
+                <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
+                <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
+                <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
+                <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
+              </svg>
+            </div>
+            <span class="island-notch-main" id="island-main-text">Ready</span>
+            <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
           </div>
         </div>
 
@@ -157,48 +169,48 @@
                 </svg>
               </div>
               <div>
-                <div class="island-model-name">Neura AI &bull; MLP Architecture</div>
-                <div class="island-model-sub" id="island-env-tag">BaseNeuralNetwork &bull; development</div>
+                <div class="island-model-name">Neura AI &bull; XGBoost Alzheimer's</div>
+                <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
               </div>
             </div>
-            <span class="island-badge-live">Live TF 2.x</span>
+            <span class="island-badge-live">Live XGBoost 3.x</span>
           </div>
 
           <div class="island-metrics-row">
-            <div class="island-stat-box">
-              <span class="island-stat-num" id="island-stat-features">128</span>
-              <span class="island-stat-lbl">Input Dims</span>
+            <div class="island-stat-box stat-default">
+              <span class="island-stat-num" id="island-stat-features">32</span>
+              <span class="island-stat-lbl">Clinical Dims</span>
             </div>
-            <div class="island-stat-box">
-              <span class="island-stat-num" id="island-stat-classes">10</span>
-              <span class="island-stat-lbl">Classes</span>
+            <div class="island-stat-box stat-purple">
+              <span class="island-stat-num" id="island-stat-classes">2</span>
+              <span class="island-stat-lbl">Classes (0/1)</span>
             </div>
-            <div class="island-stat-box">
-              <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">Ready</span>
-              <span class="island-stat-lbl">Weights</span>
+            <div class="island-stat-box stat-green" id="island-stat-box-status">
+              <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
+              <span class="island-stat-lbl">Accuracy</span>
             </div>
           </div>
 
           <div class="island-quick-actions">
-            <button class="island-btn" onclick="submitCommand('/train 5')">
+            <button class="island-btn btn-orange" onclick="submitCommand('/train 50')">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
               </svg>
-              <span>Train 5</span>
+              <span>Train</span>
             </button>
-            <button class="island-btn" onclick="submitCommand('/predict')">
+            <button class="island-btn btn-purple" onclick="submitCommand('/predict')">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
               </svg>
-              <span>Predict</span>
+              <span>Diagnose</span>
             </button>
-            <button class="island-btn" onclick="submitCommand('/eval')">
+            <button class="island-btn btn-green" onclick="submitCommand('/eval')">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
               </svg>
-              <span>Eval</span>
+              <span>Metrics</span>
             </button>
-            <button class="island-btn" onclick="openModelModal()">
+            <button class="island-btn btn-default" onclick="openModelModal()">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
               </svg>
@@ -242,40 +254,40 @@
         <div class="claude-hero" id="claude-hero">
           <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo" onerror="this.style.display='none'" />
           <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
-          <p class="hero-subhead">How can Neura assist you with your TensorFlow machine learning workflows today?</p>
+          <p class="hero-subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling today?</p>
 
           <!-- 4 Action Cards -->
           <div class="hero-cards-grid">
-            <div class="hero-card" onclick="submitCommand('/train 5')">
+            <div class="hero-card" onclick="submitCommand('/train 50')">
               <div class="hero-card-header">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-                <span>Train Neural Network</span>
+                <span>Train XGBoost Model</span>
               </div>
-              <div class="hero-card-desc">Execute 5 epochs of backpropagation on synthetic data</div>
+              <div class="hero-card-desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data pasien)</div>
             </div>
 
             <div class="hero-card" onclick="submitCommand('/predict')">
               <div class="hero-card-header">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                <span>Run Inference</span>
+                <span>Run Alzheimer Diagnosis</span>
               </div>
-              <div class="hero-card-desc">Sample a 128-dim input and inspect top class probabilities</div>
+              <div class="hero-card-desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory Complaints)</div>
             </div>
 
             <div class="hero-card" onclick="submitCommand('/eval')">
               <div class="hero-card-header">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span>Evaluate Metrics</span>
+                <span>Evaluate Medical Metrics</span>
               </div>
-              <div class="hero-card-desc">Compute test loss and test accuracy against validation sets</div>
+              <div class="hero-card-desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1% ROC-AUC</div>
             </div>
 
             <div class="hero-card" onclick="submitCommand('/status')">
               <div class="hero-card-header">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                <span>Model Architecture</span>
+                <span>Clinical Model Specs</span>
               </div>
-              <div class="hero-card-desc">Verify checkpoints, weights readiness, and server health</div>
+              <div class="hero-card-desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance</div>
             </div>
           </div>
         </div>
@@ -291,18 +303,18 @@
         <textarea
           id="chat-input-textarea"
           rows="1"
-          placeholder="Reply to Neura or type /train, /eval, /predict..."
+          placeholder="Tanya tentang diagnosis Alzheimer atau ketik /train, /eval, /predict..."
           onkeydown="handleTextareaKey(event)"
           oninput="handleTextareaInput(this)"
         ></textarea>
 
         <div class="input-bottom-bar">
           <div class="input-actions-left">
-            <span class="cmd-pill" onclick="submitCommand('/train 5')">
+            <span class="cmd-pill" onclick="submitCommand('/train 50')">
               <svg class="pill-icon pill-icon-train" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
               </svg>
-              <span>/train 5</span>
+              <span>/train 50</span>
             </span>
             <span class="cmd-pill" onclick="submitCommand('/predict')">
               <svg class="pill-icon pill-icon-predict" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -333,7 +345,7 @@
       </div>
 
       <div class="disclaimer-caption">
-        Neura can make mistakes. Verify important machine learning evaluations and checkpoints.
+        Neura can make mistakes. Verify important medical predictions and clinical evaluations.
       </div>
     </div>
 
@@ -356,18 +368,19 @@
     </div>
 
     <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;">
-      Neura is running an MVC-structured multi-layer perceptron (MLP) built on top of TensorFlow &amp; Keras.
+      Neura is running an advanced <strong>XGBoost Gradient Boosted Trees Classifier</strong> trained on 2,149 clinical patient records for high-accuracy Alzheimer's disease diagnosis.
     </div>
 
     <table class="claude-table">
-      <tr><td>Architecture</td><td id="modal-model-name">BaseNeuralNetwork</td></tr>
-      <tr><td>Framework</td><td>TensorFlow / Keras 3</td></tr>
-      <tr><td>Input Features</td><td>128 (Float32 tensor)</td></tr>
-      <tr><td>Hidden Layers</td><td>Dense(64, ReLU) &bull; Dense(32, ReLU)</td></tr>
-      <tr><td>Output Classes</td><td>10 (Softmax distribution)</td></tr>
+      <tr><td>Architecture</td><td id="modal-model-name">AlzheimersXGBoost</td></tr>
+      <tr><td>Algorithm</td><td>XGBoost (Extreme Gradient Boosting 3.4.1)</td></tr>
+      <tr><td>Dataset Source</td><td>datasets/alzheimers_disease_data.csv (2,149 records)</td></tr>
+      <tr><td>Input Features</td><td>32 Biomarkers (MMSE, ADL, Memory, Age, Lifestyle)</td></tr>
+      <tr><td>Output Target</td><td>Diagnosis: 0 (Non-Alzheimer's) vs 1 (Alzheimer's)</td></tr>
+      <tr><td>Accuracy / ROC-AUC</td><td style="color:var(--accent-green);font-weight:600">95.35% Accuracy &bull; 94.11% ROC-AUC</td></tr>
       <tr><td>Environment</td><td id="modal-env">development</td></tr>
-      <tr><td>Checkpoint Path</td><td id="modal-checkpoint" style="font-size:11px">public/checkpoints/NeuralNetwork.keras</td></tr>
-      <tr><td>Model Status</td><td id="modal-status" style="color:var(--accent-green);font-weight:600">Ready</td></tr>
+      <tr><td>Checkpoint Path</td><td id="modal-checkpoint" style="font-size:11px">public/checkpoints/xgboost_alzheimers.json</td></tr>
+      <tr><td>Model Status</td><td id="modal-status" style="color:var(--accent-green);font-weight:600">Ready &bull; Active</td></tr>
     </table>
 
     <div style="margin-top:20px;display:flex;justify-content:flex-end">

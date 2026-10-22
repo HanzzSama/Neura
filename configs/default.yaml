@@ -12,75 +12,56 @@ project:
 # Model Configuration
 # -----------------------------------------
 model:
-  name: "BaseNeuralNetwork"
-  type: "dense"               # dense | cnn | rnn | transformer
-  input_shape: [128]          # Adjust to your data
-  output_units: 10            # Number of output classes / values
-  output_activation: "softmax" # softmax | sigmoid | linear
+  name: "AlzheimersXGBoost"
+  algorithm: "xgboost"
+  type: "gradient_boosted_trees"
+  input_shape: [32]            # 32 clinical & cognitive biomarkers
+  output_units: 2             # Binary classification: 0 (Negative) vs 1 (Alzheimer's)
+  output_activation: "sigmoid"
 
-  architecture:
-    hidden_layers:
-      - units: 256
-        activation: "relu"
-        dropout: 0.3
-      - units: 128
-        activation: "relu"
-        dropout: 0.2
-      - units: 64
-        activation: "relu"
-        dropout: 0.1
+  hyperparameters:
+    n_estimators: 300
+    learning_rate: 0.08
+    max_depth: 4
+    min_child_weight: 3
+    subsample: 0.85
+    colsample_bytree: 0.85
+    scale_pos_weight: 1.83
+    gamma: 0.2
+    eval_metric: "logloss"
 
 # -----------------------------------------
 # Training Configuration
 # -----------------------------------------
 training:
-  epochs: 50
+  epochs: 100                 # Max boosting iterations / trees
   batch_size: 32
   validation_split: 0.2
   shuffle: true
   seed: 42
 
-  optimizer:
-    name: "adam"
-    learning_rate: 0.001
-    weight_decay: 0.0
-
-  loss: "categorical_crossentropy"  # or "mse", "binary_crossentropy"
-  metrics:
-    - "accuracy"
-
   early_stopping:
     enabled: true
-    monitor: "val_loss"
-    patience: 10
-    restore_best_weights: true
-
-  reduce_lr:
-    enabled: true
-    monitor: "val_loss"
-    factor: 0.5
-    patience: 5
-    min_lr: 1e-7
+    monitor: "val_logloss"
+    patience: 25
 
 # -----------------------------------------
 # Data Configuration
 # -----------------------------------------
 data:
-  source: "csv"               # csv | tfrecord | numpy | image_dir
-  train_path: "data/raw/train.csv"
-  test_path: "data/raw/test.csv"
-  target_column: "label"
-  feature_columns: []         # empty = all except target
+  source: "csv"
+  train_path: "datasets/alzheimers_disease_data.csv"
+  test_path: "datasets/alzheimers_disease_data.csv"
+  target_column: "Diagnosis"
+  id_column: "PatientID"
+  drop_columns:
+    - "PatientID"
+    - "DoctorInCharge"
 
   preprocessing:
-    normalize: true
-    normalization_method: "minmax"  # minmax | zscore | none
-    handle_missing: "mean"          # mean | median | drop | none
-    encode_categoricals: true
-
-  augmentation:
-    enabled: false
-    methods: []
+    normalize: false          # Tree-based algorithms do not require feature scaling
+    handle_missing: "median"
+    encode_categoricals: false
 
 # -----------------------------------------
 # Paths (Public)

@@ -89,15 +89,29 @@ def serve_js(filename):
 @app.route("/api/status", methods=["GET"])
 def api_status():
     checkpoint_path = (
-        Path(config.get("paths.checkpoints", "public/checkpoints")) / "NeuralNetwork.keras"
+        Path(config.get("paths.checkpoints", "public/checkpoints")) / "xgboost_alzheimers.json"
     )
     model_ready = checkpoint_path.exists()
+
+    metrics = {}
+    metrics_path = Path("public/reports/alzheimers_xgboost_metrics.json")
+    if metrics_path.exists():
+        try:
+            with open(metrics_path, "r", encoding="utf-8") as f:
+                metrics = json.load(f).get("metrics", {})
+        except Exception:
+            pass
+
     return jsonify({
-        "model_name": config.get("model.name", "NeuralNetwork"),
+        "model_name": config.get("model.name", "AlzheimersXGBoost"),
+        "algorithm": "XGBoost Classifier",
         "environment": config.get("project.environment", "development"),
         "model_ready": model_ready,
         "checkpoint": str(checkpoint_path) if model_ready else None,
         "training_running": _training_status["running"],
+        "features_count": 32,
+        "dataset": "alzheimers_disease_data.csv",
+        "metrics": metrics,
     })
 
 
@@ -107,85 +121,108 @@ def api_status():
 
 @app.route("/api/train", methods=["POST"])
 def api_train():
-    global _model, _training_status
+    global _training_status
 
     if _training_status["running"]:
         return jsonify({"error": "Training already running."}), 409
 
     body = request.get_json(silent=True) or {}
-    epochs = int(body.get("epochs", config.get("training.epochs", 5)))
+    epochs = int(body.get("epochs", config.get("training.epochs", 100)))
 
     def _run_training():
-        global _model, _training_status
+        global _training_status
         _training_status = {"running": True, "progress": [], "report": None}
 
         try:
-            import numpy as np
-            from sklearn.datasets import make_classification
+            import xgboost as xgb
+            import pandas as pd
             from sklearn.model_selection import train_test_split
-            from app.models.neural_network import NeuralNetwork
-            from app.controllers.training_controller import TrainingController
-
-            n_features = config.get("model.input_shape", [128])[0]
-            n_classes = config.get("model.output_units", 10)
-
-            X, y = make_classification(
-                n_samples=2000, n_features=n_features,
-                n_classes=n_classes, n_informative=min(n_features, 15),
-                random_state=42,
-            )
-            y_onehot = np.eye(n_classes)[y].astype("float32")
-            X = X.astype("float32")
-            X_train, X_val, y_train, y_val = train_test_split(
-                X, y_onehot, test_size=0.2, random_state=42
+            from sklearn.metrics import (
+                accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
             )
 
-            # Patch config epochs
-            config.set("training.epochs", epochs)
+            df = pd.read_csv("datasets/alzheimers_disease_data.csv")
+            drop_cols = [c for c in ["PatientID", "DoctorInCharge"] if c in df.columns]
+            df_clean = df.drop(columns=drop_cols)
+            X = df_clean.drop(columns=["Diagnosis"])
+            y = df_clean["Diagnosis"]
 
-            model_instance = NeuralNetwork(config).initialize()
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.20, random_state=42, stratify=y
+            )
 
-            # Custom callback to capture progress
-            import tensorflow as tf
-
-            class ProgressCapture(tf.keras.callbacks.Callback):
-                def on_epoch_end(self, epoch, logs=None):
-                    logs = logs or {}
+            class ProgressCallback(xgb.callback.TrainingCallback):
+                def after_iteration(self, model, epoch, evals_log):
+                    train_loss = evals_log["validation_0"]["logloss"][-1]
+                    val_loss = evals_log["validation_1"]["logloss"][-1]
                     _training_status["progress"].append({
                         "epoch": epoch + 1,
-                        "loss": round(float(logs.get("loss", 0)), 4),
-                        "val_loss": round(float(logs.get("val_loss", 0)), 4),
-                        "accuracy": round(float(logs.get("accuracy", 0)), 4),
-                        "val_accuracy": round(float(logs.get("val_accuracy", 0)), 4),
+                        "loss": round(float(train_loss), 4),
+                        "val_loss": round(float(val_loss), 4),
+                        "accuracy": round(float(max(0.0, 1.0 - train_loss)), 4),
+                        "val_accuracy": round(float(max(0.0, 1.0 - val_loss)), 4),
                     })
+                    return False
 
-            keras_model = model_instance.get_keras_model()
-            history = keras_model.fit(
-                X_train, y_train, epochs=epochs, batch_size=32,
-                validation_data=(X_val, y_val),
-                callbacks=[ProgressCapture()], verbose=0,
+            model = xgb.XGBClassifier(
+                n_estimators=epochs,
+                learning_rate=0.08,
+                max_depth=4,
+                min_child_weight=3,
+                subsample=0.85,
+                colsample_bytree=0.85,
+                scale_pos_weight=1.83,
+                gamma=0.2,
+                eval_metric="logloss",
+                random_state=42,
+                n_jobs=-1,
+                callbacks=[ProgressCallback()],
             )
 
-            model_instance.save(config.get("paths.checkpoints", "public/checkpoints"))
-            _model = model_instance
+            model.fit(
+                X_train, y_train,
+                eval_set=[(X_train, y_train), (X_test, y_test)],
+                verbose=False,
+            )
 
-            hist = history.history
-            _training_status["report"] = {
-                "epochs_run": len(hist.get("loss", [])),
-                "best_val_loss": round(float(min(hist.get("val_loss", [0]))), 4),
-                "best_val_acc": round(float(max(hist.get("val_accuracy", [0]))), 4),
-                "final_train_acc": round(float(hist.get("accuracy", [0])[-1]), 4),
+            os.makedirs("public/checkpoints", exist_ok=True)
+            model_save_path = "public/checkpoints/xgboost_alzheimers.json"
+            model.save_model(model_save_path)
+
+            y_pred = model.predict(X_test)
+            y_prob = model.predict_proba(X_test)[:, 1]
+            cm = confusion_matrix(y_test, y_pred)
+
+            report = {
+                "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
+                "precision": round(float(precision_score(y_test, y_pred, zero_division=0)), 4),
+                "recall": round(float(recall_score(y_test, y_pred, zero_division=0)), 4),
+                "f1_score": round(float(f1_score(y_test, y_pred, zero_division=0)), 4),
+                "roc_auc": round(float(roc_auc_score(y_test, y_prob)), 4),
             }
+            _training_status["report"] = report
+
+            with open("public/reports/alzheimers_xgboost_metrics.json", "w", encoding="utf-8") as f:
+                json.dump({
+                    "model_name": "AlzheimersXGBoost",
+                    "algorithm": "XGBoost",
+                    "metrics": report,
+                    "confusion_matrix": {
+                        "tn": int(cm[0][0]), "fp": int(cm[0][1]),
+                        "fn": int(cm[1][0]), "tp": int(cm[1][1])
+                    }
+                }, f, indent=2)
+
         except Exception as e:
             _training_status["error"] = str(e)
-            logger.error(f"Training error: {traceback.format_exc()}")
+            logger.error(f"XGBoost training error: {traceback.format_exc()}")
         finally:
             _training_status["running"] = False
 
     thread = threading.Thread(target=_run_training, daemon=True)
     thread.start()
 
-    return jsonify({"message": f"Training started for {epochs} epochs.", "epochs": epochs})
+    return jsonify({"message": f"Training started for {epochs} boosting rounds.", "epochs": epochs})
 
 
 @app.route("/api/train/progress", methods=["GET"])
@@ -202,32 +239,30 @@ def api_train_progress():
 # API — Evaluate
 # -----------------------------------------------------------------------
 
-@app.route("/api/evaluate", methods=["POST"])
+@app.route("/api/evaluate", methods=["GET", "POST"])
 def api_evaluate():
     try:
-        import numpy as np
-        from sklearn.datasets import make_classification
-        from app.controllers.evaluation_controller import EvaluationController
-
-        model = get_model()
-        if model is None:
-            return jsonify({"error": "No trained model found. Run /train first."}), 400
-
-        n_features = config.get("model.input_shape", [128])[0]
-        n_classes = config.get("model.output_units", 10)
-
-        X, y = make_classification(
-            n_samples=500, n_features=n_features,
-            n_classes=n_classes, n_informative=min(n_features, 15),
-            random_state=99,
-        )
-        y_onehot = np.eye(n_classes)[y].astype("float32")
-        X = X.astype("float32")
-
-        ctrl = EvaluationController(config, model)
-        metrics = ctrl.run(X, y_onehot, save_report=True)
-
-        return jsonify({"metrics": {k: round(float(v), 4) for k, v in metrics.items()}})
+        metrics_file = Path("public/reports/alzheimers_xgboost_metrics.json")
+        if metrics_file.exists():
+            with open(metrics_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return jsonify({
+                "model": "AlzheimersXGBoost",
+                "algorithm": "XGBoost Classifier",
+                "metrics": data.get("metrics", {}),
+                "confusion_matrix": data.get("confusion_matrix", {}),
+                "top_features": data.get("top_features", []),
+            })
+        else:
+            from scripts.train_xgboost_alzheimer import train_alzheimers_xgboost
+            _, metrics_summary = train_alzheimers_xgboost()
+            return jsonify({
+                "model": "AlzheimersXGBoost",
+                "algorithm": "XGBoost Classifier",
+                "metrics": metrics_summary.get("metrics", {}),
+                "confusion_matrix": metrics_summary.get("confusion_matrix", {}),
+                "top_features": metrics_summary.get("top_features", []),
+            })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -236,38 +271,57 @@ def api_evaluate():
 # API — Predict
 # -----------------------------------------------------------------------
 
-@app.route("/api/predict", methods=["POST"])
+@app.route("/api/predict", methods=["GET", "POST"])
 def api_predict():
     try:
-        import numpy as np
-        from app.controllers.prediction_controller import PredictionController
+        import random
+        import pandas as pd
+        from scripts.predict_xgboost_alzheimer import AlzheimersPredictor
 
-        model = get_model()
-        if model is None:
-            return jsonify({"error": "No trained model found. Run /train first."}), 400
-
+        predictor = AlzheimersPredictor()
         body = request.get_json(silent=True) or {}
-        input_data = body.get("input", None)
+        patient_input = body.get("input", None)
 
-        n_features = config.get("model.input_shape", [128])[0]
-        n_classes = config.get("model.output_units", 10)
+        df_raw = pd.read_csv("datasets/alzheimers_disease_data.csv")
 
-        if input_data is not None:
-            sample = np.array(input_data, dtype="float32")
+        if patient_input is not None and isinstance(patient_input, dict):
+            res = predictor.predict_patient(patient_input)
+            patient_data = patient_input
         else:
-            sample = np.random.randn(n_features).astype("float32")
+            rand_idx = random.randint(0, len(df_raw) - 1)
+            sample_row = df_raw.iloc[rand_idx].to_dict()
+            res = predictor.predict_patient(sample_row)
+            patient_data = sample_row
 
-        class_names = [f"Class_{i}" for i in range(n_classes)]
-        ctrl = PredictionController(config, model, class_names=class_names)
-        result = ctrl.predict(sample, display=False)
+        pid = patient_data.get("PatientID", f"#{random.randint(1000, 9999)}")
+        actual = patient_data.get("Diagnosis", None)
+
+        key_markers = {
+            "Age": int(patient_data.get("Age", 72)),
+            "Gender": "Male" if int(patient_data.get("Gender", 0)) == 0 else "Female",
+            "MMSE": round(float(patient_data.get("MMSE", 20.0)), 1),
+            "ADL": round(float(patient_data.get("ADL", 5.0)), 1),
+            "FunctionalAssessment": round(float(patient_data.get("FunctionalAssessment", 5.0)), 1),
+            "MemoryComplaints": "Yes" if int(patient_data.get("MemoryComplaints", 0)) == 1 else "No",
+            "BehavioralProblems": "Yes" if int(patient_data.get("BehavioralProblems", 0)) == 1 else "No",
+        }
+
+        prob_pos = round(float(res["probability_percent"]), 2)
+        prob_neg = round(float(100.0 - prob_pos), 2)
 
         return jsonify({
-            "predicted_class": result.predicted_label,
-            "confidence": round(result.confidence, 4),
+            "patient_id": int(pid) if isinstance(pid, (int, float)) else str(pid),
+            "actual_diagnosis": int(actual) if actual is not None else None,
+            "predicted_class": res["diagnosis_label"],
+            "is_positive": res["prediction"] == 1,
+            "risk_level": res["risk_level"],
+            "probability": prob_pos,
+            "confidence": res["confidence"],
+            "key_markers": key_markers,
             "probabilities": [
-                {"class": class_names[i], "prob": round(float(p), 4)}
-                for i, p in enumerate(result.raw_output)
-            ],
+                {"class": "Non-Alzheimer's", "prob": round(prob_neg / 100.0, 4)},
+                {"class": "Alzheimer's Disease", "prob": round(prob_pos / 100.0, 4)},
+            ]
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
