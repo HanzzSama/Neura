@@ -17,6 +17,10 @@ let stopRequested = false;
 let trainingPollInterval = null;
 let activeModelData = null;
 
+// Connectivity state
+let _isOnline = navigator.onLine;
+let _offlineBannerHideTimer = null;
+
 function setGeneratingState(generating) {
   isTyping = generating;
   const btn = document.getElementById('send-msg-btn');
@@ -66,6 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetchModelStatus(false);
   setInterval(() => fetchModelStatus(false), 12000);
+
+  // ── Internet Connectivity Detection ──────────────────────────────────────
+  initConnectivity();
 
   // Global keyboard shortcut: Ctrl+K or Cmd+K for new chat
   window.addEventListener('keydown', (e) => {
@@ -425,6 +432,12 @@ async function waitLoad(startTime, minMs = 450) {
 }
 
 async function sendUserMessage(textOverride = null) {
+  // Block when offline
+  if (!_isOnline) {
+    showToast('Tidak ada koneksi internet', 'error');
+    return;
+  }
+
   const input = document.getElementById('chat-input-textarea');
   const text = (textOverride !== null ? String(textOverride) : (input ? input.value : '')).trim();
   if (!text) return;
@@ -525,17 +538,20 @@ async function processMLInput(rawText, typingId, startTime) {
     } else {
       appendAssistantMessage(`
         <h4>XGBoost Training Initialized</h4>
-        <p>Started asynchronous training session for <strong>${epochs} boosting rounds</strong> on <code>AlzheimersXGBoost</code> (datasets/alzheimers_disease_data.csv).</p>
+        <p>Executing gradient boosting training for <strong>${epochs} boosting rounds</strong> on <code>AlzheimersXGBoost</code> (datasets/alzheimers_disease_data.csv).</p>
         <div class="terracotta-progress-wrap" id="live-progress-container">
           <div class="progress-meta-row">
-            <span>Optimization Progress</span>
+            <span id="optimization-status-text">Optimization Progress</span>
             <span id="epoch-progress-counter">Round 0 / ${epochs}</span>
           </div>
           <div class="progress-bar-base">
             <div class="progress-bar-fill" id="live-progress-fill" style="width: 0%"></div>
           </div>
+          <div class="progress-meta-sub" id="live-metrics-text" style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-muted);margin-top:7px;font-family:'JetBrains Mono',monospace">
+            <span>Estimating tree gradients...</span>
+            <span>0%</span>
+          </div>
         </div>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:8px">Background boosting daemon active. Polling live status...</p>
       `, { stream: false });
       startProgressPolling(epochs);
     }
@@ -935,30 +951,56 @@ function renderProgressOutput(data) {
 function startProgressPolling(totalEpochs) {
   if (trainingPollInterval) clearInterval(trainingPollInterval);
 
+  let lastCompleted = 0;
+
   trainingPollInterval = setInterval(async () => {
     try {
       const data = await fetchJSON('/api/train/progress');
       const progress = data.progress || [];
       const completed = progress.length;
-      const pct = Math.min(Math.round((completed / totalEpochs) * 100), 100);
+      lastCompleted = Math.max(lastCompleted, completed);
+      const pct = Math.min(Math.round((lastCompleted / totalEpochs) * 100), 100);
 
       const fill = document.getElementById('live-progress-fill');
       const counter = document.getElementById('epoch-progress-counter');
-      if (fill) fill.style.width = pct + '%';
-      if (counter) counter.textContent = `Epoch ${completed} / ${totalEpochs}`;
+      const liveMeta = document.getElementById('live-metrics-text');
+      const statusTitle = document.getElementById('optimization-status-text');
 
-      const lastEp = progress[completed - 1];
-      const lossText = lastEp ? `Loss: ${lastEp.loss.toFixed(3)} \u2022 Acc: ${(lastEp.accuracy * 100).toFixed(0)}%` : 'Optimizing...';
+      if (fill) fill.style.width = pct + '%';
+      if (counter) counter.textContent = `Round ${lastCompleted} / ${totalEpochs}`;
+
+      const lastEp = progress[lastCompleted - 1];
+      if (lastEp && liveMeta) {
+        liveMeta.innerHTML = `
+          <span>Loss: <strong style="color:var(--accent-terracotta)">${lastEp.loss.toFixed(4)}</strong> &bull; Val Acc: <strong style="color:var(--accent-green)">${(lastEp.val_accuracy * 100).toFixed(1)}%</strong></span>
+          <span style="color:var(--text-secondary);font-weight:600">${pct}%</span>
+        `;
+      } else if (lastCompleted === 0 && liveMeta) {
+        liveMeta.innerHTML = `
+          <span>Splitting 2,149 patient records &bull; Initializing boosting rounds...</span>
+          <span style="color:var(--text-secondary)">0%</span>
+        `;
+      }
+
       setDynamicIslandState('training', {
-        sub: `Epoch ${completed}/${totalEpochs} \u2022 ${lossText}`,
+        sub: lastEp ? `Round ${lastCompleted}/${totalEpochs} \u2022 Loss: ${lastEp.loss.toFixed(3)} \u2022 ${(lastEp.val_accuracy * 100).toFixed(0)}%` : `Round ${lastCompleted}/${totalEpochs} \u2022 Optimizing trees...`,
         main: `Training (${pct}%)`
       });
 
-      if (!data.running) {
+      // When training finishes and all rounds are rendered
+      if (!data.running && lastCompleted >= progress.length) {
         clearInterval(trainingPollInterval);
         trainingPollInterval = null;
+
+        if (fill) fill.style.width = '100%';
+        if (counter) counter.textContent = `Round ${totalEpochs} / ${totalEpochs}`;
+        if (statusTitle) statusTitle.textContent = 'Optimization Converged';
+        if (liveMeta) {
+          liveMeta.innerHTML = `<span style="color:var(--accent-green);font-weight:500">&check; All ${totalEpochs} boosting rounds converged</span><span style="color:var(--accent-green);font-weight:600">100%</span>`;
+        }
+
         fetchModelStatus(false);
-        showToast('Training completed successfully', 'success');
+        showToast('Model training completed successfully', 'success');
 
         setDynamicIslandState('ready', {
           sub: data.report ? `Training Complete \u2022 Accuracy: ${(data.report.accuracy * 100).toFixed(1)}%` : 'Training Complete',
@@ -967,37 +1009,38 @@ function startProgressPolling(totalEpochs) {
         });
 
         if (data.report) {
-          const totalRounds = data.progress ? data.progress.length : '—';
-          appendAssistantMessage(`
-            <h4>Training Session Completed</h4>
-            <div class="claude-card">
-              <div class="claude-stats-grid">
-                <div class="stat-pill">
-                  <div class="stat-label">Total Rounds</div>
-                  <div class="stat-val">${totalRounds}</div>
+          setTimeout(() => {
+            appendAssistantMessage(`
+              <h4>Training Session Completed</h4>
+              <div class="claude-card">
+                <div class="claude-stats-grid">
+                  <div class="stat-pill">
+                    <div class="stat-label">Total Rounds</div>
+                    <div class="stat-val">${totalEpochs}</div>
+                  </div>
+                  <div class="stat-pill">
+                    <div class="stat-label">Test Accuracy</div>
+                    <div class="stat-val val-good">${(data.report.accuracy * 100).toFixed(1)}%</div>
+                  </div>
+                  <div class="stat-pill">
+                    <div class="stat-label">F1-Score</div>
+                    <div class="stat-val val-good">${(data.report.f1_score * 100).toFixed(1)}%</div>
+                  </div>
+                  <div class="stat-pill">
+                    <div class="stat-label">ROC-AUC</div>
+                    <div class="stat-val val-good">${(data.report.roc_auc * 100).toFixed(1)}%</div>
+                  </div>
                 </div>
-                <div class="stat-pill">
-                  <div class="stat-label">Test Accuracy</div>
-                  <div class="stat-val val-good">${(data.report.accuracy * 100).toFixed(1)}%</div>
-                </div>
-                <div class="stat-pill">
-                  <div class="stat-label">F1-Score</div>
-                  <div class="stat-val val-good">${(data.report.f1_score * 100).toFixed(1)}%</div>
-                </div>
-                <div class="stat-pill">
-                  <div class="stat-label">ROC-AUC</div>
-                  <div class="stat-val val-good">${(data.report.roc_auc * 100).toFixed(1)}%</div>
-                </div>
+                <p class="checkpoint-path-note">Checkpoint saved to <code>public/checkpoints/xgboost_alzheimers.json</code></p>
               </div>
-              <p class="checkpoint-path-note">Checkpoint saved to <code>public/checkpoints/xgboost_alzheimers.json</code></p>
-            </div>
-          `);
+            `, { stream: false });
+          }, 350);
         }
       }
     } catch(err) {
       // Silent error during poll
     }
-  }, 1200);
+  }, 120);
 }
 
 // --------------------------------------------------------------------------
@@ -1454,4 +1497,136 @@ async function fetchJSON(url, method = 'GET', body = null) {
   if (body !== null) opts.body = JSON.stringify(body);
   const res = await fetch(API + url, opts);
   return res.json();
+}
+
+// =============================================================================
+// INTERNET CONNECTIVITY MODULE
+// 3-layer detection: browser events + heartbeat ping + central state controller
+// =============================================================================
+
+/**
+ * Initialise connectivity detection.
+ * Called once from DOMContentLoaded.
+ */
+function initConnectivity() {
+  // Layer 1: instant browser events
+  window.addEventListener('online',  () => setOnlineState(true));
+  window.addEventListener('offline', () => setOnlineState(false));
+
+  // Layer 2: heartbeat ping every 15 s
+  setInterval(heartbeatCheck, 15_000);
+
+  // Run an initial check immediately (catches captive portals on load)
+  heartbeatCheck();
+}
+
+/**
+ * Heartbeat: fetch /api/status with a 4-second timeout.
+ * Updates online state based on real server reachability.
+ */
+async function heartbeatCheck() {
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch('/api/status', { signal: controller.signal });
+    clearTimeout(tid);
+    setOnlineState(res.ok);
+  } catch {
+    setOnlineState(false);
+  }
+}
+
+/**
+ * Central connectivity state controller.
+ * All UI changes for online/offline live here.
+ * @param {boolean} isOnline
+ */
+function setOnlineState(isOnline) {
+  if (_isOnline === isOnline) return; // no change
+  const wasOnline = _isOnline;
+  _isOnline = isOnline;
+
+  // ── 1. Offline Banner pill ───────────────────────────────────────────────
+  const banner = document.getElementById('offline-banner');
+  const bannerText = document.getElementById('offline-banner-text');
+  const bannerIcon = document.getElementById('offline-banner-icon');
+
+  if (banner) {
+    clearTimeout(_offlineBannerHideTimer);
+
+    if (!isOnline) {
+      // Show red offline pill
+      banner.classList.remove('is-online');
+      if (bannerText) bannerText.textContent = 'Tidak ada koneksi internet';
+      if (bannerIcon) bannerIcon.innerHTML = `
+        <line x1="1" y1="1" x2="23" y2="23"/>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+        <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+        <line x1="12" y1="20" x2="12.01" y2="20"/>
+      `;
+      banner.classList.add('visible');
+    } else {
+      // Show green recovery pill briefly, then hide
+      banner.classList.add('is-online');
+      if (bannerText) bannerText.textContent = 'Koneksi pulih — Neura siap!';
+      if (bannerIcon) bannerIcon.innerHTML = `
+        <path d="M1.42 9a15.91 15.91 0 0 1 21.16 0"/>
+        <path d="M5 12.55a10.94 10.94 0 0 1 14 0"/>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+        <line x1="12" y1="20" x2="12.01" y2="20"/>
+      `;
+      banner.classList.add('visible');
+      _offlineBannerHideTimer = setTimeout(() => {
+        banner.classList.remove('visible', 'is-online');
+      }, 2800);
+    }
+  }
+
+  // ── 2. Input area gating ─────────────────────────────────────────────────
+  const inputArea = document.querySelector('.chat-input-area');
+  if (inputArea) {
+    inputArea.classList.toggle('is-offline', !isOnline);
+  }
+  const textarea = document.getElementById('chat-input-textarea');
+  const sendBtn  = document.getElementById('send-msg-btn');
+  if (textarea) textarea.disabled = !isOnline;
+  if (sendBtn)  sendBtn.disabled  = !isOnline;
+
+  // ── 3. In-chat system notice ─────────────────────────────────────────────
+  if (!isOnline) {
+    _appendSystemNotice(
+      'offline',
+      `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      'Koneksi terputus. Periksa jaringan Anda.'
+    );
+    setDynamicIslandState && setDynamicIslandState('idle', { sub: 'Offline', main: 'No connection' });
+  } else if (wasOnline === false) {
+    // Only show recovery notice when we were actually offline before
+    _appendSystemNotice(
+      'online',
+      `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+      'Koneksi pulih — Neura siap!'
+    );
+  }
+}
+
+/**
+ * Inject a styled system notice row into the active chat scroll container.
+ * @param {'offline'|'online'} type
+ * @param {string} iconSvg
+ * @param {string} message
+ */
+function _appendSystemNotice(type, iconSvg, message) {
+  const container = document.getElementById('chat-content-container');
+  if (!container) return;
+
+  const el = document.createElement('div');
+  el.className = `system-notice ${type}`;
+  el.setAttribute('role', 'status');
+  el.innerHTML = `${iconSvg}<span>${escapeHtml(message)}</span>`;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
 }

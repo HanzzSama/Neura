@@ -127,15 +127,23 @@ def api_train():
         return jsonify({"error": "Training already running."}), 409
 
     body = request.get_json(silent=True) or {}
-    epochs = int(body.get("epochs", config.get("training.epochs", 100)))
+    epochs = int(body.get("epochs", config.get("training.epochs", 50)))
+
+    # Initialize running state IMMEDIATELY before starting the background thread
+    _training_status = {
+        "running": True,
+        "progress": [],
+        "report": None,
+        "total_epochs": epochs,
+        "error": None,
+    }
 
     def _run_training():
         global _training_status
-        _training_status = {"running": True, "progress": [], "report": None}
-
         try:
             import xgboost as xgb
             import pandas as pd
+            import time
             from sklearn.model_selection import train_test_split
             from sklearn.metrics import (
                 accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
@@ -162,6 +170,8 @@ def api_train():
                         "accuracy": round(float(max(0.0, 1.0 - train_loss)), 4),
                         "val_accuracy": round(float(max(0.0, 1.0 - val_loss)), 4),
                     })
+                    # Pacing (~35ms per round) so live client UI can render fluid progress bar animation
+                    time.sleep(0.035)
                     return False
 
             model = xgb.XGBClassifier(
@@ -202,6 +212,7 @@ def api_train():
             }
             _training_status["report"] = report
 
+            os.makedirs("public/reports", exist_ok=True)
             with open("public/reports/alzheimers_xgboost_metrics.json", "w", encoding="utf-8") as f:
                 json.dump({
                     "model_name": "AlzheimersXGBoost",

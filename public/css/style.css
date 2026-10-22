@@ -2329,3 +2329,265 @@ html, body {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.12);
   transform: translateY(-1.5px);
 }
+
+/* ==========================================================================
+   OFFLINE / ONLINE BANNER
+   ========================================================================== */
+.offline-banner {
+  position: fixed;
+  top: -72px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  background: rgba(18, 8, 8, 0.90);
+  border: 1px solid rgba(255, 80, 80, 0.30);
+  border-radius: 999px;
+  color: #ff7070;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 10000;
+  pointer-events: none;
+  transition: top 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 60, 60, 0.10);
+}
+.offline-banner.visible {
+  top: 18px;
+}
+.offline-banner.is-online {
+  border-color: rgba(50, 205, 100, 0.30);
+  color: #5ce87e;
+  background: rgba(8, 18, 10, 0.90);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(50, 200, 80, 0.10);
+}
+.offline-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  flex-shrink: 0;
+  animation: pulse-red 1.5s ease-in-out infinite;
+}
+.offline-banner.is-online .offline-dot {
+  background: #5ce87e;
+  animation: pulse-green 1.5s ease-in-out infinite;
+}
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* System notice messages inside chat */
+.system-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  margin: 8px auto;
+  max-width: 520px;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  animation: notice-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.system-notice.offline {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.20);
+  color: var(--accent-red, #C62828);
+}
+.system-notice.online {
+  background: rgba(46, 125, 50, 0.08);
+  border: 1px solid rgba(46, 125, 50, 0.20);
+  color: var(--accent-green, #2E7D32);
+}
+[data-theme="dark"] .system-notice.offline {
+  background: rgba(255, 80, 80, 0.10);
+  border-color: rgba(255, 80, 80, 0.22);
+  color: #ff8a8a;
+}
+[data-theme="dark"] .system-notice.online {
+  background: rgba(80, 220, 110, 0.10);
+  border-color: rgba(80, 220, 110, 0.22);
+  color: #7ae89a;
+}
+@keyframes notice-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Dim disabled input area when offline */
+.chat-input-area.is-offline .chat-input-textarea,
+.chat-input-area.is-offline #msg-input {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.chat-input-area.is-offline #send-msg-btn {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   ROTATING BORDER GLOW EFFECT (NEURA PULSE RING)
+   Spins continuously around the floating input box
+   ========================================================================== */
+
+@property --glow-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes rotate-input-glow {
+  0% {
+    --glow-angle: 0deg;
+  }
+  100% {
+    --glow-angle: 360deg;
+  }
+}
+
+.glow-ring {
+  position: relative;
+  width: 100%;
+  max-width: 768px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  margin: 0 auto;
+}
+
+/* Crisp rotating outer border rim */
+.glow-ring::after {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 21.5px;
+  background: conic-gradient(
+    from var(--glow-angle, 0deg),
+    transparent 0deg,
+    rgba(217, 119, 87, 0.25) 45deg,
+    #D97757 95deg,
+    #C084FC 130deg,
+    transparent 175deg,
+    transparent 205deg,
+    rgba(99, 102, 241, 0.25) 235deg,
+    #6366F1 280deg,
+    #38BDF8 315deg,
+    transparent 355deg
+  );
+  opacity: 0.5;
+  animation: rotate-input-glow 4s linear infinite;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+/* Atmospheric blurred halo around the input */
+.glow-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 24px;
+  background: conic-gradient(
+    from var(--glow-angle, 0deg),
+    transparent 0deg,
+    rgba(217, 119, 87, 0.2) 45deg,
+    rgba(217, 119, 87, 0.9) 95deg,
+    rgba(192, 132, 252, 0.85) 130deg,
+    transparent 175deg,
+    transparent 205deg,
+    rgba(99, 102, 241, 0.2) 235deg,
+    rgba(99, 102, 241, 0.9) 280deg,
+    rgba(56, 189, 248, 0.85) 315deg,
+    transparent 355deg
+  );
+  filter: blur(12px);
+  opacity: 0.38;
+  animation: rotate-input-glow 4s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+/* Ensure inner wrapper stays on top of the glowing pseudo-elements */
+.glow-ring > .input-box-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+/* Hover state: increase brightness & aura */
+.glow-ring:hover::after {
+  opacity: 0.8;
+}
+
+.glow-ring:hover::before {
+  opacity: 0.6;
+  filter: blur(14px);
+}
+
+/* Focus state: vibrant full glow & slightly faster rotation */
+.glow-ring:focus-within::after {
+  opacity: 1;
+  animation-duration: 2.8s;
+}
+
+.glow-ring:focus-within::before {
+  opacity: 0.95;
+  filter: blur(16px);
+  animation-duration: 2.8s;
+}
+
+.glow-ring:focus-within > .input-box-wrapper {
+  border-color: rgba(217, 119, 87, 0.35);
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.10);
+}
+
+/* Dark mode adjustments for maximum luminescence */
+[data-theme="dark"] .glow-ring::after {
+  opacity: 0.6;
+}
+
+[data-theme="dark"] .glow-ring::before {
+  opacity: 0.5;
+  filter: blur(14px);
+}
+
+[data-theme="dark"] .glow-ring:hover::after {
+  opacity: 0.9;
+}
+
+[data-theme="dark"] .glow-ring:hover::before {
+  opacity: 0.75;
+  filter: blur(16px);
+}
+
+[data-theme="dark"] .glow-ring:focus-within::after {
+  opacity: 1;
+}
+
+[data-theme="dark"] .glow-ring:focus-within::before {
+  opacity: 1;
+  filter: blur(20px);
+}
+
+[data-theme="dark"] .glow-ring:focus-within > .input-box-wrapper {
+  border-color: rgba(217, 119, 87, 0.45);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
+}
+

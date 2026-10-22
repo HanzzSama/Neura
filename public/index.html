@@ -12,9 +12,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <!-- External Stylesheet -->
-  <link rel="stylesheet" href="/css/style.css?v=2.3" />
+  <link rel="stylesheet" href="/css/style.css?v=2.7" />
 </head>
 <body>
+
+<!-- ========================================================================
+     OFFLINE CONNECTIVITY BANNER
+     Slides down from top when connection is lost. Managed by app.js.
+     ======================================================================== -->
+<div id="offline-banner" class="offline-banner" role="alert" aria-live="assertive" aria-atomic="true">
+  <span class="offline-dot"></span>
+  <svg id="offline-banner-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="1" y1="1" x2="23" y2="23"/>
+    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+    <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+    <line x1="12" y1="20" x2="12.01" y2="20"/>
+  </svg>
+  <span id="offline-banner-text">Tidak ada koneksi internet</span>
+</div>
 
 <div class="claude-layout">
 
@@ -299,7 +317,8 @@
          FLOATING BOTTOM INPUT (Claude Signature Aesthetic)
          ======================================================================== -->
     <div class="floating-input-container">
-      <div class="input-box-wrapper">
+      <div class="glow-ring" id="input-glow-ring">
+        <div class="input-box-wrapper">
         <textarea
           id="chat-input-textarea"
           rows="1"
@@ -343,6 +362,7 @@
           </button>
         </div>
       </div>
+    </div>
 
       <div class="disclaimer-caption">
         Neura can make mistakes. Verify important medical predictions and clinical evaluations.
@@ -395,7 +415,7 @@
 <div class="toast-box" id="toast-box"></div>
 
 <!-- External JavaScript -->
-<script src="/js/app.js?v=2.3"></script>
+<script src="/js/app.js?v=2.7"></script>
 
 </body>
 </html>
