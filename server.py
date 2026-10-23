@@ -63,6 +63,13 @@ def get_model():
 # -----------------------------------------------------------------------
 
 @app.route("/")
+@app.route("/welcome")
+def welcome():
+    return send_from_directory("public", "welcome.html")
+
+
+@app.route("/app")
+@app.route("/chat")
 def index():
     return send_from_directory("public", "index.html")
 

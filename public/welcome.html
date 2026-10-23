@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Antigravity</title>
+  <meta name="description" content="Experience liftoff with the next-gen agent platform">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 15 L85 85 L65 85 L50 45 L35 85 L15 85 Z' fill='%231a73e8'/></svg>">
+  <link rel="stylesheet" href="/css/welcome.css?v=3">
+  <link rel="stylesheet" href="/css/dynamic-island.css?v=3">
+  <link rel="stylesheet" href="/css/smooth-scroll.css?v=3">
+</head>
+<body>
+
+  <!-- Sticky Site Header / Navbar -->
+  <header class="site-header">
+    <div class="nav-container">
+      <div class="brand-container" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <!-- Google Antigravity Official Multi-color Icon + Typography -->
+        <svg class="brand-logo-svg" viewBox="0 0 220 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- A Icon with Google gradient hues -->
+          <path d="M18 4C24 4 28 10 24 18C20 26 12 30 7 32C5 33 2 31 3 28C6 22 9 12 18 4Z" fill="#1a73e8"/>
+          <path d="M18 4C22 8 29 20 29 26C29 30 25 33 21 31C16 28 14 20 18 4Z" fill="#ea4335"/>
+          <path d="M12 28C16 24 20 24 24 28C26 30 24 33 21 33C17 33 14 31 12 28Z" fill="#fbbc04"/>
+          <path d="M8 24C10 21 14 21 17 24C19 26 18 29 15 29C12 29 9 27 8 24Z" fill="#34a853"/>
+          <!-- Brand text -->
+          <text x="36" y="24" font-family="'Google Sans Flex', sans-serif" font-weight="500" font-size="16.5" fill="#1f1f1f" letter-spacing="-0.02em">Google Antigravity</text>
+        </svg>
+      </div>
+
+      <!-- Right Action Buttons -->
+      <div class="nav-actions">
+        <a href="/app" class="action-icon-btn" title="Launch Remote Control">🚀</a>
+        <a href="/app" class="btn-pill-dark">
+          <span data-i18n="btn_download">Download</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 16L7 11L8.4 9.55L11 12.15V4H13V12.15L15.6 9.55L17 11L12 16ZM6 20C5.45 20 4.97917 19.8042 4.5875 19.4125C4.19583 19.0208 4 18.55 4 18V15H6V18H18V15H20V18C20 18.55 19.8042 19.0208 19.4125 19.4125C19.0208 19.8042 18.55 20 18 20H6Z"/></svg>
+        </a>
+        <button class="lang-btn" id="lang-toggle-btn" title="Ganti Bahasa">
+          🌐 ID <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 15L7.05 10.05L8.45 8.65L12 12.2L15.55 8.65L16.95 10.05L12 15Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub Nav / Announcement Bar (Placed Below Main Nav) -->
+  <div class="announcement-bar" id="announcement-bar">
+    <div class="announcement-content">
+      <span class="announcement-pill">✦ BARU</span>
+      <span class="announcement-text">Gemini 4 Argon tersedia untuk Google AI Pro dan Ultra di Google Antigravity</span>
+      <a href="/app" class="announcement-link">Pelajari lebih lanjut &rarr;</a>
+    </div>
+    <button class="announcement-close" id="announcement-close" aria-label="Tutup">&times;</button>
+  </div>
+
+  <!-- Hero Section with Canvas Particle Simulation -->
+  <section class="hero-section">
+    <canvas id="antigravity-canvas"></canvas>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg class="hero-badge-logo" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4C21 4 25 9 22 16C19 23 11 27 6 29C4 30 2 28 3 25C5 20 8 11 16 4Z" fill="#1a73e8"/>
+          <path d="M16 4C20 8 26 18 26 23C26 27 22 30 19 28C14 25 12 18 16 4Z" fill="#ea4335"/>
+          <path d="M11 25C14 22 18 22 21 25C23 27 21 30 18 30C15 30 12 28 11 25Z" fill="#fbbc04"/>
+        </svg>
+        <span class="hero-badge-text">Google Antigravity</span>
+      </div>
+
+      <h1 class="hero-headline" data-i18n="hero_headline">
+        Melaju lebih cepat dengan platform agen generasi terbaru
+      </h1>
+
+      <div class="hero-actions">
+        <a href="/app" class="hero-download-btn">
+          <span data-i18n="btn_download">Download</span>
+        </a>
+        <a href="/app" class="hero-secondary-btn">
+          <span data-i18n="hero_sub_btn">Buka Neura Workspace &rarr;</span>
+        </a>
+      </div>
+
+      <div class="hero-pill-tab"></div>
+    </div>
+  </section>
+
+  <!-- Interactive IDE Showcase Window Frame -->
+  <section class="showcase-section">
+    <div class="ide-window-frame">
+      <div class="ide-title-bar">
+        <div class="window-dots">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+        </div>
+        <div class="ide-title-text">flight-tracker &mdash; page.tsx</div>
+        <div style="font-size: 11px; opacity: 0.7;">Antigravity Agent Ready &bull; UTF-8</div>
+      </div>
+
+      <div class="ide-window-body">
+        <!-- Sidebar Tree -->
+        <aside class="ide-sidebar">
+          <div class="sidebar-header">Explorer</div>
+          <div class="tree-item"><span class="tree-item-icon">📁</span> src</div>
+          <div class="tree-item"><span class="tree-item-icon">&nbsp;&nbsp;📁</span> app</div>
+          <div class="tree-item"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;📁</span> api / flights</div>
+          <div class="tree-item" data-file="route.ts"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄</span> route.ts</div>
+          <div class="tree-item active" data-file="page.tsx"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;📄</span> page.tsx</div>
+          <div class="tree-item" data-file="globals.css"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;📄</span> globals.css</div>
+          <div class="tree-item"><span class="tree-item-icon">📁</span> components</div>
+          <div class="tree-item"><span class="tree-item-icon">📄</span> package.json</div>
+        </aside>
+
+        <!-- Editor Area -->
+        <main class="ide-editor-area">
+          <div class="editor-tabs">
+            <div class="editor-tab active" data-file="page.tsx">page.tsx</div>
+            <div class="editor-tab" data-file="route.ts">route.ts</div>
+            <div class="editor-tab" data-file="globals.css">globals.css</div>
+          </div>
+
+          <button class="play-intro-overlay" id="play-intro-btn">
+            <span data-i18n="intro_btn">Putar intro ▶</span>
+          </button>
+
+          <pre class="code-content-wrapper"><code id="ide-code-content"><span class="code-keyword">import</span> { useState } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
+<span class="code-keyword">import</span> { SearchForm } <span class="code-keyword">from</span> <span class="code-string">'@/components/SearchForm'</span>;
+<span class="code-keyword">import</span> { FlightResults } <span class="code-keyword">from</span> <span class="code-string">'@/components/FlightResults'</span>;
+<span class="code-keyword">import</span> { Plane } <span class="code-keyword">from</span> <span class="code-string">'lucide-react'</span>;
+
+<span class="code-keyword">export default function</span> <span class="code-fn">Home</span>() {
+  <span class="code-keyword">const</span> [flights, setFlights] = <span class="code-fn">useState</span>([]);
+  <span class="code-keyword">const</span> [isLoading, setIsLoading] = <span class="code-fn">useState</span>(<span class="code-prop">false</span>);
+
+  <span class="code-keyword">const</span> <span class="code-fn">handleSearch</span> = <span class="code-keyword">async</span> (flightNumber: <span class="code-type">string</span>) => {
+    <span class="code-prop">setIsLoading</span>(<span class="code-prop">true</span>);
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> <span class="code-fn">fetch</span>(<span class="code-string">`/api/flights?flightNumber=${flightNumber}`</span>);
+      <span class="code-keyword">const</span> data = <span class="code-keyword">await</span> response.<span class="code-fn">json</span>();
+      <span class="code-fn">setFlights</span>(data);
+    } <span class="code-keyword">finally</span> {
+      <span class="code-fn">setIsLoading</span>(<span class="code-prop">false</span>);
+    }
+  };
+
+  <span class="code-keyword">return</span> (
+    <span class="code-string">&lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8"&gt;</span>
+      <span class="code-diff-added">+ &lt;FlightTracker onSearch={handleSearch} /&gt;</span>
+      <span class="code-diff-removed">- &lt;FlightDetailsCard /&gt;</span>
+    <span class="code-string">&lt;/div&gt;</span>
+  );
+}</code></pre>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- Horizontal Tool Pills Carousel -->
+  <section class="tools-carousel-section">
+    <div class="tool-pill-icon" title="Sync & Reload">⟳</div>
+    <div class="tool-pill-icon" title="Gemini Intelligence">✦</div>
+    <div class="tool-pill-icon" title="Parallel Workspaces">⧉</div>
+    <div class="tool-pill-icon" title="Command Palette">⌘</div>
+    <div class="tool-pill-icon" title="Deep Code Context">⚲</div>
+    <div class="tool-pill-icon" title="Project Files">📁</div>
+    <div class="tool-pill-icon" title="Syntax Engine">&lt; &gt;</div>
+    <div class="tool-pill-icon" title="Multi-agents">⠇</div>
+    <div class="tool-pill-icon" title="Live Inline Edits">✎</div>
+    <div class="tool-pill-icon" title="Terminal Surface">🖵</div>
+    <div class="tool-pill-icon" title="Module Graph">⬡</div>
+    <div class="tool-pill-icon" title="Instant Execution">➔</div>
+    <div class="tool-pill-icon" title="Artifact Viewer">⊞</div>
+    <div class="tool-pill-icon" title="Enter Orbit">↵</div>
+  </section>
+
+  <!-- Manifesto / Big Editorial Statement -->
+  <section class="statement-section">
+    <p class="statement-text" data-i18n="statement">
+      Google Antigravity adalah platform pengembangan berbasis agen kami, yang memungkinkan siapa saja membangun di era berbasis agen.
+    </p>
+  </section>
+
+  <!-- 4 Core Showcase Rows -->
+  <section class="products-section" id="products">
+    
+    <!-- 1. Antigravity App -->
+    <div class="product-row">
+      <div class="product-info">
+        <h2 class="product-title" data-i18n="app_title">Antigravity App</h2>
+        <p class="product-description" data-i18n="app_desc">
+          Pusat komando Anda untuk mengelola beberapa agen lokal secara paralel. Kelompokkan percakapan ke dalam Proyek, operasikan di berbagai ruang kerja, dan otomatiskan tugas rutin dengan pesan terjadwal.
+        </p>
+      </div>
+      <div class="app-card-preview">
+        <div class="mockup-chat-box">
+          <div class="mockup-top-meta">
+            <span class="mockup-project-tag">
+              📁 new-project
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="mockup-input-container">
+            <div class="mockup-placeholder">Ask anything, @ to mention, / for actions</div>
+            <div class="mockup-input-bottom">
+              <span class="model-pill-badge">
+                <span class="plus-icon">+</span>
+                <span>Gemini 3.5 Flash</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+              <button class="mockup-mic-btn" title="Voice Input">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="mockup-worktree-row">
+            <span class="worktree-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+              <span>New Worktree</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            </span>
+            <span class="worktree-chip branch-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+              <span>main</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="mockup-dropdown-popover">
+            <div class="popover-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Local</span>
+            </div>
+            <div class="popover-item active">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+              <span>New Worktree</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Antigravity IDE -->
+    <div class="product-row reverse">
+      <div class="ide-card-preview">
+        <div class="ide-card-glow"></div>
+        <div class="ide-window-inner">
+          <div class="ide-tab-bar">
+            <div class="ide-tab active">
+              <span class="file-icon">⚡</span>
+              <span>LoginButton.tsx</span>
+            </div>
+            <div class="ide-tab">
+              <span class="file-icon">⚛</span>
+              <span>App.tsx</span>
+            </div>
+          </div>
+          <div class="code-snippet-box">
+            <div class="code-comment-line">// Pair programming with Antigravity Agent</div>
+            <div class="code-line"><span class="line-num">1</span> <span><span class="code-keyword">import</span> Link <span class="code-keyword">from</span> <span class="code-string">'next/link'</span>;</span></div>
+            <div class="code-line"><span class="line-num">2</span> <span><span class="code-keyword">export default function</span> <span class="code-fn">LoginButton</span>(): React.ReactElement {</span></div>
+            <div class="code-line indent-1"><span class="line-num">3</span> <span><span class="code-keyword">return</span> (</span></div>
+            <div class="code-line indent-2 code-diff-added"><span class="line-num">4</span> <span>+ &lt;Link href="/api/auth/login" className="btn-primary"&gt;</span></div>
+            <div class="code-line indent-3"><span class="line-num">5</span> <span>  Login with Google Antigravity</span></div>
+            <div class="code-line indent-2"><span class="line-num">6</span> <span>  &lt;/Link&gt;</span></div>
+            <div class="code-line indent-1"><span class="line-num">7</span> <span>);</span></div>
+            <div class="code-line"><span class="line-num">8</span> <span>}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="product-info">
+        <h2 class="product-title" data-i18n="ide_title">Antigravity IDE</h2>
+        <p class="product-description" data-i18n="ide_desc">
+          IDE berbasis agen dengan fitur lengkap. Dilengkapi pengelola agen, artefak, dan pemahaman mendalam tentang codebase Anda.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. Antigravity SDK -->
+    <div class="product-row">
+      <div class="product-info">
+        <h2 class="product-title" data-i18n="sdk_title">Antigravity SDK</h2>
+        <p class="product-description" data-i18n="sdk_desc">
+          Buat prototipe agen kustom yang memanfaatkan kerangka kerja Antigravity dengan kode minimal. Skrip Python sederhana untuk mengiterasi pada aplikasi berbasis agen, mengotomatiskan tugas rekayasa perangkat lunak, dan menjalankan evaluasi.
+        </p>
+      </div>
+      <div class="sdk-card-preview">
+        <div class="sdk-glow-orb"></div>
+        <div class="sdk-card-inner">
+          <div class="sdk-banner-title">Antigravity SDK</div>
+          <div class="sdk-code-window">
+            <div class="sdk-code-header">
+              <span class="python-dot"></span>
+              <span>agent_workflow.py</span>
+            </div>
+            <pre class="sdk-code-body"><code><span class="sdk-kw">from</span> antigravity <span class="sdk-kw">import</span> Agent, Workspace
+
+agent = Agent.create(model=<span class="sdk-str">"gemini-4-argon"</span>)
+workspace = Workspace.open(<span class="sdk-str">"./my-project"</span>)
+agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</code></pre>
+          </div>
+          <div class="sdk-code-badge">
+            <span class="pip-icon">$</span> pip install google-antigravity
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Antigravity CLI -->
+    <div class="product-row reverse">
+      <div class="cli-card-preview">
+        <div class="cli-window-inner">
+          <div class="cli-window-header">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="cli-header-title">agy &bull; Terminal</span>
+          </div>
+          <div class="cli-two-column-body">
+            <div class="cli-col-left">
+              <div class="ascii-logo">
+   /\
+  /  \     Welcome to Antigravity CLI!
+ / /\ \    Choose your color scheme:
+/_/  \_\
+              </div>
+              <div class="cli-theme-list">
+                <div class="cli-theme-item">light</div>
+                <div class="cli-theme-item">solarized light</div>
+                <div class="cli-theme-item">colorblind-friendly light</div>
+                <div class="cli-theme-item active">&gt; dark</div>
+                <div class="cli-theme-item">solarized dark</div>
+                <div class="cli-theme-item">colorblind-friendly dark</div>
+                <div class="cli-theme-item">tokyo night</div>
+                <div class="cli-theme-item">terminal</div>
+              </div>
+              <div class="cli-next-btn">[Next]</div>
+            </div>
+            <div class="cli-col-right">
+              <div class="cli-user-input">&gt; you: add a greeting function</div>
+              <div class="cli-ai-response">AGY: Here's the change:</div>
+              <div class="cli-diff-lines">
+                <div class="cli-diff-line"><span class="line-num">3</span> <span>import "fmt"</span></div>
+                <div class="cli-diff-line"><span class="line-num">4</span> <span></span></div>
+                <div class="cli-diff-line diff-del"><span class="line-num">5</span> <span>- func main() {</span></div>
+                <div class="cli-diff-line diff-add"><span class="line-num">5</span> <span>+ func greet(name string) {</span></div>
+                <div class="cli-diff-line diff-add"><span class="line-num">6</span> <span>+   fmt.Printf("Hello, %s!\n", name)</span></div>
+                <div class="cli-diff-line"><span class="line-num">7</span> <span>  }</span></div>
+              </div>
+              <div class="cli-command-row">
+                <span class="cli-prompt">agy:neura$</span>
+                <span>agy run --autonomous</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-info">
+        <h2 class="product-title" data-i18n="cli_title">Antigravity CLI</h2>
+        <p class="product-description" data-i18n="cli_desc">
+          Antarmuka berbasis terminal yang ringan dan cepat untuk bekerja dengan agen Antigravity. Jalankan agen pemrograman otonom, eksekusi perintah shell secara langsung, dan kelola subagen latar belakang semuanya dari keyboard Anda.
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Blog / Latest Updates Section (Carousel) -->
+  <section class="blog-section" id="blog">
+    <div class="blog-header">
+      <h2 class="blog-headline" data-i18n="blog_headline">Latest Blogs</h2>
+      <a href="/app" class="blog-see-all-btn" data-i18n="blog_see_all">View blog</a>
+    </div>
+
+    <div class="blog-carousel-track" id="blog-carousel-track">
+      <!-- Card 1: Gemini 4 Argon -->
+      <article class="blog-card" onclick="window.location.href='/app'">
+        <div class="blog-card-media blog-media-argon">
+          <div class="neon-glow-ribbon"></div>
+          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Gemini 4 Argon</span>
+        </div>
+        <div class="blog-card-content">
+          <h3 class="blog-card-title">Gemini 4 Argon in Google Antigravity</h3>
+          <div class="blog-card-meta">
+            <span>Oct 13, 2026</span>
+            <span>Model</span>
+          </div>
+          <div class="blog-card-link">
+            <span>Read blog</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Custom agents in Google plugins -->
+      <article class="blog-card" onclick="window.location.href='/app'">
+        <div class="blog-card-media blog-media-plugin">
+          <div class="plugin-mockup-card">
+            <div class="plugin-card-title">Build With Google Plugins</div>
+            <div class="plugin-card-desc">Browse and enable plugins from the Build With Google catalog</div>
+            <div class="plugin-card-btn-row">
+              <span class="plugin-customize-btn">Customize</span>
+              <svg class="cursor-pointer-icon" width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" stroke="#000000" stroke-width="1.6"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card-content">
+          <h3 class="blog-card-title">Custom agents in Google plugins</h3>
+          <div class="blog-card-meta">
+            <span>Sep 28, 2026</span>
+            <span>Product</span>
+          </div>
+          <div class="blog-card-link">
+            <span>Read blog</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Gemini 3.8 Flash -->
+      <article class="blog-card" onclick="window.location.href='/app'">
+        <div class="blog-card-media blog-media-flash">
+          <div class="neon-glow-brackets">&lt; &gt;</div>
+          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Gemini 3.8 Flash</span>
+        </div>
+        <div class="blog-card-content">
+          <h3 class="blog-card-title">Gemini 3.8 Flash in Google Antigravity</h3>
+          <div class="blog-card-meta">
+            <span>Sep 1, 2026</span>
+            <span>Model</span>
+          </div>
+          <div class="blog-card-link">
+            <span>Read blog</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Teamwork -->
+      <article class="blog-card" onclick="window.location.href='/app'">
+        <div class="blog-card-media blog-media-dive">
+          <div class="dive-mini-widget">
+            <div class="dive-widget-header">
+              <span>⑂ teamwork-preview</span>
+              <span>+ Gemini 3.7 Flash High ⌄</span>
+            </div>
+            <div class="dive-widget-body">
+              <span>Feature Deep Dive</span>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card-content">
+          <h3 class="blog-card-title">Teamwork: when AI becomes a research partner</h3>
+          <div class="blog-card-meta">
+            <span>Aug 27, 2026</span>
+            <span>Research</span>
+            <span>Product</span>
+          </div>
+          <div class="blog-card-link">
+            <span>Read blog</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Vision-first workflows -->
+      <article class="blog-card" onclick="window.location.href='/app'">
+        <div class="blog-card-media blog-media-vision">
+          <div class="vision-radial-glow"></div>
+          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Multimodal Vision</span>
+        </div>
+        <div class="blog-card-content">
+          <h3 class="blog-card-title">Vision-first workflows in Google Antigravity</h3>
+          <div class="blog-card-meta">
+            <span>Aug 15, 2026</span>
+            <span>Research</span>
+          </div>
+          <div class="blog-card-link">
+            <span>Read blog</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Carousel Nav Buttons (Bottom Left Pill) -->
+    <div class="blog-carousel-controls">
+      <div class="carousel-pill-nav">
+        <button class="carousel-nav-arrow" onclick="scrollBlogCarousel(-1)" aria-label="Previous blog post">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-nav-arrow" onclick="scrollBlogCarousel(1)" aria-label="Next blog post">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stay in Sync / Newsletter Updates Section -->
+  <section class="sync-updates-section" id="updates">
+    <div class="sync-updates-card">
+      <h2 class="sync-updates-title">Stay in sync with Google Antigravity</h2>
+      <p class="sync-updates-sub">Get the latest product updates, releases, and feature drops.</p>
+
+      <!-- Filter Pills -->
+      <div class="sync-pills-row" id="sync-pills">
+        <button type="button" class="sync-pill active" onclick="toggleSyncPill(this)">
+          <svg class="pill-check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>All Updates</span>
+        </button>
+        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+          <span class="pill-brand-glyph">A</span>
+          <span>Antigravity App</span>
+        </button>
+        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 16 21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Antigravity CLI</span>
+        </button>
+        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg>
+          <span>IDE Extensions</span>
+        </button>
+        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Antigravity SDK</span>
+        </button>
+      </div>
+
+      <!-- Email Subscription Form -->
+      <form class="sync-subscribe-form" onsubmit="handleSyncSubscribe(event)">
+        <input
+          type="email"
+          class="sync-email-input"
+          id="sync-email-field"
+          placeholder="Enter your email address"
+          required
+        />
+        <button type="submit" class="sync-subscribe-btn">Subscribe</button>
+      </form>
+
+      <!-- Terms & Privacy Agreement -->
+      <label class="sync-consent-row">
+        <input type="checkbox" id="sync-consent-check" required />
+        <span>I accept Google's <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>. Unsubscribe anytime.</span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Download Google Antigravity Section -->
+  <section class="bottom-cta-section" id="download">
+    <div class="bottom-cta-container">
+      <canvas id="cta-stars-canvas" class="cta-stars-canvas"></canvas>
+
+      <div class="download-card-content">
+        <h2 class="download-card-title">
+          Download Google<br />
+          Antigravity<span class="blinking-google-cursor"></span>
+        </h2>
+
+        <div class="download-buttons-row">
+          <a href="/app" class="btn-download-white">
+            Download for x64
+          </a>
+          <a href="/app" class="btn-download-dark">
+            Download for ARM64
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 220 36" height="24" fill="none">
+              <path d="M18 4C24 4 28 10 24 18C20 26 12 30 7 32C5 33 2 31 3 28C6 22 9 12 18 4Z" fill="#1a73e8"/>
+              <path d="M18 4C22 8 29 20 29 26C29 30 25 33 21 31C16 28 14 20 18 4Z" fill="#ea4335"/>
+              <path d="M12 28C16 24 20 24 24 28C26 30 24 33 21 33C17 33 14 31 12 28Z" fill="#fbbc04"/>
+              <path d="M8 24C10 21 14 21 17 24C19 26 18 29 15 29C12 29 9 27 8 24Z" fill="#34a853"/>
+              <text x="36" y="24" font-family="'Google Sans Flex', sans-serif" font-weight="500" font-size="16" fill="#1f1f1f">Google Antigravity</text>
+            </svg>
+          </div>
+          <p style="font-size: 13px; color: #80868b; max-width: 280px; margin-top: 4px;">
+            Platform agen generasi masa depan untuk rekayasa perangkat lunak otonom dan AI kolaboratif.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Produk</div>
+          <ul class="footer-links-list">
+            <li><a href="#products" class="footer-link">Antigravity App</a></li>
+            <li><a href="#products" class="footer-link">Antigravity IDE</a></li>
+            <li><a href="#products" class="footer-link">Antigravity CLI</a></li>
+            <li><a href="#products" class="footer-link">Antigravity SDK</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Ekosistem</div>
+          <ul class="footer-links-list">
+            <li><a href="/app" class="footer-link">Gemini 4 Argon</a></li>
+            <li><a href="/app" class="footer-link">Gemini 3.8 Flash</a></li>
+            <li><a href="/app" class="footer-link">Google Plugins</a></li>
+            <li><a href="/app" class="footer-link">Neura TensorFlow</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Sumber Daya</div>
+          <ul class="footer-links-list">
+            <li><a href="#blog" class="footer-link">Blog &amp; Riset</a></li>
+            <li><a href="/app" class="footer-link">Dokumentasi</a></li>
+            <li><a href="/app" class="footer-link">Catatan Rilis</a></li>
+            <li><a href="/app" class="footer-link">Dukungan Komunitas</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Perusahaan</div>
+          <ul class="footer-links-list">
+            <li><a href="https://about.google/" target="_blank" class="footer-link">Tentang Google</a></li>
+            <li><a href="https://policies.google.com/privacy" target="_blank" class="footer-link">Privasi</a></li>
+            <li><a href="https://policies.google.com/terms" target="_blank" class="footer-link">Persyaratan Layanan</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Google LLC &bull; Antigravity Platform</div>
+        <div class="footer-bottom-links">
+          <a href="https://policies.google.com/privacy" target="_blank">Privasi</a>
+          <a href="https://policies.google.com/terms" target="_blank">Persyaratan</a>
+          <span>Bahasa: Indonesia (ID)</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/lenis.min.js"></script>
+  <script src="/js/smooth-scroll.js"></script>
+  <script src="/js/dynamic-island.js"></script>
+  <script src="/js/welcome.js"></script>
+</body>
+</html>

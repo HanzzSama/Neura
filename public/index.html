@@ -11,8 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- External Stylesheet -->
-  <link rel="stylesheet" href="/css/style.css?v=2.7" />
+  <!-- External Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css?v=3.3" />
+  <link rel="stylesheet" href="/css/dynamic-island.css" />
 </head>
 <body>
 
@@ -72,7 +73,7 @@
     </div>
 
     <!-- Sidebar Body -->
-    <div class="sidebar-body">
+    <div class="sidebar-body" data-lenis-prevent="true">
       <div>
         <div class="nav-group-title">Recent Chats</div>
         <div class="chat-history-list" id="chat-history-list">
@@ -265,7 +266,7 @@
     </header>
 
     <!-- Scrollable Chat Stream -->
-    <div class="chat-scroll-area" id="chat-scroll-area">
+    <div class="chat-scroll-area" id="chat-scroll-area" data-lenis-prevent="true">
       <div class="chat-content-container" id="chat-content-container">
 
         <!-- Claude Hero State (shown when chat is new) -->
@@ -347,6 +348,12 @@
               </svg>
               <span>/eval</span>
             </span>
+            <span class="cmd-pill" onclick="submitCommand('Konsultasi')">
+              <svg class="pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
+              <span>Konsultasi</span>
+            </span>
             <span class="cmd-pill" onclick="submitCommand('/status')">
               <svg class="pill-icon pill-icon-status" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                 <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z" clip-rule="evenodd"/>
@@ -415,7 +422,8 @@
 <div class="toast-box" id="toast-box"></div>
 
 <!-- External JavaScript -->
-<script src="/js/app.js?v=2.7"></script>
+<script src="/js/dynamic-island.js"></script>
+<script src="/js/app.js?v=3.3"></script>
 
 </body>
 </html>

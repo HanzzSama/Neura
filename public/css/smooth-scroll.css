@@ -1,0 +1,56 @@
+/* ==========================================================================
+   GLOBAL SMOOTH SCROLL (Lenis Inertial Momentum Engine)
+   Works across all pages: welcome.html, index.html, modals, and workspaces
+   ========================================================================== */
+
+html.lenis:not(:has(.claude-layout)),
+html.lenis:not(:has(.claude-layout)) body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent],
+.lenis.lenis-smooth #chat-scroll-area,
+.lenis.lenis-smooth .chat-scroll-area,
+.lenis.lenis-smooth .chat-log,
+.lenis.lenis-smooth .chat-messages,
+.lenis.lenis-smooth .sidebar,
+.lenis.lenis-smooth .sidebar-body,
+.lenis.lenis-smooth .sidebar-nav,
+.lenis.lenis-smooth .modal-body,
+.lenis.lenis-smooth pre,
+.lenis.lenis-smooth textarea {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Smart Scroll-Reactive Navbar (Auto-hide on Scroll Down, Reveal on Scroll Up)
+   Scoped to landing/content pages only, not affecting app layouts
+   ========================================================================== */
+.site-header,
+body:not(:has(.claude-layout)) .top-nav {
+  will-change: transform;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.site-header.nav-hidden,
+body:not(:has(.claude-layout)) .top-nav.nav-hidden {
+  transform: translateY(-100%) !important;
+}
+
+.site-header.nav-visible,
+body:not(:has(.claude-layout)) .top-nav.nav-visible {
+  transform: translateY(0) !important;
+}
