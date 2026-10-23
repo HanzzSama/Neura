@@ -304,28 +304,41 @@ function getHeroHtml() {
       <div class="hero-cards-grid">
         <div class="hero-card" onclick="submitCommand('/train 5')">
           <div class="hero-card-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3.5" y="13" width="4" height="8" rx="1"/>
+              <rect x="10" y="8" width="4" height="13" rx="1"/>
+              <rect x="16.5" y="3" width="4" height="18" rx="1"/>
+            </svg>
             <span>Train Neural Network</span>
           </div>
           <div class="hero-card-desc">Execute 5 epochs of backpropagation on synthetic data</div>
         </div>
         <div class="hero-card" onclick="submitCommand('/predict')">
           <div class="hero-card-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 10.414V6a1 1 0 1 0-2 0v7a1 1 0 0 0 1 1h5a1 1 0 1 0 0-2h-4z" clip-rule="evenodd"/>
+            </svg>
             <span>Run Inference</span>
           </div>
           <div class="hero-card-desc">Sample a 128-dim input and inspect top class probabilities</div>
         </div>
         <div class="hero-card" onclick="submitCommand('/eval')">
           <div class="hero-card-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L17.5 9H13V4.5zM8 12h8a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2z"/>
+            </svg>
             <span>Evaluate Metrics</span>
           </div>
           <div class="hero-card-desc">Compute test loss and test accuracy against validation sets</div>
         </div>
         <div class="hero-card" onclick="submitCommand('/status')">
           <div class="hero-card-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="3" width="20" height="7.5" rx="2"/>
+              <circle cx="6" cy="6.75" r="1.3" fill="#FAF9F5"/>
+              <rect x="2" y="13.5" width="20" height="7.5" rx="2"/>
+              <circle cx="6" cy="17.25" r="1.3" fill="#FAF9F5"/>
+            </svg>
             <span>Model Architecture</span>
           </div>
           <div class="hero-card-desc">Verify checkpoints, weights readiness, and server health</div>

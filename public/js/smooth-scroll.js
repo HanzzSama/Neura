@@ -89,42 +89,74 @@
     });
 
     // -----------------------------------------------------------------------
-    // Smart Scroll-Reactive Header (Auto-hide on Scroll Down, Reveal on Scroll Up)
+    // Smooth Parallax & Kinetic Scroll-Reactive Header Navigation
     // -----------------------------------------------------------------------
     let lastScrollY = window.scrollY || 0;
+    let isHeaderHidden = false;
 
-    function handleScrollDirection(currentScrollY) {
+    function updateHeaderParallax(currentScrollY, velocity = 0) {
       const headers = document.querySelectorAll('.site-header, .top-nav');
+      if (!headers.length) return;
 
+      // 1. Kinetic velocity dampening for smooth organic parallax travel
+      // Velocity is positive scrolling DOWN, negative scrolling UP
+      const clampedVelocity = Math.max(-16, Math.min(16, velocity || 0));
+      const parallaxY = -(clampedVelocity * 0.38);
+      const innerParallax = clampedVelocity * 0.22;
+      const navScale = Math.max(0.984, 1 - Math.min(0.016, Math.abs(clampedVelocity) * 0.0012));
+
+      headers.forEach(h => {
+        h.style.setProperty('--nav-parallax-y', `${parallaxY.toFixed(2)}px`);
+        h.style.setProperty('--nav-parallax-scale', `${navScale.toFixed(4)}`);
+        h.style.setProperty('--nav-inner-parallax', `${innerParallax.toFixed(2)}px`);
+
+        // Parallax elevation state (glassmorphism & compression)
+        if (currentScrollY > 20) {
+          h.classList.add('nav-scrolled');
+        } else {
+          h.classList.remove('nav-scrolled');
+        }
+      });
+
+      // 2. Near top: always reveal relaxed header
       if (currentScrollY <= 20) {
-        // At or near top: always show
-        headers.forEach(h => {
-          h.classList.remove('nav-hidden');
-          h.classList.add('nav-visible');
-        });
-        document.body.classList.remove('nav-hidden');
-        lastScrollY = currentScrollY;
-        return;
-      }
-
-      const delta = currentScrollY - lastScrollY;
-
-      // Filter out micro-scroll twitches (threshold 6px)
-      if (Math.abs(delta) > 6) {
-        if (delta > 0 && currentScrollY > 60) {
-          // Scrolling DOWN -> Transform header up (Dynamic Island stays fixed!)
-          headers.forEach(h => {
-            h.classList.add('nav-hidden');
-            h.classList.remove('nav-visible');
-          });
-          document.body.classList.add('nav-hidden');
-        } else if (delta < 0) {
-          // Scrolling UP -> Reveal header
+        if (isHeaderHidden) {
           headers.forEach(h => {
             h.classList.remove('nav-hidden');
             h.classList.add('nav-visible');
           });
           document.body.classList.remove('nav-hidden');
+          isHeaderHidden = false;
+        }
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // 3. Directional detection with smooth hysteresis
+      const delta = currentScrollY - lastScrollY;
+
+      // Filter micro-jitters (react cleanly to intentional scrolls)
+      if (Math.abs(delta) > 5 || Math.abs(clampedVelocity) > 1.0) {
+        if ((delta > 0 || clampedVelocity > 0.8) && currentScrollY > 60) {
+          // Scrolling DOWN -> Glide header out with upward parallax momentum
+          if (!isHeaderHidden) {
+            headers.forEach(h => {
+              h.classList.add('nav-hidden');
+              h.classList.remove('nav-visible');
+            });
+            document.body.classList.add('nav-hidden');
+            isHeaderHidden = true;
+          }
+        } else if (delta < 0 || clampedVelocity < -0.6) {
+          // Scrolling UP -> Reveal header with floating parallax spring entry
+          if (isHeaderHidden) {
+            headers.forEach(h => {
+              h.classList.remove('nav-hidden');
+              h.classList.add('nav-visible');
+            });
+            document.body.classList.remove('nav-hidden');
+            isHeaderHidden = false;
+          }
         }
         lastScrollY = currentScrollY;
       }
@@ -151,15 +183,23 @@
     }
 
     lenis.on('scroll', (e) => {
-      handleScrollDirection(e.scroll);
+      updateHeaderParallax(e.scroll, e.velocity);
       updateIslandParallax(e.scroll, e.velocity);
     });
 
     // Native fallback in case Lenis is bypassed
+    let lastNativeScrollY = window.scrollY || 0;
+    let lastNativeTime = performance.now();
     window.addEventListener('scroll', () => {
       if (!window.lenis || !window.lenis.isSmooth) {
-        handleScrollDirection(window.scrollY);
-        updateIslandParallax(window.scrollY, 0);
+        const curY = window.scrollY;
+        const now = performance.now();
+        const dt = Math.max(1, now - lastNativeTime);
+        const estVelocity = ((curY - lastNativeScrollY) / dt) * 16;
+        lastNativeScrollY = curY;
+        lastNativeTime = now;
+        updateHeaderParallax(curY, estVelocity);
+        updateIslandParallax(curY, estVelocity);
       }
     }, { passive: true });
   }

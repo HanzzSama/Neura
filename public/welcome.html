@@ -3,359 +3,827 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Google Antigravity</title>
-  <meta name="description" content="Experience liftoff with the next-gen agent platform">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 15 L85 85 L65 85 L50 45 L35 85 L15 85 Z' fill='%231a73e8'/></svg>">
-  <link rel="stylesheet" href="/css/welcome.css?v=3">
-  <link rel="stylesheet" href="/css/dynamic-island.css?v=3">
-  <link rel="stylesheet" href="/css/smooth-scroll.css?v=3">
+  <title>Neura &bull; AI Deteksi &amp; Diagnosis Dini Alzheimer</title>
+  <meta name="description" content="Platform AI klinis mutakhir untuk deteksi dini risiko penyakit Alzheimer berbasis 32 biomarker dan machine learning berakurasi tinggi.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23D97757'/><path d='M30 50 Q50 20 70 50 T90 50' stroke='white' stroke-width='8' fill='none'/></svg>">
+  <link rel="stylesheet" href="/css/welcome.css?v=23">
+  <link rel="stylesheet" href="/css/dynamic-island.css?v=23">
+  <link rel="stylesheet" href="/css/smooth-scroll.css?v=23">
 </head>
 <body>
 
-  <!-- Sticky Site Header / Navbar -->
-  <header class="site-header">
-    <div class="nav-container">
-      <div class="brand-container" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <!-- Google Antigravity Official Multi-color Icon + Typography -->
-        <svg class="brand-logo-svg" viewBox="0 0 220 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- A Icon with Google gradient hues -->
-          <path d="M18 4C24 4 28 10 24 18C20 26 12 30 7 32C5 33 2 31 3 28C6 22 9 12 18 4Z" fill="#1a73e8"/>
-          <path d="M18 4C22 8 29 20 29 26C29 30 25 33 21 31C16 28 14 20 18 4Z" fill="#ea4335"/>
-          <path d="M12 28C16 24 20 24 24 28C26 30 24 33 21 33C17 33 14 31 12 28Z" fill="#fbbc04"/>
-          <path d="M8 24C10 21 14 21 17 24C19 26 18 29 15 29C12 29 9 27 8 24Z" fill="#34a853"/>
-          <!-- Brand text -->
-          <text x="36" y="24" font-family="'Google Sans Flex', sans-serif" font-weight="500" font-size="16.5" fill="#1f1f1f" letter-spacing="-0.02em">Google Antigravity</text>
-        </svg>
-      </div>
+  <!-- Sub Nav / Minimalist Clinical Announcement Ribbon (Top Ribbon) -->
+  <aside class="announcement-bar" id="announcement-bar">
+    <div class="announcement-content">
+      <span class="announcement-pill">✦ RISET KLINIS</span>
+      <span class="announcement-text">Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi 94.4% (ROC-AUC 0.933)</span>
+      <a href="/app" class="announcement-link">Pelajari lebih lanjut &rarr;</a>
+    </div>
+    <button class="announcement-close" id="announcement-close" aria-label="Tutup pemberitahuan">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </aside>
 
-      <!-- Right Action Buttons -->
+  <!-- Main Nav: Minimalist, Modern, Glass Header -->
+  <header class="site-header" id="site-header">
+    <div class="nav-container">
+      <!-- Brand on Left -->
+      <a href="/" class="brand-container" title="Neura AI - Halaman Utama" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+        <div class="brand-badge-icon">
+          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="brand-logo-img" onerror="this.style.display='none'" />
+        </div>
+        <span class="brand-name">Neura</span>
+        <span class="brand-tag">Clinical AI</span>
+      </a>
+
+      <!-- Center Minimalist Navigation Links -->
+      <nav class="nav-center-menu" aria-label="Menu Utama">
+        <a href="#about" class="nav-menu-link">Tentang</a>
+        <a href="#pipeline" class="nav-menu-link">Alur Analisis</a>
+        <a href="#security" class="nav-menu-link">Keamanan</a>
+        <a href="#specification" class="nav-menu-link">Spesifikasi</a>
+        <a href="/app" class="nav-menu-link">Workspace</a>
+      </nav>
+
+      <!-- Right Action Items -->
       <div class="nav-actions">
-        <a href="/app" class="action-icon-btn" title="Launch Remote Control">🚀</a>
-        <a href="/app" class="btn-pill-dark">
-          <span data-i18n="btn_download">Download</span>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 16L7 11L8.4 9.55L11 12.15V4H13V12.15L15.6 9.55L17 11L12 16ZM6 20C5.45 20 4.97917 19.8042 4.5875 19.4125C4.19583 19.0208 4 18.55 4 18V15H6V18H18V15H20V18C20 18.55 19.8042 19.0208 19.4125 19.4125C19.0208 19.8042 18.55 20 18 20H6Z"/></svg>
+        <!-- Integrated Modern System Status Pill (Replacing black ceiling notch) -->
+        <a href="/app" class="nav-status-pill" title="Status Model XGBoost & Evaluasi Klinis">
+          <span class="nav-status-dot"></span>
+          <span class="nav-status-title">XGBoost 3.x</span>
+          <span class="nav-status-badge">Ready</span>
         </a>
-        <button class="lang-btn" id="lang-toggle-btn" title="Ganti Bahasa">
-          🌐 ID <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 15L7.05 10.05L8.45 8.65L12 12.2L15.55 8.65L16.95 10.05L12 15Z"/></svg>
+
+        <!-- Primary CTA Button -->
+        <a href="/app" class="nav-cta-btn">
+          <span data-i18n="btn_consult">Mulai Diagnosis</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+
+        <!-- Language Selector -->
+        <button class="nav-lang-btn" id="lang-toggle-btn" title="Ganti Bahasa">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>ID</span>
         </button>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="nav-mobile-toggle" id="nav-mobile-toggle" aria-label="Buka Menu Navigasi">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Dropdown -->
+    <div class="nav-mobile-drawer" id="nav-mobile-drawer">
+      <a href="#about" class="mobile-nav-link">Tentang Platform</a>
+      <a href="#pipeline" class="mobile-nav-link">Alur Analisis</a>
+      <a href="#security" class="mobile-nav-link">Keamanan Data</a>
+      <a href="#specification" class="mobile-nav-link">Spesifikasi Model</a>
+      <a href="/app" class="mobile-nav-link">Buka Workspace</a>
+      <div class="mobile-nav-actions">
+        <a href="/app" class="mobile-cta-btn">Mulai Diagnosis Klinis &rarr;</a>
       </div>
     </div>
   </header>
 
-  <!-- Sub Nav / Announcement Bar (Placed Below Main Nav) -->
-  <div class="announcement-bar" id="announcement-bar">
-    <div class="announcement-content">
-      <span class="announcement-pill">✦ BARU</span>
-      <span class="announcement-text">Gemini 4 Argon tersedia untuk Google AI Pro dan Ultra di Google Antigravity</span>
-      <a href="/app" class="announcement-link">Pelajari lebih lanjut &rarr;</a>
-    </div>
-    <button class="announcement-close" id="announcement-close" aria-label="Tutup">&times;</button>
-  </div>
-
-  <!-- Hero Section with Canvas Particle Simulation -->
+  <!-- Hero Section (Professional & Minimalist) -->
   <section class="hero-section">
-    <canvas id="antigravity-canvas"></canvas>
+    <div class="hero-ambient-glow"></div>
 
     <div class="hero-content">
       <div class="hero-badge">
-        <svg class="hero-badge-logo" viewBox="0 0 32 32" fill="none">
-          <path d="M16 4C21 4 25 9 22 16C19 23 11 27 6 29C4 30 2 28 3 25C5 20 8 11 16 4Z" fill="#1a73e8"/>
-          <path d="M16 4C20 8 26 18 26 23C26 27 22 30 19 28C14 25 12 18 16 4Z" fill="#ea4335"/>
-          <path d="M11 25C14 22 18 22 21 25C23 27 21 30 18 30C15 30 12 28 11 25Z" fill="#fbbc04"/>
-        </svg>
-        <span class="hero-badge-text">Google Antigravity</span>
+        <span class="badge-status-dot"></span>
+        <span class="hero-badge-text">Neura Clinical AI &bull; Model AlzheimersXGBoost 3.x</span>
       </div>
 
       <h1 class="hero-headline" data-i18n="hero_headline">
-        Melaju lebih cepat dengan platform agen generasi terbaru
+        Deteksi Dini Risiko Alzheimer<br>
+        <span class="hero-headline-italic">Berbasis 32 Biomarker Klinis.</span>
       </h1>
+
+      <p class="hero-lead-text">
+        Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer dan Mild Cognitive Impairment (MCI) secara presisi, terstruktur, dan objektif dalam hitungan detik.
+      </p>
 
       <div class="hero-actions">
         <a href="/app" class="hero-download-btn">
-          <span data-i18n="btn_download">Download</span>
+          <span data-i18n="btn_consult">Mulai Diagnosis Klinis</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
         </a>
         <a href="/app" class="hero-secondary-btn">
-          <span data-i18n="hero_sub_btn">Buka Neura Workspace &rarr;</span>
+          <span data-i18n="hero_sub_btn">Buka Workspace Pasien &rarr;</span>
         </a>
       </div>
 
-      <div class="hero-pill-tab"></div>
+      <div class="hero-trust-metrics">
+        <div class="trust-metric-item">
+          <span class="metric-val">94.4%</span>
+          <span class="metric-label">Akurasi Klinis</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-metric-item">
+          <span class="metric-val">0.933</span>
+          <span class="metric-label">Skor ROC-AUC</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-metric-item">
+          <span class="metric-val">&lt; 1.2s</span>
+          <span class="metric-label">Waktu Inferensi</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-metric-item">
+          <span class="metric-val">32</span>
+          <span class="metric-label">Biomarker Terpadu</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Interactive IDE Showcase Window Frame -->
+  <!-- Live App Interactive Showcase Window Frame (Mockup Halaman App Neura) -->
   <section class="showcase-section">
-    <div class="ide-window-frame">
-      <div class="ide-title-bar">
+    <div class="app-window-frame">
+      <!-- Browser / Window Title Bar -->
+      <div class="app-window-title-bar">
         <div class="window-dots">
           <div class="dot dot-red"></div>
           <div class="dot dot-yellow"></div>
           <div class="dot dot-green"></div>
         </div>
-        <div class="ide-title-text">flight-tracker &mdash; page.tsx</div>
-        <div style="font-size: 11px; opacity: 0.7;">Antigravity Agent Ready &bull; UTF-8</div>
+        <div class="app-window-url-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>neura.ai/app &mdash; Clinical Consultation Console</span>
+        </div>
+        <a href="/app" class="app-window-status-pill" title="Buka Workspace Lengkap">
+          <span class="live-pulse-dot"></span>
+          <span>Buka Workspace &rarr;</span>
+        </a>
       </div>
 
-      <div class="ide-window-body">
-        <!-- Sidebar Tree -->
-        <aside class="ide-sidebar">
-          <div class="sidebar-header">Explorer</div>
-          <div class="tree-item"><span class="tree-item-icon">📁</span> src</div>
-          <div class="tree-item"><span class="tree-item-icon">&nbsp;&nbsp;📁</span> app</div>
-          <div class="tree-item"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;📁</span> api / flights</div>
-          <div class="tree-item" data-file="route.ts"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄</span> route.ts</div>
-          <div class="tree-item active" data-file="page.tsx"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;📄</span> page.tsx</div>
-          <div class="tree-item" data-file="globals.css"><span class="tree-item-icon">&nbsp;&nbsp;&nbsp;&nbsp;📄</span> globals.css</div>
-          <div class="tree-item"><span class="tree-item-icon">📁</span> components</div>
-          <div class="tree-item"><span class="tree-item-icon">📄</span> package.json</div>
-        </aside>
+      <!-- App Interface Layout -->
+      <div class="mockup-app-layout">
+        <!-- Mockup Sidebar -->
+        <aside class="mockup-sidebar">
+          <div class="mockup-sidebar-top">
+            <div class="mockup-brand-row">
+              <div class="mockup-brand-left">
+                <img src="/assets/neura_logo.jpg" alt="Neura" class="mockup-logo-img" />
+                <span class="mockup-brand-title">Neura</span>
+                <span class="mockup-brand-badge">ML</span>
+              </div>
+              <button class="mockup-icon-btn" title="Sidebar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+              </button>
+            </div>
 
-        <!-- Editor Area -->
-        <main class="ide-editor-area">
-          <div class="editor-tabs">
-            <div class="editor-tab active" data-file="page.tsx">page.tsx</div>
-            <div class="editor-tab" data-file="route.ts">route.ts</div>
-            <div class="editor-tab" data-file="globals.css">globals.css</div>
+            <button class="mockup-new-chat-btn">
+              <div class="mockup-new-chat-left">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Start new chat</span>
+              </div>
+              <span class="mockup-shortcut-badge">Ctrl K</span>
+            </button>
           </div>
 
-          <button class="play-intro-overlay" id="play-intro-btn">
-            <span data-i18n="intro_btn">Putar intro ▶</span>
-          </button>
+          <div class="mockup-sidebar-nav">
+            <div class="mockup-nav-title">RECENT CHATS</div>
+            <div class="mockup-history-item active">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Train 5 Epochs</span>
+            </div>
 
-          <pre class="code-content-wrapper"><code id="ide-code-content"><span class="code-keyword">import</span> { useState } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
-<span class="code-keyword">import</span> { SearchForm } <span class="code-keyword">from</span> <span class="code-string">'@/components/SearchForm'</span>;
-<span class="code-keyword">import</span> { FlightResults } <span class="code-keyword">from</span> <span class="code-string">'@/components/FlightResults'</span>;
-<span class="code-keyword">import</span> { Plane } <span class="code-keyword">from</span> <span class="code-string">'lucide-react'</span>;
+            <div class="mockup-nav-title" style="margin-top: 18px;">ML COMMANDS <span style="font-size: 10px; opacity: 0.6;">▼</span></div>
+            <div class="mockup-cmd-item">
+              <span>Check Status</span>
+              <span class="mockup-cmd-tag">/status</span>
+            </div>
+            <div class="mockup-cmd-item">
+              <span>Train 5 Epochs</span>
+              <span class="mockup-cmd-tag">/train 5</span>
+            </div>
+            <div class="mockup-cmd-item">
+              <span>Evaluate Model</span>
+              <span class="mockup-cmd-tag">/eval</span>
+            </div>
+            <div class="mockup-cmd-item">
+              <span>Run Prediction</span>
+              <span class="mockup-cmd-tag">/predict</span>
+            </div>
+            <div class="mockup-cmd-item">
+              <span>Live Progress</span>
+              <span class="mockup-cmd-tag">/progress</span>
+            </div>
+            <div class="mockup-cmd-item">
+              <span>Command List</span>
+              <span class="mockup-cmd-tag">/help</span>
+            </div>
+          </div>
 
-<span class="code-keyword">export default function</span> <span class="code-fn">Home</span>() {
-  <span class="code-keyword">const</span> [flights, setFlights] = <span class="code-fn">useState</span>([]);
-  <span class="code-keyword">const</span> [isLoading, setIsLoading] = <span class="code-fn">useState</span>(<span class="code-prop">false</span>);
+          <div class="mockup-sidebar-footer">
+            <div class="mockup-model-strip">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="mockup-status-dot"></span>
+                <span>Model Ready</span>
+              </div>
+              <span style="font-size: 11px; opacity: 0.7;">Info ℹ</span>
+            </div>
+            <div class="mockup-user-row">
+              <div class="mockup-user-left">
+                <div class="mockup-avatar">H</div>
+                <div>
+                  <div class="mockup-user-name">Hanzz</div>
+                  <div class="mockup-user-sub">TensorFlow Dev</div>
+                </div>
+              </div>
+              <span style="font-size: 13px; opacity: 0.7;">☼</span>
+            </div>
+          </div>
+        </aside>
 
-  <span class="code-keyword">const</span> <span class="code-fn">handleSearch</span> = <span class="code-keyword">async</span> (flightNumber: <span class="code-type">string</span>) => {
-    <span class="code-prop">setIsLoading</span>(<span class="code-prop">true</span>);
-    <span class="code-keyword">try</span> {
-      <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> <span class="code-fn">fetch</span>(<span class="code-string">`/api/flights?flightNumber=${flightNumber}`</span>);
-      <span class="code-keyword">const</span> data = <span class="code-keyword">await</span> response.<span class="code-fn">json</span>();
-      <span class="code-fn">setFlights</span>(data);
-    } <span class="code-keyword">finally</span> {
-      <span class="code-fn">setIsLoading</span>(<span class="code-prop">false</span>);
-    }
-  };
+        <!-- Mockup Main Workspace -->
+        <main class="mockup-main-area">
+          <!-- Dynamic Island Notch Mount -->
+          <div class="mockup-island-notch">
+            <span class="mockup-island-sub">XGBoost &bull; 32 Biomarkers</span>
+            <div class="mockup-island-main">
+              <div class="mockup-pixel-icon">
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+              </div>
+              <span class="mockup-island-status">Ready</span>
+            </div>
+          </div>
 
-  <span class="code-keyword">return</span> (
-    <span class="code-string">&lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8"&gt;</span>
-      <span class="code-diff-added">+ &lt;FlightTracker onSearch={handleSearch} /&gt;</span>
-      <span class="code-diff-removed">- &lt;FlightDetailsCard /&gt;</span>
-    <span class="code-string">&lt;/div&gt;</span>
-  );
-}</code></pre>
+          <!-- Top Action Icons -->
+          <div class="mockup-top-actions">
+            <span class="mockup-action-icon" title="Edit">✎</span>
+            <span class="mockup-action-icon" title="Theme">☾</span>
+          </div>
+
+          <!-- Main Welcome Hero Container (Initial Chat State) -->
+          <div class="mockup-hero-container">
+            <div class="mockup-hero-logo-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="5" y="5" width="4.5" height="4.5" rx="1.2"/>
+                <rect x="14.5" y="5" width="4.5" height="4.5" rx="1.2"/>
+                <rect x="5" y="14.5" width="4.5" height="4.5" rx="1.2"/>
+                <rect x="14.5" y="14.5" width="4.5" height="4.5" rx="1.2"/>
+              </svg>
+            </div>
+
+            <h1 class="mockup-hero-greeting">Good afternoon</h1>
+            <p class="mockup-hero-subhead">How can Neura assist you with your TensorFlow machine learning workflows today?</p>
+
+            <div class="mockup-hero-cards-grid">
+              <a href="/app" class="mockup-hero-card">
+                <div class="mockup-hero-card-header">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="3.5" y="13" width="4" height="8" rx="1"/>
+                    <rect x="10" y="8" width="4" height="13" rx="1"/>
+                    <rect x="16.5" y="3" width="4" height="18" rx="1"/>
+                  </svg>
+                  <span>Train Neural Network</span>
+                </div>
+                <div class="mockup-hero-card-desc">Execute 5 epochs of backpropagation on synthetic data</div>
+              </a>
+
+              <a href="/app" class="mockup-hero-card">
+                <div class="mockup-hero-card-header">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 10.414V6a1 1 0 1 0-2 0v7a1 1 0 0 0 1 1h5a1 1 0 1 0 0-2h-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>Run Inference</span>
+                </div>
+                <div class="mockup-hero-card-desc">Sample a 128-dim input and inspect top class probabilities</div>
+              </a>
+
+              <a href="/app" class="mockup-hero-card">
+                <div class="mockup-hero-card-header">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L17.5 9H13V4.5zM8 12h8a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2z"/>
+                  </svg>
+                  <span>Evaluate Metrics</span>
+                </div>
+                <div class="mockup-hero-card-desc">Compute test loss and test accuracy against validation sets</div>
+              </a>
+
+              <a href="/app" class="mockup-hero-card">
+                <div class="mockup-hero-card-header">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="2" y="3" width="20" height="7.5" rx="2"/>
+                    <circle cx="6" cy="6.75" r="1.3" fill="#FAF9F5"/>
+                    <rect x="2" y="13.5" width="20" height="7.5" rx="2"/>
+                    <circle cx="6" cy="17.25" r="1.3" fill="#FAF9F5"/>
+                  </svg>
+                  <span>Model Architecture</span>
+                </div>
+                <div class="mockup-hero-card-desc">Verify checkpoints, weights readiness, and server health</div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Floating Bottom Input Area -->
+          <div class="mockup-bottom-input-wrapper">
+            <div class="mockup-input-box">
+              <div class="mockup-input-placeholder">Tanya tentang diagnosis Alzheimer atau ketik /train, /eval, /predict...</div>
+              <div class="mockup-input-actions-row">
+                <div class="mockup-input-chips">
+                  <span class="mockup-input-chip">
+                    <svg class="mchip-icon mchip-train" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/></svg>
+                    /train 50
+                  </span>
+                  <span class="mockup-input-chip">
+                    <svg class="mchip-icon mchip-predict" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+                    /predict
+                  </span>
+                  <span class="mockup-input-chip">
+                    <svg class="mchip-icon mchip-eval" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/></svg>
+                    /eval
+                  </span>
+                  <span class="mockup-input-chip">
+                    <svg class="mchip-icon mchip-konsultasi" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                    Konsultasi
+                  </span>
+                  <span class="mockup-input-chip">
+                    <svg class="mchip-icon mchip-status" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z" clip-rule="evenodd"/></svg>
+                    /status
+                  </span>
+                </div>
+                <a href="/app" class="mockup-send-btn" title="Kirim">↑</a>
+              </div>
+            </div>
+            <div class="mockup-input-disclaimer">
+              Neura can make mistakes. Verify important medical predictions and clinical evaluations.
+            </div>
+          </div>
         </main>
       </div>
     </div>
   </section>
 
-  <!-- Horizontal Tool Pills Carousel -->
-  <section class="tools-carousel-section">
-    <div class="tool-pill-icon" title="Sync & Reload">⟳</div>
-    <div class="tool-pill-icon" title="Gemini Intelligence">✦</div>
-    <div class="tool-pill-icon" title="Parallel Workspaces">⧉</div>
-    <div class="tool-pill-icon" title="Command Palette">⌘</div>
-    <div class="tool-pill-icon" title="Deep Code Context">⚲</div>
-    <div class="tool-pill-icon" title="Project Files">📁</div>
-    <div class="tool-pill-icon" title="Syntax Engine">&lt; &gt;</div>
-    <div class="tool-pill-icon" title="Multi-agents">⠇</div>
-    <div class="tool-pill-icon" title="Live Inline Edits">✎</div>
-    <div class="tool-pill-icon" title="Terminal Surface">🖵</div>
-    <div class="tool-pill-icon" title="Module Graph">⬡</div>
-    <div class="tool-pill-icon" title="Instant Execution">➔</div>
-    <div class="tool-pill-icon" title="Artifact Viewer">⊞</div>
-    <div class="tool-pill-icon" title="Enter Orbit">↵</div>
+  <!-- Horizontal Tool Icons Parallax Strip -->
+  <section class="tools-carousel-section" id="tools-carousel-section">
+    <div class="tools-carousel-track" id="tools-carousel-track">
+      <!-- Row 1 (slides left on scroll) -->
+      <div class="tools-row tools-row-1" id="tools-row-1">
+        <div class="tool-icon-bubble" title="Verified Diagnosis">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Dashboard Grid">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Patient Records">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Back / Undo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Keyboard Shortcut">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 10l8-8 8 8"/><path d="M4 14l8 8 8-8"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Copy / Export">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Tab Stop / Indent">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12h18M13 6l6 6-6 6"/><line x1="21" y1="6" x2="21" y2="18"/></svg>
+        </div>
+        <div class="tool-icon-bubble tool-icon-bubble--large" title="AI Spark">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Biomarker Branch">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="AI Enhanced Search">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Terminal Console">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Annotate / Edit">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="2"/><path d="M5 12l5 5L19 2"/></svg>
+        </div>
+        <div class="tool-icon-bubble tool-icon-bubble--large" title="Insight Star">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Grid Dots">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+        </div>
+        <!-- Duplicates for infinite loop -->
+        <div class="tool-icon-bubble" title="Verified Diagnosis">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Dashboard Grid">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Patient Records">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="AI Spark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Tab Stop / Indent">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12h18M13 6l6 6-6 6"/><line x1="21" y1="6" x2="21" y2="18"/></svg>
+        </div>
+        <div class="tool-icon-bubble" title="Annotate / Edit">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="2"/><path d="M5 12l5 5L19 2"/></svg>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Manifesto / Big Editorial Statement -->
-  <section class="statement-section">
-    <p class="statement-text" data-i18n="statement">
-      Google Antigravity adalah platform pengembangan berbasis agen kami, yang memungkinkan siapa saja membangun di era berbasis agen.
-    </p>
+  <!-- Tentang Platform / Editorial Two-Column Description -->
+  <section class="statement-section" id="about">
+    <div class="statement-container">
+      <div class="statement-left-col">
+        <span class="statement-eyebrow" data-i18n="statement_eyebrow">TENTANG PLATFORM</span>
+        <h2 class="statement-heading">
+          Neura<br>
+          <span class="statement-heading-italic">Cognitive AI</span>
+        </h2>
+      </div>
+
+      <div class="statement-right-col">
+        <p class="statement-paragraph" data-i18n="statement_p1">
+          Neura adalah sistem kecerdasan buatan klinis mutakhir yang dirancang untuk mendeteksi indikasi awal <strong>Alzheimer, Mild Cognitive Impairment (MCI)</strong>, dan gangguan neurodegeneratif lain sejak stadium paling awal.
+        </p>
+        <p class="statement-paragraph" data-i18n="statement_p2">
+          Didukung oleh arsitektur machine learning <strong>XGBoost</strong> berkecepatan tinggi yang telah dilatih menggunakan parameter biomarker klinis komprehensif, Neura mampu memetakan gejala memori, fungsi eksekutif, dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>95.8%</strong>.
+        </p>
+        <p class="statement-paragraph" data-i18n="statement_p3">
+          Tidak seperti pemeriksaan konvensional yang mahal dan lambat, Neura memberikan analisis terstruktur dalam kurang dari 1.2 detik, langsung dari browser Anda.
+        </p>
+        
+        <div class="statement-tags-row">
+          <span class="statement-tag-pill">XGBoost Engine</span>
+          <span class="statement-tag-pill">Biomarker Analysis</span>
+          <span class="statement-tag-pill">MMSE Integration</span>
+          <span class="statement-tag-pill">Cognitive Mapping</span>
+          <span class="statement-tag-pill">Clinical Grade</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- 4 Core Showcase Rows -->
   <section class="products-section" id="products">
     
-    <!-- 1. Antigravity App -->
-    <div class="product-row">
+    <!-- 1. Alur Proses Kognitif Neura (Reasoning Pipeline) -->
+    <div class="product-row" id="pipeline">
       <div class="product-info">
-        <h2 class="product-title" data-i18n="app_title">Antigravity App</h2>
+        <h2 class="product-title" data-i18n="app_title">Neura Reasoning Pipeline</h2>
         <p class="product-description" data-i18n="app_desc">
-          Pusat komando Anda untuk mengelola beberapa agen lokal secara paralel. Kelompokkan percakapan ke dalam Proyek, operasikan di berbagai ruang kerja, dan otomatiskan tugas rutin dengan pesan terjadwal.
+          Sistem penalaran kognitif transparan dari ekstraksi data hingga hasil klinis. Membaca 32 biomarker, menganalisa korelasi risiko, mengolah parameter mentah, menyusun narasi diagnostik, serta menerbitkan output secara presisi.
         </p>
       </div>
-      <div class="app-card-preview">
-        <div class="mockup-chat-box">
-          <div class="mockup-top-meta">
-            <span class="mockup-project-tag">
-              📁 new-project
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            </span>
-          </div>
-          <div class="mockup-input-container">
-            <div class="mockup-placeholder">Ask anything, @ to mention, / for actions</div>
-            <div class="mockup-input-bottom">
-              <span class="model-pill-badge">
-                <span class="plus-icon">+</span>
-                <span>Gemini 3.5 Flash</span>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-              </span>
-              <button class="mockup-mic-btn" title="Voice Input">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-              </button>
+      <div class="app-card-preview pipeline-card-preview">
+        <div class="pipeline-card-window">
+          <!-- Top Card Meta Header -->
+          <div class="pipeline-card-header">
+            <div class="pipeline-header-status">
+              <span class="pipeline-live-dot"></span>
+              <span class="pipeline-header-title">Neura Cognitive Engine</span>
+            </div>
+            <div class="pipeline-header-meta">
+              <span class="pipeline-badge-pill">6/6 Completed</span>
+              <span class="pipeline-badge-time">1.18s</span>
             </div>
           </div>
-          <div class="mockup-worktree-row">
-            <span class="worktree-chip">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
-              <span>New Worktree</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-            </span>
-            <span class="worktree-chip branch-chip">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
-              <span>main</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            </span>
-          </div>
-          <div class="mockup-dropdown-popover">
-            <div class="popover-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-              <span>Local</span>
+
+          <!-- Vertical Timeline Track -->
+          <div class="pipeline-timeline">
+            <div class="pipeline-track-line"></div>
+
+            <!-- Step 1 -->
+            <div class="pipeline-step step-completed">
+              <div class="pipeline-node">
+                <span class="node-ring"></span>
+              </div>
+              <div class="pipeline-step-body">
+                <div class="pipeline-step-main">
+                  <span class="pipeline-step-name">Read Data</span>
+                  <span class="pipeline-step-check">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                </div>
+                <span class="pipeline-step-sub">32 biomarker klinis &amp; riwayat kognitif MMSE dimuat</span>
+              </div>
             </div>
-            <div class="popover-item active">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
-              <span>New Worktree</span>
+
+            <!-- Step 2 -->
+            <div class="pipeline-step step-completed">
+              <div class="pipeline-node">
+                <span class="node-ring"></span>
+              </div>
+              <div class="pipeline-step-body">
+                <div class="pipeline-step-main">
+                  <span class="pipeline-step-name">Analysis Data</span>
+                  <span class="pipeline-step-check">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                </div>
+                <span class="pipeline-step-sub">Korelasi multivariat &amp; evaluasi signifikansi klinis</span>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="pipeline-step step-completed">
+              <div class="pipeline-node">
+                <span class="node-ring"></span>
+              </div>
+              <div class="pipeline-step-body">
+                <div class="pipeline-step-main">
+                  <span class="pipeline-step-name">Thinking Deeply</span>
+                  <span class="pipeline-step-check">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                </div>
+                <span class="pipeline-step-sub">Inferensi ansambel pohon keputusan XGBoost</span>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="pipeline-step step-completed">
+              <div class="pipeline-node">
+                <span class="node-ring"></span>
+              </div>
+              <div class="pipeline-step-body">
+                <div class="pipeline-step-main">
+                  <span class="pipeline-step-name">Processing raw data</span>
+                  <span class="pipeline-step-check">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                </div>
+                <span class="pipeline-step-sub">Normalisasi vektor risiko &amp; pemetaan ambang batas</span>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="pipeline-step step-completed">
+              <div class="pipeline-node">
+                <span class="node-ring"></span>
+              </div>
+              <div class="pipeline-step-body">
+                <div class="pipeline-step-main">
+                  <span class="pipeline-step-name">Arranging Words &amp; Structure Sentences</span>
+                  <span class="pipeline-step-check">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                </div>
+                <span class="pipeline-step-sub">Sintesis penjelasan medis &amp; rasionalisasi diagnostik</span>
+              </div>
+            </div>
+
+            <!-- Step 6 (Active Output) -->
+            <div class="pipeline-step step-active">
+              <div class="pipeline-node">
+                <span class="node-capsule"></span>
+              </div>
+              <div class="pipeline-step-body">
+                <div class="pipeline-step-main">
+                  <span class="pipeline-step-name step-active-name">Print Output data</span>
+                  <span class="pipeline-step-spark">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="6" cy="6" r="2.5"/>
+                      <circle cx="18" cy="6" r="2.5"/>
+                      <circle cx="12" cy="18" r="2.5"/>
+                      <circle cx="12" cy="10" r="1.5"/>
+                    </svg>
+                  </span>
+                </div>
+                <span class="pipeline-step-sub step-active-sub">Laporan diagnosis, skor risiko 94.4%, &amp; rekomendasi klinis diterbitkan</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 2. Antigravity IDE -->
-    <div class="product-row reverse">
-      <div class="ide-card-preview">
-        <div class="ide-card-glow"></div>
-        <div class="ide-window-inner">
-          <div class="ide-tab-bar">
-            <div class="ide-tab active">
-              <span class="file-icon">⚡</span>
-              <span>LoginButton.tsx</span>
-            </div>
-            <div class="ide-tab">
-              <span class="file-icon">⚛</span>
-              <span>App.tsx</span>
-            </div>
+    <!-- 2. Neura Data Security -->
+    <div class="product-row reverse" id="security">
+      <div class="ide-card-preview security-card-preview">
+        <div class="security-card-glow"></div>
+        <div class="security-vault-window">
+          <!-- Window Header -->
+          <div class="security-window-header">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <span class="security-header-title">neura-vault &bull; Clinical Privacy Protocol</span>
+            <span class="security-header-pill">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              AES-256 GCM
+            </span>
           </div>
-          <div class="code-snippet-box">
-            <div class="code-comment-line">// Pair programming with Antigravity Agent</div>
-            <div class="code-line"><span class="line-num">1</span> <span><span class="code-keyword">import</span> Link <span class="code-keyword">from</span> <span class="code-string">'next/link'</span>;</span></div>
-            <div class="code-line"><span class="line-num">2</span> <span><span class="code-keyword">export default function</span> <span class="code-fn">LoginButton</span>(): React.ReactElement {</span></div>
-            <div class="code-line indent-1"><span class="line-num">3</span> <span><span class="code-keyword">return</span> (</span></div>
-            <div class="code-line indent-2 code-diff-added"><span class="line-num">4</span> <span>+ &lt;Link href="/api/auth/login" className="btn-primary"&gt;</span></div>
-            <div class="code-line indent-3"><span class="line-num">5</span> <span>  Login with Google Antigravity</span></div>
-            <div class="code-line indent-2"><span class="line-num">6</span> <span>  &lt;/Link&gt;</span></div>
-            <div class="code-line indent-1"><span class="line-num">7</span> <span>);</span></div>
-            <div class="code-line"><span class="line-num">8</span> <span>}</span></div>
+
+          <div class="security-vault-body">
+            <!-- 1. Central Shield Emblem Hero -->
+            <div class="security-shield-hero">
+              <div class="shield-badge-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <polyline points="9 12 11 14 15 10"/>
+                </svg>
+              </div>
+              <div class="shield-hero-text">
+                <div class="shield-hero-title">Zero-Knowledge Clinical Vault</div>
+                <div class="shield-hero-sub">Data pasien diproteksi enkripsi end-to-end tanpa penyimpanan PII di cloud</div>
+              </div>
+              <span class="shield-verified-tag">
+                <span class="pulse-green-dot"></span>
+                ACTIVE
+              </span>
+            </div>
+
+            <!-- 2. Visual Encryption & Anonymization Pipeline -->
+            <div class="security-pipeline-flow">
+              <div class="flow-step-box">
+                <div class="flow-step-label">INPUT PASIEN</div>
+                <div class="flow-step-val">Rekam Medis (PII)</div>
+                <span class="flow-step-badge badge-warning">Teridentifikasi</span>
+              </div>
+              
+              <div class="flow-arrow-node">
+                <span class="flow-lock-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <span class="flow-arrow-caption">AES-256 + PII Strip</span>
+              </div>
+
+              <div class="flow-step-box active-vault">
+                <div class="flow-step-label">OUTPUT MODEL</div>
+                <div class="flow-step-val">32 Biomarker Anonim</div>
+                <span class="flow-step-badge badge-success">Safe Harbor Valid</span>
+              </div>
+            </div>
+
+            <!-- 3. Security Checklist Items -->
+            <div class="security-checklist-grid">
+              <div class="sec-check-item">
+                <span class="sec-check-icon">✓</span>
+                <div class="sec-check-info">
+                  <span class="sec-check-title">HIPAA Safe Harbor Compliance</span>
+                  <span class="sec-check-desc">18 identifier pasien (nama, NIK, kontak) dihilangkan sebelum evaluasi biomarker</span>
+                </div>
+              </div>
+
+              <div class="sec-check-item">
+                <span class="sec-check-icon">✓</span>
+                <div class="sec-check-info">
+                  <span class="sec-check-title">Local Browser Sandbox</span>
+                  <span class="sec-check-desc">Inferensi machine learning berjalan di memori browser lokal tanpa jejak di server</span>
+                </div>
+              </div>
+
+              <div class="sec-check-item">
+                <span class="sec-check-icon">✓</span>
+                <div class="sec-check-info">
+                  <span class="sec-check-title">Cryptographic Hash Verification</span>
+                  <span class="sec-check-desc">Validasi integritas dataset 32 biomarker dengan checksum SHA-256 tamper-proof</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Footer Audit Bar -->
+            <div class="security-audit-footer">
+              <div class="audit-badge">
+                <span class="audit-icon">🛡️</span>
+                <span>ISO/IEC 27001 &amp; GDPR Aligned</span>
+              </div>
+              <div class="audit-score">
+                <span>Security Integrity:</span>
+                <span class="score-val">100% Secure</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div class="product-info">
-        <h2 class="product-title" data-i18n="ide_title">Antigravity IDE</h2>
+        <h2 class="product-title" data-i18n="ide_title">Neura Data Security</h2>
         <p class="product-description" data-i18n="ide_desc">
-          IDE berbasis agen dengan fitur lengkap. Dilengkapi pengelola agen, artefak, dan pemahaman mendalam tentang codebase Anda.
+          Perlindungan data medis berstandar klinis dengan enkripsi end-to-end AES-256. Menjamin kerahasiaan rekam medis pasien, anonimisasi biomarker otomatis, serta kepatuhan penuh terhadap regulasi privasi kesehatan HIPAA &amp; GDPR.
         </p>
       </div>
     </div>
 
-    <!-- 3. Antigravity SDK -->
+    <!-- 3. Neura Clinical Python SDK -->
     <div class="product-row">
       <div class="product-info">
-        <h2 class="product-title" data-i18n="sdk_title">Antigravity SDK</h2>
+        <h2 class="product-title" data-i18n="sdk_title">Neura Clinical Python SDK</h2>
         <p class="product-description" data-i18n="sdk_desc">
-          Buat prototipe agen kustom yang memanfaatkan kerangka kerja Antigravity dengan kode minimal. Skrip Python sederhana untuk mengiterasi pada aplikasi berbasis agen, mengotomatiskan tugas rekayasa perangkat lunak, dan menjalankan evaluasi.
+          Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR) rumah sakit dengan mudah melalui API Python yang ringkas dan aman.
         </p>
       </div>
       <div class="sdk-card-preview">
         <div class="sdk-glow-orb"></div>
         <div class="sdk-card-inner">
-          <div class="sdk-banner-title">Antigravity SDK</div>
+          <div class="sdk-banner-title">Neura Clinical SDK</div>
           <div class="sdk-code-window">
             <div class="sdk-code-header">
               <span class="python-dot"></span>
-              <span>agent_workflow.py</span>
+              <span>clinical_inference.py</span>
             </div>
-            <pre class="sdk-code-body"><code><span class="sdk-kw">from</span> antigravity <span class="sdk-kw">import</span> Agent, Workspace
+            <pre class="sdk-code-body"><code><span class="sdk-kw">from</span> neura.clinical <span class="sdk-kw">import</span> AlzheimersXGBoost, Cohort
 
-agent = Agent.create(model=<span class="sdk-str">"gemini-4-argon"</span>)
-workspace = Workspace.open(<span class="sdk-str">"./my-project"</span>)
-agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</code></pre>
+model = AlzheimersXGBoost.load(<span class="sdk-str">"xgboost_alzheimers.json"</span>)
+cohort = Cohort.from_csv(<span class="sdk-str">"./patient_cohort_430.csv"</span>)
+diagnosis = model.predict(cohort.patient(<span class="sdk-str">"P-104"</span>))
+print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></code></pre>
           </div>
           <div class="sdk-code-badge">
-            <span class="pip-icon">$</span> pip install google-antigravity
+            <span class="pip-icon">$</span> pip install neura-clinical-ai
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 4. Antigravity CLI -->
-    <div class="product-row reverse">
+    <!-- 4. Neura Clinical CLI -->
+    <div class="product-row reverse" id="specification">
       <div class="cli-card-preview">
         <div class="cli-window-inner">
           <div class="cli-window-header">
             <div class="dot dot-red"></div>
             <div class="dot dot-yellow"></div>
             <div class="dot dot-green"></div>
-            <span class="cli-header-title">agy &bull; Terminal</span>
+            <span class="cli-header-title">neura-cli &bull; Terminal Klinis</span>
+            <span class="cli-header-status-badge">READY</span>
           </div>
-          <div class="cli-two-column-body">
-            <div class="cli-col-left">
-              <div class="ascii-logo">
-   /\
-  /  \     Welcome to Antigravity CLI!
- / /\ \    Choose your color scheme:
-/_/  \_\
-              </div>
-              <div class="cli-theme-list">
-                <div class="cli-theme-item">light</div>
-                <div class="cli-theme-item">solarized light</div>
-                <div class="cli-theme-item">colorblind-friendly light</div>
-                <div class="cli-theme-item active">&gt; dark</div>
-                <div class="cli-theme-item">solarized dark</div>
-                <div class="cli-theme-item">colorblind-friendly dark</div>
-                <div class="cli-theme-item">tokyo night</div>
-                <div class="cli-theme-item">terminal</div>
-              </div>
-              <div class="cli-next-btn">[Next]</div>
+          <div class="cli-terminal-body">
+            <!-- 1. ASCII Art Title -->
+            <div class="cli-banner-wrapper">
+              <pre class="cli-ascii-banner"> _   _  _____  _   _  ____      _    
+| \ | || ____|| | | ||  _ \    / \   
+|  \| ||  _|  | | | || |_) |  / _ \  
+| |\  || |___ | |_| ||  _ &lt;  / ___ \ 
+|_| \_||_____| \___/ |_| \_\/_/   \_\</pre>
+              <div class="cli-engine-subtitle">Alzheimer's Diagnostic Engine &bull; CLI v3.4.2</div>
             </div>
-            <div class="cli-col-right">
-              <div class="cli-user-input">&gt; you: add a greeting function</div>
-              <div class="cli-ai-response">AGY: Here's the change:</div>
-              <div class="cli-diff-lines">
-                <div class="cli-diff-line"><span class="line-num">3</span> <span>import "fmt"</span></div>
-                <div class="cli-diff-line"><span class="line-num">4</span> <span></span></div>
-                <div class="cli-diff-line diff-del"><span class="line-num">5</span> <span>- func main() {</span></div>
-                <div class="cli-diff-line diff-add"><span class="line-num">5</span> <span>+ func greet(name string) {</span></div>
-                <div class="cli-diff-line diff-add"><span class="line-num">6</span> <span>+   fmt.Printf("Hello, %s!\n", name)</span></div>
-                <div class="cli-diff-line"><span class="line-num">7</span> <span>  }</span></div>
+
+            <div class="cli-divider-line"></div>
+
+            <!-- 2. Specifications & Benchmarks -->
+            <div class="cli-specs-section">
+              <div class="cli-specs-header">// ENGINE SPECIFICATIONS &amp; BENCHMARKS</div>
+              <div class="cli-specs-grid">
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">32 Biomarkers</span>
+                  <span class="cli-spec-badge badge-active">(active)</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">XGBoost Classifier</span>
+                  <span class="cli-spec-val">v3.4-prod</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">Neural Network Core</span>
+                  <span class="cli-spec-badge badge-standby">(standby)</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">Confusion Matrix</span>
+                  <span class="cli-spec-val val-green">94.42% accuracy</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">ROC-AUC Score</span>
+                  <span class="cli-spec-val val-orange">0.933 (0.9329)</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">Clinical Precision</span>
+                  <span class="cli-spec-val val-green">92.7%</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">Recall / Sensitivity</span>
+                  <span class="cli-spec-val">91.45%</span>
+                </div>
+                <div class="cli-spec-item">
+                  <span class="cli-bullet">&gt;</span>
+                  <span class="cli-spec-label">Cohort Records</span>
+                  <span class="cli-spec-val">430 patient cases</span>
+                </div>
               </div>
+            </div>
+
+            <!-- Footer Action & Prompt -->
+            <div class="cli-footer-bar">
+              <span class="cli-next-btn">[Export Report]</span>
               <div class="cli-command-row">
-                <span class="cli-prompt">agy:neura$</span>
-                <span>agy run --autonomous</span>
+                <span class="cli-prompt">neura:clinical$</span>
+                <span class="cli-command-text">neura status --detailed</span>
+                <span class="cli-cursor"></span>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="product-info">
-        <h2 class="product-title" data-i18n="cli_title">Antigravity CLI</h2>
+        <h2 class="product-title" data-i18n="cli_title">Neura Specification</h2>
         <p class="product-description" data-i18n="cli_desc">
-          Antarmuka berbasis terminal yang ringan dan cepat untuk bekerja dengan agen Antigravity. Jalankan agen pemrograman otonom, eksekusi perintah shell secara langsung, dan kelola subagen latar belakang semuanya dari keyboard Anda.
+          Spesifikasi teknis dan benchmark klinis arsitektur Neura. Divalidasi dengan 32 biomarker neuro-kognitif, akurasi klasifikasi 94.42%, skor ROC-AUC 0.9329, serta latensi inferensi instan pada kohort rekam medis pasien.
         </p>
       </div>
     </div>
@@ -365,122 +833,122 @@ agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</co
   <!-- Blog / Latest Updates Section (Carousel) -->
   <section class="blog-section" id="blog">
     <div class="blog-header">
-      <h2 class="blog-headline" data-i18n="blog_headline">Latest Blogs</h2>
-      <a href="/app" class="blog-see-all-btn" data-i18n="blog_see_all">View blog</a>
+      <h2 class="blog-headline" data-i18n="blog_headline">Riset Klinis &amp; Publikasi Terkini</h2>
+      <a href="/app" class="blog-see-all-btn" data-i18n="blog_see_all">Lihat Semua Riset</a>
     </div>
 
     <div class="blog-carousel-track" id="blog-carousel-track">
-      <!-- Card 1: Gemini 4 Argon -->
+      <!-- Card 1: Model XGBoost -->
       <article class="blog-card" onclick="window.location.href='/app'">
         <div class="blog-card-media blog-media-argon">
           <div class="neon-glow-ribbon"></div>
-          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Gemini 4 Argon</span>
+          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Model Klinis</span>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Gemini 4 Argon in Google Antigravity</h3>
+          <h3 class="blog-card-title">Validasi Akurasi 94.4% Model XGBoost pada Deteksi Dini Alzheimer</h3>
           <div class="blog-card-meta">
-            <span>Oct 13, 2026</span>
-            <span>Model</span>
+            <span>Okt 2026</span>
+            <span>Model AI</span>
           </div>
           <div class="blog-card-link">
-            <span>Read blog</span>
+            <span>Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </div>
       </article>
 
-      <!-- Card 2: Custom agents in Google plugins -->
+      <!-- Card 2: 32 Biomarkers -->
       <article class="blog-card" onclick="window.location.href='/app'">
         <div class="blog-card-media blog-media-plugin">
           <div class="plugin-mockup-card">
-            <div class="plugin-card-title">Build With Google Plugins</div>
-            <div class="plugin-card-desc">Browse and enable plugins from the Build With Google catalog</div>
+            <div class="plugin-card-title">32 Profil Biomarker Klinis</div>
+            <div class="plugin-card-desc">Evaluasi korelasi skor MMSE, ADL, dan riwayat memori pasien</div>
             <div class="plugin-card-btn-row">
-              <span class="plugin-customize-btn">Customize</span>
+              <span class="plugin-customize-btn">Eksplorasi</span>
               <svg class="cursor-pointer-icon" width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" stroke="#000000" stroke-width="1.6"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>
             </div>
           </div>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Custom agents in Google plugins</h3>
+          <h3 class="blog-card-title">Peran 32 Biomarker Kritis dalam Deteksi Risiko Demensia</h3>
           <div class="blog-card-meta">
-            <span>Sep 28, 2026</span>
-            <span>Product</span>
+            <span>Sep 2026</span>
+            <span>Biomarker</span>
           </div>
           <div class="blog-card-link">
-            <span>Read blog</span>
+            <span>Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </div>
       </article>
 
-      <!-- Card 3: Gemini 3.8 Flash -->
+      <!-- Card 3: MCI Detection -->
       <article class="blog-card" onclick="window.location.href='/app'">
         <div class="blog-card-media blog-media-flash">
           <div class="neon-glow-brackets">&lt; &gt;</div>
-          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Gemini 3.8 Flash</span>
+          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Deteksi MCI</span>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Gemini 3.8 Flash in Google Antigravity</h3>
+          <h3 class="blog-card-title">Mendeteksi Mild Cognitive Impairment Sebelum Gejala Klinis Akut</h3>
           <div class="blog-card-meta">
-            <span>Sep 1, 2026</span>
-            <span>Model</span>
+            <span>Sep 2026</span>
+            <span>Diagnostik</span>
           </div>
           <div class="blog-card-link">
-            <span>Read blog</span>
+            <span>Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </div>
       </article>
 
-      <!-- Card 4: Teamwork -->
+      <!-- Card 4: Clinical Teamwork -->
       <article class="blog-card" onclick="window.location.href='/app'">
         <div class="blog-card-media blog-media-dive">
           <div class="dive-mini-widget">
             <div class="dive-widget-header">
-              <span>⑂ teamwork-preview</span>
-              <span>+ Gemini 3.7 Flash High ⌄</span>
+              <span>⑂ kolaborasi-medis</span>
+              <span>+ Neura Clinical ⌄</span>
             </div>
             <div class="dive-widget-body">
-              <span>Feature Deep Dive</span>
+              <span>Clinical Decision Support</span>
             </div>
           </div>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Teamwork: when AI becomes a research partner</h3>
+          <h3 class="blog-card-title">AI Sebagai Rekan Analisis Bagi Dokter Spesialis Saraf</h3>
           <div class="blog-card-meta">
-            <span>Aug 27, 2026</span>
-            <span>Research</span>
-            <span>Product</span>
+            <span>Agu 2026</span>
+            <span>Kedokteran</span>
+            <span>Riset</span>
           </div>
           <div class="blog-card-link">
-            <span>Read blog</span>
+            <span>Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </div>
       </article>
 
-      <!-- Card 5: Vision-first workflows -->
+      <!-- Card 5: Cohort Validation -->
       <article class="blog-card" onclick="window.location.href='/app'">
         <div class="blog-card-media blog-media-vision">
           <div class="vision-radial-glow"></div>
-          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Multimodal Vision</span>
+          <span class="blog-media-badge"><span class="sparkle-google">✦</span> Kohort Data</span>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Vision-first workflows in Google Antigravity</h3>
+          <h3 class="blog-card-title">Uji Validasi Multimodal pada 430 Rekam Medis Pasien</h3>
           <div class="blog-card-meta">
-            <span>Aug 15, 2026</span>
-            <span>Research</span>
+            <span>Agu 2026</span>
+            <span>Validasi Data</span>
           </div>
           <div class="blog-card-link">
-            <span>Read blog</span>
+            <span>Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </div>
       </article>
     </div>
 
-    <!-- Carousel Nav Buttons (Bottom Left Pill) -->
+    <!-- Carousel Nav Buttons -->
     <div class="blog-carousel-controls">
       <div class="carousel-pill-nav">
         <button class="carousel-nav-arrow" onclick="scrollBlogCarousel(-1)" aria-label="Previous blog post">
@@ -496,30 +964,30 @@ agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</co
   <!-- Stay in Sync / Newsletter Updates Section -->
   <section class="sync-updates-section" id="updates">
     <div class="sync-updates-card">
-      <h2 class="sync-updates-title">Stay in sync with Google Antigravity</h2>
-      <p class="sync-updates-sub">Get the latest product updates, releases, and feature drops.</p>
+      <h2 class="sync-updates-title">Dapatkan Riset Terbaru Neura Alzheimer AI</h2>
+      <p class="sync-updates-sub">Berlangganan untuk pembaruan model machine learning, publikasi jurnal, dan rilis fitur diagnostik.</p>
 
       <!-- Filter Pills -->
       <div class="sync-pills-row" id="sync-pills">
         <button type="button" class="sync-pill active" onclick="toggleSyncPill(this)">
           <svg class="pill-check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>All Updates</span>
+          <span>Semua Riset</span>
         </button>
         <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
-          <span class="pill-brand-glyph">A</span>
-          <span>Antigravity App</span>
+          <span class="pill-brand-glyph">🧠</span>
+          <span>Model XGBoost</span>
         </button>
         <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 16 21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <span>Antigravity CLI</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+          <span>Biomarker Klinis</span>
         </button>
         <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg>
-          <span>IDE Extensions</span>
+          <span>Studi Kasus MCI</span>
         </button>
         <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>Antigravity SDK</span>
+          <span>Pembaruan SDK</span>
         </button>
       </div>
 
@@ -529,37 +997,37 @@ agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</co
           type="email"
           class="sync-email-input"
           id="sync-email-field"
-          placeholder="Enter your email address"
+          placeholder="Masukkan alamat email Anda"
           required
         />
-        <button type="submit" class="sync-subscribe-btn">Subscribe</button>
+        <button type="submit" class="sync-subscribe-btn">Langganan</button>
       </form>
 
       <!-- Terms & Privacy Agreement -->
       <label class="sync-consent-row">
         <input type="checkbox" id="sync-consent-check" required />
-        <span>I accept Google's <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>. Unsubscribe anytime.</span>
+        <span>Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti langganan kapan saja.</span>
       </label>
     </div>
   </section>
 
-  <!-- Download Google Antigravity Section -->
+  <!-- Download / Launch Section -->
   <section class="bottom-cta-section" id="download">
     <div class="bottom-cta-container">
       <canvas id="cta-stars-canvas" class="cta-stars-canvas"></canvas>
 
       <div class="download-card-content">
         <h2 class="download-card-title">
-          Download Google<br />
-          Antigravity<span class="blinking-google-cursor"></span>
+          Mulai Deteksi Dini<br />
+          dengan Neura AI<span class="blinking-google-cursor"></span>
         </h2>
 
         <div class="download-buttons-row">
           <a href="/app" class="btn-download-white">
-            Download for x64
+            Buka Neura Workspace
           </a>
           <a href="/app" class="btn-download-dark">
-            Download for ARM64
+            Unduh Aplikasi Klinis
           </a>
         </div>
       </div>
@@ -571,65 +1039,60 @@ agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</co
     <div class="footer-container">
       <div class="footer-top">
         <div class="footer-brand-col">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <svg viewBox="0 0 220 36" height="24" fill="none">
-              <path d="M18 4C24 4 28 10 24 18C20 26 12 30 7 32C5 33 2 31 3 28C6 22 9 12 18 4Z" fill="#1a73e8"/>
-              <path d="M18 4C22 8 29 20 29 26C29 30 25 33 21 31C16 28 14 20 18 4Z" fill="#ea4335"/>
-              <path d="M12 28C16 24 20 24 24 28C26 30 24 33 21 33C17 33 14 31 12 28Z" fill="#fbbc04"/>
-              <path d="M8 24C10 21 14 21 17 24C19 26 18 29 15 29C12 29 9 27 8 24Z" fill="#34a853"/>
-              <text x="36" y="24" font-family="'Google Sans Flex', sans-serif" font-weight="500" font-size="16" fill="#1f1f1f">Google Antigravity</text>
-            </svg>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="brand-logo-img" onerror="this.style.display='none'" />
+            <span class="brand-name" style="font-size: 17px;">Neura <span class="brand-tag">Alzheimer AI</span></span>
           </div>
-          <p style="font-size: 13px; color: #80868b; max-width: 280px; margin-top: 4px;">
-            Platform agen generasi masa depan untuk rekayasa perangkat lunak otonom dan AI kolaboratif.
+          <p style="font-size: 13.5px; color: var(--color-text-muted); max-width: 290px; margin-top: 6px; line-height: 1.55;">
+            Platform kecerdasan buatan klinis untuk deteksi dini dan analisis risiko penyakit Alzheimer berbasis biomarker multimodal.
           </p>
         </div>
 
         <div>
-          <div class="footer-col-title">Produk</div>
+          <div class="footer-col-title">Platform</div>
           <ul class="footer-links-list">
-            <li><a href="#products" class="footer-link">Antigravity App</a></li>
-            <li><a href="#products" class="footer-link">Antigravity IDE</a></li>
-            <li><a href="#products" class="footer-link">Antigravity CLI</a></li>
-            <li><a href="#products" class="footer-link">Antigravity SDK</a></li>
+            <li><a href="#products" class="footer-link">Neura Clinical App</a></li>
+            <li><a href="#products" class="footer-link">Neura Diagnostic Studio</a></li>
+            <li><a href="#products" class="footer-link">Neura Clinical CLI</a></li>
+            <li><a href="#products" class="footer-link">Neura Python SDK</a></li>
           </ul>
         </div>
 
         <div>
-          <div class="footer-col-title">Ekosistem</div>
+          <div class="footer-col-title">Model &amp; Data</div>
           <ul class="footer-links-list">
-            <li><a href="/app" class="footer-link">Gemini 4 Argon</a></li>
-            <li><a href="/app" class="footer-link">Gemini 3.8 Flash</a></li>
-            <li><a href="/app" class="footer-link">Google Plugins</a></li>
-            <li><a href="/app" class="footer-link">Neura TensorFlow</a></li>
+            <li><a href="/app" class="footer-link">AlzheimersXGBoost 3.x</a></li>
+            <li><a href="/app" class="footer-link">32 Biomarker Klinis</a></li>
+            <li><a href="/app" class="footer-link">Evaluasi 430 Pasien</a></li>
+            <li><a href="/app" class="footer-link">Akurasi 94.4% (AUC 0.933)</a></li>
           </ul>
         </div>
 
         <div>
           <div class="footer-col-title">Sumber Daya</div>
           <ul class="footer-links-list">
-            <li><a href="#blog" class="footer-link">Blog &amp; Riset</a></li>
-            <li><a href="/app" class="footer-link">Dokumentasi</a></li>
-            <li><a href="/app" class="footer-link">Catatan Rilis</a></li>
-            <li><a href="/app" class="footer-link">Dukungan Komunitas</a></li>
+            <li><a href="#blog" class="footer-link">Riset &amp; Publikasi</a></li>
+            <li><a href="/app" class="footer-link">Dokumentasi API</a></li>
+            <li><a href="/app" class="footer-link">Protokol Klinis</a></li>
+            <li><a href="/app" class="footer-link">Dukungan Tenaga Medis</a></li>
           </ul>
         </div>
 
         <div>
-          <div class="footer-col-title">Perusahaan</div>
+          <div class="footer-col-title">Tentang</div>
           <ul class="footer-links-list">
-            <li><a href="https://about.google/" target="_blank" class="footer-link">Tentang Google</a></li>
-            <li><a href="https://policies.google.com/privacy" target="_blank" class="footer-link">Privasi</a></li>
-            <li><a href="https://policies.google.com/terms" target="_blank" class="footer-link">Persyaratan Layanan</a></li>
+            <li><a href="/app" class="footer-link">Tentang Neura AI</a></li>
+            <li><a href="/app" class="footer-link">Privasi &amp; Data Medis</a></li>
+            <li><a href="/app" class="footer-link">Etika AI Kesehatan</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <div>&copy; 2026 Google LLC &bull; Antigravity Platform</div>
+        <div>&copy; 2026 Neura Health AI &bull; Alzheimer's Diagnostic Platform</div>
         <div class="footer-bottom-links">
-          <a href="https://policies.google.com/privacy" target="_blank">Privasi</a>
-          <a href="https://policies.google.com/terms" target="_blank">Persyaratan</a>
+          <a href="/app">Privasi</a>
+          <a href="/app">Persyaratan</a>
           <span>Bahasa: Indonesia (ID)</span>
         </div>
       </div>
@@ -637,8 +1100,8 @@ agent.run_task(<span class="sdk-str">"Refactor auth flow"</span>, workspace)</co
   </footer>
 
   <script src="/js/lenis.min.js"></script>
-  <script src="/js/smooth-scroll.js"></script>
-  <script src="/js/dynamic-island.js"></script>
-  <script src="/js/welcome.js"></script>
+  <script src="/js/smooth-scroll.js?v=23"></script>
+  <script src="/js/dynamic-island.js?v=23"></script>
+  <script src="/js/welcome.js?v=23"></script>
 </body>
 </html>

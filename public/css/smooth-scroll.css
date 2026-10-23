@@ -36,21 +36,26 @@ html.lenis:not(:has(.claude-layout)) body {
 }
 
 /* ==========================================================================
-   Smart Scroll-Reactive Navbar (Auto-hide on Scroll Down, Reveal on Scroll Up)
+   Smart Scroll-Reactive Navbar with Smooth Parallax Physics
    Scoped to landing/content pages only, not affecting app layouts
    ========================================================================== */
 .site-header,
 body:not(:has(.claude-layout)) .top-nav {
+  --nav-parallax-y: 0px;
+  --nav-parallax-scale: 1;
+  --nav-inner-parallax: 0px;
   will-change: transform;
-  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.44s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .site-header.nav-hidden,
 body:not(:has(.claude-layout)) .top-nav.nav-hidden {
-  transform: translateY(-100%) !important;
+  transform: translate3d(0, calc(-100% + var(--nav-parallax-y, 0px)), 0) !important;
+  pointer-events: none;
 }
 
 .site-header.nav-visible,
 body:not(:has(.claude-layout)) .top-nav.nav-visible {
-  transform: translateY(0) !important;
+  transform: translate3d(0, 0, 0) !important;
+  pointer-events: auto;
 }

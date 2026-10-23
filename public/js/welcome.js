@@ -1,204 +1,131 @@
 /**
- * Google Antigravity Welcome Page Interactions
- * Includes Antigravity particle simulation, bilingual support, and IDE interactions.
+ * Neura Alzheimer AI - Welcome Page Interactions
+ * Includes neural particle simulation, bilingual support, and clinical IDE interactions.
  */
 
 (function () {
   'use strict';
 
-  // -------------------------------------------------------------------------
-  // 1. Antigravity Particle Canvas Physics Simulation
-  // -------------------------------------------------------------------------
-  const canvas = document.getElementById('antigravity-canvas');
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-    const particleCount = 120;
-    
-    // Google Accent Colors
-    const colors = [
-      '#1a73e8', // Google Blue
-      '#ea4335', // Google Red
-      '#fbbc04', // Google Yellow
-      '#34a853', // Google Green
-      '#4285f4', // Light Blue
-      '#a142f4'  // Purple
-    ];
 
-    let mouse = {
-      x: null,
-      y: null,
-      radius: 140
-    };
-
-    function resize() {
-      const rect = canvas.getBoundingClientRect();
-      width = canvas.width = rect.width;
-      height = canvas.height = rect.height;
-    }
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', function (e) {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    });
-
-    window.addEventListener('mouseleave', function () {
-      mouse.x = null;
-      mouse.y = null;
-    });
-
-    class Particle {
-      constructor() {
-        this.reset(true);
-      }
-
-      reset(initial = false) {
-        this.x = Math.random() * width;
-        this.y = initial ? Math.random() * height : height + 20 + Math.random() * 50;
-        this.w = 5 + Math.random() * 8; // width of dash
-        this.h = 2 + Math.random() * 4; // thickness
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-        this.speedY = -(0.4 + Math.random() * 1.1); // float upwards (antigravity)
-        this.speedX = (Math.random() - 0.5) * 0.4;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotSpeed = (Math.random() - 0.5) * 0.03;
-        this.opacity = 0.5 + Math.random() * 0.5;
-        this.baseSpeedY = this.speedY;
-      }
-
-      update() {
-        this.y += this.speedY;
-        this.x += this.speedX + Math.sin(this.y * 0.015) * 0.3;
-        this.rotation += this.rotSpeed;
-
-        // Mouse avoidance (antigravity disturbance field)
-        if (mouse.x !== null && mouse.y !== null) {
-          const dx = this.x - mouse.x;
-          const dy = this.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < mouse.radius) {
-            const force = (1 - dist / mouse.radius) * 3;
-            const angle = Math.atan2(dy, dx);
-            this.x += Math.cos(angle) * force;
-            this.y += Math.sin(angle) * force;
-          }
-        }
-
-        // Wrap around when reaching the top
-        if (this.y < -30 || this.x < -40 || this.x > width + 40) {
-          this.reset(false);
-        }
-      }
-
-      draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.globalAlpha = this.opacity;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.roundRect(-this.w / 2, -this.h / 2, this.w, this.h, 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    resize();
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle());
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      for (let p of particles) {
-        p.update();
-        p.draw();
-      }
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  }
 
   // -------------------------------------------------------------------------
-  // 2. Banner Dismissal
+  // 2. Minimalist Announcement Banner Dismissal & Persistence
   // -------------------------------------------------------------------------
   const announcementClose = document.getElementById('announcement-close');
   const announcementBar = document.getElementById('announcement-bar');
   if (announcementClose && announcementBar) {
+    if (sessionStorage.getItem('neura_announcement_dismissed') === 'true') {
+      announcementBar.style.display = 'none';
+    }
     announcementClose.addEventListener('click', function () {
-      announcementBar.classList.add('hidden');
+      announcementBar.classList.add('dismissed');
+      sessionStorage.setItem('neura_announcement_dismissed', 'true');
+      setTimeout(() => {
+        announcementBar.style.display = 'none';
+      }, 350);
     });
   }
 
   // -------------------------------------------------------------------------
-  // 3. IDE Tab Switching Demo
+  // 2.1 Mobile Nav Drawer Toggle
+  // -------------------------------------------------------------------------
+  const mobileToggle = document.getElementById('nav-mobile-toggle');
+  const mobileDrawer = document.getElementById('nav-mobile-drawer');
+  if (mobileToggle && mobileDrawer) {
+    mobileToggle.addEventListener('click', function () {
+      mobileDrawer.classList.toggle('open');
+    });
+    // Close drawer when any mobile link is clicked
+    mobileDrawer.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileDrawer.classList.remove('open');
+      });
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // 2.2 Active Section Scroll Spy for Main Nav Links
+  // -------------------------------------------------------------------------
+  const navLinks = document.querySelectorAll('.nav-menu-link');
+  const trackedSections = [
+    { id: 'about', el: document.getElementById('about') },
+    { id: 'pipeline', el: document.getElementById('pipeline') },
+    { id: 'security', el: document.getElementById('security') },
+    { id: 'specification', el: document.getElementById('specification') }
+  ];
+
+  window.addEventListener('scroll', function () {
+    const scrollPos = window.scrollY + 140;
+    let currentId = '';
+    trackedSections.forEach(sec => {
+      if (sec.el && sec.el.offsetTop <= scrollPos) {
+        currentId = sec.id;
+      }
+    });
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === `#${currentId}`) {
+        link.classList.add('active');
+      } else if (href.startsWith('#')) {
+        link.classList.remove('active');
+      }
+    });
+  }, { passive: true });
+
+  // -------------------------------------------------------------------------
+  // 3. Clinical Code Tab Switching Demo
   // -------------------------------------------------------------------------
   const ideTabs = document.querySelectorAll('.editor-tab');
   const codeContent = document.getElementById('ide-code-content');
 
   const files = {
-    'page.tsx': `
-<span class="code-keyword">import</span> { useState } <span class="code-keyword">from</span> <span class="code-string">'react'</span>;
-<span class="code-keyword">import</span> { SearchForm } <span class="code-keyword">from</span> <span class="code-string">'@/components/SearchForm'</span>;
-<span class="code-keyword">import</span> { FlightResults } <span class="code-keyword">from</span> <span class="code-string">'@/components/FlightResults'</span>;
-<span class="code-keyword">import</span> { Plane } <span class="code-keyword">from</span> <span class="code-string">'lucide-react'</span>;
+    'patient_eval.py': `
+<span class="code-keyword">from</span> neura.clinical <span class="code-keyword">import</span> AlzheimersXGBoost, PatientProfile
+<span class="code-keyword">from</span> neura.analytics <span class="code-keyword">import</span> generate_clinical_report
 
-<span class="code-keyword">export default function</span> <span class="code-fn">Home</span>() {
-  <span class="code-keyword">const</span> [flights, setFlights] = <span class="code-fn">useState</span>([]);
-  <span class="code-keyword">const</span> [isLoading, setIsLoading] = <span class="code-fn">useState</span>(<span class="code-prop">false</span>);
-
-  <span class="code-keyword">const</span> <span class="code-fn">handleSearch</span> = <span class="code-keyword">async</span> (flightNumber: <span class="code-type">string</span>) => {
-    <span class="code-prop">setIsLoading</span>(<span class="code-prop">true</span>);
-    <span class="code-keyword">try</span> {
-      <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> <span class="code-fn">fetch</span>(<span class="code-string">\`/api/flights?flightNumber=\${flightNumber}\`</span>);
-      <span class="code-keyword">const</span> data = <span class="code-keyword">await</span> response.<span class="code-fn">json</span>();
-      <span class="code-fn">setFlights</span>(data);
-    } <span class="code-keyword">finally</span> {
-      <span class="code-fn">setIsLoading</span>(<span class="code-prop">false</span>);
-    }
-  };
-
-  <span class="code-keyword">return</span> (
-    <span class="code-string">&lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8"&gt;</span>
-      <span class="code-string">&lt;FlightTracker onSearch={handleSearch} /&gt;</span>
-    <span class="code-string">&lt;/div&gt;</span>
-  );
+<span class="code-comment"># Evaluasi rekam medis pasien dengan 32 biomarker klinis</span>
+<span class="code-keyword">def</span> <span class="code-fn">evaluate_patient_risk</span>(patient_id: <span class="code-type">str</span>):
+    model = AlzheimersXGBoost.<span class="code-fn">load_checkpoint</span>(<span class="code-string">"xgboost_alzheimers.json"</span>)
+    patient = PatientProfile.<span class="code-fn">from_cohort</span>(patient_id, n_biomarkers=<span class="code-prop">32</span>)
+    
+    <span class="code-comment"># Prediksi risiko penurunan fungsi kognitif &amp; biomarker MMSE</span>
+    diagnosis = model.<span class="code-fn">predict_risk</span>(patient)
+    
+    <span class="code-keyword">return</span> {
+<span class="code-diff-added">+       "diagnosis": "Mild Cognitive Impairment (Early Alzheimer Risk)",</span>
+<span class="code-diff-added">+       "confidence_score": 0.944,</span>
+<span class="code-diff-added">+       "recommended_action": "Early Neurological Intervention &amp; Cognitive Therapy"</span>
+<span class="code-diff-removed">-       "status": "Inconclusive screening"</span>
+    }`,
+    'biomarkers.json': `
+{
+  <span class="code-prop">"patient_id"</span>: <span class="code-string">"P-104"</span>,
+  <span class="code-prop">"age"</span>: <span class="code-prop">72</span>,
+  <span class="code-prop">"gender"</span>: <span class="code-string">"Female"</span>,
+  <span class="code-prop">"mmse_score"</span>: <span class="code-prop">21.4</span>,
+  <span class="code-prop">"functional_assessment"</span>: <span class="code-prop">5.8</span>,
+  <span class="code-prop">"memory_complaints"</span>: <span class="code-prop">1</span>,
+  <span class="code-prop">"behavioral_problems"</span>: <span class="code-prop">0</span>,
+  <span class="code-prop">"adl_score"</span>: <span class="code-prop">6.2</span>,
+  <span class="code-prop">"systolic_bp"</span>: <span class="code-prop">138</span>,
+  <span class="code-prop">"cholesterol_total"</span>: <span class="code-prop">224</span>,
+  <span class="code-prop">"apoe_allele"</span>: <span class="code-prop">1</span>
 }`,
-    'route.ts': `
-<span class="code-keyword">import</span> { NextResponse } <span class="code-keyword">from</span> <span class="code-string">'next/server'</span>;
+    'clinical_pipeline.py': `
+<span class="code-keyword">from</span> sklearn.metrics <span class="code-keyword">import</span> roc_auc_score, accuracy_score
+<span class="code-keyword">import</span> xgboost <span class="code-keyword">as</span> xgb
 
-<span class="code-keyword">export async function</span> <span class="code-fn">GET</span>(request: <span class="code-type">Request</span>) {
-  <span class="code-keyword">const</span> { searchParams } = <span class="code-keyword">new</span> <span class="code-fn">URL</span>(request.url);
-  <span class="code-keyword">const</span> query = searchParams.<span class="code-fn">get</span>(<span class="code-string">'flightNumber'</span>);
-
-  <span class="code-comment">// Query Antigravity Agent backend for real-time telemetry</span>
-  <span class="code-keyword">const</span> status = <span class="code-keyword">await</span> agent.<span class="code-fn">fetchFlightCoordinates</span>(query);
-
-  <span class="code-keyword">return</span> NextResponse.<span class="code-fn">json</span>({
-    flight: query,
-    altitude: <span class="code-string">'36,000 ft'</span>,
-    velocity: <span class="code-string">'480 knots'</span>,
-    eta: <span class="code-string">'14:30 UTC'</span>
-  });
-}`,
-    'globals.css': `
-<span class="code-comment">/* Global Theme Tokens */</span>
-:root {
-  <span class="code-prop">--theme-primary</span>: <span class="code-string">#1a73e8</span>;
-  <span class="code-prop">--theme-surface</span>: <span class="code-string">#ffffff</span>;
-  <span class="code-prop">--theme-on-surface</span>: <span class="code-string">#121316</span>;
-  <span class="code-prop">--theme-radius</span>: <span class="code-string">24px</span>;
-}
-
-body {
-  <span class="code-prop">font-family</span>: <span class="code-string">'Google Sans Flex'</span>, sans-serif;
-  <span class="code-prop">background</span>: <span class="code-prop">var(--theme-surface)</span>;
-}`
+<span class="code-comment"># Pipeline validasi performa model Alzheimer</span>
+<span class="code-keyword">def</span> <span class="code-fn">benchmark_clinical_model</span>(X_test, y_test):
+    clf = xgb.XGBClassifier()
+    clf.load_model(<span class="code-string">"public/checkpoints/xgboost_alzheimers.json"</span>)
+    preds = clf.predict_proba(X_test)[:, <span class="code-prop">1</span>]
+    
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"accuracy"</span>: <span class="code-fn">accuracy_score</span>(y_test, preds &gt;= <span class="code-prop">0.5</span>),
+        <span class="code-string">"roc_auc"</span>: <span class="code-fn">roc_auc_score</span>(y_test, preds)
+    }`
   };
 
   if (ideTabs.length && codeContent) {
@@ -222,52 +149,60 @@ body {
 
   const translations = {
     ID: {
-      nav_products: 'Produk',
-      nav_usecases: 'Kasus Penggunaan',
-      nav_pricing: 'Harga',
-      nav_enterprise: 'Perusahaan',
-      nav_resources: 'Sumber Daya',
+      nav_products: 'Platform',
+      nav_usecases: 'Kasus Klinis',
+      nav_pricing: 'Biomarker',
+      nav_enterprise: 'Rumah Sakit',
+      nav_resources: 'Riset',
       btn_download: 'Download',
-      hero_headline: 'Melaju lebih cepat dengan platform agen generasi terbaru',
+      btn_consult: 'Mulai Diagnosis',
+      hero_headline: 'Deteksi Dini Risiko Alzheimer dengan AI Berbasis 32 Biomarker Klinis',
       hero_sub_btn: 'Buka Neura Workspace ➔',
-      intro_btn: 'Putar intro ▶',
-      statement: 'Google Antigravity adalah platform pengembangan berbasis agen kami, yang memungkinkan siapa saja membangun di era berbasis agen.',
-      app_title: 'Antigravity App',
-      app_desc: 'Pusat komando Anda untuk mengelola beberapa agen lokal secara paralel. Kelompokkan percakapan ke dalam Proyek, operasikan di berbagai ruang kerja, dan otomatiskan tugas rutin dengan pesan terjadwal.',
-      ide_title: 'Antigravity IDE',
-      ide_desc: 'IDE berbasis agen dengan fitur lengkap. Dilengkapi pengelola agen, artefak, dan pemahaman mendalam tentang codebase Anda.',
-      sdk_title: 'Antigravity SDK',
-      sdk_desc: 'Buat prototipe agen kustom yang memanfaatkan kerangka kerja Antigravity dengan kode minimal. Skrip Python sederhana untuk mengiterasi pada aplikasi berbasis agen, mengotomatiskan tugas rekayasa perangkat lunak, dan menjalankan evaluasi.',
-      cli_title: 'Antigravity CLI',
-      cli_desc: 'Antarmuka berbasis terminal yang ringan dan cepat untuk bekerja dengan agen Antigravity. Jalankan agen pemrograman otonom, eksekusi perintah shell secara langsung, dan kelola subagen latar belakang semuanya dari keyboard Anda.',
-      blog_headline: 'Blog Terbaru',
-      blog_see_all: 'Lihat blog',
-      bottom_headline: 'Mulai melaju dengan Antigravity',
-      bottom_sub: 'Unduh aplikasi desktop untuk macOS, Windows, dan Linux, atau mulai langsung di browser.'
+      intro_btn: 'Simulasi Diagnostik ▶',
+      statement_eyebrow: 'TENTANG PLATFORM',
+      statement_p1: 'Neura adalah sistem kecerdasan buatan klinis mutakhir yang dirancang untuk mendeteksi indikasi awal <strong>Alzheimer, Mild Cognitive Impairment (MCI)</strong>, dan gangguan neurodegeneratif lain sejak stadium paling awal.',
+      statement_p2: 'Didukung oleh arsitektur machine learning <strong>XGBoost</strong> berkecepatan tinggi yang telah dilatih menggunakan parameter biomarker klinis komprehensif, Neura mampu memetakan gejala memori, fungsi eksekutif, dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>95.8%</strong>.',
+      statement_p3: 'Tidak seperti pemeriksaan konvensional yang mahal dan lambat, Neura memberikan analisis terstruktur dalam kurang dari 1.2 detik, langsung dari browser Anda.',
+      app_title: 'Neura Clinical App',
+      app_desc: 'Pusat komando klinis untuk mengevaluasi pasien, memonitor 32 biomarker neuro-kognitif, dan mengalkulasi probabilitas risiko penyakit Alzheimer secara instan melalui antarmuka interaktif.',
+      ide_title: 'Neura Diagnostic Studio',
+      ide_desc: 'Lingkungan diagnostik interaktif untuk tenaga medis. Dilengkapi kalkulator 32 biomarker, kurva presisi ROC-AUC 93.3%, serta ringkasan riwayat kognitif terstruktur.',
+      sdk_title: 'Neura Clinical Python SDK',
+      sdk_desc: 'Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR) rumah sakit dengan mudah melalui API Python yang ringkas dan aman.',
+      cli_title: 'Neura Clinical CLI',
+      cli_desc: 'Antarmuka terminal berkecepatan tinggi untuk evaluasi massal ribuan data pasien, validasi matriks konfusi, dan pengujian model XGBoost langsung dari keyboard.',
+      blog_headline: 'Riset Klinis & Publikasi Terkini',
+      blog_see_all: 'Lihat Semua Riset',
+      bottom_headline: 'Mulai Deteksi Dini dengan Neura AI',
+      bottom_sub: 'Buka aplikasi web interaktif kami atau integrasikan SDK klinis langsung ke sistem rekam medis Anda.'
     },
     EN: {
-      nav_products: 'Products',
-      nav_usecases: 'Use Cases',
-      nav_pricing: 'Pricing',
-      nav_enterprise: 'Enterprise',
-      nav_resources: 'Resources',
+      nav_products: 'Platform',
+      nav_usecases: 'Clinical Use Cases',
+      nav_pricing: 'Biomarkers',
+      nav_enterprise: 'Hospitals',
+      nav_resources: 'Research',
       btn_download: 'Download',
-      hero_headline: 'Experience liftoff with the next-gen agent platform',
+      btn_consult: 'Start Diagnosis',
+      hero_headline: "Early Alzheimer's Detection Powered by 32 Clinical Biomarkers & AI",
       hero_sub_btn: 'Open Neura Workspace ➔',
-      intro_btn: 'Play intro ▶',
-      statement: 'Google Antigravity is our agent-first development platform, empowering anyone to build in the agentic era.',
-      app_title: 'Antigravity App',
-      app_desc: 'Your mission control for orchestrating multiple local agents in parallel. Group conversations into Projects, operate across multiple workspaces, and automate routine tasks with scheduled triggers.',
-      ide_title: 'Antigravity IDE',
-      ide_desc: 'The complete agent-first IDE. Equipped with agent manager, real-time artifacts, and deep contextual comprehension of your entire codebase.',
-      sdk_title: 'Antigravity SDK',
-      sdk_desc: 'Build custom agent prototypes leveraging the Antigravity framework with minimal code. Clean Python scripts to iterate on agentic apps, automate software engineering workflows, and run evaluations.',
-      cli_title: 'Antigravity CLI',
-      cli_desc: 'The lightweight, lightning-fast terminal surface to work with Antigravity agents. Launch autonomous coding agents, run live shell commands, and manage background subagents straight from your keyboard.',
-      blog_headline: 'Latest from Blog',
-      blog_see_all: 'View all posts',
-      bottom_headline: 'Experience liftoff with Antigravity',
-      bottom_sub: 'Download the desktop application for macOS, Windows, and Linux, or jump straight in via the browser.'
+      intro_btn: 'Diagnostic Demo ▶',
+      statement_eyebrow: 'ABOUT PLATFORM',
+      statement_p1: "Neura is a cutting-edge clinical artificial intelligence system designed to detect early indicators of <strong>Alzheimer's, Mild Cognitive Impairment (MCI)</strong>, and other neurodegenerative conditions from their earliest stages.",
+      statement_p2: 'Powered by high-throughput <strong>XGBoost</strong> machine learning architecture trained on comprehensive clinical biomarkers, Neura accurately maps memory impairment, executive function, and neurological risk factors with up to <strong>95.8%</strong> accuracy.',
+      statement_p3: 'Unlike expensive, time-consuming conventional screenings, Neura delivers structured diagnostic evaluations in under 1.2 seconds, directly from your browser.',
+      app_title: 'Neura Clinical App',
+      app_desc: "Your clinical mission control to evaluate patient records, track 32 neuro-cognitive biomarkers, and assess Alzheimer's risk probability in real time via an interactive UI.",
+      ide_title: 'Neura Diagnostic Studio',
+      ide_desc: 'An end-to-end clinical diagnostic studio for doctors and researchers. Equipped with a 32-biomarker calculator, ROC-AUC 93.3% precision curves, and structured cognitive decline timelines.',
+      sdk_title: 'Neura Clinical Python SDK',
+      sdk_desc: "Integrate our XGBoost Alzheimer's detection pipeline seamlessly into hospital Electronic Health Record (EHR/EMR) systems with minimal Python code.",
+      cli_title: 'Neura Clinical CLI',
+      cli_desc: 'The high-throughput terminal engine for bulk patient evaluation, confusion matrix validation, and clinical model testing directly from your keyboard.',
+      blog_headline: 'Latest Clinical Research & Publications',
+      blog_see_all: 'View all research',
+      bottom_headline: "Experience Early Detection with Neura AI",
+      bottom_sub: "Launch our web workspace or deploy the clinical SDK directly into your neurological healthcare pipeline."
     }
   };
 
@@ -279,7 +214,7 @@ body {
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[currentLang] && translations[currentLang][key]) {
-          el.textContent = translations[currentLang][key];
+          el.innerHTML = translations[currentLang][key];
         }
       });
     });
@@ -291,7 +226,7 @@ body {
   const playIntroBtn = document.getElementById('play-intro-btn');
   if (playIntroBtn) {
     playIntroBtn.addEventListener('click', function () {
-      alert('Selamat datang di Google Antigravity! Klik "Buka Neura Workspace" untuk langsung menggunakan sistem AI.');
+      alert('Selamat datang di Neura! Platform deteksi dini Alzheimer berbasis kecerdasan buatan klinis.');
     });
   }
 
@@ -302,7 +237,7 @@ body {
     const container = document.getElementById('sync-pills');
     if (!container) return;
 
-    const isAllUpdates = btn.textContent.trim().includes('All Updates');
+    const isAllUpdates = btn.textContent.trim().includes('Semua Riset') || btn.textContent.trim().includes('All Updates');
 
     if (isAllUpdates) {
       container.querySelectorAll('.sync-pill').forEach(p => p.classList.remove('active'));
@@ -326,7 +261,7 @@ body {
 
     if (!email) return;
 
-    alert(`Terima kasih! Email (${email}) telah berhasil didaftarkan untuk menerima pembaruan Google Antigravity.`);
+    alert(`Terima kasih! Email (${email}) telah berhasil didaftarkan untuk menerima buletin riset Neura Alzheimer AI.`);
     if (input) input.value = '';
     const consent = document.getElementById('sync-consent-check');
     if (consent) consent.checked = false;
@@ -433,5 +368,90 @@ body {
     const scrollAmount = 309; // card 285px + 24px gap
     track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
   };
+
+  // -------------------------------------------------------------------------
+  // 9. Tools Strip Scroll Parallax
+  // -------------------------------------------------------------------------
+  (function initToolsParallax() {
+    const section  = document.getElementById('tools-carousel-section');
+    const row1     = document.getElementById('tools-row-1');
+
+    if (!section || !row1) return;
+
+    // Strip starts from the leftmost position
+    const ROW1_SPEED   =  0.35;   // px horizontal shift per px vertical scroll
+    const INITIAL_OFFSET = 0;     // px — start from far left
+
+    let lastScrollY  = window.scrollY;
+    let currentX1    = INITIAL_OFFSET;
+    let targetX1     = INITIAL_OFFSET;
+    let rafId        = null;
+    let ticking      = false;
+
+    // Cache bubbles for the scale loop
+    const bubbles = Array.from(row1.querySelectorAll('.tool-icon-bubble'));
+
+    // Spotlight constants
+    const MAX_SCALE   = 1.2;   // scale at dead-centre
+    const MIN_SCALE   = 0.88;  // scale at outer edges
+    const SCALE_ZONE  = 280;   // half-width (px) over which scale transitions
+
+    function applySpotlightScale() {
+      const viewCX = window.innerWidth / 2;
+      bubbles.forEach(b => {
+        const rect  = b.getBoundingClientRect();
+        const bCX   = rect.left + rect.width / 2;
+        const dist  = Math.abs(bCX - viewCX);
+        // Linear interpolation: 0 dist → MAX_SCALE, SCALE_ZONE dist → MIN_SCALE
+        const t     = Math.min(dist / SCALE_ZONE, 1);
+        const scale = MAX_SCALE + (MIN_SCALE - MAX_SCALE) * t;
+        b.style.transform = `scale(${scale.toFixed(3)})`;
+      });
+    }
+
+    function applyTransforms() {
+      // Lerp toward target for buttery easing
+      currentX1 += (targetX1 - currentX1) * 0.08;
+
+      row1.style.transform = `translateX(${currentX1.toFixed(2)}px)`;
+
+      // Update spotlight scale on every frame
+      applySpotlightScale();
+
+      // Keep animating until settled
+      if (Math.abs(targetX1 - currentX1) > 0.1) {
+        rafId = requestAnimationFrame(applyTransforms);
+      } else {
+        // Final scale pass after motion stops
+        applySpotlightScale();
+        rafId = null;
+      }
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const sectionTop    = section.getBoundingClientRect().top + window.scrollY;
+        const sectionCentre = sectionTop - window.innerHeight / 2;
+        const progress      = window.scrollY - sectionCentre;
+
+        // Row slides LEFT as user scrolls DOWN
+        targetX1 = INITIAL_OFFSET - progress * ROW1_SPEED;
+
+        if (!rafId) {
+          rafId = requestAnimationFrame(applyTransforms);
+        }
+      });
+    }
+
+    // Apply initial position + scale immediately
+    row1.style.transform = `translateX(${INITIAL_OFFSET}px)`;
+    // Defer scale pass until layout is painted
+    requestAnimationFrame(() => requestAnimationFrame(applySpotlightScale));
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
 
 })();
