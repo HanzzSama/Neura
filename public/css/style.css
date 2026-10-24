@@ -573,6 +573,43 @@ html, body {
   overflow: hidden;
 }
 
+/* ── Chat dims as voice room enters ─────────────────────────────────────── */
+.main-view.chat-is-exiting {
+  animation: chat-blur-out 0.38s cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+/* ── Chat comes back as voice room exits ─────────────────────────────────── */
+.main-view.chat-is-entering {
+  animation: chat-blur-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes chat-blur-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+  to {
+    opacity: 0.35;
+    transform: scale(0.985);
+    filter: blur(3px);
+  }
+}
+
+@keyframes chat-blur-in {
+  from {
+    opacity: 0.35;
+    transform: scale(0.985);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
 /* Clean Modern Top Navigation (Borderless & Transparent) */
 .top-nav {
   height: 60px;
@@ -997,6 +1034,148 @@ html, body {
   color: var(--text-secondary);
 }
 
+/* ==========================================================================
+   VOICE SESSION SUMMARY CARD (Exported Voice Consultation with Clamp)
+   ========================================================================== */
+.voice-session-summary {
+  width: 100%;
+  max-width: 100%;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text-primary);
+  margin-top: 6px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  /* JANGAN overflow:hidden di sini — akan memotong expand bar yang ada di luar body */
+  overflow: visible;
+  box-sizing: border-box;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.voice-session-summary .voice-session-header {
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 13px;
+  user-select: none;
+}
+
+.voice-session-summary .voice-session-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-primary);
+}
+
+.voice-session-summary .voice-session-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background-color: var(--bg-badge);
+  color: var(--accent-terracotta);
+  border-radius: 10px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+}
+
+.voice-session-summary .voice-session-body {
+  padding: 14px 16px 10px 16px;
+  word-break: break-word;
+  position: relative;
+  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Clamped State: Only the body is clamped, while the expand button is always pinned and visible below */
+.voice-session-summary.is-clamped .voice-session-body {
+  max-height: 180px !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+.voice-session-summary.is-clamped .voice-session-body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 65px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--bg-card) 95%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+:root[data-theme="dark"] .voice-session-summary.is-clamped .voice-session-body::after {
+  background: linear-gradient(to bottom, rgba(40, 38, 34, 0) 0%, var(--bg-card) 95%);
+}
+
+/* Expanded State */
+.voice-session-summary.is-expanded .voice-session-body {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.voice-session-summary.is-expanded .voice-session-body::after {
+  display: none !important;
+}
+
+/* Footer Action Bar with "Selengkapnya" button - ALWAYS VISIBLE BELOW THE BODY */
+.voice-session-expand-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px 12px;
+  background: var(--bg-card);
+  border-top: 1px dashed var(--border-subtle);
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.voice-session-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 6px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-terracotta);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.voice-session-expand-btn:hover {
+  background-color: var(--bg-badge);
+  border-color: var(--accent-terracotta);
+  color: var(--accent-terracotta-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(217, 119, 87, 0.16);
+}
+
+.voice-session-expand-btn svg {
+  transition: transform 0.22s ease;
+}
+
+.voice-session-summary.is-expanded .voice-session-expand-btn svg {
+  transform: rotate(180deg);
+}
+
 /* Minimalist Anti-SLOP In-Chat Metric System (No Bulky White Container) */
 .claude-card {
   background-color: transparent;
@@ -1416,7 +1595,7 @@ html, body {
 }
 
 /* ==========================================================================
-   BOTTOM INPUT AREA (Claude Floating Bottom Box)
+   BOTTOM INPUT AREA (Claude Floating Bottom Box - Minimal Redesign)
    ========================================================================== */
 .floating-input-container {
   position: absolute;
@@ -1426,10 +1605,14 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 24px 20px;
+  padding: 0 24px 16px;
   background: linear-gradient(180deg, rgba(250, 249, 245, 0) 0%, var(--bg-app) 35%);
   pointer-events: none;
   z-index: 30;
+}
+
+:root[data-theme="dark"] .floating-input-container {
+  background: linear-gradient(180deg, rgba(30, 29, 27, 0) 0%, var(--bg-app) 35%);
 }
 
 .input-box-wrapper {
@@ -1437,18 +1620,26 @@ html, body {
   max-width: 768px;
   background-color: var(--bg-input);
   border: 1px solid var(--border-input);
-  border-radius: 20px;
-  box-shadow: var(--shadow-input);
+  border-radius: 18px;
+  background-clip: padding-box;
   display: flex;
   flex-direction: column;
-  padding: 12px 14px 10px 18px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  padding: 14px 16px 12px 16px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
   pointer-events: auto;
+}
+
+:root[data-theme="dark"] .input-box-wrapper {
+  background-color: #262624;
+  border-color: rgba(255, 255, 255, 0.09);
 }
 
 .input-box-wrapper:focus-within {
   border-color: var(--border-focus);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-focus);
+}
+
+:root[data-theme="dark"] .input-box-wrapper:focus-within {
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 #chat-input-textarea {
@@ -1457,12 +1648,14 @@ html, body {
   outline: none;
   background: transparent;
   resize: none;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   color: var(--text-primary);
   max-height: 180px;
-  min-height: 24px;
+  min-height: 26px;
+  padding: 0;
+  margin: 0;
 }
 
 #chat-input-textarea::placeholder {
@@ -1475,60 +1668,179 @@ html, body {
   align-items: center;
   justify-content: space-between;
   margin-top: 10px;
+  position: relative;
 }
 
 .input-actions-left {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  position: relative;
 }
 
-.cmd-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--text-secondary);
-  background-color: var(--bg-app);
-  border: 1px solid var(--border-subtle);
+/* Minimal icon button (e.g. + button) */
+.ib-icon-btn {
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
-  padding: 3px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.ib-icon-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .ib-icon-btn {
+  color: #9c9a94;
+}
+
+:root[data-theme="dark"] .ib-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f3f3f1;
+}
+
+/* Popup Quick Command Menu on + button click */
+.quick-menu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 250px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: qm-appear 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="dark"] .quick-menu {
+  background: #1c1b18;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+}
+
+@keyframes qm-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.qm-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  text-align: left;
   cursor: pointer;
   white-space: nowrap;
-  flex-shrink: 0;
-  transition: all 0.12s ease;
+  transition: all 0.15s ease;
+  user-select: none;
+  gap: 16px;
 }
 
-.cmd-pill:hover {
-  background-color: var(--bg-sidebar-hover);
+.qm-item:hover {
+  background-color: var(--bg-hover);
   color: var(--text-primary);
-  border-color: var(--border-strong);
-  transform: translateY(-1px);
 }
 
-.pill-icon {
-  width: 12.5px;
-  height: 12.5px;
+:root[data-theme="dark"] .qm-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.qm-tag {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  background-color: rgba(217, 119, 87, 0.12);
+  color: var(--accent-terracotta);
+  border: 1px solid rgba(217, 119, 87, 0.18);
+  padding: 2.5px 8px;
+  border-radius: 5px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  transition: all 0.15s ease;
   flex-shrink: 0;
-  display: inline-block;
-  transition: transform 0.12s ease;
 }
 
-.cmd-pill:hover .pill-icon {
-  transform: scale(1.1);
+:root[data-theme="dark"] .qm-tag {
+  background-color: rgba(217, 119, 87, 0.18);
+  color: #E07A5F;
+  border-color: rgba(217, 119, 87, 0.28);
 }
 
-.pill-icon-train   { color: var(--accent-terracotta); }
-.pill-icon-predict { color: #8B5CF6; }
-.pill-icon-eval    { color: var(--accent-green); }
-.pill-icon-status  { color: #0EA5E9; }
+.qm-item:hover .qm-tag {
+  background-color: rgba(217, 119, 87, 0.22);
+  color: var(--accent-terracotta-hover);
+  border-color: rgba(217, 119, 87, 0.35);
+}
 
+:root[data-theme="dark"] .qm-item:hover .qm-tag {
+  background-color: rgba(217, 119, 87, 0.28);
+  color: #FFA588;
+}
+
+/* Right side actions (Model Label + Mic + Waveform) */
+.input-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Model Label ("Neura Clinical") */
+.ib-model-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  user-select: none;
+  cursor: default;
+  letter-spacing: -0.01em;
+}
+
+:root[data-theme="dark"] .ib-model-label {
+  color: #d1cfc7;
+}
+
+.ib-model-tier {
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 3px;
+}
+
+:root[data-theme="dark"] .ib-model-tier {
+  color: #82807a;
+}
+
+/* Send / Voice Button Base */
 .send-icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: none;
   background-color: var(--accent-terracotta);
@@ -1536,37 +1848,52 @@ html, body {
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
+  padding: 0;
 }
 
 .send-icon-btn:hover {
   background-color: var(--accent-terracotta-hover);
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
-/* Voice Button State (When input textarea is empty) */
+/* Voice state when input is empty (minimal mic icon matching Claude) */
 .send-icon-btn.is-voice {
-  background-color: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.32);
+  background-color: transparent !important;
+  color: var(--text-secondary) !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
 }
 
 .send-icon-btn.is-voice:hover {
-  background-color: rgba(16, 185, 129, 0.22);
-  border-color: rgba(16, 185, 129, 0.55);
-  color: #059669;
-  transform: scale(1.08);
-  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.25);
+  background-color: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+  transform: scale(1.06);
+}
+
+:root[data-theme="dark"] .send-icon-btn.is-voice {
+  color: #9c9a94 !important;
+}
+
+:root[data-theme="dark"] .send-icon-btn.is-voice:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f3f1 !important;
 }
 
 /* Voice Button Actively Listening / Recording State */
 .send-icon-btn.is-listening {
   background-color: #ef4444 !important;
   color: #ffffff !important;
-  border: 1px solid #dc2626 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 30px !important;
+  height: 30px !important;
   animation: mic-pulse 1.3s infinite ease-in-out;
-  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6) !important;
 }
 
 @keyframes mic-pulse {
@@ -1584,21 +1911,48 @@ html, body {
   }
 }
 
+/* Waveform icon button */
+.ib-waveform-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.ib-waveform-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .ib-waveform-btn {
+  color: #9c9a94;
+}
+
+:root[data-theme="dark"] .ib-waveform-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f3f3f1;
+}
+
 /* Live Voice Status Banner inside chat input bar */
 .chat-voice-status-banner {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.25);
   border-radius: 9999px;
-  padding: 4px 12px;
-  font-size: 12px;
+  padding: 3px 10px;
+  font-size: 11.5px;
   color: #ef4444;
   font-weight: 500;
   animation: banner-appear 0.2s ease-out;
-  margin-left: auto;
-  margin-right: 8px;
 }
 
 @keyframes banner-appear {
@@ -1607,8 +1961,8 @@ html, body {
 }
 
 .chat-voice-wave-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: #ef4444;
   animation: wave-dot-ping 1s infinite alternate;
@@ -1628,7 +1982,7 @@ html, body {
   color: var(--text-muted);
   cursor: pointer;
   font-size: 11px;
-  padding: 2px 6px;
+  padding: 2px 4px;
   border-radius: 4px;
   transition: all 0.15s ease;
 }
@@ -1636,16 +1990,6 @@ html, body {
 .chat-voice-cancel-btn:hover {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
-}
-
-.cmd-pill.pill-voice-room {
-  border-color: rgba(59, 130, 246, 0.35);
-  color: var(--accent-blue, #2563eb);
-}
-
-.cmd-pill.pill-voice-room:hover {
-  background: rgba(59, 130, 246, 0.12);
-  border-color: var(--accent-blue, #2563eb);
 }
 
 .send-icon-btn:disabled {
@@ -2575,60 +2919,62 @@ html, body {
   position: relative;
   width: 100%;
   max-width: 768px;
-  border-radius: 20px;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   pointer-events: auto;
   margin: 0 auto;
+  transition: box-shadow 0.25s ease;
 }
 
-/* Crisp rotating outer border rim */
+/* Crisp rotating outer border rim - mathematically concentric (18px + 1px) */
 .glow-ring::after {
   content: '';
   position: absolute;
-  inset: -1.5px;
-  border-radius: 21.5px;
+  inset: -1px;
+  border-radius: 19px;
   background: conic-gradient(
     from var(--glow-angle, 0deg),
     transparent 0deg,
-    rgba(217, 119, 87, 0.25) 45deg,
+    rgba(217, 119, 87, 0.2) 45deg,
     #D97757 95deg,
     #C084FC 130deg,
     transparent 175deg,
     transparent 205deg,
-    rgba(99, 102, 241, 0.25) 235deg,
+    rgba(99, 102, 241, 0.2) 235deg,
     #6366F1 280deg,
     #38BDF8 315deg,
     transparent 355deg
   );
-  opacity: 0.5;
+  opacity: 0.32;
   animation: rotate-input-glow 4s linear infinite;
   z-index: 1;
   pointer-events: none;
   transition: opacity 0.35s ease;
 }
 
-/* Atmospheric blurred halo around the input */
+/* Atmospheric blurred halo around the input - mathematically concentric (18px + 2.5px) */
 .glow-ring::before {
   content: '';
   position: absolute;
-  inset: -4px;
-  border-radius: 24px;
+  inset: -2.5px;
+  border-radius: 20.5px;
   background: conic-gradient(
     from var(--glow-angle, 0deg),
     transparent 0deg,
-    rgba(217, 119, 87, 0.2) 45deg,
-    rgba(217, 119, 87, 0.9) 95deg,
-    rgba(192, 132, 252, 0.85) 130deg,
+    rgba(217, 119, 87, 0.15) 45deg,
+    rgba(217, 119, 87, 0.75) 95deg,
+    rgba(192, 132, 252, 0.7) 130deg,
     transparent 175deg,
     transparent 205deg,
-    rgba(99, 102, 241, 0.2) 235deg,
-    rgba(99, 102, 241, 0.9) 280deg,
-    rgba(56, 189, 248, 0.85) 315deg,
+    rgba(99, 102, 241, 0.15) 235deg,
+    rgba(99, 102, 241, 0.75) 280deg,
+    rgba(56, 189, 248, 0.7) 315deg,
     transparent 355deg
   );
-  filter: blur(12px);
-  opacity: 0.38;
+  filter: blur(8px);
+  opacity: 0.2;
   animation: rotate-input-glow 4s linear infinite;
   z-index: 0;
   pointer-events: none;
@@ -2643,49 +2989,68 @@ html, body {
 }
 
 /* Hover state: increase brightness & aura */
+.glow-ring:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
 .glow-ring:hover::after {
-  opacity: 0.8;
+  opacity: 0.6;
 }
 
 .glow-ring:hover::before {
-  opacity: 0.6;
-  filter: blur(14px);
+  opacity: 0.45;
+  filter: blur(10px);
 }
 
 /* Focus state: vibrant full glow & slightly faster rotation */
+.glow-ring:focus-within {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+
 .glow-ring:focus-within::after {
-  opacity: 1;
+  opacity: 0.9;
   animation-duration: 2.8s;
 }
 
 .glow-ring:focus-within::before {
-  opacity: 0.95;
-  filter: blur(16px);
+  opacity: 0.75;
+  filter: blur(12px);
   animation-duration: 2.8s;
 }
 
 .glow-ring:focus-within > .input-box-wrapper {
   border-color: rgba(217, 119, 87, 0.35);
-  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.10);
 }
 
 /* Dark mode adjustments for maximum luminescence */
+:root[data-theme="dark"] .glow-ring {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
 [data-theme="dark"] .glow-ring::after {
-  opacity: 0.6;
+  opacity: 0.45;
 }
 
 [data-theme="dark"] .glow-ring::before {
-  opacity: 0.5;
-  filter: blur(14px);
+  opacity: 0.35;
+  filter: blur(10px);
+}
+
+[data-theme="dark"] .glow-ring:hover {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45);
 }
 
 [data-theme="dark"] .glow-ring:hover::after {
-  opacity: 0.9;
+  opacity: 0.75;
 }
 
 [data-theme="dark"] .glow-ring:hover::before {
-  opacity: 0.75;
-  filter: blur(16px);
+  opacity: 0.6;
+  filter: blur(12px);
+}
+
+[data-theme="dark"] .glow-ring:focus-within {
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.55);
 }
 
 [data-theme="dark"] .glow-ring:focus-within::after {
@@ -2693,13 +3058,12 @@ html, body {
 }
 
 [data-theme="dark"] .glow-ring:focus-within::before {
-  opacity: 1;
-  filter: blur(20px);
+  opacity: 0.85;
+  filter: blur(16px);
 }
 
 [data-theme="dark"] .glow-ring:focus-within > .input-box-wrapper {
   border-color: rgba(217, 119, 87, 0.45);
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
 }
 
 /* ==========================================================================
@@ -2783,6 +3147,130 @@ html, body {
 .slide-track {
   width: 100%;
   position: relative;
+}
+
+/* ─── Phase Bar (Reguler → Klinis Lanjutan) ─── */
+.profile-phase-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 0;
+}
+.profile-phase-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+}
+.profile-phase-tag.phase-reguler { background: rgba(217,119,87,0.1); color: var(--accent-terracotta); }
+.profile-phase-tag.phase-advanced { background: rgba(79,130,195,0.1); color: #4F82C3; }
+.profile-phase-sep { font-size: 11px; color: var(--text-tertiary); }
+
+/* ─── Section Label per slide ─── */
+.tf-section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 8px;
+  margin-bottom: -4px;
+}
+.tf-section-label.reguler-label { background: rgba(217,119,87,0.1); color: var(--accent-terracotta); }
+.tf-section-label.advanced-label { background: rgba(79,130,195,0.1); color: #4F82C3; }
+
+/* ─── Advanced Group Wrapper ─── */
+.tf-adv-group { display: flex; flex-direction: column; gap: 14px; }
+
+/* ─── Advanced Slider ─── */
+.tf-adv-slider-group { display: flex; flex-direction: column; gap: 6px; }
+.tf-adv-slider-header { display: flex; justify-content: space-between; align-items: center; }
+.tf-adv-slider-label { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
+.tf-adv-slider-val {
+  font-size: 13px; font-weight: 700; color: var(--accent-terracotta);
+  font-family: 'JetBrains Mono', monospace; min-width: 52px; text-align: right;
+}
+.tf-adv-slider { width: 100%; }
+.tf-adv-slider-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-tertiary); }
+
+/* ─── Binary Toggle (Ya/Tidak) ─── */
+.tf-binary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+.tf-binary-label { font-size: 12.5px; color: var(--text-primary); font-weight: 500; flex: 1; }
+.tf-binary-toggle { display: flex; gap: 4px; }
+.tf-binary-btn {
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-subtle);
+  background: transparent;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; color: var(--text-secondary);
+  transition: all 0.18s ease;
+}
+.tf-binary-btn.active-yes { background: rgba(76,175,80,0.1); border-color: #4CAF50; color: #4CAF50; }
+.tf-binary-btn.active-no { background: rgba(217,119,87,0.1); border-color: var(--accent-terracotta); color: var(--accent-terracotta); }
+
+/* ─── Chip Select Row (single-select) ─── */
+.tf-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tf-chip-btn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-surface);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; color: var(--text-secondary);
+  transition: all 0.18s ease;
+}
+.tf-chip-btn.selected { background: rgba(217,119,87,0.12); border-color: var(--accent-terracotta); color: var(--accent-terracotta); font-weight: 600; }
+.tf-chip-btn:hover { border-color: var(--accent-terracotta); color: var(--accent-terracotta); }
+
+/* ─── Advanced Two-Column Grid (Cholesterol) ─── */
+.tf-adv-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tf-unit-sm { width: 90px !important; min-width: 60px !important; }
+.tf-adv-field-label {
+  font-size: 11.5px; font-weight: 600; color: var(--text-secondary);
+  margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;
+}
+
+/* ─── MMSE Legend ─── */
+.tf-mmse-legend { display: flex; flex-wrap: wrap; gap: 5px; margin-top: -4px; margin-bottom: 6px; }
+.mmse-tag { padding: 2px 9px; border-radius: 8px; font-size: 10.5px; font-weight: 600; }
+.mmse-tag.severe  { background: rgba(244,67,54,0.12); color: #F44336; }
+.mmse-tag.moderate { background: rgba(255,152,0,0.12); color: #FF9800; }
+.mmse-tag.mild    { background: rgba(255,193,7,0.12); color: #F9A825; }
+.mmse-tag.normal  { background: rgba(76,175,80,0.12); color: #4CAF50; }
+
+/* ─── Confirmation Box (Slide 16) ─── */
+.tf-confirmation-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.tf-confirm-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--text-primary); font-weight: 500;
+}
+.tf-confirm-icon { font-size: 16px; width: 22px; text-align: center; }
+.tf-confirm-cta {
+  margin-top: 4px; font-size: 12.5px; color: var(--text-secondary);
+  text-align: center; padding-top: 8px; border-top: 1px solid var(--border-subtle);
 }
 
 .slide-pane {

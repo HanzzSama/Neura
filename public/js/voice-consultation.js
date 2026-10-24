@@ -26,15 +26,40 @@
   var silenceTimer = null;
   var accumulatedFinalText = '';
   var currentInterimText = '';
-  var SILENCE_TIMEOUT_MS = 850;
+  var lastRecognizedSpeechText = '';
+  var lastSpeechChangeTimestamp = 0;
+  var SILENCE_TIMEOUT_MS = 1800;
   var voiceConversation = [];
   var orbState = 'idle'; // idle | listening | processing | speaking
   var orbT = 0;
+  var noiseAudioStream = null;
+  var currentUtterance = null;
+  var speakSafetyTimer = null;
+
+  // Recognition restart / error-recovery state
+  var recRetryCount = 0;        // consecutive error count for backoff
+  var recLastError = null;      // last error type string
+  var recRestartLocked = false; // prevents double-restart race condition
+  var recRetryTimer = null;     // pending setTimeout for restart
+  var MAX_RETRY_DELAY_MS = 8000;
+
+  // VAD (Voice Activity Detection) via AudioContext — audio amplitude based
+  var vadAudioCtx = null;
+  var vadAnalyser = null;
+  var vadMicStream = null;
+  var vadAnimId = null;
+  var vadSpeechDetected = false;
+  var VAD_NOISE_FLOOR = 4;
+  var VAD_SPEECH_CONFIRM_MS = 150;
+  var VAD_SILENCE_AFTER_SPEECH = 1800;
+  var vadAboveFloorSince = 0;
+  var vadBelowFloorSince = 0;
+  var vadRunning = false;
 
   // DOM Elements
   var vcView, vcScrollArea, vcThread, vcOrbCanvas, vcOrbCtx;
   var vcCenterBubbleCanvas, vcCenterBubbleCtx;
-  var vcStatusDot, vcStatusText, vcMuteBtn, vcTimer;
+  var vcStatusDot, vcStatusText, vcMuteBtn, vcTimer, vcSendNowBtn;
 
   // --------------------------------------------------------------------------
   // Open / Close Voice Chat Room
@@ -51,19 +76,60 @@
     vcStatusText = document.getElementById('voice-status-text');
     vcMuteBtn = document.getElementById('voice-mute-btn');
     vcTimer = document.getElementById('voice-session-timer');
+    vcSendNowBtn = document.getElementById('voice-send-now-btn');
+    if (vcSendNowBtn) vcSendNowBtn.style.display = 'none';
 
     if (!vcView) {
       isVoiceOpen = false;
       return;
     }
 
-    // Hide main floating input container while in voice room
+    // ── TRANSITION: Chat → Voice ──────────────────────────────────────────
+    var mainView = document.querySelector('.main-view');
     var fi = document.querySelector('.floating-input-container');
-    if (fi) fi.style.display = 'none';
+    var islandWrapper = document.querySelector('.dynamic-island-wrapper');
+    var _mainExitHandler = null;
 
-    // Show voice chat view
-    vcView.style.display = 'flex';
-    vcView.setAttribute('aria-hidden', 'false');
+    // 1. Briefly dim the chat area + slide island up simultaneously
+    if (mainView) {
+      mainView.classList.remove('chat-is-entering');
+      mainView.classList.add('chat-is-exiting');
+
+      // Auto-remove once animation ends (so it never stays stuck)
+      _mainExitHandler = function () {
+        mainView.removeEventListener('animationend', _mainExitHandler);
+        mainView.classList.remove('chat-is-exiting');
+      };
+      mainView.addEventListener('animationend', _mainExitHandler);
+    }
+    // Slide island up out of view
+    if (islandWrapper) islandWrapper.classList.add('island-voice-hidden');
+
+    // 2. After blur-out settles (~320ms), reveal voice panel
+    setTimeout(function () {
+      // Force-clean chat-is-exiting regardless (voice panel z:30 covers it)
+      if (mainView) {
+        if (_mainExitHandler) mainView.removeEventListener('animationend', _mainExitHandler);
+        mainView.classList.remove('chat-is-exiting');
+      }
+
+      if (fi) fi.style.display = 'none';
+
+      // Show voice panel then immediately trigger enter animation
+      vcView.style.display = 'flex';
+      vcView.setAttribute('aria-hidden', 'false');
+      vcView.classList.remove('is-exiting');
+      void vcView.offsetWidth; // force reflow so browser sees display change before animation
+      vcView.classList.add('is-entering');
+
+      function onEnterDone() {
+        vcView.removeEventListener('animationend', onEnterDone);
+        vcView.classList.remove('is-entering');
+      }
+      vcView.addEventListener('animationend', onEnterDone);
+
+    }, 320);
+    // ─────────────────────────────────────────────────────────────────────
 
     // Reset thread & conversation log
     if (vcThread) vcThread.innerHTML = '';
@@ -85,27 +151,69 @@
     vcCenterBubbleCanvas = document.getElementById('voice-center-bubble');
     if (vcCenterBubbleCanvas) {
       vcCenterBubbleCtx = vcCenterBubbleCanvas.getContext('2d');
-      vcCenterBubbleCanvas.onclick = toggleVoiceMute;
+      vcCenterBubbleCanvas.onclick = handleCenterBubbleClick;
+      vcCenterBubbleCanvas.title = 'Klik untuk langsung kirim (atau mute jika hening)';
+    }
+    var clusterEl = document.getElementById('voice-bubble-cluster');
+    if (clusterEl) {
+      clusterEl.onclick = handleCenterBubbleClick;
     }
     if (vcOrbCanvas || vcCenterBubbleCanvas) {
       startOrbAnimation();
     }
 
+    // Activate browser DSP hardware noise suppression + VAD stream
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({
+        audio: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true
+        }
+      }).then(function (stream) {
+        noiseAudioStream = stream;
+        startVAD(stream);
+      }).catch(function (err) {
+        console.warn('Microphone hardware noiseSuppression notice:', err);
+      });
+    }
+
     isCallActive = true;
     isMuted = false;
-    isAgentSpeaking = false;
-    setOrbState('listening');
-    setVoiceStatus('Menghubungkan...', 'dot-listening');
+    isAgentSpeaking = true;
+    setOrbState('speaking');
+    setVoiceStatus('Menghubungkan...', 'dot-speaking');
 
     document.addEventListener('keydown', onEscClose);
 
-    // Initial greeting from Neura
+    // Initial greeting from Neura (plays immediately after panel transition)
     setTimeout(function () {
       if (!isVoiceOpen) return;
       var greeting = 'Halo! Saya Neura. Sesi konsultasi suara telah aktif. Silakan mulai berbicara tentang gejala atau pertanyaan klinis Anda.';
       appendVoiceAIMessage(greeting);
       speakResponse(greeting);
-    }, 500);
+    }, 380);
+  }
+
+  function handleCenterBubbleClick() {
+    // If agent is speaking, clicking immediately stops TTS and listens to user
+    if (isAgentSpeaking) {
+      if (window.speechSynthesis) {
+        try { window.speechSynthesis.cancel(); } catch (_) {}
+      }
+      isAgentSpeaking = false;
+      setVoiceStatus('Mendengarkan...', 'dot-listening');
+      setOrbState('listening');
+      resumeListening();
+      return;
+    }
+
+    var full = (accumulatedFinalText + ' ' + currentInterimText).trim();
+    if (full.length > 0) {
+      commitUserSpeech(full);
+    } else {
+      toggleVoiceMute();
+    }
   }
 
   function closeVoiceChat() {
@@ -113,11 +221,29 @@
     isVoiceOpen = false;
     isCallActive = false;
 
+    // Stop VAD
+    stopVAD();
+
+    // Clean up hardware noise suppression stream
+    if (noiseAudioStream) {
+      try {
+        noiseAudioStream.getTracks().forEach(function (t) { t.stop(); });
+      } catch (e) { }
+      noiseAudioStream = null;
+    }
+
     // Clean up timers & speech
     if (sessionTimerInterval) { clearInterval(sessionTimerInterval); sessionTimerInterval = null; }
     if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
     if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
-    if (speechRec) { try { speechRec.abort(); } catch (e) { } speechRec = null; }
+    if (recRetryTimer) { clearTimeout(recRetryTimer); recRetryTimer = null; }
+    recRestartLocked = false;
+    if (speechRec) {
+      try { speechRec.onstart = null; speechRec.onresult = null;
+            speechRec.onerror = null; speechRec.onend = null;
+            speechRec.abort(); } catch (e) { }
+      speechRec = null;
+    }
     if (window.speechSynthesis) window.speechSynthesis.cancel();
 
     document.removeEventListener('keydown', onEscClose);
@@ -125,15 +251,62 @@
     // Export summary to main chat session
     exportVoiceToChat();
 
-    // Hide voice panel
-    if (vcView) {
-      vcView.style.display = 'none';
-      vcView.setAttribute('aria-hidden', 'true');
-    }
-
-    // Restore main floating input
+    // ── TRANSITION: Voice → Chat ──────────────────────────────────────────
+    var mainView = document.querySelector('.main-view');
     var fi = document.querySelector('.floating-input-container');
-    if (fi) fi.style.display = '';
+
+    if (vcView) {
+      // 1. Play exit animation on voice panel
+      vcView.classList.remove('is-entering');
+      vcView.classList.add('is-exiting');
+
+      function onExitDone() {
+        vcView.removeEventListener('animationend', onExitDone);
+        // 2. Hide voice panel completely
+        vcView.style.display = 'none';
+        vcView.setAttribute('aria-hidden', 'true');
+        vcView.classList.remove('is-exiting');
+
+        // 3. Restore main floating input
+        if (fi) fi.style.display = '';
+
+        // 4. Slide island back down
+        var islandWrapperClose = document.querySelector('.dynamic-island-wrapper');
+        if (islandWrapperClose) islandWrapperClose.classList.remove('island-voice-hidden');
+
+        // 5. Bloom the chat back in
+        if (mainView) {
+          mainView.classList.remove('chat-is-exiting');
+          mainView.classList.add('chat-is-entering');
+          function onChatEnterDone() {
+            mainView.removeEventListener('animationend', onChatEnterDone);
+            mainView.classList.remove('chat-is-entering');
+          }
+          mainView.addEventListener('animationend', onChatEnterDone);
+        }
+      }
+      vcView.addEventListener('animationend', onExitDone);
+
+      // Safety fallback: if animationend never fires (hidden, reduced motion), clean up after 500ms
+      setTimeout(function () {
+        if (vcView && vcView.style.display !== 'none') {
+          vcView.style.display = 'none';
+          vcView.setAttribute('aria-hidden', 'true');
+          vcView.classList.remove('is-exiting');
+          if (fi) fi.style.display = '';
+          var islandFallback = document.querySelector('.dynamic-island-wrapper');
+          if (islandFallback) islandFallback.classList.remove('island-voice-hidden');
+          if (mainView) {
+            mainView.classList.remove('chat-is-exiting');
+            mainView.classList.add('chat-is-entering');
+          }
+        }
+      }, 550);
+    } else {
+      // Fallback if vcView was never set
+      if (fi) fi.style.display = '';
+    }
+    // ─────────────────────────────────────────────────────────────────────
   }
 
   function onEscClose(e) {
@@ -154,8 +327,11 @@
     }
 
     if (isMuted) {
-      if (speechRec) { try { speechRec.abort(); } catch (e) { } }
+      if (speechRec) { try { speechRec.abort(); } catch (e) { } speechRec = null; }
       if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
+      vadSpeechDetected = false;
+      vadAboveFloorSince = 0;
+      vadBelowFloorSince = 0;
       removeLiveUserBubble();
       setVoiceStatus('Mikrofon dimatikan', '');
       setOrbState('idle');
@@ -357,11 +533,132 @@
   // --------------------------------------------------------------------------
   // Web Speech Recognition & Turn Taking
   // --------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
+  // VAD — AudioContext amplitude-based Voice Activity Detection
+  // --------------------------------------------------------------------------
+  function startVAD(stream) {
+    if (vadRunning) return;
+    try {
+      vadAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (vadAudioCtx.state === 'suspended') {
+        vadAudioCtx.resume().catch(function () {});
+      }
+      vadAnalyser = vadAudioCtx.createAnalyser();
+      vadAnalyser.fftSize = 512;
+      vadAnalyser.smoothingTimeConstant = 0.6;
+      vadMicStream = vadAudioCtx.createMediaStreamSource(stream);
+      vadMicStream.connect(vadAnalyser);
+      vadRunning = true;
+      vadSpeechDetected = false;
+      vadAboveFloorSince = 0;
+      vadBelowFloorSince = 0;
+      runVADLoop();
+    } catch (e) {
+      console.warn('VAD init notice, falling back to text-based silence:', e);
+    }
+  }
+
+  function stopVAD() {
+    vadRunning = false;
+    if (vadAnimId) { cancelAnimationFrame(vadAnimId); vadAnimId = null; }
+    if (vadMicStream) { try { vadMicStream.disconnect(); } catch (e) { } vadMicStream = null; }
+    if (vadAudioCtx) { try { vadAudioCtx.close(); } catch (e) { } vadAudioCtx = null; }
+    vadAnalyser = null;
+    vadSpeechDetected = false;
+  }
+
+  function getVADRMS() {
+    if (!vadAnalyser) return 0;
+    var buf = new Uint8Array(vadAnalyser.frequencyBinCount);
+    vadAnalyser.getByteTimeDomainData(buf);
+    var sum = 0;
+    for (var i = 0; i < buf.length; i++) {
+      var v = (buf[i] - 128);
+      sum += v * v;
+    }
+    return Math.sqrt(sum / buf.length);
+  }
+
+  function runVADLoop() {
+    if (!vadRunning) return;
+    var rms = getVADRMS();
+    var now = Date.now();
+    var hasText = (accumulatedFinalText + currentInterimText).trim().length > 0;
+
+    if (rms >= VAD_NOISE_FLOOR || hasText) {
+      // User is making sound above noise floor or text was recognized
+      vadBelowFloorSince = 0;
+      if (vadAboveFloorSince === 0) vadAboveFloorSince = now;
+
+      if (!vadSpeechDetected) {
+        vadSpeechDetected = true;
+      }
+    } else {
+      // Below noise floor (silence)
+      vadAboveFloorSince = 0;
+      if (vadBelowFloorSince === 0) vadBelowFloorSince = now;
+
+      // If we confirmed real speech AND now silent for long enough => commit!
+      if (vadSpeechDetected && hasText && !isAgentSpeaking && !isMuted && isCallActive) {
+        var silentFor = now - vadBelowFloorSince;
+        if (silentFor >= VAD_SILENCE_AFTER_SPEECH) {
+          vadSpeechDetected = false;
+          vadBelowFloorSince = 0;
+          triggerCommitTurn();
+          vadAnimId = requestAnimationFrame(runVADLoop);
+          return;
+        }
+      }
+
+      // Reset if silence is very long with no text
+      if (!hasText) {
+        vadSpeechDetected = false;
+        vadAboveFloorSince = 0;
+      }
+    }
+
+    vadAnimId = requestAnimationFrame(runVADLoop);
+  }
+
+  // --------------------------------------------------------------------------
+  // Speech Recognition
+  // --------------------------------------------------------------------------
   function resumeListening() {
     if (!isCallActive || isAgentSpeaking || isMuted) return;
     accumulatedFinalText = '';
     currentInterimText = '';
+    lastRecognizedSpeechText = '';
+    lastSpeechChangeTimestamp = 0;
+    vadSpeechDetected = false;
+    vadAboveFloorSince = 0;
+    vadBelowFloorSince = 0;
+    recRetryCount = 0;
+    recLastError = null;
+    recRestartLocked = false;
+    if (recRetryTimer) { clearTimeout(recRetryTimer); recRetryTimer = null; }
+    if (vcSendNowBtn) vcSendNowBtn.style.display = 'none';
     startRecognitionTurn();
+  }
+
+  // Calculates exponential backoff delay capped at MAX_RETRY_DELAY_MS
+  function getBackoffDelay() {
+    var delay = Math.min(300 * Math.pow(2, recRetryCount), MAX_RETRY_DELAY_MS);
+    return delay;
+  }
+
+  // Safely schedule a restart, preventing double-invocation
+  function scheduleRestart(delayMs) {
+    if (recRestartLocked) return;
+    if (!isCallActive || isAgentSpeaking || isMuted) return;
+    recRestartLocked = true;
+    if (recRetryTimer) clearTimeout(recRetryTimer);
+    recRetryTimer = setTimeout(function () {
+      recRestartLocked = false;
+      recRetryTimer = null;
+      if (isCallActive && !isAgentSpeaking && !isMuted) {
+        startRecognitionTurn();
+      }
+    }, delayMs);
   }
 
   function startRecognitionTurn() {
@@ -372,75 +669,142 @@
       return;
     }
 
+    // Tear down previous instance cleanly
     if (speechRec) {
-      try { speechRec.abort(); } catch (e) { }
+      try { speechRec.onstart = null; speechRec.onresult = null;
+            speechRec.onerror = null; speechRec.onend = null;
+            speechRec.abort(); } catch (e) { }
+      speechRec = null;
     }
 
-    accumulatedFinalText = '';
-    currentInterimText = '';
+    recLastError = null;
 
-    speechRec = new SR();
-    speechRec.lang = 'id-ID';
-    speechRec.continuous = true;
-    speechRec.interimResults = true;
+    var rec = new SR();
+    rec.lang = 'id-ID';
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+    speechRec = rec;
 
-    speechRec.onstart = function () {
-      if (isCallActive && !isAgentSpeaking && !isMuted) {
-        setVoiceStatus('Mendengarkan...', 'dot-listening');
-        setOrbState('listening');
-      }
+    rec.onstart = function () {
+      if (!isCallActive || isAgentSpeaking || isMuted) return;
+      recRetryCount = 0;   // successful start — reset backoff
+      recLastError = null;
+      setVoiceStatus('Mendengarkan...', 'dot-listening');
+      setOrbState('listening');
     };
 
-    speechRec.onresult = function (event) {
-      if (isAgentSpeaking || isMuted) return;
+    rec.onresult = function (event) {
+      if (isAgentSpeaking || isMuted || !isCallActive) return;
 
       var interim = '';
       for (var i = event.resultIndex; i < event.results.length; i++) {
-        var res = event.results[i];
-        if (res.isFinal) {
-          accumulatedFinalText += ' ' + res[0].transcript;
+        var r = event.results[i];
+        if (r.isFinal) {
+          var conf = r[0].confidence || 0;
+          var transcript = r[0].transcript.trim();
+          if (transcript.length > 0 && (conf === 0 || conf >= 0.25)) {
+            accumulatedFinalText += ' ' + transcript;
+          }
         } else {
-          interim += ' ' + res[0].transcript;
+          interim += ' ' + r[0].transcript;
         }
       }
 
       currentInterimText = interim;
       var combined = (accumulatedFinalText + ' ' + currentInterimText).trim();
 
-      if (combined.length > 0) {
-        // Real-time live bubble update!
+      if (combined.length > 0 && combined !== lastRecognizedSpeechText) {
+        lastRecognizedSpeechText = combined;
+        lastSpeechChangeTimestamp = Date.now();
+        vadSpeechDetected = true;
         updateLiveUserBubble(combined);
+        if (vcSendNowBtn) vcSendNowBtn.style.display = 'inline-flex';
         setVoiceStatus('Mendengarkan perkataan Anda...', 'dot-listening');
         resetSilenceTimer();
       }
     };
 
-    speechRec.onerror = function (e) {
+    rec.onerror = function (e) {
       if (!isCallActive) return;
-      if (e.error === 'not-allowed') {
-        setVoiceStatus('Izin mikrofon ditolak', '');
-      } else if (e.error === 'network') {
-        setVoiceStatus('Koneksi suara terputus', '');
+      recLastError = e.error;
+
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        // Fatal — user must re-grant mic permission
+        setVoiceStatus('Izin mikrofon ditolak — klik ikon gembok di browser', '');
+        setOrbState('idle');
+        return;
       }
+
+      if (e.error === 'audio-capture') {
+        setVoiceStatus('Mikrofon tidak terdeteksi atau sedang dipakai aplikasi lain', '');
+        setOrbState('idle');
+        return;
+      }
+
+      if (e.error === 'no-speech') {
+        recLastError = 'no-speech';
+        return;
+      }
+
+      if (e.error === 'network' || e.error === 'aborted') {
+        recRetryCount++;
+        var delay = getBackoffDelay();
+        if (e.error === 'network') {
+          if (recRetryCount <= 2) {
+            setVoiceStatus('Mencoba ulang koneksi suara...', 'dot-listening');
+          } else {
+            setVoiceStatus('Koneksi Speech API tidak stabil — mencoba ulang', '');
+          }
+        }
+        recRestartLocked = true;
+        if (recRetryTimer) clearTimeout(recRetryTimer);
+        recRetryTimer = setTimeout(function () {
+          recRestartLocked = false;
+          recRetryTimer = null;
+          if (isCallActive && !isAgentSpeaking && !isMuted) startRecognitionTurn();
+        }, delay);
+        return;
+      }
+
+      // Unknown error — light backoff
+      recRetryCount++;
     };
 
-    speechRec.onend = function () {
+    rec.onend = function () {
+      if (!isCallActive) return;
+
+      // Fatal errors — do not restart
+      if (recLastError === 'not-allowed' || recLastError === 'service-not-allowed') return;
+
       var text = (accumulatedFinalText + ' ' + currentInterimText).trim();
-      if (text && isCallActive && !isAgentSpeaking) {
+
+      if (text && text.length >= 2 && !isAgentSpeaking) {
         commitUserSpeech(text);
-      } else if (isCallActive && !isAgentSpeaking && !isMuted) {
-        try { speechRec.start(); } catch (e) { }
+        return;
       }
+
+      // If a restart is already scheduled (from onerror backoff) — do nothing
+      if (recRestartLocked || recRetryTimer) return;
+
+      if (isAgentSpeaking || isMuted) return;
+
+      // Benign end (no-speech timeout or normal end): restart with tiny delay
+      var restartDelay = (recLastError === 'no-speech') ? 150 : 250;
+      scheduleRestart(restartDelay);
     };
 
     try {
-      speechRec.start();
-    } catch (e) { }
+      rec.start();
+    } catch (e) {
+      scheduleRestart(350);
+    }
   }
 
   function resetSilenceTimer() {
     if (silenceTimer) clearTimeout(silenceTimer);
     silenceTimer = setTimeout(function () {
+      silenceTimer = null;
       triggerCommitTurn();
     }, SILENCE_TIMEOUT_MS);
   }
@@ -449,8 +813,16 @@
     if (!isCallActive || isAgentSpeaking) return;
     if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
     var full = (accumulatedFinalText + ' ' + currentInterimText).trim();
-    if (full) {
+    if (full && full.length >= 2) {
       commitUserSpeech(full);
+    } else {
+      // Nothing meaningful to send — just reset VAD and keep listening
+      accumulatedFinalText = '';
+      currentInterimText = '';
+      lastRecognizedSpeechText = '';
+      lastSpeechChangeTimestamp = 0;
+      vadSpeechDetected = false;
+      removeLiveUserBubble();
     }
   }
 
@@ -460,7 +832,10 @@
 
     accumulatedFinalText = '';
     currentInterimText = '';
+    lastRecognizedSpeechText = '';
+    lastSpeechChangeTimestamp = 0;
 
+    if (vcSendNowBtn) vcSendNowBtn.style.display = 'none';
     if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
     if (speechRec) { try { speechRec.abort(); } catch (e) { } }
 
@@ -469,7 +844,7 @@
 
     isAgentSpeaking = true;
     showVoiceTyping();
-    setVoiceStatus('Menganalisa...', 'dot-processing');
+    setVoiceStatus('Menganalisa jawaban klinis...', 'dot-processing');
     setOrbState('processing');
 
     fetch('/api/chat', {
@@ -496,6 +871,11 @@
   // Speech Synthesis
   // --------------------------------------------------------------------------
   function speakResponse(text) {
+    if (speakSafetyTimer) {
+      clearTimeout(speakSafetyTimer);
+      speakSafetyTimer = null;
+    }
+
     if (!window.speechSynthesis) {
       isAgentSpeaking = false;
       resumeListening();
@@ -505,11 +885,21 @@
     isAgentSpeaking = true;
     setVoiceStatus('Neura sedang berbicara...', 'dot-speaking');
     setOrbState('speaking');
-    window.speechSynthesis.cancel();
+
+    try {
+      window.speechSynthesis.cancel();
+    } catch (_) {}
 
     // Clean formatting chars for clean TTS pronunciation
-    var clean = text.replace(/[*_#`]/g, '').replace(/<[^>]+>/g, '').trim();
+    var clean = (text || '').replace(/[*_#`]/g, '').replace(/<[^>]+>/g, '').trim();
+    if (!clean) {
+      isAgentSpeaking = false;
+      resumeListening();
+      return;
+    }
+
     var utter = new SpeechSynthesisUtterance(clean);
+    currentUtterance = utter; // Keep reference to prevent Chrome GC
     utter.lang = 'id-ID';
     utter.rate = 1.0;
     utter.pitch = 1.02;
@@ -521,7 +911,15 @@
     });
     if (idV) utter.voice = idV;
 
+    var finished = false;
     function finishSpeaking() {
+      if (finished) return;
+      finished = true;
+      if (speakSafetyTimer) {
+        clearTimeout(speakSafetyTimer);
+        speakSafetyTimer = null;
+      }
+      currentUtterance = null;
       isAgentSpeaking = false;
       if (isCallActive && !isMuted) {
         setVoiceStatus('Mendengarkan...', 'dot-listening');
@@ -533,7 +931,23 @@
     utter.onend = finishSpeaking;
     utter.onerror = finishSpeaking;
 
-    window.speechSynthesis.speak(utter);
+    // Safety timeout: Chrome TTS can stall or fail without firing onend/onerror
+    var estimatedMs = Math.max(3000, Math.min(22000, (clean.length / 10) * 1000 + 2500));
+    speakSafetyTimer = setTimeout(function () {
+      finishSpeaking();
+    }, estimatedMs);
+
+    setTimeout(function () {
+      try {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+        window.speechSynthesis.speak(utter);
+      } catch (err) {
+        console.warn('SpeechSynthesis speak error:', err);
+        finishSpeaking();
+      }
+    }, 50);
   }
 
   window._repeatVoiceMsg = function (btn) {
@@ -552,7 +966,7 @@
     var lines = voiceConversation.map(function (m) {
       return (m.role === 'user' ? '**🎙️ Anda (' + m.ts + '):** ' : '**✦ Neura (' + m.ts + '):** ') + m.text;
     });
-    var summary = '---\n🎙️ **Voice Session (' + dur + ')**\n\n' + lines.join('\n\n') + '\n\n---';
+    var summary = '🎙️ **Voice Session (' + dur + ')**\n\n' + lines.join('\n\n');
     if (typeof window.appendVoiceSessionToChat === 'function') {
       window.appendVoiceSessionToChat(summary);
     }
@@ -570,6 +984,14 @@
     orbState = state;
     if (vcOrbCanvas) vcOrbCanvas.className = 'orb-' + state;
     if (vcCenterBubbleCanvas) vcCenterBubbleCanvas.className = 'center-bubble-' + state;
+    var cluster = document.getElementById('voice-bubble-cluster');
+    if (cluster) cluster.className = 'voice-bubble-cluster orb-' + state;
+    var voiceView = document.getElementById('voice-chat-view');
+    if (voiceView) {
+      voiceView.classList.toggle('is-speaking', state === 'speaking');
+      voiceView.classList.toggle('is-listening', state === 'listening');
+      voiceView.classList.toggle('is-processing', state === 'processing');
+    }
   }
 
   function startOrbAnimation() {
@@ -642,12 +1064,14 @@
 
   function drawCenterBubble() {
     if (!vcCenterBubbleCtx || !vcCenterBubbleCanvas) return;
+    if (vcCenterBubbleCanvas.style.display === 'none' || vcCenterBubbleCanvas.width <= 4) return;
     var ctx = vcCenterBubbleCtx;
     var W = vcCenterBubbleCanvas.width;
     var H = vcCenterBubbleCanvas.height;
     var cx = W / 2;
     var cy = H / 2;
     var r = (W / 2) - 2;
+    if (r <= 0) return;
 
     ctx.clearRect(0, 0, W, H);
 
@@ -729,7 +1153,45 @@
   window.openVoiceChat = openVoiceChat;
   window.closeVoiceChat = closeVoiceChat;
   window.toggleVoiceMute = toggleVoiceMute;
+  window.handleCenterBubbleClick = handleCenterBubbleClick;
   window.openVoiceConsultation = openVoiceChat;
   window.closeVoiceConsultation = closeVoiceChat;
+  window.commitVoiceSpeechNow = function () {
+    var full = (accumulatedFinalText + ' ' + currentInterimText).trim();
+    if (full.length > 0) {
+      commitUserSpeech(full);
+    } else {
+      var liveBubble = document.getElementById('voice-current-live-bubble');
+      if (liveBubble && liveBubble.textContent.trim()) {
+        commitUserSpeech(liveBubble.textContent.trim());
+      }
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // Startup Cleanup — strip any stuck transition classes on page load/refresh
+  // --------------------------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', function () {
+    var mainView = document.querySelector('.main-view');
+    if (mainView) {
+      mainView.classList.remove('chat-is-exiting', 'chat-is-entering');
+    }
+
+    // Ensure island is always visible on page load
+    var islandWrapper = document.querySelector('.dynamic-island-wrapper');
+    if (islandWrapper) islandWrapper.classList.remove('island-voice-hidden');
+
+    var voiceView = document.getElementById('voice-chat-view');
+    if (voiceView) {
+      voiceView.classList.remove('is-entering', 'is-exiting');
+      // Ensure voice panel is hidden and chat input is visible on load
+      if (!isVoiceOpen) {
+        voiceView.style.display = 'none';
+        voiceView.setAttribute('aria-hidden', 'true');
+        var fi = document.querySelector('.floating-input-container');
+        if (fi) fi.style.removeProperty('display');
+      }
+    }
+  });
 
 })();

@@ -615,8 +615,8 @@ CHAT_DATASET = {
         {
             "id": "salam_001",
             "topik": "Sapaan dan Pengenalan Neura AI",
-            "kata_kunci": ["halo", "hai", "selamat pagi", "selamat siang", "selamat malam", "assalamualaikum", "hi neura"],
-            "tags": ["sapaan", "halo", "perkenalan"],
+            "kata_kunci": ["halo", "hai", "selamat pagi", "selamat siang", "selamat malam", "assalamualaikum", "hi neura", "pengenalan", "perkenalan", "pengenalan neura", "pengenalan neura ai", "tentang neura", "apa itu neura", "siapa neura", "/intro", "/about"],
+            "tags": ["sapaan", "halo", "perkenalan", "pengenalan", "intro"],
             "suggestions": [
                 "Saya ingin konsultasi daya ingat",
                 "Apa saja gejala awal Alzheimer?",

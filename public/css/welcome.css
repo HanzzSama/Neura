@@ -371,73 +371,93 @@ a {
 
 /* Sleek In-Navbar Clinical Status Pill */
 .nav-status-pill {
+  height: 38px;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 5px 12px;
+  gap: 8px;
+  padding: 0 14px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border);
   text-decoration: none;
   transition: all var(--transition-fast);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .nav-status-pill:hover {
   background: #FFFFFF;
   border-color: var(--color-border-strong);
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav-status-pill:active {
+  transform: translateY(0);
 }
 
 .nav-status-dot {
-  width: 6.5px;
-  height: 6.5px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #16a34a;
   box-shadow: 0 0 6px rgba(22, 163, 74, 0.6);
   animation: livePipelinePulse 2s infinite ease-in-out;
+  flex-shrink: 0;
 }
 
 .nav-status-title {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 550;
   color: var(--color-text);
   letter-spacing: -0.01em;
 }
 
 .nav-status-badge {
-  font-size: 10.5px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: #16a34a;
   background: rgba(22, 163, 74, 0.1);
-  padding: 1px 6px;
+  padding: 2px 7px;
   border-radius: var(--radius-pill);
+  line-height: 1;
 }
 
 /* Primary CTA Button */
 .nav-cta-btn {
+  height: 38px;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 18px;
   border-radius: var(--radius-pill);
   background: var(--accent-primary);
   color: #FFFFFF;
-  font-size: 13.5px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 550;
   text-decoration: none;
+  border: 1px solid transparent;
   box-shadow: 0 2px 10px rgba(217, 119, 87, 0.28);
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
 .nav-cta-btn:hover {
   background: var(--accent-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(217, 119, 87, 0.4);
+  box-shadow: 0 4px 14px rgba(217, 119, 87, 0.38);
+}
+
+.nav-cta-btn:active {
+  transform: translateY(0);
 }
 
 .nav-cta-btn svg {
+  flex-shrink: 0;
   transition: transform var(--transition-fast);
 }
 
@@ -445,26 +465,57 @@ a {
   transform: translateX(2px);
 }
 
-/* Language Selector */
+/* Language Selector (Subtitle / Language Button) */
 .nav-lang-btn {
+  height: 38px;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 12.5px;
-  font-weight: 500;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
 .nav-lang-btn:hover {
-  background: var(--color-sidebar);
+  background: #FFFFFF;
   color: var(--color-text);
   border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav-lang-btn:active {
+  transform: translateY(0);
+}
+
+.nav-lang-btn svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.nav-lang-btn:hover svg {
+  color: var(--accent-primary);
+}
+
+.nav-lang-btn span {
+  font-weight: 600;
+  line-height: 1;
 }
 
 /* Mobile Toggle */
