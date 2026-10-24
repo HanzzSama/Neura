@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Neura &bull; AI Deteksi &amp; Diagnosis Dini Alzheimer</title>
-  <meta name="description" content="Platform AI klinis mutakhir untuk deteksi dini risiko penyakit Alzheimer berbasis 32 biomarker dan machine learning berakurasi tinggi.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23D97757'/><path d='M30 50 Q50 20 70 50 T90 50' stroke='white' stroke-width='8' fill='none'/></svg>">
-  <link rel="stylesheet" href="/css/welcome.css?v=23">
-  <link rel="stylesheet" href="/css/dynamic-island.css?v=23">
-  <link rel="stylesheet" href="/css/smooth-scroll.css?v=23">
+  <meta name="description"
+    content="Platform AI klinis mutakhir untuk deteksi dini risiko penyakit Alzheimer berbasis 32 biomarker dan machine learning berakurasi tinggi.">
+  <!-- Neura Brand Favicons / Browser Tab Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/welcome.css?v=40">
+  <link rel="stylesheet" href="/css/dynamic-island.css?v=40">
+  <link rel="stylesheet" href="/css/smooth-scroll.css?v=40">
+  <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
 </head>
+
 <body>
 
   <!-- Sub Nav / Minimalist Clinical Announcement Ribbon (Top Ribbon) -->
   <aside class="announcement-bar" id="announcement-bar">
     <div class="announcement-content">
       <span class="announcement-pill">✦ RISET KLINIS</span>
-      <span class="announcement-text">Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi 94.4% (ROC-AUC 0.933)</span>
+      <span class="announcement-text">Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi
+        94.4% (ROC-AUC 0.933)</span>
       <a href="/app" class="announcement-link">Pelajari lebih lanjut &rarr;</a>
     </div>
     <button class="announcement-close" id="announcement-close" aria-label="Tutup pemberitahuan">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
     </button>
   </aside>
 
@@ -28,9 +44,11 @@
   <header class="site-header" id="site-header">
     <div class="nav-container">
       <!-- Brand on Left -->
-      <a href="/" class="brand-container" title="Neura AI - Halaman Utama" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+      <a href="/" class="brand-container" title="Neura AI - Halaman Utama"
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
         <div class="brand-badge-icon">
-          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="brand-logo-img" onerror="this.style.display='none'" />
+          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="brand-logo-img"
+            onerror="this.style.display='none'" />
         </div>
         <span class="brand-name">Neura</span>
         <span class="brand-tag">Clinical AI</span>
@@ -54,15 +72,30 @@
           <span class="nav-status-badge">Ready</span>
         </a>
 
+        <!-- LiveKit Voice Consultation CTA Button -->
+        <button class="nav-voice-btn" id="open-voice-consultation-btn" title="Konsultasi Suara Langsung dengan AI">
+          <span class="voice-pulse-dot"></span>
+          <span>Konsultasi Suara</span>
+        </button>
+
         <!-- Primary CTA Button -->
         <a href="/app" class="nav-cta-btn">
           <span data-i18n="btn_consult">Mulai Diagnosis</span>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
         </a>
 
         <!-- Language Selector -->
         <button class="nav-lang-btn" id="lang-toggle-btn" title="Ganti Bahasa">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
           <span>ID</span>
         </button>
 
@@ -87,58 +120,44 @@
     </div>
   </header>
 
-  <!-- Hero Section (Professional & Minimalist) -->
+  <!-- Hero Section (Editorial Split Layout) -->
   <section class="hero-section">
-    <div class="hero-ambient-glow"></div>
-
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-status-dot"></span>
-        <span class="hero-badge-text">Neura Clinical AI &bull; Model AlzheimersXGBoost 3.x</span>
-      </div>
-
-      <h1 class="hero-headline" data-i18n="hero_headline">
-        Deteksi Dini Risiko Alzheimer<br>
-        <span class="hero-headline-italic">Berbasis 32 Biomarker Klinis.</span>
-      </h1>
-
-      <p class="hero-lead-text">
-        Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer dan Mild Cognitive Impairment (MCI) secara presisi, terstruktur, dan objektif dalam hitungan detik.
-      </p>
-
-      <div class="hero-actions">
-        <a href="/app" class="hero-download-btn">
-          <span data-i18n="btn_consult">Mulai Diagnosis Klinis</span>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-        </a>
-        <a href="/app" class="hero-secondary-btn">
-          <span data-i18n="hero_sub_btn">Buka Workspace Pasien &rarr;</span>
-        </a>
-      </div>
-
-      <div class="hero-trust-metrics">
-        <div class="trust-metric-item">
-          <span class="metric-val">94.4%</span>
-          <span class="metric-label">Akurasi Klinis</span>
+    <!-- Left Column: Text -->
+    <div class="hero-left">
+      <div class="hero-left-inner">
+        <h1 class="hero-headline">
+          Mendeteksi Alzheimer<br>Lebih Awal,<br>Lebih Tepat.
+        </h1>
+        <p class="hero-lead-text">
+          Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal,
+          dengan akurasi 94.4% yang telah divalidasi pada 430 rekam medis.
+        </p>
+        <div class="hero-actions">
+          <a href="/app" class="hero-download-btn">
+            <span>Mulai Diagnosis Klinis</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+            </svg>
+          </a>
+          <a href="/app" class="hero-secondary-btn">Buka Workspace Pasien &rarr;</a>
         </div>
-        <div class="trust-divider"></div>
-        <div class="trust-metric-item">
-          <span class="metric-val">0.933</span>
-          <span class="metric-label">Skor ROC-AUC</span>
-        </div>
-        <div class="trust-divider"></div>
-        <div class="trust-metric-item">
-          <span class="metric-val">&lt; 1.2s</span>
-          <span class="metric-label">Waktu Inferensi</span>
-        </div>
-        <div class="trust-divider"></div>
-        <div class="trust-metric-item">
-          <span class="metric-val">32</span>
-          <span class="metric-label">Biomarker Terpadu</span>
+        <div class="hero-tagline-bar">
+          <span>94.4% AKURASI &bull; ROC-AUC 0.933 &bull; 32 BIOMARKER KLINIS &bull; &lt;1.2s INFERENSI</span>
         </div>
       </div>
     </div>
+
+    <!-- Right Column: Dark Brain Panel -->
+    <div class="hero-right">
+      <!-- Geometric step shapes at corners -->
+      <div class="hero-step hero-step-tr"></div>
+      <div class="hero-step hero-step-br"></div>
+      <div class="hero-step hero-step-bl"></div>
+      <img src="/assets/hero_brain_wireframe.jpg?v=34" alt="Neural Precision Mapping — Neura AI" class="hero-brain-img"
+        loading="eager" />
+    </div>
   </section>
+
 
   <!-- Live App Interactive Showcase Window Frame (Mockup Halaman App Neura) -->
   <section class="showcase-section">
@@ -151,7 +170,10 @@
           <div class="dot dot-green"></div>
         </div>
         <div class="app-window-url-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
           <span>neura.ai/app &mdash; Clinical Consultation Console</span>
         </div>
         <a href="/app" class="app-window-status-pill" title="Buka Workspace Lengkap">
@@ -172,13 +194,19 @@
                 <span class="mockup-brand-badge">ML</span>
               </div>
               <button class="mockup-icon-btn" title="Sidebar">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                </svg>
               </button>
             </div>
 
             <button class="mockup-new-chat-btn">
               <div class="mockup-new-chat-left">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
                 <span>Start new chat</span>
               </div>
               <span class="mockup-shortcut-badge">Ctrl K</span>
@@ -188,11 +216,14 @@
           <div class="mockup-sidebar-nav">
             <div class="mockup-nav-title">RECENT CHATS</div>
             <div class="mockup-history-item active">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
               <span>Train 5 Epochs</span>
             </div>
 
-            <div class="mockup-nav-title" style="margin-top: 18px;">ML COMMANDS <span style="font-size: 10px; opacity: 0.6;">▼</span></div>
+            <div class="mockup-nav-title" style="margin-top: 18px;">ML COMMANDS <span
+                style="font-size: 10px; opacity: 0.6;">▼</span></div>
             <div class="mockup-cmd-item">
               <span>Check Status</span>
               <span class="mockup-cmd-tag">/status</span>
@@ -265,23 +296,24 @@
           <div class="mockup-hero-container">
             <div class="mockup-hero-logo-box">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="5" y="5" width="4.5" height="4.5" rx="1.2"/>
-                <rect x="14.5" y="5" width="4.5" height="4.5" rx="1.2"/>
-                <rect x="5" y="14.5" width="4.5" height="4.5" rx="1.2"/>
-                <rect x="14.5" y="14.5" width="4.5" height="4.5" rx="1.2"/>
+                <rect x="5" y="5" width="4.5" height="4.5" rx="1.2" />
+                <rect x="14.5" y="5" width="4.5" height="4.5" rx="1.2" />
+                <rect x="5" y="14.5" width="4.5" height="4.5" rx="1.2" />
+                <rect x="14.5" y="14.5" width="4.5" height="4.5" rx="1.2" />
               </svg>
             </div>
 
             <h1 class="mockup-hero-greeting">Good afternoon</h1>
-            <p class="mockup-hero-subhead">How can Neura assist you with your TensorFlow machine learning workflows today?</p>
+            <p class="mockup-hero-subhead">How can Neura assist you with your TensorFlow machine learning workflows
+              today?</p>
 
             <div class="mockup-hero-cards-grid">
               <a href="/app" class="mockup-hero-card">
                 <div class="mockup-hero-card-header">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="3.5" y="13" width="4" height="8" rx="1"/>
-                    <rect x="10" y="8" width="4" height="13" rx="1"/>
-                    <rect x="16.5" y="3" width="4" height="18" rx="1"/>
+                    <rect x="3.5" y="13" width="4" height="8" rx="1" />
+                    <rect x="10" y="8" width="4" height="13" rx="1" />
+                    <rect x="16.5" y="3" width="4" height="18" rx="1" />
                   </svg>
                   <span>Train Neural Network</span>
                 </div>
@@ -291,7 +323,9 @@
               <a href="/app" class="mockup-hero-card">
                 <div class="mockup-hero-card-header">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 10.414V6a1 1 0 1 0-2 0v7a1 1 0 0 0 1 1h5a1 1 0 1 0 0-2h-4z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 10.414V6a1 1 0 1 0-2 0v7a1 1 0 0 0 1 1h5a1 1 0 1 0 0-2h-4z"
+                      clip-rule="evenodd" />
                   </svg>
                   <span>Run Inference</span>
                 </div>
@@ -301,7 +335,8 @@
               <a href="/app" class="mockup-hero-card">
                 <div class="mockup-hero-card-header">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L17.5 9H13V4.5zM8 12h8a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2z"/>
+                    <path
+                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L17.5 9H13V4.5zM8 12h8a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2z" />
                   </svg>
                   <span>Evaluate Metrics</span>
                 </div>
@@ -311,10 +346,10 @@
               <a href="/app" class="mockup-hero-card">
                 <div class="mockup-hero-card-header">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="2" y="3" width="20" height="7.5" rx="2"/>
-                    <circle cx="6" cy="6.75" r="1.3" fill="#FAF9F5"/>
-                    <rect x="2" y="13.5" width="20" height="7.5" rx="2"/>
-                    <circle cx="6" cy="17.25" r="1.3" fill="#FAF9F5"/>
+                    <rect x="2" y="3" width="20" height="7.5" rx="2" />
+                    <circle cx="6" cy="6.75" r="1.3" fill="#FAF9F5" />
+                    <rect x="2" y="13.5" width="20" height="7.5" rx="2" />
+                    <circle cx="6" cy="17.25" r="1.3" fill="#FAF9F5" />
                   </svg>
                   <span>Model Architecture</span>
                 </div>
@@ -326,27 +361,46 @@
           <!-- Floating Bottom Input Area -->
           <div class="mockup-bottom-input-wrapper">
             <div class="mockup-input-box">
-              <div class="mockup-input-placeholder">Tanya tentang diagnosis Alzheimer atau ketik /train, /eval, /predict...</div>
+              <div class="mockup-input-placeholder">Tanya tentang diagnosis Alzheimer atau ketik /train, /eval,
+                /predict...</div>
               <div class="mockup-input-actions-row">
                 <div class="mockup-input-chips">
                   <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-train" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/></svg>
+                    <svg class="mchip-icon mchip-train" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z" />
+                    </svg>
                     /train 50
                   </span>
                   <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-predict" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+                    <svg class="mchip-icon mchip-predict" width="12" height="12" viewBox="0 0 24 24"
+                      fill="currentColor">
+                      <path
+                        d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+                    </svg>
                     /predict
                   </span>
                   <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-eval" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/></svg>
+                    <svg class="mchip-icon mchip-eval" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z" />
+                    </svg>
                     /eval
                   </span>
                   <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-konsultasi" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                    <svg class="mchip-icon mchip-konsultasi" width="12" height="12" viewBox="0 0 24 24"
+                      fill="currentColor">
+                      <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                    </svg>
                     Konsultasi
                   </span>
                   <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-status" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z" clip-rule="evenodd"/></svg>
+                    <svg class="mchip-icon mchip-status" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z"
+                        clip-rule="evenodd" />
+                    </svg>
                     /status
                   </span>
                 </div>
@@ -368,65 +422,146 @@
       <!-- Row 1 (slides left on scroll) -->
       <div class="tools-row tools-row-1" id="tools-row-1">
         <div class="tool-icon-bubble" title="Verified Diagnosis">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clip-rule="evenodd"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+              clip-rule="evenodd" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Dashboard Grid">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+            <rect x="14" y="14" width="7" height="7" rx="1.5" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Patient Records">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Back / Undo">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round">
+            <polyline points="9 14 4 9 9 4" />
+            <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Keyboard Shortcut">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 10l8-8 8 8"/><path d="M4 14l8 8 8-8"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round">
+            <path d="M4 10l8-8 8 8" />
+            <path d="M4 14l8 8 8-8" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Copy / Export">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Tab Stop / Indent">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12h18M13 6l6 6-6 6"/><line x1="21" y1="6" x2="21" y2="18"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round">
+            <path d="M3 12h18M13 6l6 6-6 6" />
+            <line x1="21" y1="6" x2="21" y2="18" />
+          </svg>
         </div>
         <div class="tool-icon-bubble tool-icon-bubble--large" title="AI Spark">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Biomarker Branch">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round">
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="AI Enhanced Search">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            <path d="M11 8v6M8 11h6" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Terminal Console">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5" />
+            <line x1="12" y1="19" x2="20" y2="19" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Annotate / Edit">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="2"/><path d="M5 12l5 5L19 2"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="2" />
+            <path d="M5 12l5 5L19 2" />
+          </svg>
         </div>
         <div class="tool-icon-bubble tool-icon-bubble--large" title="Insight Star">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Grid Dots">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="5" cy="5" r="2" />
+            <circle cx="12" cy="5" r="2" />
+            <circle cx="19" cy="5" r="2" />
+            <circle cx="5" cy="12" r="2" />
+            <circle cx="12" cy="12" r="2" />
+            <circle cx="19" cy="12" r="2" />
+          </svg>
         </div>
         <!-- Duplicates for infinite loop -->
         <div class="tool-icon-bubble" title="Verified Diagnosis">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clip-rule="evenodd"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+              clip-rule="evenodd" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Dashboard Grid">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+            <rect x="14" y="14" width="7" height="7" rx="1.5" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Patient Records">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="AI Spark">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Tab Stop / Indent">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12h18M13 6l6 6-6 6"/><line x1="21" y1="6" x2="21" y2="18"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round">
+            <path d="M3 12h18M13 6l6 6-6 6" />
+            <line x1="21" y1="6" x2="21" y2="18" />
+          </svg>
         </div>
         <div class="tool-icon-bubble" title="Annotate / Edit">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="2"/><path d="M5 12l5 5L19 2"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="2" />
+            <path d="M5 12l5 5L19 2" />
+          </svg>
         </div>
       </div>
     </div>
@@ -445,15 +580,20 @@
 
       <div class="statement-right-col">
         <p class="statement-paragraph" data-i18n="statement_p1">
-          Neura adalah sistem kecerdasan buatan klinis mutakhir yang dirancang untuk mendeteksi indikasi awal <strong>Alzheimer, Mild Cognitive Impairment (MCI)</strong>, dan gangguan neurodegeneratif lain sejak stadium paling awal.
+          Neura adalah sistem kecerdasan buatan klinis mutakhir yang dirancang untuk mendeteksi indikasi awal
+          <strong>Alzheimer, Mild Cognitive Impairment (MCI)</strong>, dan gangguan neurodegeneratif lain sejak stadium
+          paling awal.
         </p>
         <p class="statement-paragraph" data-i18n="statement_p2">
-          Didukung oleh arsitektur machine learning <strong>XGBoost</strong> berkecepatan tinggi yang telah dilatih menggunakan parameter biomarker klinis komprehensif, Neura mampu memetakan gejala memori, fungsi eksekutif, dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>95.8%</strong>.
+          Didukung oleh arsitektur machine learning <strong>XGBoost</strong> berkecepatan tinggi yang telah dilatih
+          menggunakan parameter biomarker klinis komprehensif, Neura mampu memetakan gejala memori, fungsi eksekutif,
+          dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>95.8%</strong>.
         </p>
         <p class="statement-paragraph" data-i18n="statement_p3">
-          Tidak seperti pemeriksaan konvensional yang mahal dan lambat, Neura memberikan analisis terstruktur dalam kurang dari 1.2 detik, langsung dari browser Anda.
+          Tidak seperti pemeriksaan konvensional yang mahal dan lambat, Neura memberikan analisis terstruktur dalam
+          kurang dari 1.2 detik, langsung dari browser Anda.
         </p>
-        
+
         <div class="statement-tags-row">
           <span class="statement-tag-pill">XGBoost Engine</span>
           <span class="statement-tag-pill">Biomarker Analysis</span>
@@ -467,13 +607,15 @@
 
   <!-- 4 Core Showcase Rows -->
   <section class="products-section" id="products">
-    
+
     <!-- 1. Alur Proses Kognitif Neura (Reasoning Pipeline) -->
     <div class="product-row" id="pipeline">
       <div class="product-info">
         <h2 class="product-title" data-i18n="app_title">Neura Reasoning Pipeline</h2>
         <p class="product-description" data-i18n="app_desc">
-          Sistem penalaran kognitif transparan dari ekstraksi data hingga hasil klinis. Membaca 32 biomarker, menganalisa korelasi risiko, mengolah parameter mentah, menyusun narasi diagnostik, serta menerbitkan output secara presisi.
+          Sistem penalaran kognitif transparan dari ekstraksi data hingga hasil klinis. Membaca 32 biomarker,
+          menganalisa korelasi risiko, mengolah parameter mentah, menyusun narasi diagnostik, serta menerbitkan output
+          secara presisi.
         </p>
       </div>
       <div class="app-card-preview pipeline-card-preview">
@@ -503,7 +645,10 @@
                 <div class="pipeline-step-main">
                   <span class="pipeline-step-name">Read Data</span>
                   <span class="pipeline-step-check">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </span>
                 </div>
                 <span class="pipeline-step-sub">32 biomarker klinis &amp; riwayat kognitif MMSE dimuat</span>
@@ -519,7 +664,10 @@
                 <div class="pipeline-step-main">
                   <span class="pipeline-step-name">Analysis Data</span>
                   <span class="pipeline-step-check">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </span>
                 </div>
                 <span class="pipeline-step-sub">Korelasi multivariat &amp; evaluasi signifikansi klinis</span>
@@ -535,7 +683,10 @@
                 <div class="pipeline-step-main">
                   <span class="pipeline-step-name">Thinking Deeply</span>
                   <span class="pipeline-step-check">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </span>
                 </div>
                 <span class="pipeline-step-sub">Inferensi ansambel pohon keputusan XGBoost</span>
@@ -551,7 +702,10 @@
                 <div class="pipeline-step-main">
                   <span class="pipeline-step-name">Processing raw data</span>
                   <span class="pipeline-step-check">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </span>
                 </div>
                 <span class="pipeline-step-sub">Normalisasi vektor risiko &amp; pemetaan ambang batas</span>
@@ -567,7 +721,10 @@
                 <div class="pipeline-step-main">
                   <span class="pipeline-step-name">Arranging Words &amp; Structure Sentences</span>
                   <span class="pipeline-step-check">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </span>
                 </div>
                 <span class="pipeline-step-sub">Sintesis penjelasan medis &amp; rasionalisasi diagnostik</span>
@@ -584,14 +741,15 @@
                   <span class="pipeline-step-name step-active-name">Print Output data</span>
                   <span class="pipeline-step-spark">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <circle cx="6" cy="6" r="2.5"/>
-                      <circle cx="18" cy="6" r="2.5"/>
-                      <circle cx="12" cy="18" r="2.5"/>
-                      <circle cx="12" cy="10" r="1.5"/>
+                      <circle cx="6" cy="6" r="2.5" />
+                      <circle cx="18" cy="6" r="2.5" />
+                      <circle cx="12" cy="18" r="2.5" />
+                      <circle cx="12" cy="10" r="1.5" />
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub step-active-sub">Laporan diagnosis, skor risiko 94.4%, &amp; rekomendasi klinis diterbitkan</span>
+                <span class="pipeline-step-sub step-active-sub">Laporan diagnosis, skor risiko 94.4%, &amp; rekomendasi
+                  klinis diterbitkan</span>
               </div>
             </div>
           </div>
@@ -609,91 +767,106 @@
             <div class="dot dot-red"></div>
             <div class="dot dot-yellow"></div>
             <div class="dot dot-green"></div>
-            <span class="security-header-title">neura-vault &bull; Clinical Privacy Protocol</span>
+            <span class="security-header-title">neura-vault &bull; zero-knowledge protocol</span>
             <span class="security-header-pill">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="pulse-green-dot"></span>
               AES-256 GCM
             </span>
           </div>
 
           <div class="security-vault-body">
-            <!-- 1. Central Shield Emblem Hero -->
-            <div class="security-shield-hero">
-              <div class="shield-badge-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <polyline points="9 12 11 14 15 10"/>
+            <!-- 1. Minimalist Cryptographic Key & Shield Hero -->
+            <div class="security-minimal-hero">
+              <div class="security-shield-orb">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <polyline points="9 12 11 14 15 10" />
                 </svg>
               </div>
-              <div class="shield-hero-text">
-                <div class="shield-hero-title">Zero-Knowledge Clinical Vault</div>
-                <div class="shield-hero-sub">Data pasien diproteksi enkripsi end-to-end tanpa penyimpanan PII di cloud</div>
+              <div class="security-hero-meta">
+                <h3 class="security-hero-heading">Zero-Knowledge Clinical Vault</h3>
+                <p class="security-hero-caption">Rekam medis terenkripsi langsung di browser lokal sebelum evaluasi
+                  biomarker</p>
               </div>
-              <span class="shield-verified-tag">
-                <span class="pulse-green-dot"></span>
-                ACTIVE
-              </span>
             </div>
 
-            <!-- 2. Visual Encryption & Anonymization Pipeline -->
-            <div class="security-pipeline-flow">
-              <div class="flow-step-box">
-                <div class="flow-step-label">INPUT PASIEN</div>
-                <div class="flow-step-val">Rekam Medis (PII)</div>
-                <span class="flow-step-badge badge-warning">Teridentifikasi</span>
+            <!-- 2. Minimalist Stream Line (Clean, unboxed data path) -->
+            <div class="security-stream-row">
+              <div class="stream-pill stream-input">
+                <span class="stream-pill-tag">Input Pasien</span>
+                <span class="stream-pill-title">Rekam Medis (PII)</span>
               </div>
-              
-              <div class="flow-arrow-node">
-                <span class="flow-lock-icon">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <div class="stream-connector">
+                <span class="stream-line"></span>
+                <span class="stream-lock-badge">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  <span>AES-256</span>
                 </span>
-                <span class="flow-arrow-caption">AES-256 + PII Strip</span>
+                <span class="stream-line"></span>
               </div>
-
-              <div class="flow-step-box active-vault">
-                <div class="flow-step-label">OUTPUT MODEL</div>
-                <div class="flow-step-val">32 Biomarker Anonim</div>
-                <span class="flow-step-badge badge-success">Safe Harbor Valid</span>
+              <div class="stream-pill stream-output">
+                <span class="stream-pill-tag tag-success">Output Valid</span>
+                <span class="stream-pill-title">32 Biomarker Anonim</span>
               </div>
             </div>
 
-            <!-- 3. Security Checklist Items -->
-            <div class="security-checklist-grid">
-              <div class="sec-check-item">
-                <span class="sec-check-icon">✓</span>
-                <div class="sec-check-info">
-                  <span class="sec-check-title">HIPAA Safe Harbor Compliance</span>
-                  <span class="sec-check-desc">18 identifier pasien (nama, NIK, kontak) dihilangkan sebelum evaluasi biomarker</span>
+            <!-- 3. Minimalist Clean Feature Rows (Whitespace & Crisp Typography, No Bulky Grey Boxes) -->
+            <div class="security-features-clean">
+              <div class="sec-clean-item">
+                <span class="sec-clean-check">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <div class="sec-clean-text">
+                  <span class="sec-clean-title">HIPAA Safe Harbor De-Identification</span>
+                  <span class="sec-clean-desc">18 identifier pasien (nama, NIK, kontak) dihilangkan otomatis sebelum
+                    evaluasi</span>
                 </div>
               </div>
 
-              <div class="sec-check-item">
-                <span class="sec-check-icon">✓</span>
-                <div class="sec-check-info">
-                  <span class="sec-check-title">Local Browser Sandbox</span>
-                  <span class="sec-check-desc">Inferensi machine learning berjalan di memori browser lokal tanpa jejak di server</span>
+              <div class="sec-clean-item">
+                <span class="sec-clean-check">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <div class="sec-clean-text">
+                  <span class="sec-clean-title">Local Browser Memory Sandbox</span>
+                  <span class="sec-clean-desc">Inferensi machine learning berjalan lokal di RAM tanpa jejak data di
+                    server</span>
                 </div>
               </div>
 
-              <div class="sec-check-item">
-                <span class="sec-check-icon">✓</span>
-                <div class="sec-check-info">
-                  <span class="sec-check-title">Cryptographic Hash Verification</span>
-                  <span class="sec-check-desc">Validasi integritas dataset 32 biomarker dengan checksum SHA-256 tamper-proof</span>
+              <div class="sec-clean-item">
+                <span class="sec-clean-check">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <div class="sec-clean-text">
+                  <span class="sec-clean-title">Cryptographic SHA-256 Checksum</span>
+                  <span class="sec-clean-desc">Validasi integritas dataset 32 biomarker secara tamper-proof</span>
                 </div>
               </div>
             </div>
 
-            <!-- 4. Footer Audit Bar -->
-            <div class="security-audit-footer">
-              <div class="audit-badge">
-                <span class="audit-icon">🛡️</span>
-                <span>ISO/IEC 27001 &amp; GDPR Aligned</span>
-              </div>
-              <div class="audit-score">
-                <span>Security Integrity:</span>
-                <span class="score-val">100% Secure</span>
-              </div>
+            <!-- 4. Subtle Single-Line Security Footer -->
+            <div class="security-clean-footer">
+              <span class="sec-footer-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                ISO/IEC 27001 &bull; HIPAA &bull; GDPR Compliant
+              </span>
+              <span class="sec-footer-stat">Zero Cloud Storage</span>
             </div>
           </div>
         </div>
@@ -701,7 +874,9 @@
       <div class="product-info">
         <h2 class="product-title" data-i18n="ide_title">Neura Data Security</h2>
         <p class="product-description" data-i18n="ide_desc">
-          Perlindungan data medis berstandar klinis dengan enkripsi end-to-end AES-256. Menjamin kerahasiaan rekam medis pasien, anonimisasi biomarker otomatis, serta kepatuhan penuh terhadap regulasi privasi kesehatan HIPAA &amp; GDPR.
+          Perlindungan data medis berstandar klinis dengan enkripsi end-to-end AES-256. Menjamin kerahasiaan rekam medis
+          pasien, anonimisasi biomarker otomatis, serta kepatuhan penuh terhadap regulasi privasi kesehatan HIPAA &amp;
+          GDPR.
         </p>
       </div>
     </div>
@@ -711,7 +886,8 @@
       <div class="product-info">
         <h2 class="product-title" data-i18n="sdk_title">Neura Clinical Python SDK</h2>
         <p class="product-description" data-i18n="sdk_desc">
-          Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR) rumah sakit dengan mudah melalui API Python yang ringkas dan aman.
+          Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR)
+          rumah sakit dengan mudah melalui API Python yang ringkas dan aman.
         </p>
       </div>
       <div class="sdk-card-preview">
@@ -823,7 +999,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
       <div class="product-info">
         <h2 class="product-title" data-i18n="cli_title">Neura Specification</h2>
         <p class="product-description" data-i18n="cli_desc">
-          Spesifikasi teknis dan benchmark klinis arsitektur Neura. Divalidasi dengan 32 biomarker neuro-kognitif, akurasi klasifikasi 94.42%, skor ROC-AUC 0.9329, serta latensi inferensi instan pada kohort rekam medis pasien.
+          Spesifikasi teknis dan benchmark klinis arsitektur Neura. Divalidasi dengan 32 biomarker neuro-kognitif,
+          akurasi klasifikasi 94.42%, skor ROC-AUC 0.9329, serta latensi inferensi instan pada kohort rekam medis
+          pasien.
         </p>
       </div>
     </div>
@@ -852,7 +1030,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
           <div class="blog-card-link">
             <span>Baca riset</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
         </div>
       </article>
@@ -865,7 +1045,10 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
             <div class="plugin-card-desc">Evaluasi korelasi skor MMSE, ADL, dan riwayat memori pasien</div>
             <div class="plugin-card-btn-row">
               <span class="plugin-customize-btn">Eksplorasi</span>
-              <svg class="cursor-pointer-icon" width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" stroke="#000000" stroke-width="1.6"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>
+              <svg class="cursor-pointer-icon" width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"
+                stroke="#000000" stroke-width="1.6">
+                <path d="M3 3l7 18 3-7 7-3L3 3z" />
+              </svg>
             </div>
           </div>
         </div>
@@ -877,7 +1060,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
           <div class="blog-card-link">
             <span>Baca riset</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
         </div>
       </article>
@@ -896,7 +1081,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
           <div class="blog-card-link">
             <span>Baca riset</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
         </div>
       </article>
@@ -923,7 +1110,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
           <div class="blog-card-link">
             <span>Baca riset</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
         </div>
       </article>
@@ -942,7 +1131,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
           <div class="blog-card-link">
             <span>Baca riset</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
         </div>
       </article>
@@ -952,62 +1143,93 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
     <div class="blog-carousel-controls">
       <div class="carousel-pill-nav">
         <button class="carousel-nav-arrow" onclick="scrollBlogCarousel(-1)" aria-label="Previous blog post">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
         <button class="carousel-nav-arrow" onclick="scrollBlogCarousel(1)" aria-label="Next blog post">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Stay in Sync / Newsletter Updates Section -->
+  <!-- Stay in Sync / Newsletter Updates Section (Abstract, Minimalist, Professional) -->
   <section class="sync-updates-section" id="updates">
     <div class="sync-updates-card">
-      <h2 class="sync-updates-title">Dapatkan Riset Terbaru Neura Alzheimer AI</h2>
-      <p class="sync-updates-sub">Berlangganan untuk pembaruan model machine learning, publikasi jurnal, dan rilis fitur diagnostik.</p>
+      <div class="sync-watermark-text" aria-hidden="true">RESEARCH ARCHIVE</div>
 
-      <!-- Filter Pills -->
-      <div class="sync-pills-row" id="sync-pills">
-        <button type="button" class="sync-pill active" onclick="toggleSyncPill(this)">
-          <svg class="pill-check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Semua Riset</span>
-        </button>
-        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
-          <span class="pill-brand-glyph">🧠</span>
-          <span>Model XGBoost</span>
-        </button>
-        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/></svg>
-          <span>Biomarker Klinis</span>
-        </button>
-        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg>
-          <span>Studi Kasus MCI</span>
-        </button>
-        <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>Pembaruan SDK</span>
-        </button>
+      <div class="sync-content-wrap">
+        <div class="sync-eyebrow-pill">
+          <span class="sync-live-dot"></span>
+          <span>NEURA CLINICAL DISPATCH &bull; 2026</span>
+        </div>
+
+        <h2 class="sync-updates-title">
+          Riset &amp; Publikasi Klinis Neura
+        </h2>
+        <p class="sync-updates-sub">
+          Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur AlzheimersXGBoost, serta telaah kasus
+          kognitif langsung ke inbox Anda.
+        </p>
+
+        <!-- Minimalist Filter Pills -->
+        <div class="sync-pills-row" id="sync-pills">
+          <button type="button" class="sync-pill active" onclick="toggleSyncPill(this)">
+            <svg class="pill-check-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.6">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span>Semua Riset</span>
+          </button>
+          <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+            <span class="sync-topic-dot"></span>
+            <span>Model XGBoost 3.x</span>
+          </button>
+          <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+            <span class="sync-topic-dot"></span>
+            <span>32 Biomarker Klinis</span>
+          </button>
+          <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+            <span class="sync-topic-dot"></span>
+            <span>Studi Kasus MCI</span>
+          </button>
+          <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
+            <span class="sync-topic-dot"></span>
+            <span>Protokol MMSE</span>
+          </button>
+        </div>
+
+        <!-- Minimalist Email Subscription Form -->
+        <form class="sync-subscribe-form" onsubmit="handleSyncSubscribe(event)">
+          <div class="sync-input-wrap">
+            <svg class="sync-mail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+            <input type="email" class="sync-email-input" id="sync-email-field"
+              placeholder="Masukkan email institusi atau klinis Anda..." required />
+          </div>
+          <button type="submit" class="sync-subscribe-btn">
+            <span>Langganan Riset</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </form>
+
+        <!-- Terms & Privacy Agreement -->
+        <label class="sync-consent-row">
+          <input type="checkbox" id="sync-consent-check" required />
+          <span>Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti
+            langganan kapan saja.</span>
+        </label>
       </div>
-
-      <!-- Email Subscription Form -->
-      <form class="sync-subscribe-form" onsubmit="handleSyncSubscribe(event)">
-        <input
-          type="email"
-          class="sync-email-input"
-          id="sync-email-field"
-          placeholder="Masukkan alamat email Anda"
-          required
-        />
-        <button type="submit" class="sync-subscribe-btn">Langganan</button>
-      </form>
-
-      <!-- Terms & Privacy Agreement -->
-      <label class="sync-consent-row">
-        <input type="checkbox" id="sync-consent-check" required />
-        <span>Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti langganan kapan saja.</span>
-      </label>
     </div>
   </section>
 
@@ -1034,74 +1256,106 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
     </div>
   </section>
 
-  <!-- Site Footer -->
+  <!-- Site Footer (Abstract, Minimalist, Professional) -->
   <footer class="site-footer">
+    <div class="footer-abstract-watermark" aria-hidden="true">NEURA</div>
+
     <div class="footer-container">
       <div class="footer-top">
+        <!-- Brand & Vision Column -->
         <div class="footer-brand-col">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="brand-logo-img" onerror="this.style.display='none'" />
-            <span class="brand-name" style="font-size: 17px;">Neura <span class="brand-tag">Alzheimer AI</span></span>
+          <div class="footer-brand-header">
+            <div class="footer-brand-logo">
+              <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="footer-logo-img"
+                onerror="this.style.display='none'" />
+            </div>
+            <div class="footer-brand-title-wrap">
+              <span class="footer-brand-title">Neura</span>
+              <span class="footer-brand-tag">Clinical AI</span>
+            </div>
           </div>
-          <p style="font-size: 13.5px; color: var(--color-text-muted); max-width: 290px; margin-top: 6px; line-height: 1.55;">
-            Platform kecerdasan buatan klinis untuk deteksi dini dan analisis risiko penyakit Alzheimer berbasis biomarker multimodal.
+          <p class="footer-brand-desc">
+            Infrastruktur kecerdasan buatan klinis untuk deteksi dini risiko Alzheimer dan neurodegenerasi berbasis 32
+            biomarker multimodal.
           </p>
+          <div class="footer-status-badge">
+            <span class="footer-status-dot"></span>
+            <span class="footer-status-text">XGBoost 3.x &bull; Operational</span>
+          </div>
         </div>
 
-        <div>
-          <div class="footer-col-title">Platform</div>
+        <!-- Col 1: Platform -->
+        <div class="footer-col">
+          <div class="footer-col-title"><span class="col-num">01</span> Platform</div>
           <ul class="footer-links-list">
-            <li><a href="#products" class="footer-link">Neura Clinical App</a></li>
-            <li><a href="#products" class="footer-link">Neura Diagnostic Studio</a></li>
-            <li><a href="#products" class="footer-link">Neura Clinical CLI</a></li>
-            <li><a href="#products" class="footer-link">Neura Python SDK</a></li>
+            <li><a href="#pipeline" class="footer-link">Reasoning Pipeline</a></li>
+            <li><a href="#security" class="footer-link">Zero-Knowledge Vault</a></li>
+            <li><a href="#specification" class="footer-link">Terminal Klinis CLI</a></li>
+            <li><a href="/app" class="footer-link">Neura Workspace</a></li>
           </ul>
         </div>
 
-        <div>
-          <div class="footer-col-title">Model &amp; Data</div>
+        <!-- Col 2: Model & Data -->
+        <div class="footer-col">
+          <div class="footer-col-title"><span class="col-num">02</span> Model &amp; Riset</div>
           <ul class="footer-links-list">
             <li><a href="/app" class="footer-link">AlzheimersXGBoost 3.x</a></li>
-            <li><a href="/app" class="footer-link">32 Biomarker Klinis</a></li>
-            <li><a href="/app" class="footer-link">Evaluasi 430 Pasien</a></li>
-            <li><a href="/app" class="footer-link">Akurasi 94.4% (AUC 0.933)</a></li>
+            <li><a href="#specification" class="footer-link">32 Biomarker Klinis</a></li>
+            <li><a href="/app" class="footer-link">Validasi 430 Pasien</a></li>
+            <li><a href="/app" class="footer-link">ROC-AUC 0.933</a></li>
           </ul>
         </div>
 
-        <div>
-          <div class="footer-col-title">Sumber Daya</div>
+        <!-- Col 3: Protokol -->
+        <div class="footer-col">
+          <div class="footer-col-title"><span class="col-num">03</span> Protokol</div>
           <ul class="footer-links-list">
-            <li><a href="#blog" class="footer-link">Riset &amp; Publikasi</a></li>
-            <li><a href="/app" class="footer-link">Dokumentasi API</a></li>
-            <li><a href="/app" class="footer-link">Protokol Klinis</a></li>
-            <li><a href="/app" class="footer-link">Dukungan Tenaga Medis</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <div class="footer-col-title">Tentang</div>
-          <ul class="footer-links-list">
-            <li><a href="/app" class="footer-link">Tentang Neura AI</a></li>
-            <li><a href="/app" class="footer-link">Privasi &amp; Data Medis</a></li>
+            <li><a href="#security" class="footer-link">HIPAA Safe Harbor</a></li>
+            <li><a href="#security" class="footer-link">Enkripsi AES-256</a></li>
+            <li><a href="/app" class="footer-link">Skrining Kognitif MMSE</a></li>
             <li><a href="/app" class="footer-link">Etika AI Kesehatan</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Perusahaan -->
+        <div class="footer-col">
+          <div class="footer-col-title"><span class="col-num">04</span> Ekosistem</div>
+          <ul class="footer-links-list">
+            <li><a href="#about" class="footer-link">Tentang Neura AI</a></li>
+            <li><a href="/app" class="footer-link">Dokumentasi API</a></li>
+            <li><a href="/app" class="footer-link">Kemitraan Klinis</a></li>
+            <li><a href="/app" class="footer-link">Dukungan Tenaga Medis</a></li>
           </ul>
         </div>
       </div>
 
+      <!-- Abstract Hairline Divider -->
+      <div class="footer-divider-line"></div>
+
+      <!-- Bottom Bar -->
       <div class="footer-bottom">
-        <div>&copy; 2026 Neura Health AI &bull; Alzheimer's Diagnostic Platform</div>
+        <div class="footer-copy">
+          &copy; 2026 Neura Health AI. Hak Cipta Dilindungi.
+        </div>
+        <div class="footer-center-tag">
+          <span>Model Machine Learning Tervalidasi Klinis</span>
+        </div>
         <div class="footer-bottom-links">
-          <a href="/app">Privasi</a>
-          <a href="/app">Persyaratan</a>
-          <span>Bahasa: Indonesia (ID)</span>
+          <a href="/app">Kebijakan Privasi</a>
+          <a href="/app">Syarat Layanan</a>
+          <a href="/app">Keamanan Data</a>
+          <span class="footer-lang-tag">ID</span>
         </div>
       </div>
     </div>
   </footer>
 
   <script src="/js/lenis.min.js"></script>
-  <script src="/js/smooth-scroll.js?v=23"></script>
-  <script src="/js/dynamic-island.js?v=23"></script>
-  <script src="/js/welcome.js?v=23"></script>
+  <script src="/js/smooth-scroll.js?v=42"></script>
+  <script src="/js/dynamic-island.js?v=42"></script>
+  <script src="/js/welcome.js?v=46"></script>
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+  <script src="/js/voice-consultation.js?v=44"></script>
 </body>
+
 </html>

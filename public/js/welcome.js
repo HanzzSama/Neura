@@ -279,20 +279,93 @@
     let width = 0;
     let height = 0;
     let particles = [];
+    let animTime = 0;
+
+    // 3 Blurred Gradient Bubbles with distinct vibrant colors rotating in celestial harmony
+    const blurBubbles = [
+      {
+        name: 'Terracotta Core',
+        angle: 0,
+        speed: 0.0035,
+        orbitX: 190,
+        orbitY: 130,
+        baseRadius: 220,
+        // Neura signature terracotta / warm amber
+        stops: [
+          [0.0,  'rgba(217, 119, 87, 0.46)'],
+          [0.25, 'rgba(235, 130, 85, 0.32)'],
+          [0.55, 'rgba(249, 115, 22, 0.16)'],
+          [0.80, 'rgba(217, 119, 87, 0.05)'],
+          [1.0,  'rgba(217, 119, 87, 0)']
+        ],
+        phase: 0
+      },
+      {
+        name: 'Electric Azure',
+        angle: (Math.PI * 2) / 3, // 120° offset
+        speed: 0.0028,
+        orbitX: 220,
+        orbitY: 150,
+        baseRadius: 240,
+        // Royal Sky Blue / Cyan
+        stops: [
+          [0.0,  'rgba(59, 130, 246, 0.44)'],
+          [0.25, 'rgba(96, 165, 250, 0.30)'],
+          [0.55, 'rgba(56, 189, 248, 0.15)'],
+          [0.80, 'rgba(59, 130, 246, 0.04)'],
+          [1.0,  'rgba(59, 130, 246, 0)']
+        ],
+        phase: 2.09
+      },
+      {
+        name: 'Cosmic Violet',
+        angle: (Math.PI * 4) / 3, // 240° offset
+        speed: 0.0032,
+        orbitX: 180,
+        orbitY: 125,
+        baseRadius: 210,
+        // Deep Violet / Magenta
+        stops: [
+          [0.0,  'rgba(168, 85, 247, 0.42)'],
+          [0.25, 'rgba(192, 132, 252, 0.28)'],
+          [0.55, 'rgba(236, 72, 153, 0.14)'],
+          [0.80, 'rgba(168, 85, 247, 0.04)'],
+          [1.0,  'rgba(168, 85, 247, 0)']
+        ],
+        phase: 4.18
+      }
+    ];
 
     function resize() {
       const parent = canvas.parentElement;
       if (!parent) return;
       width = canvas.width = parent.clientWidth;
       height = canvas.height = parent.clientHeight;
+
+      const scale = Math.max(0.65, Math.min(width / 1100, 1.25));
+      const isMobile = width < 768;
+
+      blurBubbles[0].orbitX = (isMobile ? 120 : 220) * scale;
+      blurBubbles[0].orbitY = (isMobile ? 60 : 95) * scale;
+      blurBubbles[0].baseRadius = (isMobile ? 150 : 230) * scale;
+
+      blurBubbles[1].orbitX = (isMobile ? 140 : 250) * scale;
+      blurBubbles[1].orbitY = (isMobile ? 70 : 110) * scale;
+      blurBubbles[1].baseRadius = (isMobile ? 160 : 250) * scale;
+
+      blurBubbles[2].orbitX = (isMobile ? 110 : 205) * scale;
+      blurBubbles[2].orbitY = (isMobile ? 55 : 90) * scale;
+      blurBubbles[2].baseRadius = (isMobile ? 140 : 220) * scale;
+
       createParticles();
     }
 
     function createParticles() {
       particles = [];
       const particleCount = Math.min(220, Math.floor(width * 0.16));
-      const centerX = width * 0.72;
-      const centerY = height * 0.5;
+      // Tepat di tengah bawah
+      const centerX = width * 0.5;
+      const centerY = height * 0.85;
 
       const colors = [
         'rgba(96, 165, 250, ',  // Sky Blue
@@ -326,9 +399,48 @@
     function animate() {
       ctx.clearRect(0, 0, width, height);
 
-      const centerX = width * 0.72;
-      const centerY = height * 0.5;
+      // Tepat di tengah bawah
+      const centerX = width * 0.5;
+      const centerY = height * 0.85;
+      animTime += 0.015;
 
+      // ---------------------------------------------------------------------
+      // 1. Draw 3 Rotating Blurred Gradient Bubbles (Chromatic Ambient Layer)
+      // ---------------------------------------------------------------------
+      ctx.save();
+      // 'screen' blend mode allows the overlapping bubbles to blend into a vivid luminous glow
+      ctx.globalCompositeOperation = 'screen';
+
+      blurBubbles.forEach(b => {
+        // Continuous rotation around orbit
+        b.angle += b.speed;
+
+        // Subtle fluid undulation in orbit
+        const curOrbitX = b.orbitX * (1 + 0.09 * Math.sin(animTime * 1.1 + b.phase));
+        const curOrbitY = b.orbitY * (1 + 0.09 * Math.cos(animTime * 0.9 + b.phase));
+        const bx = centerX + Math.cos(b.angle) * curOrbitX;
+        const by = centerY + Math.sin(b.angle) * curOrbitY;
+
+        // Subtle breathing radius
+        const br = Math.max(25, b.baseRadius + Math.sin(animTime * 1.4 + b.phase) * 18);
+
+        // Gaussian-like radial gradient falloff produces authentic blur effect
+        const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br);
+        for (let s = 0; s < b.stops.length; s++) {
+          grad.addColorStop(b.stops[s][0], b.stops[s][1]);
+        }
+
+        ctx.beginPath();
+        ctx.arc(bx, by, br, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
+
+      ctx.restore();
+
+      // ---------------------------------------------------------------------
+      // 2. Draw Celestial Star Particles on Top of the Blurred Bubbles
+      // ---------------------------------------------------------------------
       particles.forEach(p => {
         p.angle += p.speed;
         p.twinkle += p.twinkleSpeed;
@@ -373,37 +485,37 @@
   // 9. Tools Strip Scroll Parallax
   // -------------------------------------------------------------------------
   (function initToolsParallax() {
-    const section  = document.getElementById('tools-carousel-section');
-    const row1     = document.getElementById('tools-row-1');
+    const section = document.getElementById('tools-carousel-section');
+    const row1 = document.getElementById('tools-row-1');
 
     if (!section || !row1) return;
 
     // Strip starts from the leftmost position
-    const ROW1_SPEED   =  0.35;   // px horizontal shift per px vertical scroll
+    const ROW1_SPEED = 0.35;   // px horizontal shift per px vertical scroll
     const INITIAL_OFFSET = 0;     // px — start from far left
 
-    let lastScrollY  = window.scrollY;
-    let currentX1    = INITIAL_OFFSET;
-    let targetX1     = INITIAL_OFFSET;
-    let rafId        = null;
-    let ticking      = false;
+    let lastScrollY = window.scrollY;
+    let currentX1 = INITIAL_OFFSET;
+    let targetX1 = INITIAL_OFFSET;
+    let rafId = null;
+    let ticking = false;
 
     // Cache bubbles for the scale loop
     const bubbles = Array.from(row1.querySelectorAll('.tool-icon-bubble'));
 
     // Spotlight constants
-    const MAX_SCALE   = 1.2;   // scale at dead-centre
-    const MIN_SCALE   = 0.88;  // scale at outer edges
-    const SCALE_ZONE  = 280;   // half-width (px) over which scale transitions
+    const MAX_SCALE = 1.2;   // scale at dead-centre
+    const MIN_SCALE = 0.88;  // scale at outer edges
+    const SCALE_ZONE = 280;   // half-width (px) over which scale transitions
 
     function applySpotlightScale() {
       const viewCX = window.innerWidth / 2;
       bubbles.forEach(b => {
-        const rect  = b.getBoundingClientRect();
-        const bCX   = rect.left + rect.width / 2;
-        const dist  = Math.abs(bCX - viewCX);
+        const rect = b.getBoundingClientRect();
+        const bCX = rect.left + rect.width / 2;
+        const dist = Math.abs(bCX - viewCX);
         // Linear interpolation: 0 dist → MAX_SCALE, SCALE_ZONE dist → MIN_SCALE
-        const t     = Math.min(dist / SCALE_ZONE, 1);
+        const t = Math.min(dist / SCALE_ZONE, 1);
         const scale = MAX_SCALE + (MIN_SCALE - MAX_SCALE) * t;
         b.style.transform = `scale(${scale.toFixed(3)})`;
       });
@@ -433,9 +545,9 @@
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
-        const sectionTop    = section.getBoundingClientRect().top + window.scrollY;
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
         const sectionCentre = sectionTop - window.innerHeight / 2;
-        const progress      = window.scrollY - sectionCentre;
+        const progress = window.scrollY - sectionCentre;
 
         // Row slides LEFT as user scrolls DOWN
         targetX1 = INITIAL_OFFSET - progress * ROW1_SPEED;
@@ -452,6 +564,197 @@
     requestAnimationFrame(() => requestAnimationFrame(applySpotlightScale));
 
     window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // -------------------------------------------------------------------------
+  // 7. Interactive Parallax Scroller & Thumbnail Scale for Showcase Mockup
+  // Scales up smoothly from thumbnail size (~0.86) to normal full size (1.0)
+  // as the user scrolls into view.
+  // -------------------------------------------------------------------------
+  (function initShowcaseParallax() {
+    const showcaseSection = document.querySelector('.showcase-section');
+    const appWindowFrame = document.querySelector('.app-window-frame');
+    if (!showcaseSection || !appWindowFrame) return;
+
+    let ticking = false;
+
+    function renderParallax() {
+      const rect = showcaseSection.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      // Extended parallax track: starts before entering viewport (vh * 1.08)
+      // and smoothly continues until settled into prime reading position (vh * 0.10)
+      const startPoint = vh * 1.08;
+      const endPoint = vh * 0.10;
+      const rawProgress = (startPoint - rect.top) / (startPoint - endPoint);
+      const progress = Math.max(0, Math.min(1, rawProgress));
+
+      // Smooth physical easing curve
+      const eased = 1 - Math.pow(1 - progress, 2.2);
+
+      const isMobile = window.innerWidth <= 768;
+      // Start visibly small (thumbnail size) and expand to scale(1.0)
+      const minScale = isMobile ? 0.78 : 0.65;
+      const maxTilt = isMobile ? 4 : 10;
+      const maxOffsetY = isMobile ? 48 : 100;
+
+      const scale = minScale + (1 - minScale) * eased;
+      const rotateX = (1 - eased) * maxTilt;
+      const translateY = (1 - eased) * maxOffsetY;
+
+      appWindowFrame.style.transform = `perspective(1200px) translateY(${translateY.toFixed(2)}px) scale(${scale.toFixed(4)}) rotateX(${rotateX.toFixed(2)}deg)`;
+
+      // Dynamic cinematic depth shadow expanding on approach
+      const shadowSpread = 20 + eased * 68;
+      const shadowAlpha = 0.08 + eased * 0.12;
+      appWindowFrame.style.boxShadow = `0 ${shadowSpread.toFixed(0)}px 84px -16px rgba(31, 30, 29, ${shadowAlpha.toFixed(2)}), 0 0 0 1px var(--color-border)`;
+
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(renderParallax);
+      }
+    }
+
+    // Connect with Lenis momentum scroll if available
+    if (window.lenis) {
+      window.lenis.on('scroll', requestTick);
+    }
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick, { passive: true });
+
+    // Initial paint
+    requestAnimationFrame(renderParallax);
+  })();
+
+  // -------------------------------------------------------------------------
+  // 8. Continuous Scroll-Driven Parallax for Product Rows (Bidirectional)
+  //    Left column starts from left (-100%) -> moves to original position (0)
+  //    Right column starts from right (+100%) -> moves to original position (0)
+  //    Smoothly follows scroll up and down without locking or clipping.
+  // -------------------------------------------------------------------------
+  (function initProductRowParallax() {
+    const rows = Array.from(document.querySelectorAll('.product-row'));
+    if (!rows.length) return;
+
+    // Cache per-row references and progress
+    const items = rows.map(row => {
+      const left = row.firstElementChild;
+      const right = row.lastElementChild;
+      return {
+        row,
+        left,
+        right,
+        targetProgress: 0,
+        currentProgress: -1 // start uninitialized to force first frame paint
+      };
+    });
+
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    // Smooth hermite interpolation (smoothstep) for organic acceleration & deceleration
+    function smoothstep(val) {
+      const x = clamp(val, 0, 1);
+      return x * x * (3 - 2 * x);
+    }
+
+    /**
+     * Compute scroll progress for a row:
+     * - Starts sliding in when row top enters viewport near bottom (vh * 0.95)
+     * - Reaches 1 (natural 0 offset) when row top reaches comfortable reading position (vh * 0.22)
+     * - As user scrolls BACK UP, progress goes back from 1 down to 0, sliding elements back out.
+     */
+    function computeTargetProgress(row) {
+      const rect = row.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const start = vh * 0.95;
+      const end   = vh * 0.22;
+      const raw = (start - rect.top) / (start - end);
+      return smoothstep(raw);
+    }
+
+    function renderItem(item) {
+      const p = item.currentProgress;
+      // On desktop use full 100% translation; on small mobile screens scale down for comfort
+      const isMobile = window.innerWidth <= 768;
+      const maxPercent = isMobile ? 35 : 100;
+
+      // When progress = 0: offsetPercent = maxPercent (100%)
+      // When progress = 1: offsetPercent = 0%
+      const offsetPercent = (1 - p) * maxPercent;
+
+      // Left child starts at -100% (or -offset) -> glides right to 0
+      // Right child starts at +100% (or +offset) -> glides left to 0
+      const leftTranslate  = -offsetPercent;
+      const rightTranslate = +offsetPercent;
+
+      // Opacity fades in quickly and stays at 1
+      const opacity = clamp(p * 1.5, 0, 1);
+
+      if (item.left) {
+        item.left.style.transform = `translate3d(${leftTranslate.toFixed(2)}%, 0, 0)`;
+        item.left.style.opacity   = opacity.toFixed(3);
+      }
+      if (item.right) {
+        item.right.style.transform = `translate3d(${rightTranslate.toFixed(2)}%, 0, 0)`;
+        item.right.style.opacity   = opacity.toFixed(3);
+      }
+    }
+
+    let rafId = null;
+
+    function tick() {
+      let active = false;
+
+      items.forEach(item => {
+        item.targetProgress = computeTargetProgress(item.row);
+
+        if (item.currentProgress < 0) {
+          // Initial first frame jump directly to target
+          item.currentProgress = item.targetProgress;
+          renderItem(item);
+          return;
+        }
+
+        const delta = item.targetProgress - item.currentProgress;
+        if (Math.abs(delta) > 0.001) {
+          // Lerp factor 0.12 provides fluid inertial glide
+          item.currentProgress += delta * 0.12;
+          renderItem(item);
+          active = true;
+        } else if (item.currentProgress !== item.targetProgress) {
+          item.currentProgress = item.targetProgress;
+          renderItem(item);
+        }
+      });
+
+      if (active) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        rafId = null;
+      }
+    }
+
+    function requestTick() {
+      if (!rafId) {
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    // Connect with Lenis smooth scroll or native window scroll
+    if (window.lenis) {
+      window.lenis.on('scroll', requestTick);
+    }
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick, { passive: true });
+
+    // Initial paint
+    requestAnimationFrame(tick);
   })();
 
 })();

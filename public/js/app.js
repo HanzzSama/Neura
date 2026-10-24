@@ -8,6 +8,8 @@
 
 const API = '';
 const CHAT_STORAGE_KEY = 'neura_recent_chats_v2';
+const LAST_SESSION_STORAGE_KEY = 'neura_active_session_id_v2';
+const DRAFT_INPUT_STORAGE_KEY = 'neura_draft_chat_input_v2';
 const ML_DROPDOWN_STORAGE_KEY = 'neura_ml_dropdown_collapsed';
 const USER_PROFILE_STORAGE_KEY = 'neura_user_profile_v1';
 
@@ -20,40 +22,335 @@ let stopRequested = false;
 let trainingPollInterval = null;
 let activeModelData = null;
 
+// Speech-to-Text Voice Dictation State
+let chatSpeechRec = null;
+let isChatVoiceListening = false;
+let chatVoiceSilenceTimer = null;
+let chatVoiceAccumulatedText = '';
+
 // Connectivity state
 let _isOnline = navigator.onLine;
 let _offlineBannerHideTimer = null;
 
-function setGeneratingState(generating) {
-  isTyping = generating;
+function updateSendBtnState() {
+  const input = document.getElementById('chat-input-textarea');
   const btn = document.getElementById('send-msg-btn');
   if (!btn) return;
-  if (generating) {
+
+  if (isTyping) {
     btn.classList.add('is-generating');
-    btn.title = 'Stop generating';
+    btn.classList.remove('is-voice', 'is-listening');
+    btn.title = 'Hentikan respon';
     btn.innerHTML = `
       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
         <rect x="5" y="5" width="14" height="14" rx="2.5"/>
       </svg>
     `;
-  } else {
-    btn.classList.remove('is-generating');
-    btn.title = 'Send message';
+    return;
+  }
+
+  btn.classList.remove('is-generating');
+
+  if (isChatVoiceListening) {
+    btn.classList.add('is-listening');
+    btn.classList.remove('is-voice');
+    btn.title = 'Sedang mendengarkan... Klik untuk kirim pesan sekarang';
+    btn.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" stroke-width="2.5"/>
+        <line x1="8" y1="23" x2="16" y2="23" stroke="currentColor" stroke-width="2.5"/>
+      </svg>
+    `;
+    return;
+  }
+
+  btn.classList.remove('is-listening');
+
+  const hasText = input && input.value.trim().length > 0;
+  if (hasText) {
+    // Send Message State (Terracotta with Upward Arrow)
+    btn.classList.remove('is-voice');
+    btn.title = 'Kirim pesan (Enter)';
     btn.innerHTML = `
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2.5a1.2 1.2 0 0 1 .85.35l6 6a1.2 1.2 0 1 1-1.7 1.7L13.2 6.55V20a1.2 1.2 0 1 1-2.4 0V6.55L6.85 10.55a1.2 1.2 0 1 1-1.7-1.7l6-6a1.2 1.2 0 0 1 .85-.35z"/>
       </svg>
     `;
+  } else {
+    // Voice-to-Text State (Mint Green with Microphone Icon)
+    btn.classList.add('is-voice');
+    btn.title = 'Bicara untuk Konversi Suara ke Pesan Chat';
+    btn.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+    `;
   }
 }
 
+function setGeneratingState(generating) {
+  isTyping = generating;
+  updateSendBtnState();
+}
+
+let lastVoiceBtnClick = 0;
+let chatVoiceShouldKeepListening = false;
+let chatVoiceRestartAttempts = 0;
+let chatVoiceInactivityTimer = null;
+const CHAT_VOICE_SILENCE_TIMEOUT_MS = 1800; // Auto-commits to chat bubble after 1.8s of silence after speaking
+
 function handleSendClick() {
+  const now = Date.now();
+  if (now - lastVoiceBtnClick < 300) return; // Debounce rapid accidental double-clicks
+  lastVoiceBtnClick = now;
+
   if (isTyping) {
     stopRequested = true;
     return;
   }
-  sendUserMessage();
+
+  if (isChatVoiceListening) {
+    stopChatVoiceInput(true);
+    return;
+  }
+
+  const input = document.getElementById('chat-input-textarea');
+  const hasText = input && input.value.trim().length > 0;
+
+  if (hasText) {
+    sendUserMessage();
+  } else {
+    startChatVoiceInput();
+  }
 }
+
+function startChatVoiceInput() {
+  if (isTyping) return;
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showToast('Browser ini tidak mendukung Web Speech API. Silakan gunakan Google Chrome atau Microsoft Edge.', 'error');
+    return;
+  }
+
+  chatVoiceShouldKeepListening = true;
+  isChatVoiceListening = true;
+  chatVoiceRestartAttempts = 0;
+  chatVoiceAccumulatedText = '';
+
+  const input = document.getElementById('chat-input-textarea');
+  const banner = document.getElementById('chat-voice-status-banner');
+  const statusText = document.getElementById('chat-voice-status-text');
+
+  if (banner) banner.style.display = 'flex';
+  if (statusText) statusText.textContent = 'Mendengarkan suara... Silakan mulai berbicara';
+
+  updateSendBtnState();
+
+  // Inactivity timeout: stop after 20 seconds if user never speaks
+  if (chatVoiceInactivityTimer) clearTimeout(chatVoiceInactivityTimer);
+  chatVoiceInactivityTimer = setTimeout(function () {
+    if (isChatVoiceListening && (!input || !input.value.trim())) {
+      stopChatVoiceInput(false);
+      showToast('Waktu bicara selesai (tidak ada suara terdeteksi).', 'info');
+    }
+  }, 20000);
+
+  function createAndStartRecognizer() {
+    if (!chatVoiceShouldKeepListening) return;
+
+    if (chatSpeechRec) {
+      try { chatSpeechRec.abort(); } catch (e) { }
+      chatSpeechRec = null;
+    }
+
+    try {
+      chatSpeechRec = new SR();
+      chatSpeechRec.lang = 'id-ID';
+      chatSpeechRec.continuous = true;
+      chatSpeechRec.interimResults = true;
+
+      chatSpeechRec.onstart = function () {
+        if (isChatVoiceListening && statusText && !input.value.trim()) {
+          statusText.textContent = 'Mendengarkan... Silakan mulai berbicara';
+        }
+      };
+
+      chatSpeechRec.onresult = function (event) {
+        if (!isChatVoiceListening) return;
+
+        let interim = '';
+        let final = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const res = event.results[i];
+          if (res.isFinal) {
+            final += res[0].transcript;
+          } else {
+            interim += res[0].transcript;
+          }
+        }
+
+        if (final) {
+          chatVoiceAccumulatedText = (chatVoiceAccumulatedText + ' ' + final).trim();
+        }
+
+        const currentText = (chatVoiceAccumulatedText + ' ' + interim).trim();
+
+        if (input && currentText) {
+          input.value = currentText;
+          handleTextareaInput(input);
+        }
+
+        if (statusText && currentText) {
+          statusText.textContent = `Mendengar: "${currentText.length > 28 ? currentText.slice(0, 28) + '...' : currentText}"`;
+        }
+
+        // Reset inactivity timer since user is speaking
+        if (chatVoiceInactivityTimer) {
+          clearTimeout(chatVoiceInactivityTimer);
+          chatVoiceInactivityTimer = null;
+        }
+
+        // Reset silence timer: commits 1.8s after user stops speaking
+        if (chatVoiceSilenceTimer) clearTimeout(chatVoiceSilenceTimer);
+        chatVoiceSilenceTimer = setTimeout(function () {
+          if (isChatVoiceListening && input && input.value.trim().length > 0) {
+            stopChatVoiceInput(true);
+          }
+        }, CHAT_VOICE_SILENCE_TIMEOUT_MS);
+      };
+
+      chatSpeechRec.onerror = function (e) {
+        console.warn('SpeechRecognition status:', e.error);
+        if (e.error === 'not-allowed') {
+          showToast('Izin mikrofon ditolak oleh browser. Klik ikon gembok di address bar untuk mengizinkan.', 'error');
+          cancelChatVoiceInput();
+        } else if (e.error === 'audio-capture') {
+          showToast('Mikrofon tidak terdeteksi atau sedang dipakai aplikasi lain.', 'error');
+          cancelChatVoiceInput();
+        } else if (e.error === 'no-speech') {
+          // Chrome pauses on quietness; do NOT stop listening! onend will restart it.
+        }
+      };
+
+      chatSpeechRec.onend = function () {
+        if (!chatVoiceShouldKeepListening || !isChatVoiceListening) return;
+
+        // If user already spoke something and silence timer is running, allow silence timer to send
+        const currentVal = input ? input.value.trim() : '';
+        if (currentVal.length > 0) {
+          // Keep listening or let silence timer commit
+          if (chatVoiceRestartAttempts < 30) {
+            chatVoiceRestartAttempts++;
+            setTimeout(function () {
+              if (chatVoiceShouldKeepListening && isChatVoiceListening) {
+                createAndStartRecognizer();
+              }
+            }, 100);
+          }
+          return;
+        }
+
+        // If user hasn't spoken yet, DO NOT CLOSE! Seamlessly restart listening
+        if (chatVoiceRestartAttempts < 25) {
+          chatVoiceRestartAttempts++;
+          setTimeout(function () {
+            if (chatVoiceShouldKeepListening && isChatVoiceListening) {
+              createAndStartRecognizer();
+            }
+          }, 120);
+        } else {
+          stopChatVoiceInput(false);
+        }
+      };
+
+      chatSpeechRec.start();
+    } catch (err) {
+      console.warn('SpeechRecognition restart notice:', err);
+    }
+  }
+
+  createAndStartRecognizer();
+}
+
+function stopChatVoiceInput(shouldSend = true) {
+  chatVoiceShouldKeepListening = false;
+
+  if (chatVoiceSilenceTimer) {
+    clearTimeout(chatVoiceSilenceTimer);
+    chatVoiceSilenceTimer = null;
+  }
+  if (chatVoiceInactivityTimer) {
+    clearTimeout(chatVoiceInactivityTimer);
+    chatVoiceInactivityTimer = null;
+  }
+
+  isChatVoiceListening = false;
+
+  if (chatSpeechRec) {
+    try { chatSpeechRec.stop(); } catch (e) { }
+    chatSpeechRec = null;
+  }
+
+  const banner = document.getElementById('chat-voice-status-banner');
+  if (banner) banner.style.display = 'none';
+
+  updateSendBtnState();
+
+  if (shouldSend) {
+    const input = document.getElementById('chat-input-textarea');
+    if (input && input.value.trim().length > 0) {
+      sendUserMessage();
+    }
+  }
+}
+
+function cancelChatVoiceInput(event = null) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  chatVoiceShouldKeepListening = false;
+
+  if (chatVoiceSilenceTimer) {
+    clearTimeout(chatVoiceSilenceTimer);
+    chatVoiceSilenceTimer = null;
+  }
+  if (chatVoiceInactivityTimer) {
+    clearTimeout(chatVoiceInactivityTimer);
+    chatVoiceInactivityTimer = null;
+  }
+
+  isChatVoiceListening = false;
+
+  if (chatSpeechRec) {
+    try { chatSpeechRec.abort(); } catch (e) { }
+    chatSpeechRec = null;
+  }
+
+  const input = document.getElementById('chat-input-textarea');
+  if (input) {
+    input.value = '';
+    handleTextareaInput(input);
+  }
+
+  const banner = document.getElementById('chat-voice-status-banner');
+  if (banner) banner.style.display = 'none';
+
+  updateSendBtnState();
+  showToast('Perekaman suara dibatalkan', 'info');
+}
+
+window.cancelChatVoiceInput = cancelChatVoiceInput;
+window.startChatVoiceInput = startChatVoiceInput;
+window.stopChatVoiceInput = stopChatVoiceInput;
 
 // --------------------------------------------------------------------------
 // Initialization & Dynamic Greeting
@@ -64,12 +361,27 @@ document.addEventListener('DOMContentLoaded', () => {
   renderRecentChatsSidebar();
   initMLCommandsDropdown();
 
-  // If there are existing saved sessions, open the most recent one; otherwise start fresh
-  if (chatSessions.length > 0) {
+  // Restore last active room/session so refreshing never resets the room
+  const savedLastSessionId = localStorage.getItem(LAST_SESSION_STORAGE_KEY);
+  if (savedLastSessionId === 'new') {
+    startNewChat(false);
+  } else if (savedLastSessionId && chatSessions.some(s => s.id === savedLastSessionId)) {
+    switchChatSession(savedLastSessionId);
+  } else if (chatSessions.length > 0) {
     switchChatSession(chatSessions[0].id);
   } else {
-    startNewChat();
+    startNewChat(false);
   }
+
+  // Restore draft textarea content if user was typing before refresh
+  try {
+    const savedDraft = localStorage.getItem(DRAFT_INPUT_STORAGE_KEY);
+    const chatInput = document.getElementById('chat-input-textarea');
+    if (savedDraft && chatInput && !chatInput.value) {
+      chatInput.value = savedDraft;
+      handleTextareaInput(chatInput);
+    }
+  } catch(e) {}
 
   fetchModelStatus(false);
   setInterval(() => fetchModelStatus(false), 12000);
@@ -91,6 +403,9 @@ document.addEventListener('DOMContentLoaded', () => {
       syncProfileCardToStorage(card.id);
     });
   }, 100);
+
+  // Initialize Send/Voice Button State
+  updateSendBtnState();
 });
 
 function setupGreeting() {
@@ -210,6 +525,9 @@ function switchChatSession(sessionId) {
   const session = chatSessions.find(s => s.id === sessionId);
   if (!session) return;
   activeSessionId = sessionId;
+  try {
+    localStorage.setItem(LAST_SESSION_STORAGE_KEY, sessionId);
+  } catch(e) {}
   renderRecentChatsSidebar();
   renderSessionMessages(session);
 }
@@ -219,8 +537,15 @@ function deleteChatSession(e, sessionId) {
   chatSessions = chatSessions.filter(s => s.id !== sessionId);
   saveChatSessions();
   if (activeSessionId === sessionId) {
-    activeSessionId = null;
-    startNewChat();
+    if (chatSessions.length > 0) {
+      switchChatSession(chatSessions[0].id);
+    } else {
+      activeSessionId = null;
+      try {
+        localStorage.setItem(LAST_SESSION_STORAGE_KEY, 'new');
+      } catch(err) {}
+      startNewChat();
+    }
   } else {
     renderRecentChatsSidebar();
   }
@@ -351,8 +676,12 @@ function getHeroHtml() {
 // --------------------------------------------------------------------------
 // Start New Chat Action
 // --------------------------------------------------------------------------
-function startNewChat() {
+function startNewChat(showNotification = true) {
   activeSessionId = null;
+  try {
+    localStorage.setItem(LAST_SESSION_STORAGE_KEY, 'new');
+    localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
+  } catch(e) {}
   renderRecentChatsSidebar();
 
   const container = document.getElementById('chat-content-container');
@@ -364,9 +693,12 @@ function startNewChat() {
     input.value = '';
     input.style.height = 'auto';
     input.focus();
+    updateSendBtnState();
   }
 
-  showToast('New conversation ready', 'info');
+  if (showNotification) {
+    showToast('New conversation ready', 'info');
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -400,12 +732,29 @@ function toggleSidebar() {
 function handleTextareaInput(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+  updateSendBtnState();
+  try {
+    if (el.value.trim().length > 0) {
+      localStorage.setItem(DRAFT_INPUT_STORAGE_KEY, el.value);
+    } else {
+      localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
+    }
+  } catch(e) {}
 }
 
 function handleTextareaKey(e) {
+  if (e.key === 'Escape' && isChatVoiceListening) {
+    e.preventDefault();
+    cancelChatVoiceInput();
+    return;
+  }
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
-    sendUserMessage();
+    if (isChatVoiceListening) {
+      stopChatVoiceInput(true);
+    } else {
+      sendUserMessage();
+    }
   }
 }
 
@@ -444,6 +793,7 @@ function submitCommand(cmd) {
   if (input) {
     input.value = '';
     input.style.height = 'auto';
+    updateSendBtnState();
   }
 
   // Send message directly with the command
@@ -489,12 +839,19 @@ async function sendUserMessage(textOverride = null) {
     chatSessions.unshift(newSession);
     activeSessionId = newSession.id;
     saveChatSessions();
+    try {
+      localStorage.setItem(LAST_SESSION_STORAGE_KEY, newSession.id);
+    } catch(e) {}
     renderRecentChatsSidebar();
   }
 
-  // Clear input
+  // Clear input & draft
   input.value = '';
   input.style.height = 'auto';
+  try {
+    localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
+  } catch(e) {}
+  updateSendBtnState();
 
   // Remove hero if present
   const hero = document.getElementById('claude-hero');
@@ -2562,3 +2919,31 @@ function _appendSystemNotice(type, iconSvg, message) {
   container.appendChild(el);
   container.scrollTop = container.scrollHeight;
 }
+
+// --------------------------------------------------------------------------
+// Voice Consultation Session Exporter to Main Chat
+// --------------------------------------------------------------------------
+window.appendVoiceSessionToChat = function(summaryMarkdown) {
+  if (!summaryMarkdown) return;
+  if (!activeSessionId) {
+    const newSession = {
+      id: 'session_' + Date.now(),
+      title: 'Voice Consultation',
+      createdAt: Date.now(),
+      messages: []
+    };
+    chatSessions.unshift(newSession);
+    activeSessionId = newSession.id;
+    saveChatSessions();
+    try {
+      localStorage.setItem(LAST_SESSION_STORAGE_KEY, newSession.id);
+    } catch(e) {}
+    renderRecentChatsSidebar();
+    const hero = document.getElementById('claude-hero');
+    if (hero) hero.remove();
+  }
+
+  const formattedHtml = `<div class="voice-session-summary" style="padding:12px 16px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;font-size:13.5px;line-height:1.6;margin-top:4px;">${summaryMarkdown.replace(/\n\n/g, '<br><br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+  appendAssistantMessage(formattedHtml, { stream: false });
+};
+

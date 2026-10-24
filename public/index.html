@@ -1,429 +1,625 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Claude &bull; Neura AI</title>
-  <meta name="description" content="Neura AI — Interactive machine learning assistant powered by TensorFlow, featuring Claude's warm and intuitive interface." />
-  
+  <meta name="description"
+    content="Neura AI — Interactive machine learning assistant powered by TensorFlow, featuring Claude's warm and intuitive interface." />
+
+  <!-- Neura Brand Favicons / Browser Tab Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
   <!-- Claude AI Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=3.3" />
+  <link rel="stylesheet" href="/css/style.css?v=3.6" />
   <link rel="stylesheet" href="/css/dynamic-island.css" />
+  <link rel="stylesheet" href="/css/voice-consultation.css?v=52" />
 </head>
+
 <body>
 
-<!-- ========================================================================
+  <!-- ========================================================================
      OFFLINE CONNECTIVITY BANNER
      Slides down from top when connection is lost. Managed by app.js.
      ======================================================================== -->
-<div id="offline-banner" class="offline-banner" role="alert" aria-live="assertive" aria-atomic="true">
-  <span class="offline-dot"></span>
-  <svg id="offline-banner-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="1" y1="1" x2="23" y2="23"/>
-    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
-    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
-    <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
-    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
-    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
-    <line x1="12" y1="20" x2="12.01" y2="20"/>
-  </svg>
-  <span id="offline-banner-text">Tidak ada koneksi internet</span>
-</div>
+  <div id="offline-banner" class="offline-banner" role="alert" aria-live="assertive" aria-atomic="true">
+    <span class="offline-dot"></span>
+    <svg id="offline-banner-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="1" y1="1" x2="23" y2="23" />
+      <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+      <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+      <path d="M10.71 5.05A16 16 0 0 1 22.56 9" />
+      <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+      <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+      <line x1="12" y1="20" x2="12.01" y2="20" />
+    </svg>
+    <span id="offline-banner-text">Tidak ada koneksi internet</span>
+  </div>
 
-<div class="claude-layout">
-
-  <!-- ========================================================================
-       SIDEBAR
-       ======================================================================== -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-top">
-      <div class="brand-row">
-        <div class="brand-link" onclick="startNewChat()">
-          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="neura-logo-img" onerror="this.style.display='none'" />
-          <div>
-            <span class="brand-title">Neura</span>
-            <span class="brand-sub">ML</span>
-          </div>
-        </div>
-
-        <button class="sidebar-collapse-btn" title="Close sidebar" onclick="toggleSidebar()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <line x1="9" y1="3" x2="9" y2="21"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- New Chat Button -->
-      <button class="new-chat-btn" onclick="startNewChat()">
-        <div class="new-chat-left">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          <span>Start new chat</span>
-        </div>
-        <span class="shortcut-badge">Ctrl K</span>
-      </button>
-    </div>
-
-    <!-- Sidebar Body -->
-    <div class="sidebar-body" data-lenis-prevent="true">
-      <div>
-        <div class="nav-group-title">Recent Chats</div>
-        <div class="chat-history-list" id="chat-history-list">
-          <!-- Populated dynamically by JavaScript -->
-        </div>
-      </div>
-
-      <!-- Quick ML Commands (Collapsible Dropdown Accordion) -->
-      <div class="nav-group-section">
-        <button class="nav-group-header" id="ml-commands-toggle-btn" onclick="toggleMLCommandsDropdown()" aria-expanded="true">
-          <span class="nav-group-title">ML Commands</span>
-          <svg class="dropdown-chevron-icon" id="ml-commands-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </button>
-        <div class="ml-commands-list" id="ml-commands-list">
-          <button class="ml-command-item" onclick="submitCommand('/status')">
-            <span>Check Status</span>
-            <span class="ml-tag">/status</span>
-          </button>
-          <button class="ml-command-item" onclick="submitCommand('/train 5')">
-            <span>Train 5 Epochs</span>
-            <span class="ml-tag">/train 5</span>
-          </button>
-          <button class="ml-command-item" onclick="submitCommand('/eval')">
-            <span>Evaluate Model</span>
-            <span class="ml-tag">/eval</span>
-          </button>
-          <button class="ml-command-item" onclick="submitCommand('/predict')">
-            <span>Run Prediction</span>
-            <span class="ml-tag">/predict</span>
-          </button>
-          <button class="ml-command-item" onclick="submitCommand('/progress')">
-            <span>Live Progress</span>
-            <span class="ml-tag">/progress</span>
-          </button>
-          <button class="ml-command-item" onclick="submitCommand('/help')">
-            <span>Command List</span>
-            <span class="ml-tag">/help</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sidebar Bottom Strip -->
-    <div class="sidebar-footer">
-      <div class="model-status-strip" onclick="openModelModal()">
-        <div class="model-status-left">
-          <span class="status-dot dot-offline" id="sb-status-dot"></span>
-          <span id="sb-status-text" style="font-weight:500">Checking model...</span>
-        </div>
-        <span style="font-size:11px;color:var(--text-muted)">Info ℹ</span>
-      </div>
-
-      <div class="user-profile-row">
-        <div class="user-info">
-          <div class="user-avatar-circle">H</div>
-          <div>
-            <div class="user-meta-name">Hanzz</div>
-            <div class="user-meta-role">TensorFlow Dev</div>
-          </div>
-        </div>
-        <button class="nav-icon-btn" title="Toggle Light / Dark mode" onclick="toggleTheme()">
-          <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ========================================================================
-       MAIN VIEW CONTAINER
-       ======================================================================== -->
-  <main class="main-view">
-
-    <!-- =====================================================================    <!-- ========================================================================
-         DYNAMIC ISLAND NOTCH (Top Center Ceiling-Mounted Dropdown)
-         ======================================================================== -->
-    <div class="dynamic-island-wrapper">
-      <div class="dynamic-island theme-green" id="dynamic-island">
-        <!-- Compact Notch State (Claude Pixel Loader & Dynamic Context) -->
-        <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
-          <span class="island-notch-sub" id="island-sub-text">XGBoost &bull; 32 Biomarkers</span>
-          <div class="island-notch-main-row">
-            <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
-              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
-                <!-- 3x3 Matrix with 0 Gap -->
-                <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
-                <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
-                <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
-                <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
-                <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
-                <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
-                <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
-                <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
-                <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
-              </svg>
-            </div>
-            <span class="island-notch-main" id="island-main-text">Ready</span>
-            <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
-          </div>
-        </div>
-
-        <!-- Expanded Dropdown State (Hover with smooth drop) -->
-        <div class="island-expanded">
-          <div class="island-expanded-header">
-            <div class="island-header-left">
-              <div class="island-logo-mini">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
-                </svg>
-              </div>
-              <div>
-                <div class="island-model-name">Neura AI</div>
-                <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
-              </div>
-            </div>
-            <span class="island-badge-live">Live XGBoost 3.x</span>
-          </div>
-
-          <div class="island-metrics-row">
-            <div class="island-stat-box stat-default">
-              <span class="island-stat-num" id="island-stat-features">32</span>
-              <span class="island-stat-lbl">Clinical Dims</span>
-            </div>
-            <div class="island-stat-box stat-purple">
-              <span class="island-stat-num" id="island-stat-classes">2</span>
-              <span class="island-stat-lbl">Classes (0/1)</span>
-            </div>
-            <div class="island-stat-box stat-green" id="island-stat-box-status">
-              <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
-              <span class="island-stat-lbl">Accuracy</span>
-            </div>
-          </div>
-
-          <div class="island-quick-actions">
-            <button class="island-btn btn-orange" onclick="submitCommand('/train 50')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
-              </svg>
-              <span>Train</span>
-            </button>
-            <button class="island-btn btn-purple" onclick="submitCommand('/predict')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
-              </svg>
-              <span>Diagnose</span>
-            </button>
-            <button class="island-btn btn-green" onclick="submitCommand('/eval')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
-              </svg>
-              <span>Metrics</span>
-            </button>
-            <button class="island-btn btn-default" onclick="openModelModal()">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-              </svg>
-              <span>Specs</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Top Navigation Bar -->
-    <header class="top-nav">
-      <div class="top-nav-brand">
-        <button class="open-sidebar-btn" id="open-sidebar-btn" title="Open sidebar" onclick="toggleSidebar()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <line x1="9" y1="3" x2="9" y2="21"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="top-nav-right">
-        <button class="nav-icon-btn" title="Start new chat" onclick="startNewChat()">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-          </svg>
-        </button>
-        <button class="nav-icon-btn" title="Toggle Theme" onclick="toggleTheme()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <!-- Scrollable Chat Stream -->
-    <div class="chat-scroll-area" id="chat-scroll-area" data-lenis-prevent="true">
-      <div class="chat-content-container" id="chat-content-container">
-
-        <!-- Claude Hero State (shown when chat is new) -->
-        <div class="claude-hero" id="claude-hero">
-          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo" onerror="this.style.display='none'" />
-          <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
-          <p class="hero-subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling today?</p>
-
-          <!-- 4 Action Cards -->
-          <div class="hero-cards-grid">
-            <div class="hero-card" onclick="submitCommand('/train 50')">
-              <div class="hero-card-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-                <span>Train XGBoost Model</span>
-              </div>
-              <div class="hero-card-desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data pasien)</div>
-            </div>
-
-            <div class="hero-card" onclick="submitCommand('/predict')">
-              <div class="hero-card-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                <span>Run Alzheimer Diagnosis</span>
-              </div>
-              <div class="hero-card-desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory Complaints)</div>
-            </div>
-
-            <div class="hero-card" onclick="submitCommand('/eval')">
-              <div class="hero-card-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span>Evaluate Medical Metrics</span>
-              </div>
-              <div class="hero-card-desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1% ROC-AUC</div>
-            </div>
-
-            <div class="hero-card" onclick="submitCommand('/status')">
-              <div class="hero-card-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                <span>Clinical Model Specs</span>
-              </div>
-              <div class="hero-card-desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
+  <div class="claude-layout">
 
     <!-- ========================================================================
-         FLOATING BOTTOM INPUT (Claude Signature Aesthetic)
-         ======================================================================== -->
-    <div class="floating-input-container">
-      <div class="glow-ring" id="input-glow-ring">
-        <div class="input-box-wrapper">
-        <textarea
-          id="chat-input-textarea"
-          rows="1"
-          placeholder="Tanya tentang diagnosis Alzheimer atau ketik /train, /eval, /predict..."
-          onkeydown="handleTextareaKey(event)"
-          oninput="handleTextareaInput(this)"
-        ></textarea>
-
-        <div class="input-bottom-bar">
-          <div class="input-actions-left">
-            <span class="cmd-pill" onclick="submitCommand('/train 50')">
-              <svg class="pill-icon pill-icon-train" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
-              </svg>
-              <span>/train 50</span>
-            </span>
-            <span class="cmd-pill" onclick="submitCommand('/predict')">
-              <svg class="pill-icon pill-icon-predict" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
-              </svg>
-              <span>/predict</span>
-            </span>
-            <span class="cmd-pill" onclick="submitCommand('/eval')">
-              <svg class="pill-icon pill-icon-eval" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
-              </svg>
-              <span>/eval</span>
-            </span>
-            <span class="cmd-pill" onclick="submitCommand('Konsultasi')">
-              <svg class="pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-              </svg>
-              <span>Konsultasi</span>
-            </span>
-            <span class="cmd-pill" onclick="submitCommand('/status')">
-              <svg class="pill-icon pill-icon-status" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z" clip-rule="evenodd"/>
-              </svg>
-              <span>/status</span>
-            </span>
+       SIDEBAR
+       ======================================================================== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-row">
+          <div class="brand-link" onclick="startNewChat()">
+            <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="neura-logo-img"
+              onerror="this.style.display='none'" />
+            <div>
+              <span class="brand-title">Neura</span>
+              <span class="brand-sub">ML</span>
+            </div>
           </div>
 
-          <button class="send-icon-btn" id="send-msg-btn" title="Send message" onclick="handleSendClick()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2.5a1.2 1.2 0 0 1 .85.35l6 6a1.2 1.2 0 1 1-1.7 1.7L13.2 6.55V20a1.2 1.2 0 1 1-2.4 0V6.55L6.85 10.55a1.2 1.2 0 1 1-1.7-1.7l6-6a1.2 1.2 0 0 1 .85-.35z"/>
+          <button class="sidebar-collapse-btn" title="Close sidebar" onclick="toggleSidebar()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- New Chat Button -->
+        <button class="new-chat-btn" onclick="startNewChat()">
+          <div class="new-chat-left">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Start new chat</span>
+          </div>
+          <span class="shortcut-badge">Ctrl K</span>
+        </button>
+      </div>
+
+      <!-- Sidebar Body -->
+      <div class="sidebar-body" data-lenis-prevent="true">
+        <div>
+          <div class="nav-group-title">Recent Chats</div>
+          <div class="chat-history-list" id="chat-history-list">
+            <!-- Populated dynamically by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Quick ML Commands (Collapsible Dropdown Accordion) -->
+        <div class="nav-group-section">
+          <button class="nav-group-header" id="ml-commands-toggle-btn" onclick="toggleMLCommandsDropdown()"
+            aria-expanded="true">
+            <span class="nav-group-title">ML Commands</span>
+            <svg class="dropdown-chevron-icon" id="ml-commands-chevron" width="13" height="13" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div class="ml-commands-list" id="ml-commands-list">
+            <button class="ml-command-item" onclick="submitCommand('/status')">
+              <span>Check Status</span>
+              <span class="ml-tag">/status</span>
+            </button>
+            <button class="ml-command-item" onclick="submitCommand('/train 5')">
+              <span>Train 5 Epochs</span>
+              <span class="ml-tag">/train 5</span>
+            </button>
+            <button class="ml-command-item" onclick="submitCommand('/eval')">
+              <span>Evaluate Model</span>
+              <span class="ml-tag">/eval</span>
+            </button>
+            <button class="ml-command-item" onclick="submitCommand('/predict')">
+              <span>Run Prediction</span>
+              <span class="ml-tag">/predict</span>
+            </button>
+            <button class="ml-command-item" onclick="submitCommand('/progress')">
+              <span>Live Progress</span>
+              <span class="ml-tag">/progress</span>
+            </button>
+            <button class="ml-command-item" onclick="submitCommand('/help')">
+              <span>Command List</span>
+              <span class="ml-tag">/help</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Bottom Strip -->
+      <div class="sidebar-footer">
+        <div class="model-status-strip" onclick="openModelModal()">
+          <div class="model-status-left">
+            <span class="status-dot dot-offline" id="sb-status-dot"></span>
+            <span id="sb-status-text" style="font-weight:500">Checking model...</span>
+          </div>
+          <span style="font-size:11px;color:var(--text-muted)">Info ℹ</span>
+        </div>
+
+        <div class="user-profile-row">
+          <div class="user-info">
+            <div class="user-avatar-circle">H</div>
+            <div>
+              <div class="user-meta-name">Hanzz</div>
+              <div class="user-meta-role">TensorFlow Dev</div>
+            </div>
+          </div>
+          <button class="nav-icon-btn" title="Toggle Light / Dark mode" onclick="toggleTheme()">
+            <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
             </svg>
           </button>
         </div>
       </div>
-    </div>
+    </aside>
 
-      <div class="disclaimer-caption">
-        Neura can make mistakes. Verify important medical predictions and clinical evaluations.
+    <!-- ========================================================================
+       MAIN VIEW CONTAINER
+       ======================================================================== -->
+    <main class="main-view">
+
+      <!-- =====================================================================    <!-- ========================================================================
+         DYNAMIC ISLAND NOTCH (Top Center Ceiling-Mounted Dropdown)
+         ======================================================================== -->
+      <div class="dynamic-island-wrapper">
+        <div class="dynamic-island theme-green" id="dynamic-island">
+          <!-- Compact Notch State (Claude Pixel Loader & Dynamic Context) -->
+          <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
+            <span class="island-notch-sub" id="island-sub-text">XGBoost &bull; 32 Biomarkers</span>
+            <div class="island-notch-main-row">
+              <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
+                  <!-- 3x3 Matrix with 0 Gap -->
+                  <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
+                  <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
+                  <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
+                  <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
+                  <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
+                  <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
+                  <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
+                  <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
+                  <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
+                </svg>
+              </div>
+              <span class="island-notch-main" id="island-main-text">Ready</span>
+              <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
+            </div>
+          </div>
+
+          <!-- Expanded Dropdown State (Hover with smooth drop) -->
+          <div class="island-expanded">
+            <div class="island-expanded-header">
+              <div class="island-header-left">
+                <div class="island-logo-mini">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="island-model-name">Neura AI</div>
+                  <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
+                </div>
+              </div>
+              <span class="island-badge-live">Live XGBoost 3.x</span>
+            </div>
+
+            <div class="island-metrics-row">
+              <div class="island-stat-box stat-default">
+                <span class="island-stat-num" id="island-stat-features">32</span>
+                <span class="island-stat-lbl">Clinical Dims</span>
+              </div>
+              <div class="island-stat-box stat-purple">
+                <span class="island-stat-num" id="island-stat-classes">2</span>
+                <span class="island-stat-lbl">Classes (0/1)</span>
+              </div>
+              <div class="island-stat-box stat-green" id="island-stat-box-status">
+                <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
+                <span class="island-stat-lbl">Accuracy</span>
+              </div>
+            </div>
+
+            <div class="island-quick-actions">
+              <button class="island-btn btn-orange" onclick="submitCommand('/train 50')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z" />
+                </svg>
+                <span>Train</span>
+              </button>
+              <button class="island-btn btn-purple" onclick="submitCommand('/predict')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+                </svg>
+                <span>Diagnose</span>
+              </button>
+              <button class="island-btn btn-green" onclick="submitCommand('/eval')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z" />
+                </svg>
+                <span>Metrics</span>
+              </button>
+              <button class="island-btn btn-default" onclick="openModelModal()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                <span>Specs</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-  </main>
-</div>
+      <!-- Top Navigation Bar -->
+      <header class="top-nav">
+        <div class="top-nav-brand">
+          <button class="open-sidebar-btn" id="open-sidebar-btn" title="Open sidebar" onclick="toggleSidebar()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+            </svg>
+          </button>
+        </div>
 
-<!-- ==========================================================================
+        <div class="top-nav-right">
+          <button class="nav-icon-btn" title="Start new chat" onclick="startNewChat()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+          </button>
+          <button class="nav-icon-btn" title="Toggle Theme" onclick="toggleTheme()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Chat Stream -->
+      <div class="chat-scroll-area" id="chat-scroll-area" data-lenis-prevent="true">
+        <div class="chat-content-container" id="chat-content-container">
+
+          <!-- Claude Hero State (shown when chat is new) -->
+          <div class="claude-hero" id="claude-hero">
+            <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo"
+              onerror="this.style.display='none'" />
+            <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
+            <p class="hero-subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling
+              today?</p>
+
+            <!-- 4 Action Cards -->
+            <div class="hero-cards-grid">
+              <div class="hero-card" onclick="submitCommand('/train 50')">
+                <div class="hero-card-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 20V10" />
+                    <path d="M12 20V4" />
+                    <path d="M6 20v-6" />
+                  </svg>
+                  <span>Train XGBoost Model</span>
+                </div>
+                <div class="hero-card-desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data
+                  pasien)</div>
+              </div>
+
+              <div class="hero-card" onclick="submitCommand('/predict')">
+                <div class="hero-card-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  <span>Run Alzheimer Diagnosis</span>
+                </div>
+                <div class="hero-card-desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory
+                  Complaints)</div>
+              </div>
+
+              <div class="hero-card" onclick="submitCommand('/eval')">
+                <div class="hero-card-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                  <span>Evaluate Medical Metrics</span>
+                </div>
+                <div class="hero-card-desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1%
+                  ROC-AUC</div>
+              </div>
+
+              <div class="hero-card" onclick="submitCommand('/status')">
+                <div class="hero-card-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+                    <line x1="6" y1="6" x2="6.01" y2="6" />
+                    <line x1="6" y1="18" x2="6.01" y2="18" />
+                  </svg>
+                  <span>Clinical Model Specs</span>
+                </div>
+                <div class="hero-card-desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================
+         VOICE CHAT MODE (Inline full-panel, theme-matched to Neura design system)
+         ======================================================================== -->
+      <div id="voice-chat-view" style="display:none;" aria-hidden="true">
+
+        <!-- Voice Top Bar (matches top-nav styling) -->
+        <div id="voice-top-bar">
+          <button id="voice-back-btn" title="Akhiri sesi suara"
+            onclick="window.closeVoiceChat && window.closeVoiceChat()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            <span>Kembali</span>
+          </button>
+
+          <div id="voice-top-center">
+            <div id="voice-orb-mini">
+              <canvas id="voice-orb-canvas" width="28" height="28"></canvas>
+            </div>
+            <span id="voice-top-label">Voice Consultation</span>
+            <span id="voice-session-timer">00:00</span>
+          </div>
+
+          <div id="voice-top-actions">
+            <button id="voice-mute-btn" title="Mute / Unmute mikrofon"
+              onclick="window.toggleVoiceMute && window.toggleVoiceMute()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+            <button id="voice-end-btn" title="Akhiri sesi suara"
+              onclick="window.closeVoiceChat && window.closeVoiceChat()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              <span>Akhiri</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat-identical scroll area -->
+        <div class="chat-scroll-area" id="voice-scroll-area">
+          <div class="chat-content-container" id="voice-messages-thread" role="log" aria-live="polite">
+            <!-- Messages rendered by JS — uses same .message-row classes as normal chat -->
+          </div>
+        </div>
+
+        <!-- Center Floating Voice Bubble (like in screenshot) -->
+        <div id="voice-center-bubble-wrapper">
+          <canvas id="voice-center-bubble" width="80" height="80" title="Voice AI Bubble"></canvas>
+        </div>
+
+        <!-- Voice status bar (above floating input area) -->
+        <div id="voice-status-bar">
+          <span id="voice-status-dot"></span>
+          <span id="voice-status-text">Mendengarkan...</span>
+          <button id="voice-send-now-btn" class="voice-send-now-btn" style="display:none;"
+            onclick="window.commitVoiceSpeechNow && window.commitVoiceSpeechNow()" title="Kirim ucapan sekarang tanpa menunggu">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Kirim Sekarang</span>
+          </button>
+        </div>
+
+      </div><!-- /#voice-chat-view -->
+
+
+      <!-- ========================================================================
+         FLOATING BOTTOM INPUT (Claude Signature Aesthetic)
+         ======================================================================== -->
+      <div class="floating-input-container">
+        <div class="glow-ring" id="input-glow-ring">
+          <div class="input-box-wrapper">
+            <textarea id="chat-input-textarea" rows="1"
+              placeholder="Tanya tentang diagnosis Alzheimer atau ketik /train, /eval, /predict..."
+              onkeydown="handleTextareaKey(event)" oninput="handleTextareaInput(this)"></textarea>
+
+            <div class="input-bottom-bar">
+              <div class="input-actions-left">
+                <span class="cmd-pill" onclick="submitCommand('/train 50')">
+                  <svg class="pill-icon pill-icon-train" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z" />
+                  </svg>
+                  <span>/train 50</span>
+                </span>
+                <span class="cmd-pill" onclick="submitCommand('/predict')">
+                  <svg class="pill-icon pill-icon-predict" width="13" height="13" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <path
+                      d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+                  </svg>
+                  <span>/predict</span>
+                </span>
+                <span class="cmd-pill" onclick="submitCommand('/eval')">
+                  <svg class="pill-icon pill-icon-eval" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z" />
+                  </svg>
+                  <span>/eval</span>
+                </span>
+                <span class="cmd-pill pill-voice-room" onclick="window.openVoiceChat && window.openVoiceChat()" title="Buka Ruang Konsultasi Suara Lengkap (Voice Room)">
+                  <svg class="pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="7"/>
+                  </svg>
+                  <span>Voice Room</span>
+                </span>
+                <span class="cmd-pill" onclick="submitCommand('Konsultasi')">
+                  <svg class="pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                  </svg>
+                  <span>Konsultasi</span>
+                </span>
+                <span class="cmd-pill" onclick="submitCommand('/status')">
+                  <svg class="pill-icon pill-icon-status" width="13" height="13" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  <span>/status</span>
+                </span>
+              </div>
+
+              <!-- Live Voice Recording Banner -->
+              <div id="chat-voice-status-banner" class="chat-voice-status-banner" style="display:none;">
+                <span class="chat-voice-wave-dot"></span>
+                <span id="chat-voice-status-text">Mendengarkan suara... Ucapkan pesan Anda</span>
+                <button type="button" class="chat-voice-cancel-btn" onclick="cancelChatVoiceInput(event)" title="Batalkan rekaman">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                  <span>Batal</span>
+                </button>
+              </div>
+
+              <button class="send-icon-btn is-voice" id="send-msg-btn" title="Bicara untuk Konversi Suara ke Pesan Chat"
+                onclick="handleSendClick()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="23" />
+                  <line x1="8" y1="23" x2="16" y2="23" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer-caption">
+          Neura can make mistakes. Verify important medical predictions and clinical evaluations.
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==========================================================================
      MODEL ARCHITECTURE MODAL
      ========================================================================== -->
-<div class="modal-overlay" id="model-modal" onclick="closeModelModalOnBackdrop(event)">
-  <div class="claude-modal">
-    <div class="modal-header">
-      <div style="display:flex;align-items:center;gap:8px">
-        <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="modal-neura-logo" onerror="this.style.display='none'" />
-        <span class="modal-title">Model Specifications</span>
+  <div class="modal-overlay" id="model-modal" onclick="closeModelModalOnBackdrop(event)">
+    <div class="claude-modal">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="modal-neura-logo"
+            onerror="this.style.display='none'" />
+          <span class="modal-title">Model Specifications</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModelModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
-      <button class="modal-close-btn" onclick="closeModelModal()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
 
-    <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;">
-      Neura is running an advanced <strong>XGBoost Gradient Boosted Trees Classifier</strong> trained on 2,149 clinical patient records for high-accuracy Alzheimer's disease diagnosis.
-    </div>
+      <div style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;">
+        Neura is running an advanced <strong>XGBoost Gradient Boosted Trees Classifier</strong> trained on 2,149
+        clinical patient records for high-accuracy Alzheimer's disease diagnosis.
+      </div>
 
-    <table class="claude-table">
-      <tr><td>Architecture</td><td id="modal-model-name">AlzheimersXGBoost</td></tr>
-      <tr><td>Algorithm</td><td>XGBoost (Extreme Gradient Boosting 3.4.1)</td></tr>
-      <tr><td>Dataset Source</td><td>datasets/alzheimers_disease_data.csv (2,149 records)</td></tr>
-      <tr><td>Input Features</td><td>32 Biomarkers (MMSE, ADL, Memory, Age, Lifestyle)</td></tr>
-      <tr><td>Output Target</td><td>Diagnosis: 0 (Non-Alzheimer's) vs 1 (Alzheimer's)</td></tr>
-      <tr><td>Accuracy / ROC-AUC</td><td style="color:var(--accent-green);font-weight:600">95.35% Accuracy &bull; 94.11% ROC-AUC</td></tr>
-      <tr><td>Environment</td><td id="modal-env">development</td></tr>
-      <tr><td>Checkpoint Path</td><td id="modal-checkpoint" style="font-size:11px">public/checkpoints/xgboost_alzheimers.json</td></tr>
-      <tr><td>Model Status</td><td id="modal-status" style="color:var(--accent-green);font-weight:600">Ready &bull; Active</td></tr>
-    </table>
+      <table class="claude-table">
+        <tr>
+          <td>Architecture</td>
+          <td id="modal-model-name">AlzheimersXGBoost</td>
+        </tr>
+        <tr>
+          <td>Algorithm</td>
+          <td>XGBoost (Extreme Gradient Boosting 3.4.1)</td>
+        </tr>
+        <tr>
+          <td>Dataset Source</td>
+          <td>datasets/alzheimers_disease_data.csv (2,149 records)</td>
+        </tr>
+        <tr>
+          <td>Input Features</td>
+          <td>32 Biomarkers (MMSE, ADL, Memory, Age, Lifestyle)</td>
+        </tr>
+        <tr>
+          <td>Output Target</td>
+          <td>Diagnosis: 0 (Non-Alzheimer's) vs 1 (Alzheimer's)</td>
+        </tr>
+        <tr>
+          <td>Accuracy / ROC-AUC</td>
+          <td style="color:var(--accent-green);font-weight:600">95.35% Accuracy &bull; 94.11% ROC-AUC</td>
+        </tr>
+        <tr>
+          <td>Environment</td>
+          <td id="modal-env">development</td>
+        </tr>
+        <tr>
+          <td>Checkpoint Path</td>
+          <td id="modal-checkpoint" style="font-size:11px">public/checkpoints/xgboost_alzheimers.json</td>
+        </tr>
+        <tr>
+          <td>Model Status</td>
+          <td id="modal-status" style="color:var(--accent-green);font-weight:600">Ready &bull; Active</td>
+        </tr>
+      </table>
 
-    <div style="margin-top:20px;display:flex;justify-content:flex-end">
-      <button class="cmd-pill" style="padding:6px 14px;background:var(--accent-terracotta);color:#fff;border:none;" onclick="closeModelModal()">
-        Close
-      </button>
+      <div style="margin-top:20px;display:flex;justify-content:flex-end">
+        <button class="cmd-pill" style="padding:6px 14px;background:var(--accent-terracotta);color:#fff;border:none;"
+          onclick="closeModelModal()">
+          Close
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Toast Container -->
-<div class="toast-box" id="toast-box"></div>
+  <!-- Toast Container -->
+  <div class="toast-box" id="toast-box"></div>
 
-<!-- External JavaScript -->
-<script src="/js/dynamic-island.js"></script>
-<script src="/js/app.js?v=3.3"></script>
+  <!-- External JavaScript -->
+  <script src="/js/dynamic-island.js"></script>
+  <script src="/js/app.js?v=3.9"></script>
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+  <script src="/js/voice-consultation.js?v=52"></script>
 
 </body>
+
 </html>
