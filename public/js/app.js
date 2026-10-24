@@ -1423,7 +1423,7 @@ function renderProfileSlideCard(formId) {
     <div class="profile-slide-card" id="${formId}">
       <div class="profile-slide-header">
         <div class="profile-slide-title">
-          <svg class="profile-slide-title-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <svg class="profile-slide-title-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
           </svg>
           <span>Data Diri &amp; Klinis Pasien</span>
@@ -1433,9 +1433,20 @@ function renderProfileSlideCard(formId) {
 
       <!-- Phase label bar -->
       <div class="profile-phase-bar" id="${formId}_phasebar">
-        <span class="profile-phase-tag phase-reguler">📋 Reguler</span>
-        <span class="profile-phase-sep">→</span>
-        <span class="profile-phase-tag phase-advanced">🔬 Klinis Lanjutan</span>
+        <div class="profile-phase-steps">
+          <span class="profile-phase-tag phase-reguler ${initialStep <= 9 ? 'is-active' : 'is-completed'}" id="${formId}_tag_reguler">
+            <span class="phase-tag-icon">${initialStep > 9 ? '✓' : '📋'}</span>
+            <span>Reguler</span>
+          </span>
+          <svg class="profile-phase-sep" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          <span class="profile-phase-tag phase-advanced ${initialStep >= 10 ? 'is-active' : 'is-upcoming'}" id="${formId}_tag_advanced">
+            <span class="phase-tag-icon">🔬</span>
+            <span>Klinis Lanjutan</span>
+          </span>
+        </div>
+        <span class="profile-progress-pct" id="${formId}_pct">${Math.round(initialProgress)}%</span>
       </div>
 
       <div class="profile-progress-bar">
@@ -2308,8 +2319,30 @@ function applySlideTransition(formId, direction = 'next') {
     counter.textContent = `${form.currentStep} / ${form.totalSteps}`;
   }
 
+  const pct = Math.round((form.currentStep / form.totalSteps) * 100);
   if (progress) {
-    progress.style.width = `${(form.currentStep / form.totalSteps) * 100}%`;
+    progress.style.width = `${pct}%`;
+  }
+
+  const pctEl = document.getElementById(`${formId}_pct`);
+  if (pctEl) {
+    pctEl.textContent = `${pct}%`;
+  }
+
+  const tagReguler = document.getElementById(`${formId}_tag_reguler`);
+  const tagAdvanced = document.getElementById(`${formId}_tag_advanced`);
+  if (tagReguler && tagAdvanced) {
+    if (form.currentStep <= 9) {
+      tagReguler.className = 'profile-phase-tag phase-reguler is-active';
+      const icon = tagReguler.querySelector('.phase-tag-icon');
+      if (icon) icon.textContent = '📋';
+      tagAdvanced.className = 'profile-phase-tag phase-advanced is-upcoming';
+    } else {
+      tagReguler.className = 'profile-phase-tag phase-reguler is-completed';
+      const icon = tagReguler.querySelector('.phase-tag-icon');
+      if (icon) icon.textContent = '✓';
+      tagAdvanced.className = 'profile-phase-tag phase-advanced is-active';
+    }
   }
 
   if (btnPrev) {

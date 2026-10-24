@@ -92,6 +92,19 @@ def serve_js(filename):
     return send_from_directory("public/js", filename)
 
 
+@app.route("/api/firebase-config", methods=["GET"])
+def api_firebase_config():
+    """Returns Firebase project credentials from .env to the client."""
+    return jsonify({
+        "apiKey": os.getenv("FIREBASE_API_KEY", ""),
+        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", ""),
+        "projectId": os.getenv("FIREBASE_PROJECT_ID", ""),
+        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", ""),
+        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", ""),
+        "appId": os.getenv("FIREBASE_APP_ID", "")
+    })
+
+
 # -----------------------------------------------------------------------
 # API — Status
 # -----------------------------------------------------------------------

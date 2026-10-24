@@ -3094,7 +3094,8 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
 }
 
 .profile-slide-title {
@@ -3102,38 +3103,128 @@ html, body {
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .profile-slide-title-icon {
   color: var(--accent-terracotta);
+  flex-shrink: 0;
 }
 
 .profile-slide-step-counter {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--accent-terracotta);
-  background: rgba(217, 119, 87, 0.10);
-  padding: 3px 9px;
-  border-radius: 12px;
+  background: rgba(217, 119, 87, 0.12);
+  border: 1px solid rgba(217, 119, 87, 0.25);
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
+/* ─── Phase Bar & Progress ─── */
+.profile-phase-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 8px;
+  margin: 0;
+}
+
+.profile-phase-steps {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.profile-phase-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.01em;
+  transition: all 0.22s ease;
+  line-height: 1.35;
+}
+
+/* Reguler Tag States */
+.profile-phase-tag.phase-reguler.is-active {
+  background: rgba(217, 119, 87, 0.14);
+  border: 1px solid rgba(217, 119, 87, 0.32);
+  color: var(--accent-terracotta);
+  box-shadow: 0 1px 3px rgba(217, 119, 87, 0.08);
+}
+
+.profile-phase-tag.phase-reguler.is-completed {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+}
+
+/* Advanced Tag States */
+.profile-phase-tag.phase-advanced.is-upcoming {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--border-subtle, rgba(255, 255, 255, 0.14));
+  color: var(--text-tertiary);
+  opacity: 0.6;
+}
+
+.profile-phase-tag.phase-advanced.is-active {
+  background: rgba(79, 130, 195, 0.16);
+  border: 1px solid rgba(79, 130, 195, 0.38);
+  color: #5c9bf5;
+  box-shadow: 0 1px 4px rgba(79, 130, 195, 0.12);
+}
+
+.phase-tag-icon {
+  font-size: 10.5px;
+  line-height: 1;
+}
+
+.profile-phase-sep {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.profile-progress-pct {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Progress Track and Fill */
 .profile-progress-bar {
   width: 100%;
-  height: 4px;
-  background: rgba(0, 0, 0, 0.06);
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 99px;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+[data-theme="light"] .profile-progress-bar {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.03);
 }
 
 .profile-progress-fill {
   height: 100%;
   width: 25%;
-  background: linear-gradient(90deg, var(--accent-terracotta), #C084FC);
+  background: linear-gradient(90deg, #D97757 0%, #E87A5D 55%, #B87CF8 100%);
   border-radius: 99px;
-  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 10px rgba(217, 119, 87, 0.4);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Sliding Window and Track */
@@ -3149,42 +3240,30 @@ html, body {
   position: relative;
 }
 
-/* ─── Phase Bar (Reguler → Klinis Lanjutan) ─── */
-.profile-phase-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px 0;
-}
-.profile-phase-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 12px;
-  letter-spacing: 0.3px;
-}
-.profile-phase-tag.phase-reguler { background: rgba(217,119,87,0.1); color: var(--accent-terracotta); }
-.profile-phase-tag.phase-advanced { background: rgba(79,130,195,0.1); color: #4F82C3; }
-.profile-phase-sep { font-size: 11px; color: var(--text-tertiary); }
-
-/* ─── Section Label per slide ─── */
+/* ─── Section Label per slide (fixed flex stretch) ─── */
 .tf-section-label {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   gap: 5px;
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 8px;
-  margin-bottom: -4px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  margin-bottom: 0px;
 }
-.tf-section-label.reguler-label { background: rgba(217,119,87,0.1); color: var(--accent-terracotta); }
-.tf-section-label.advanced-label { background: rgba(79,130,195,0.1); color: #4F82C3; }
+.tf-section-label.reguler-label {
+  background: rgba(217, 119, 87, 0.1);
+  border: 1px solid rgba(217, 119, 87, 0.22);
+  color: var(--accent-terracotta);
+}
+.tf-section-label.advanced-label {
+  background: rgba(79, 130, 195, 0.1);
+  border: 1px solid rgba(79, 130, 195, 0.25);
+  color: #5c9bf5;
+}
 
 /* ─── Advanced Group Wrapper ─── */
 .tf-adv-group { display: flex; flex-direction: column; gap: 14px; }
