@@ -12,12 +12,12 @@
   // Fallback configuration template.
   // Anda dapat mengisi kredensial di file .env atau langsung di objek ini:
   var DEFAULT_CONFIG = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyD8XfBnr37fKwudLuJRWRAi2wMjU9KG838",
+    authDomain: "neura-f20b9.firebaseapp.com",
+    projectId: "neura-f20b9",
+    storageBucket: "neura-f20b9.firebasestorage.app",
+    messagingSenderId: "372520569422",
+    appId: "1:372520569422:web:f200b0ccee225284f5911f",
   };
 
   var app = null;
@@ -35,9 +35,12 @@
     if (initPromise) return initPromise;
 
     initPromise = new Promise(function (resolve) {
-      // Coba fetch dari server /api/firebase-config
+      // Coba fetch dari server /api/firebase-config, dengan fallback langsung ke DEFAULT_CONFIG
       fetch('/api/firebase-config')
-        .then(function (res) { return res.json(); })
+        .then(function (res) {
+          if (!res.ok) return DEFAULT_CONFIG;
+          return res.json().catch(function () { return DEFAULT_CONFIG; });
+        })
         .then(function (serverCfg) {
           var config = DEFAULT_CONFIG;
           if (isConfigValid(serverCfg)) {
@@ -103,6 +106,10 @@
   // Expose global module
   window.NeuraFirebase = {
     init: initFirebase,
+    get app() { return app; },
+    get auth() { return auth; },
+    get db() { return db; },
+    get googleProvider() { return googleProvider; },
     getApp: function () { return app; },
     getAuth: function () { return auth; },
     getDb: function () { return db; },

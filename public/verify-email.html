@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi Email — Neura AI</title>
+  <meta name="description" content="Verifikasi akun klinis Neura AI Anda untuk mengakses Workspace & 32 Biomarker Pasien." />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       Neura Email Verify — Warm Linen + Terracotta Design
+       ========================================================= */
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --color-bg: #FAF9F5;
+      --color-surface: #FFFFFF;
+      --color-text: #1F1E1D;
+      --color-text-muted: #63615A;
+      --color-text-subtle: #9B9890;
+      --color-border: #EAE6DC;
+      --accent-primary: #D97757;
+      --accent-primary-hover: #C66545;
+      --accent-primary-light: #FBF2EE;
+      --accent-green: #2E7D32;
+      --accent-green-bg: #E8F5E9;
+      --accent-red: #C62828;
+      --accent-red-bg: #FFEBEE;
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.07);
+      --radius-lg: 24px;
+      --transition: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 10%, rgba(217, 119, 87, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 90%, rgba(217, 119, 87, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Brand header ── */
+    .verify-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.5s var(--transition) both;
+    }
+
+    .verify-brand-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .verify-brand-logo svg { color: #fff; }
+
+    .verify-brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+
+    .verify-brand-name span {
+      color: var(--accent-primary);
+    }
+
+    /* ── Card ── */
+    .verify-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(234, 230, 220, 0.7);
+      text-align: center;
+      position: relative;
+      animation: fadeUp 0.55s var(--transition) 0.05s both;
+    }
+
+    /* ── State icon ── */
+    .verify-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      transition: var(--transition);
+    }
+
+    .verify-icon-wrap.state-loading {
+      background: #F0EEE6;
+    }
+
+    .verify-icon-wrap.state-success {
+      background: var(--accent-green-bg);
+    }
+
+    .verify-icon-wrap.state-error {
+      background: var(--accent-red-bg);
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(217, 119, 87, 0.2);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ── Typography ── */
+    .verify-title {
+      font-family: var(--font-serif);
+      font-size: 1.65rem;
+      font-weight: 500;
+      color: var(--color-text);
+      line-height: 1.25;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .verify-subtitle {
+      font-size: 0.925rem;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .verify-subtitle strong {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+
+    /* ── Badge ── */
+    .verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .verify-badge.badge-loading {
+      background: #F0EEE6;
+      color: var(--color-text-muted);
+    }
+
+    .verify-badge.badge-success {
+      background: var(--accent-green-bg);
+      color: var(--accent-green);
+    }
+
+    .verify-badge.badge-error {
+      background: var(--accent-red-bg);
+      color: var(--accent-red);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Countdown bar ── */
+    .verify-countdown-wrap {
+      margin: 20px 0 28px;
+      display: none;
+    }
+
+    .verify-countdown-wrap.visible { display: block; }
+
+    .verify-countdown-label {
+      font-size: 0.8rem;
+      color: var(--color-text-subtle);
+      margin-bottom: 10px;
+    }
+
+    .verify-progress-bar {
+      height: 4px;
+      background: #EAE6DC;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .verify-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-primary), #E8856A);
+      border-radius: 99px;
+      width: 100%;
+      transition: width 1s linear;
+    }
+
+    /* ── Buttons ── */
+    .verify-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .verify-btn-primary {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    .verify-btn-primary:hover {
+      background: var(--accent-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(217, 119, 87, 0.35);
+    }
+
+    .verify-btn-secondary {
+      background: transparent;
+      color: var(--color-text-muted);
+      border: 1.5px solid var(--color-border);
+      margin-top: 10px;
+    }
+
+    .verify-btn-secondary:hover {
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    /* ── Divider ── */
+    .verify-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: 28px 0;
+    }
+
+    /* ── Security note ── */
+    .verify-security {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--color-text-subtle);
+    }
+
+    /* ── Footer ── */
+    .verify-footer {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--color-text-subtle);
+      animation: fadeUp 0.6s var(--transition) 0.15s both;
+    }
+
+    .verify-footer a {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .verify-footer a:hover { text-decoration: underline; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-scale-in {
+      animation: scaleIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    /* ── Checkmark SVG ── */
+    .check-circle {
+      width: 36px;
+      height: 36px;
+    }
+
+    .x-circle {
+      width: 36px;
+      height: 36px;
+    }
+
+    /* Responsive */
+    @media (max-width: 520px) {
+      .verify-card { padding: 36px 24px; }
+      .verify-title { font-size: 1.45rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Brand -->
+  <div class="verify-brand">
+    <div class="verify-brand-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+      </svg>
+    </div>
+    <span class="verify-brand-name">Neura <span>AI</span></span>
+  </div>
+
+  <!-- Card -->
+  <div class="verify-card" id="verify-card">
+
+    <!-- Loading state -->
+    <div id="state-loading">
+      <div class="verify-badge badge-loading">
+        <span class="badge-dot"></span>
+        Memproses Verifikasi
+      </div>
+      <div class="verify-icon-wrap state-loading">
+        <div class="spinner"></div>
+      </div>
+      <h1 class="verify-title">Memverifikasi Akun Anda</h1>
+      <p class="verify-subtitle">
+        Mohon tunggu sebentar...<br/>
+        Kami sedang mengaktifkan akun klinis Anda.
+      </p>
+    </div>
+
+    <!-- Success state (hidden by default) -->
+    <div id="state-success" style="display:none;">
+      <div class="verify-badge badge-success animate-scale-in">
+        <span class="badge-dot"></span>
+        Akun Terverifikasi
+      </div>
+      <div class="verify-icon-wrap state-success animate-scale-in">
+        <svg class="check-circle" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <h1 class="verify-title">Email Berhasil Diverifikasi!</h1>
+      <p class="verify-subtitle" id="success-subtitle">
+        Akun klinis <strong id="verified-email"></strong> kini aktif.<br/>
+        Anda akan diarahkan ke Workspace dalam beberapa detik.
+      </p>
+
+      <div class="verify-countdown-wrap visible" id="countdown-wrap">
+        <p class="verify-countdown-label">Mengalihkan ke Workspace dalam <strong id="countdown-num">5</strong> detik...</p>
+        <div class="verify-progress-bar">
+          <div class="verify-progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <a href="/app" class="verify-btn verify-btn-primary" id="btn-go-workspace">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+        </svg>
+        Buka Workspace Pasien
+      </a>
+
+      <div class="verify-divider"></div>
+      <div class="verify-security">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Sesi klinis terenkripsi AES-256 · Neura AI
+      </div>
+    </div>
+
+    <!-- Error state (hidden by default) -->
+    <div id="state-error" style="display:none;">
+      <div class="verify-badge badge-error animate-scale-in">
+        <span class="badge-dot"></span>
+        Verifikasi Gagal
+      </div>
+      <div class="verify-icon-wrap state-error animate-scale-in">
+        <svg class="x-circle" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <h1 class="verify-title">Tautan Tidak Valid</h1>
+      <p class="verify-subtitle" id="error-subtitle">
+        Tautan verifikasi telah kadaluarsa atau sudah digunakan.<br/>
+        Silakan minta tautan verifikasi baru.
+      </p>
+
+      <a href="/welcome?request_verify=true" class="verify-btn verify-btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.1"/>
+        </svg>
+        Kirim Ulang Email Verifikasi
+      </a>
+      <a href="/welcome" class="verify-btn verify-btn-secondary">
+        Kembali ke Halaman Masuk
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="verify-footer">
+    Neura AI &copy; 2024 &mdash; <a href="/welcome">Portal Klinis</a> &bull; <a href="mailto:support@neura.ai">Bantuan</a>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var REDIRECT_DELAY = 5; // detik sebelum redirect otomatis
+      var countdownTimer = null;
+      var progressTimer = null;
+
+      function showState(state) {
+        document.getElementById('state-loading').style.display = state === 'loading' ? 'block' : 'none';
+        document.getElementById('state-success').style.display = state === 'success' ? 'block' : 'none';
+        document.getElementById('state-error').style.display   = state === 'error'   ? 'block' : 'none';
+      }
+
+      function startRedirectCountdown() {
+        var remaining = REDIRECT_DELAY;
+        var fillEl = document.getElementById('progress-fill');
+        var numEl  = document.getElementById('countdown-num');
+
+        if (fillEl) fillEl.style.width = '100%';
+
+        countdownTimer = setInterval(function () {
+          remaining--;
+          if (numEl) numEl.textContent = remaining;
+
+          // Shrink progress bar smoothly
+          if (fillEl) {
+            fillEl.style.width = Math.max(0, (remaining / REDIRECT_DELAY) * 100) + '%';
+          }
+
+          if (remaining <= 0) {
+            clearInterval(countdownTimer);
+            window.location.href = '/app';
+          }
+        }, 1000);
+      }
+
+      function handleSuccess(email) {
+        var emailEl = document.getElementById('verified-email');
+        if (emailEl && email) emailEl.textContent = email;
+        showState('success');
+        startRedirectCountdown();
+      }
+
+      function handleError(message) {
+        var subtitleEl = document.getElementById('error-subtitle');
+        if (subtitleEl && message) {
+          subtitleEl.innerHTML = message + '<br/>Silakan minta tautan verifikasi baru.';
+        }
+        showState('error');
+      }
+
+      function translateVerifyError(code) {
+        switch (code) {
+          case 'auth/expired-action-code':
+            return 'Tautan verifikasi telah <strong>kadaluarsa</strong>.';
+          case 'auth/invalid-action-code':
+            return 'Tautan verifikasi <strong>tidak valid</strong> atau sudah pernah digunakan.';
+          case 'auth/user-disabled':
+            return 'Akun ini telah <strong>dinonaktifkan</strong>. Hubungi administrator.';
+          case 'auth/user-not-found':
+            return 'Akun dengan email ini <strong>tidak ditemukan</strong>.';
+          default:
+            return 'Terjadi kesalahan saat memverifikasi. Kode: <code>' + code + '</code>';
+        }
+      }
+
+      function runVerification() {
+        var params = new URLSearchParams(window.location.search);
+        var mode    = params.get('mode');
+        var oobCode = params.get('oobCode');
+        var email   = params.get('email') || '';
+
+        // Firebase redirects with mode=verifyEmail and oobCode in the URL
+        if (mode !== 'verifyEmail' || !oobCode) {
+          // No code: check if already verified or redirect to login
+          if (window.NeuraFirebase) {
+            window.NeuraFirebase.init().then(function (fb) {
+              if (fb && fb.auth) {
+                fb.auth.onAuthStateChanged(function (user) {
+                  if (user && user.emailVerified) {
+                    handleSuccess(user.email);
+                  } else {
+                    handleError('Tautan verifikasi <strong>tidak lengkap</strong> atau tidak valid.');
+                  }
+                });
+              } else {
+                handleError('Tautan verifikasi <strong>tidak ditemukan</strong> dalam URL.');
+              }
+            });
+          } else {
+            handleError('Tautan verifikasi <strong>tidak ditemukan</strong> dalam URL.');
+          }
+          return;
+        }
+
+        // Apply the verification code via Firebase
+        window.NeuraFirebase.init().then(function (fb) {
+          if (!fb || !fb.auth) {
+            handleError('Layanan autentikasi tidak tersedia. Coba refresh halaman.');
+            return;
+          }
+
+          fb.auth.applyActionCode(oobCode)
+            .then(function () {
+              // Verification successful — reload user if signed in
+              var currentUser = fb.auth.currentUser;
+              var reloadPromise = currentUser ? currentUser.reload() : Promise.resolve();
+              return reloadPromise.then(function () {
+                var verifiedEmail = (currentUser && currentUser.email) || email;
+                handleSuccess(verifiedEmail);
+              });
+            })
+            .catch(function (err) {
+              // Check if already verified (code already used)
+              var currentUser = fb.auth.currentUser;
+              if (currentUser) {
+                currentUser.reload().then(function () {
+                  if (currentUser.emailVerified) {
+                    // Already verified — still show success
+                    handleSuccess(currentUser.email);
+                  } else {
+                    handleError(translateVerifyError(err.code));
+                  }
+                }).catch(function () {
+                  handleError(translateVerifyError(err.code));
+                });
+              } else {
+                handleError(translateVerifyError(err.code));
+              }
+            });
+        }).catch(function () {
+          handleError('Gagal menghubungi layanan autentikasi. Periksa koneksi internet Anda.');
+        });
+      }
+
+      // Wait for Firebase to be ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runVerification);
+      } else {
+        runVerification();
+      }
+    })();
+  </script>
+
+</body>
+</html>

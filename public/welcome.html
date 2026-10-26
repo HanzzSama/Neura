@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="/css/dynamic-island.css?v=40">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=40">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
-  <link rel="stylesheet" href="/css/auth-hero.css?v=1">
+  <link rel="stylesheet" href="/css/auth-hero.css?v=51">
 </head>
 
 <body>
@@ -153,209 +153,393 @@
       </div>
     </div>
 
-    <!-- Right Column: Interactive Clinical Auth Portal with Ambient Neural Backdrop -->
+    <!-- Right Column: Neural Precision Mapping Visual (Tanpa Button & Tanpa Shadow) -->
     <div class="hero-right" id="hero-right">
-      <!-- Neural Wireframe Visual (Displayed by default) -->
-      <div class="hero-brain-showcase" id="hero-brain-showcase">
-        <img src="/assets/hero_brain_wireframe.jpg?v=34" alt="Neural Precision Mapping — Neura AI" class="hero-brain-img" loading="eager" />
-        <button type="button" class="hero-brain-auth-trigger" id="hero-brain-auth-trigger" title="Buka Form Masuk Portal Klinis">
-          <span class="auth-trigger-pulse"></span>
-          <span>Akses Portal Klinis (Masuk)</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Neura Interactive Auth Card (Controlled via button Masuk) -->
-      <div class="hero-auth-card" id="hero-auth-card" aria-hidden="true">
-        <!-- Close button to dismiss back to brain visual -->
-        <button type="button" class="auth-card-close-btn" id="auth-card-close-btn" title="Tutup Form Masuk" aria-label="Tutup Form">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-
-        <!-- Card Header -->
-        <div class="auth-card-header">
-          <div class="auth-header-badge-row">
-            <span class="auth-status-pill">
-              <span class="auth-status-dot"></span>
-              <span>Sistem Klinis Terverifikasi</span>
-            </span>
-            <span class="auth-security-tag" title="Keamanan Data Medis Terenkripsi">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <span>AES-256</span>
-            </span>
-          </div>
-          <h2 class="auth-card-title">Akses Portal Klinis</h2>
-          <p class="auth-card-subtitle">Masuk atau registrasi untuk mengakses Workspace &amp; 32 Biomarker Neura.</p>
-        </div>
-
-        <!-- Google One-Click Auth Button -->
-        <button type="button" class="auth-google-btn" id="auth-google-btn" title="Autentikasi Cepat dengan Akun Google">
-          <svg class="auth-google-icon" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span class="auth-btn-text">Lanjutkan dengan Google</span>
-          <span class="auth-btn-spinner"></span>
-        </button>
-
-        <!-- Divider -->
-        <div class="auth-divider">
-          <span class="auth-divider-line"></span>
-          <span class="auth-divider-text">atau dengan email</span>
-          <span class="auth-divider-line"></span>
-        </div>
-
-        <!-- Segmented Tab Switcher (Slider Animation) -->
-        <div class="auth-tabs-nav" id="auth-tabs-nav">
-          <div class="auth-tab-glider" id="auth-tab-glider"></div>
-          <button type="button" class="auth-tab-btn active" id="tab-login-btn">Masuk</button>
-          <button type="button" class="auth-tab-btn" id="tab-register-btn">Registrasi</button>
-        </div>
-
-        <!-- Notification / Error Box -->
-        <div class="auth-alert" id="auth-alert">
-          <svg class="auth-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <span id="auth-alert-text"></span>
-        </div>
-
-        <!-- Forms Slider Viewport -->
-        <div class="auth-slider-viewport">
-          <div class="auth-slider-track" id="auth-slider-track">
-            <!-- Pane 1: Login Form -->
-            <div class="auth-pane login-pane">
-              <form class="auth-form" id="auth-login-form">
-                <div class="auth-field-group">
-                  <label class="auth-field-label" for="login-email">Email Institusi / Medis</label>
-                  <div class="auth-input-wrapper">
-                    <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="2" y="4" width="20" height="16" rx="2"/>
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                    </svg>
-                    <input type="email" class="auth-input" id="login-email" placeholder="dokter@rumah-sakit.id" required autocomplete="email" />
-                  </div>
-                </div>
-
-                <div class="auth-field-group">
-                  <label class="auth-field-label" for="login-password">Kata Sandi</label>
-                  <div class="auth-input-wrapper">
-                    <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <input type="password" class="auth-input" id="login-password" placeholder="••••••••" required autocomplete="current-password" />
-                    <button type="button" class="auth-eye-btn" data-target="login-password" aria-label="Lihat kata sandi">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <button type="submit" class="auth-submit-btn" id="login-submit-btn">
-                  <span class="auth-btn-text">Masuk ke Workspace</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                  <span class="auth-btn-spinner"></span>
-                </button>
-              </form>
-            </div>
-
-            <!-- Pane 2: Register Form -->
-            <div class="auth-pane register-pane">
-              <form class="auth-form" id="auth-register-form">
-                <div class="auth-field-group">
-                  <label class="auth-field-label" for="register-name">Nama Lengkap &amp; Gelar</label>
-                  <div class="auth-input-wrapper">
-                    <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    <input type="text" class="auth-input" id="register-name" placeholder="dr. Nama Lengkap, Sp.S" required autocomplete="name" />
-                  </div>
-                </div>
-
-                <div class="auth-field-group">
-                  <label class="auth-field-label" for="register-email">Email Institusi / Medis</label>
-                  <div class="auth-input-wrapper">
-                    <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="2" y="4" width="20" height="16" rx="2"/>
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                    </svg>
-                    <input type="email" class="auth-input" id="register-email" placeholder="dokter@rumah-sakit.id" required autocomplete="email" />
-                  </div>
-                </div>
-
-                <div class="auth-field-group">
-                  <label class="auth-field-label" for="register-password">Kata Sandi Baru</label>
-                  <div class="auth-input-wrapper">
-                    <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <input type="password" class="auth-input" id="register-password" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password" />
-                    <button type="button" class="auth-eye-btn" data-target="register-password" aria-label="Lihat kata sandi">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <button type="submit" class="auth-submit-btn" id="register-submit-btn">
-                  <span class="auth-btn-text">Buat Akun Klinis</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                  <span class="auth-btn-spinner"></span>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <!-- Logged In View (Interactive Profile State) -->
-        <div class="auth-logged-view" id="auth-logged-view">
-          <div class="auth-avatar-wrap" id="auth-logged-avatar">
-            <div class="auth-avatar-fallback">D</div>
-          </div>
-          <h3 class="auth-logged-name" id="auth-logged-name">dr. Pengguna Klinis</h3>
-          <p class="auth-logged-email" id="auth-logged-email">dokter@neura.ai</p>
-          <div class="auth-logged-badge">
-            <span class="auth-status-dot"></span>
-            <span>Sesi Klinis Aktif &bull; Terverifikasi</span>
-          </div>
-          <div class="auth-logged-actions">
-            <a href="/app" class="auth-open-app-btn">
-              <span>Buka Workspace Pasien</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-              </svg>
-            </a>
-            <button type="button" class="auth-logout-btn" id="auth-logout-btn">Ganti Akun / Keluar</button>
-          </div>
-        </div>
-      </div>
+      <img src="/assets/hero_brain_wireframe.jpg?v=34" alt="Neural Precision Mapping — Neura AI" class="hero-brain-img" loading="eager" />
     </div>
   </section>
+
+  <!-- Backdrop Overlay for 50vw Auth Drawer -->
+  <div class="auth-drawer-overlay" id="auth-drawer-overlay" aria-hidden="true"></div>
+
+  <!-- Neura Clinical Auth Drawer (Height 100vh, Width 50%, Slide-In dari Kanan Layar ke Kiri) -->
+  <aside class="hero-auth-drawer" id="hero-auth-card" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Portal Masuk Klinis Neura">
+    <!-- Close button (x) -->
+    <button type="button" class="auth-card-close-btn" id="auth-card-close-btn" title="Tutup Form Masuk" aria-label="Tutup Form">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- Hidden tabs & glider for backward-compatible JS state synchronization -->
+    <div class="auth-tabs-nav visually-hidden" id="auth-tabs-nav" aria-hidden="true">
+      <div class="auth-tab-glider" id="auth-tab-glider"></div>
+      <button type="button" class="auth-tab-btn active" id="tab-login-btn">Masuk</button>
+      <button type="button" class="auth-tab-btn" id="tab-register-btn">Registrasi</button>
+      <span id="auth-divider-text">atau masuk dengan email</span>
+    </div>
+
+    <div class="auth-drawer-inner">
+      <!-- 3-Component Grid Layout (Matching Reference Mockup) -->
+      <div class="auth-composite-grid">
+
+        <!-- Left Column: Component 1 (Form Input Transparent) + Component 2 (References Dark) -->
+        <div class="auth-grid-left">
+
+          <!-- COMPONENT 1: Transparent Form Card -->
+          <div class="auth-card-comp auth-comp-form-card" id="auth-comp-form-card">
+            <!-- Header bar: Brand & Switch Mode -->
+            <div class="comp1-top-row">
+              <span class="comp1-brand-logo">Neura AI_</span>
+              <button type="button" class="comp1-mode-toggle" id="comp1-mode-toggle" title="Ganti mode formulir">Sign up</button>
+            </div>
+
+            <!-- Title & Google One-Click Pill -->
+            <div class="comp1-title-row">
+              <h2 class="comp1-title" id="comp1-title">Log in</h2>
+              <button type="button" class="comp1-google-pill" id="auth-google-btn" title="Masuk cepat dengan Google">
+                <svg class="comp1-google-icon" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span id="auth-google-btn-text">Google</span>
+                <span class="auth-btn-spinner"></span>
+              </button>
+            </div>
+
+            <!-- Error / Alert Notification Box -->
+            <div class="auth-alert" id="auth-alert">
+              <svg class="auth-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <span id="auth-alert-text"></span>
+            </div>
+
+            <!-- Forms Viewport (Sliding Panes) -->
+            <div class="auth-slider-viewport">
+              <div class="auth-slider-track" id="auth-slider-track">
+
+                <!-- Pane 1: Log in Form -->
+                <div class="auth-pane login-pane">
+                  <form class="auth-form" id="auth-login-form">
+                    <!-- Pill Input 1: Email -->
+                    <div class="comp-input-pill">
+                      <span class="comp-input-badge">@</span>
+                      <input type="email" class="comp-pill-input" id="login-email" placeholder="e-mail address" required autocomplete="email" />
+                    </div>
+
+                    <!-- Pill Input 2: Password -->
+                    <div class="comp-input-pill">
+                      <span class="comp-input-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </span>
+                      <input type="password" class="comp-pill-input" id="login-password" placeholder="password" required autocomplete="current-password" />
+                      <button type="button" class="comp-input-action-btn" id="login-forgot-btn">I forgot</button>
+                      <button type="button" class="auth-eye-btn comp-eye-btn" data-target="login-password" aria-label="Lihat kata sandi">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Bottom Action Row: Quote + Capsule Arrow Submit Button -->
+                    <div class="comp1-action-row">
+                      <p class="comp1-quote-text" id="comp1-desc-text">
+                        Tidak semua keputusan klinis mudah, evaluasi 32 biomarker Neura hadir membantu ketepatan diagnosis presisi.
+                      </p>
+                      <button type="submit" class="comp1-capsule-submit" id="login-submit-btn" title="Masuk ke Workspace">
+                        <span class="capsule-circle-arrow">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"/>
+                          </svg>
+                        </span>
+                        <span class="auth-btn-spinner"></span>
+                      </button>
+                    </div>
+
+                    <!-- Footer Link -->
+                    <a href="#about" class="comp1-more-info" id="comp1-more-info">Click here for more info.</a>
+                  </form>
+                </div>
+
+                <!-- Pane 2: Sign up (Registrasi) Form -->
+                <div class="auth-pane register-pane">
+                  <form class="auth-form" id="auth-register-form">
+                    <!-- Pill Input 0: Nama Lengkap -->
+                    <div class="comp-input-pill">
+                      <span class="comp-input-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                          <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                      </span>
+                      <input type="text" class="comp-pill-input" id="register-name" placeholder="full name & title" required autocomplete="name" />
+                    </div>
+
+                    <!-- Pill Input 1: Email -->
+                    <div class="comp-input-pill">
+                      <span class="comp-input-badge">@</span>
+                      <input type="email" class="comp-pill-input" id="register-email" placeholder="e-mail address" required autocomplete="email" />
+                    </div>
+
+                    <!-- Pill Input 2: Password -->
+                    <div class="comp-input-pill">
+                      <span class="comp-input-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </span>
+                      <input type="password" class="comp-pill-input" id="register-password" placeholder="create password (min. 6)" required minlength="6" autocomplete="new-password" />
+                      <button type="button" class="auth-eye-btn comp-eye-btn" data-target="register-password" aria-label="Lihat kata sandi">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Bottom Action Row: Quote + Capsule Arrow Submit Button -->
+                    <div class="comp1-action-row">
+                      <p class="comp1-quote-text">
+                        Registrasi akun klinis praktisi medis untuk validasi 32 biomarker terenkripsi standar AES-256.
+                      </p>
+                      <button type="submit" class="comp1-capsule-submit" id="register-submit-btn" title="Buat Akun Klinis">
+                        <span class="capsule-circle-arrow">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"/>
+                          </svg>
+                        </span>
+                        <span class="auth-btn-spinner"></span>
+                      </button>
+                    </div>
+
+                    <!-- Footer Link -->
+                    <a href="#about" class="comp1-more-info">Click here for more info.</a>
+                  </form>
+                </div>
+
+                <!-- Pane 3: Verify Email Slide (Langkah 2) -->
+                <div class="auth-pane verify-pane" id="auth-verify-pane">
+                  <div class="step-card-content">
+                    <div class="step-icon-wrap step-icon-verify">
+                      <svg class="step-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                      </svg>
+                      <span class="step-icon-ring"></span>
+                    </div>
+
+                    <div class="step-badge-pill">
+                      <span class="step-pulse-dot"></span>
+                      <span>Langkah 2 &bull; Verifikasi Akun</span>
+                    </div>
+
+                    <h3 class="step-title">Periksa Email Anda</h3>
+                    <p class="step-desc">
+                      Tautan aktivasi klinis telah dikirimkan ke:<br>
+                      <strong id="verify-email-display" class="verify-email-highlight">dokter@rumah-sakit.id</strong>
+                    </p>
+
+                    <div class="verify-instruction-box">
+                      <div class="verify-instruction-item">
+                        <span class="instruction-num">1</span>
+                        <span>Buka kotak masuk atau folder spam email Anda.</span>
+                      </div>
+                      <div class="verify-instruction-item">
+                        <span class="instruction-num">2</span>
+                        <span>Klik tautan verifikasi akun dari Neura AI.</span>
+                      </div>
+                      <div class="verify-instruction-item">
+                        <span class="instruction-num">3</span>
+                        <span>Klik tombol di bawah setelah verifikasi selesai.</span>
+                      </div>
+                    </div>
+
+                    <div class="verify-status-banner" id="verify-status-banner">
+                      <span class="verify-spinner-mini"></span>
+                      <span id="verify-status-banner-text">Menunggu aktivasi email Anda...</span>
+                    </div>
+
+                    <div class="step-actions">
+                      <button type="button" class="auth-submit-btn" id="btn-check-verified">
+                        <span class="auth-btn-text">Saya Sudah Verifikasi</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span class="auth-btn-spinner"></span>
+                      </button>
+
+                      <div class="verify-secondary-actions">
+                        <button type="button" class="auth-inline-link-btn" id="btn-resend-verification">
+                          &#9993; Kirim Ulang Tautan
+                        </button>
+                        <span class="verify-action-sep">&bull;</span>
+                        <button type="button" class="auth-inline-link-btn" id="btn-cancel-verify">
+                          Kembali ke Masuk
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pane 4: Welcome to Dashboard Slide (Langkah 3) -->
+                <div class="auth-pane welcome-pane" id="auth-welcome-pane">
+                  <div class="step-card-content">
+                    <div class="step-icon-wrap step-icon-welcome">
+                      <svg class="step-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <polyline points="9 12 11 14 15 10"/>
+                      </svg>
+                      <span class="step-icon-ring step-ring-success"></span>
+                    </div>
+
+                    <div class="step-badge-pill pill-success">
+                      <span class="step-pulse-dot dot-success"></span>
+                      <span>Akun Klinis Aktif &bull; Terverifikasi</span>
+                    </div>
+
+                    <h3 class="step-title" id="welcome-greeting-title">Selamat Datang!</h3>
+                    <p class="step-desc">
+                      Akun Anda telah terverifikasi secara resmi. Workspace dan model AI 32 Biomarker Alzheimer kini siap diakses.
+                    </p>
+
+                    <div class="welcome-stats-row">
+                      <div class="welcome-stat-col">
+                        <span class="stat-number">94.4%</span>
+                        <span class="stat-label">Akurasi ROC-AUC</span>
+                      </div>
+                      <div class="welcome-stat-col">
+                        <span class="stat-number">32</span>
+                        <span class="stat-label">Biomarker</span>
+                      </div>
+                      <div class="welcome-stat-col">
+                        <span class="stat-number">&lt;1.2s</span>
+                        <span class="stat-label">Inferensi</span>
+                      </div>
+                    </div>
+
+                    <div class="step-actions">
+                      <a href="/app" class="auth-submit-btn btn-to-dashboard" id="btn-go-to-dashboard">
+                        <span class="auth-btn-text">Buka Workspace Dashboard</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="5" y1="12" x2="19" y2="12"/>
+                          <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                      </a>
+                      <p class="welcome-auto-redirect-hint" id="welcome-redirect-hint">
+                        Mengalihkan otomatis dalam <span id="welcome-countdown">3</span> detik...
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Logged In View (Interactive Profile State) -->
+            <div class="auth-logged-view" id="auth-logged-view">
+              <div class="auth-avatar-wrap" id="auth-logged-avatar">
+                <div class="auth-avatar-fallback">D</div>
+              </div>
+              <h3 class="auth-logged-name" id="auth-logged-name">dr. Pengguna Klinis</h3>
+              <p class="auth-logged-email" id="auth-logged-email">dokter@neura.ai</p>
+              <div class="auth-logged-badge">
+                <span class="auth-status-dot"></span>
+                <span>Sesi Klinis Aktif &bull; Terverifikasi</span>
+              </div>
+              <div class="auth-logged-actions">
+                <a href="/app" class="auth-open-app-btn">
+                  <span>Buka Workspace Pasien</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                  </svg>
+                </a>
+                <button type="button" class="auth-logout-btn" id="auth-logout-btn">Ganti Akun / Keluar</button>
+              </div>
+            </div>
+
+          </div> <!-- /auth-comp-form-card -->
+
+          <!-- COMPONENT 2: Dark References Card -->
+          <div class="auth-card-comp auth-comp-ref-card" id="auth-comp-ref-card">
+            <div>
+              <h3 class="comp2-headline">References</h3>
+              <p class="comp2-sub">By Neura AI</p>
+            </div>
+            <div class="comp2-bottom-row">
+              <span class="comp2-metric-pill">ROC-AUC 0.933 &bull; 94.4% Akurasi</span>
+              <a href="#biomarkers" class="comp2-discover-link" id="comp2-discover-link" title="Pelajari riset klinis">
+                <span>Discover</span>
+              </a>
+            </div>
+          </div>
+
+        </div> <!-- /auth-grid-left -->
+
+        <!-- Right Column: COMPONENT 3 (Tall Showcase Card) -->
+        <div class="auth-grid-right">
+          <div class="auth-card-comp auth-comp-tall-card" id="auth-comp-tall-card">
+            <!-- Top typography & metadata -->
+            <div class="comp3-header-row">
+              <div class="comp3-date-hero">
+                <div class="comp3-month-hero" id="comp3-hero-month">Jan</div>
+                <div class="comp3-year-hero" id="comp3-hero-year">2026</div>
+              </div>
+              <div class="comp3-meta-info">
+                <span>Minimalism style</span>
+                <span>Typography</span>
+              </div>
+            </div>
+
+            <!-- Center art circle with frosted vertical strip -->
+            <div class="comp3-visual-stage">
+              <div class="comp3-peach-circle"></div>
+              <div class="comp3-frosted-strip">
+                <div class="frosted-strip-content">
+                  <div class="strip-text-day" id="comp3-strip-day">Selasa 06</div>
+                  <div class="strip-text-date" id="comp3-strip-date">Januari 2026</div>
+                  <div class="strip-text-brand">Neura AI</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Brand & Action Capsule -->
+            <div class="comp3-footer-row">
+              <div class="comp3-brand-signature">
+                <div class="comp3-cs-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 12a4 4 0 0 1 8 0"/>
+                  </svg>
+                </div>
+                <span class="comp3-brand-title">Creative.style</span>
+              </div>
+
+              <a href="/app" class="comp3-click-capsule" id="comp3-click-capsule" title="Kunjungi Workspace Klinis">
+                <span>Click Here</span>
+                <span class="comp3-capsule-arrow">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div> <!-- /auth-grid-right -->
+
+      </div> <!-- /auth-composite-grid -->
+    </div> <!-- /auth-drawer-inner -->
+  </aside>
 
 
   <!-- Live App Interactive Showcase Window Frame (Mockup Halaman App Neura) -->
@@ -1560,8 +1744,8 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="/js/firebase-config.js"></script>
-  <script src="/js/auth-hero.js"></script>
+  <script src="/js/firebase-config.js?v=2"></script>
+  <script src="/js/auth-hero.js?v=53"></script>
 </body>
 
 </html>

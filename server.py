@@ -29,6 +29,45 @@ from core.logger import get_logger
 
 logger = get_logger(__name__)
 
+# -----------------------------------------------------------------------
+# Firebase Admin SDK — untuk generate email verification link
+# -----------------------------------------------------------------------
+_firebase_admin_initialized = False
+
+def get_firebase_admin_auth():
+    """Lazy-init Firebase Admin SDK menggunakan kredensial dari .env."""
+    global _firebase_admin_initialized
+    try:
+        import firebase_admin
+        from firebase_admin import auth as fb_auth, credentials
+
+        if not _firebase_admin_initialized:
+            # Coba dari file service account JSON (lebih aman)
+            sa_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "").strip()
+            if sa_path and os.path.exists(sa_path):
+                cred = credentials.Certificate(sa_path)
+            else:
+                # Fallback: buat credentials dari .env variables
+                cred = credentials.Certificate({
+                    "type": "service_account",
+                    "project_id": os.getenv("FIREBASE_PROJECT_ID", ""),
+                    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID", ""),
+                    "private_key": os.getenv("FIREBASE_PRIVATE_KEY", "").replace("\\n", "\n"),
+                    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL", ""),
+                    "client_id": os.getenv("FIREBASE_CLIENT_ID", ""),
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                })
+
+            if not firebase_admin._apps:
+                firebase_admin.initialize_app(cred)
+            _firebase_admin_initialized = True
+
+        return fb_auth
+    except Exception as e:
+        logger.warning(f"[Firebase Admin] Tidak dapat diinisialisasi: {e}")
+        return None
+
 app = Flask(__name__, static_folder="public", static_url_path="")
 CORS(app)
 
@@ -71,6 +110,12 @@ def welcome():
     return send_from_directory("public", "welcome.html")
 
 
+@app.route("/verify-email")
+def verify_email_page():
+    """Custom email verification landing page for Firebase email action links."""
+    return send_from_directory("public", "verify-email.html")
+
+
 @app.route("/app")
 @app.route("/chat")
 def index():
@@ -103,6 +148,58 @@ def api_firebase_config():
         "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", ""),
         "appId": os.getenv("FIREBASE_APP_ID", "")
     })
+
+
+@app.route("/api/send-verification-email", methods=["POST"])
+def api_send_verification_email():
+    """
+    Generate Firebase email verification link dan kirim custom HTML email
+    dengan nama pengirim 'Neura AI' via Gmail SMTP.
+
+    Body JSON: { "email": str, "displayName": str, "continueUrl": str (optional) }
+    """
+    from core.email_sender import send_verification_email, is_smtp_configured
+
+    body         = request.get_json(silent=True) or {}
+    email        = (body.get("email") or "").strip()
+    display_name = (body.get("displayName") or email.split("@")[0]).strip()
+    continue_url = (body.get("continueUrl") or f"http://localhost:5000/verify-email").strip()
+
+    if not email or "@" not in email:
+        return jsonify({"success": False, "error": "Email tidak valid."}), 400
+
+    if not is_smtp_configured():
+        return jsonify({
+            "success": False,
+            "error": "SMTP belum dikonfigurasi. Isi SMTP_EMAIL dan SMTP_PASSWORD di .env",
+            "smtp_required": True
+        }), 503
+
+    # Generate Firebase verification link via Admin SDK
+    verify_link = None
+    fb_auth = get_firebase_admin_auth()
+    if fb_auth:
+        try:
+            action_settings = fb_auth.ActionCodeSettings(
+                url=continue_url,
+                handle_code_in_app=False
+            )
+            verify_link = fb_auth.generate_email_verification_link(email, action_code_settings=action_settings)
+        except Exception as e:
+            logger.warning(f"[Firebase Admin] Gagal generate link: {e}")
+
+    # Fallback jika Admin SDK tidak tersedia
+    if not verify_link:
+        return jsonify({
+            "success": False,
+            "error": "Firebase Admin SDK belum dikonfigurasi. Tambahkan kredensial service account di .env",
+            "admin_required": True
+        }), 503
+
+    # Kirim custom HTML email
+    result = send_verification_email(email, display_name, verify_link)
+    status_code = 200 if result["success"] else 500
+    return jsonify(result), status_code
 
 
 # -----------------------------------------------------------------------
