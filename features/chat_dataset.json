@@ -1,8 +1,8 @@
 {
   "version": "2.0.0",
   "domain": "Alzheimers Disease Clinical Screening & Memory Consultation",
-  "total_categories": 7,
-  "total_conversations": 20,
+  "total_categories": 10,
+  "total_conversations": 130,
   "categories": [
     "konsultasi_skrining",
     "gejala_dan_keluhan",
@@ -10,7 +10,10 @@
     "pencegahan_dan_gaya_hidup",
     "penanganan_dan_ke_dokter",
     "sapaan_dan_interaksi",
-    "panduan_perintah_model"
+    "panduan_perintah_model",
+    "percakapan_santai",
+    "kesehatan_mental",
+    "di_luar_dataset"
   ],
   "data": {
     "konsultasi_skrining": [
@@ -49,6 +52,9 @@
             "role": "assistant",
             "content": "Halo! Saya **Neura**, asisten cerdas untuk skrining awal kesehatan daya ingat dan deteksi dini risiko Alzheimer.\n\nUntuk memulai konsultasi awal, Anda dapat menceritakan keluhan yang dirasakan atau menjawab 3 pertanyaan panduan ini:\n1. **Berapa usia** Anda atau anggota keluarga yang dikonsultasikan?\n2. **Keluhan apa yang paling sering muncul?** *(Contoh: sering lupa nama kerabat dekat, mengulang pertanyaan yang sama, atau bingung arah jalan)*\n3. **Apakah keluhan tersebut mulai mengganggu kemandirian harian?** *(Contoh: kesulitan mengurus keuangan, minum obat, atau memasak sendiri)*\n\nCeritakan keluhan Anda dengan santai, dan saya akan bantu menganalisis indikasi awal serta tingkat risikonya.\n\n*(💡 Catatan: Neura adalah alat skrining awal berbasis Machine Learning XGBoost dengan akurasi 95.3%, bukan pengganti diagnosis medis resmi dokter spesialis saraf)*"
           }
+        ],
+        "responses": [
+          "Halo! Saya Neura, asisten cerdas untuk skrining awal daya ingat. Untuk memulai, ceritakan: 1. Berapa usia orang yang dikonsultasikan? 2. Keluhan apa yang paling sering muncul (misal: lupa nama kerabat, mengulang pertanyaan, atau bingung arah jalan)? 3. Apakah keluhan sudah mengganggu aktivitas mandiri sehari-hari?"
         ]
       },
       {
@@ -79,6 +85,527 @@
           {
             "role": "assistant",
             "content": "Skrining awal mandiri dapat dilakukan dengan mengamati 4 aspek klinis utama:\n\n1. **Uji Memori Jangka Pendek**: Perhatikan apakah seseorang sering melupakan percakapan atau janji yang baru saja terjadi beberapa jam lalu.\n2. **Uji Orientasi Waktu & Tempat**: Tanyakan hari, tanggal, bulan, serta lokasi saat ini tanpa melihat kalender.\n3. **Skrining Kemandirian Aktivitas (ADL)**: Amati apakah masih mandiri dalam mengelola obat harian, berhitung belanjaan, atau menggunakan telepon.\n4. **Perubahan Afek & Perilaku**: Amati apakah ada penurunan minat sosial, rasa curiga berlebihan, atau mudah frustrasi saat berpikir.\n\nJika ditemukan lebih dari 2 tanda di atas, disarankan melakukan evaluasi kognitif standar (seperti tes MMSE) atau konsultasi langsung ke Dokter Spesialis Neurologi (Sp.N)."
+          }
+        ],
+        "responses": [
+          "Skrining mandiri meliputi 4 aspek: 1. **Uji Memori Pendek**: Apakah sering lupa hal yang baru terjadi beberapa jam lalu? 2. **Orientasi**: Tanyakan hari, tanggal, dan lokasi saat ini tanpa melihat kalender. 3. **Skor ADL**: Apakah masih mandiri minum obat, berhitung belanjaan, dan memasak? 4. **Perubahan Perilaku**: Apakah ada curiga berlebihan atau mudah frustrasi?"
+        ]
+      },
+      {
+        "id": "konsul_003",
+        "topik": "Konsul 003",
+        "kata_kunci": [
+          "orang tua saya sering lupa",
+          "curhat tentang orang tua",
+          "ibu saya pikun",
+          "bapak sering lupa",
+          "nenek kakek pikun"
+        ],
+        "tags": [
+          "orang tua saya sering lupa",
+          "curhat tentang orang tua",
+          "ibu saya pikun",
+          "bapak sering lupa"
+        ],
+        "responses": [
+          "Wajar jika keluarga merasa khawatir. Amati apakah kelupaan beliau berupa kelupaan wajar (misal: lupa letak kacamata lalu ingat lagi) atau tanda peringatan (misal: lupa nama anak kandung, mengulang pertanyaan yang sama 5 menit sekali, atau tersesat di sekitar rumah). Bila ada tanda peringatan, segera rencanakan konsultasi ke dokter saraf."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "orang tua saya sering lupa"
+          },
+          {
+            "role": "assistant",
+            "content": "Wajar jika keluarga merasa khawatir. Amati apakah kelupaan beliau berupa kelupaan wajar (misal: lupa letak kacamata lalu ingat lagi) atau tanda peringatan (misal: lupa nama anak kandung, mengulang pertanyaan yang sama 5 menit sekali, atau tersesat di sekitar rumah). Bila ada tanda peringatan, segera rencanakan konsultasi ke dokter saraf."
+          }
+        ]
+      },
+      {
+        "id": "konsul_004",
+        "topik": "Konsul 004",
+        "kata_kunci": [
+          "apakah usia muda bisa kena alzheimer",
+          "lupa di usia muda",
+          "pikun umur 20an",
+          "alzheimer usia dini",
+          "early onset alzheimer"
+        ],
+        "tags": [
+          "apakah usia muda bisa kena alzheimer",
+          "lupa di usia muda",
+          "pikun umur 20an",
+          "alzheimer usia dini"
+        ],
+        "responses": [
+          "Meskipun mayoritas kasus terjadi di usia >65 tahun, terdapat kasus **Early-Onset Alzheimer's** yang dapat terjadi pada usia 30–50 tahun (sering berkaitan dengan mutasi genetik keluarga). Namun pada usia 20-an, kelupaan umumnya lebih dipicu oleh stres kronis, kurang tidur, multitasking berlebihan, atau defisiensi vitamin B12."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah usia muda bisa kena alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Meskipun mayoritas kasus terjadi di usia >65 tahun, terdapat kasus **Early-Onset Alzheimer's** yang dapat terjadi pada usia 30–50 tahun (sering berkaitan dengan mutasi genetik keluarga). Namun pada usia 20-an, kelupaan umumnya lebih dipicu oleh stres kronis, kurang tidur, multitasking berlebihan, atau defisiensi vitamin B12."
+          }
+        ]
+      },
+      {
+        "id": "konsul_005",
+        "topik": "Konsul 005",
+        "kata_kunci": [
+          "sering lupa nama orang",
+          "lupa nama benda",
+          "lupa kata kata",
+          "lidah kelu susah cari kata",
+          "tip of the tongue"
+        ],
+        "tags": [
+          "sering lupa nama orang",
+          "lupa nama benda",
+          "lupa kata kata",
+          "lidah kelu susah cari kata"
+        ],
+        "responses": [
+          "Fenomena sesekali lupa nama orang adalah wajar seiring bertambahnya usia. Namun jika seseorang mulai sering mengganti nama benda umum dengan deskripsi aneh (contoh: menyebut 'jam tangan' sebagai 'benda penunjuk waktu di tangan') atau sering terhenti di tengah kalimat, ini merupakan gejala afasia anomik yang perlu diwaspadai."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sering lupa nama orang"
+          },
+          {
+            "role": "assistant",
+            "content": "Fenomena sesekali lupa nama orang adalah wajar seiring bertambahnya usia. Namun jika seseorang mulai sering mengganti nama benda umum dengan deskripsi aneh (contoh: menyebut 'jam tangan' sebagai 'benda penunjuk waktu di tangan') atau sering terhenti di tengah kalimat, ini merupakan gejala afasia anomik yang perlu diwaspadai."
+          }
+        ]
+      },
+      {
+        "id": "konsul_006",
+        "topik": "Konsul 006",
+        "kata_kunci": [
+          "sering lupa naruh barang",
+          "lupa kunci",
+          "lupa kacamata",
+          "salah letak barang",
+          "dompet hilang terus"
+        ],
+        "tags": [
+          "sering lupa naruh barang",
+          "lupa kunci",
+          "lupa kacamata",
+          "salah letak barang"
+        ],
+        "responses": [
+          "Perbedaannya: Orang dengan penuaan normal lupa menaruh kacamata di meja lalu ingat kembali setelah menelusuri langkahnya. Penderita Alzheimer menaruh barang di tempat yang sangat tidak lazim (misal: dompet di dalam kulkas atau sepatu di dalam oven) dan tidak mampu mengingat langkah mencarinya."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sering lupa naruh barang"
+          },
+          {
+            "role": "assistant",
+            "content": "Perbedaannya: Orang dengan penuaan normal lupa menaruh kacamata di meja lalu ingat kembali setelah menelusuri langkahnya. Penderita Alzheimer menaruh barang di tempat yang sangat tidak lazim (misal: dompet di dalam kulkas atau sepatu di dalam oven) dan tidak mampu mengingat langkah mencarinya."
+          }
+        ]
+      },
+      {
+        "id": "konsul_007",
+        "topik": "Konsul 007",
+        "kata_kunci": [
+          "sering mengulang pertanyaan",
+          "tanya berulang ulang",
+          "cerita diulang ulang",
+          "lupa sudah bertanya"
+        ],
+        "tags": [
+          "sering mengulang pertanyaan",
+          "tanya berulang ulang",
+          "cerita diulang ulang",
+          "lupa sudah bertanya"
+        ],
+        "responses": [
+          "Mengulang pertanyaan yang sama dalam rentang waktu beberapa menit adalah tanda khas gangguan memori jangka pendek (*short-term memory deficit*). Hal ini terjadi karena otak bagian hippocampus mengalami kesulitan mentransfer informasi baru ke dalam memori jangka panjang."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sering mengulang pertanyaan"
+          },
+          {
+            "role": "assistant",
+            "content": "Mengulang pertanyaan yang sama dalam rentang waktu beberapa menit adalah tanda khas gangguan memori jangka pendek (*short-term memory deficit*). Hal ini terjadi karena otak bagian hippocampus mengalami kesulitan mentransfer informasi baru ke dalam memori jangka panjang."
+          }
+        ]
+      },
+      {
+        "id": "konsul_008",
+        "topik": "Konsul 008",
+        "kata_kunci": [
+          "sering lupa jalan pulang",
+          "tersesat",
+          "orang tua lupa jalan",
+          "disorientasi tempat",
+          "kakek sering bingung arah",
+          "nenek lupa rumah"
+        ],
+        "tags": [
+          "sering lupa jalan pulang",
+          "tersesat",
+          "orang tua lupa jalan",
+          "disorientasi tempat"
+        ],
+        "responses": [
+          "Tersesat di rute jalan yang selama ini akrab adalah tanda peringatan serius kerusakan fungsi visuospasial dan hippocampus. Segera berikan tanda pengenal (gelang identitas atau GPS tracker) pada saku baju beliau dan konsultasikan ke dokter spesialis saraf."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sering lupa jalan pulang"
+          },
+          {
+            "role": "assistant",
+            "content": "Tersesat di rute jalan yang selama ini akrab adalah tanda peringatan serius kerusakan fungsi visuospasial dan hippocampus. Segera berikan tanda pengenal (gelang identitas atau GPS tracker) pada saku baju beliau dan konsultasikan ke dokter spesialis saraf."
+          }
+        ]
+      },
+      {
+        "id": "konsul_009",
+        "topik": "Konsul 009",
+        "kata_kunci": [
+          "sering lupa hari tanggal",
+          "lupa tahun berapa sekarang",
+          "disorientasi waktu",
+          "bingung waktu"
+        ],
+        "tags": [
+          "sering lupa hari tanggal",
+          "lupa tahun berapa sekarang",
+          "disorientasi waktu",
+          "bingung waktu"
+        ],
+        "responses": [
+          "Lupa tanggal hari ini adalah hal yang wajar jika seseorang masih tahu bulan dan tahunnya. Namun jika seseorang mengira saat ini masih tahun 1990 atau bingung membedakan antara waktu siang dan tengah malam, ini merupakan indikasi disorientasi waktu kronis."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sering lupa hari tanggal"
+          },
+          {
+            "role": "assistant",
+            "content": "Lupa tanggal hari ini adalah hal yang wajar jika seseorang masih tahu bulan dan tahunnya. Namun jika seseorang mengira saat ini masih tahun 1990 atau bingung membedakan antara waktu siang dan tengah malam, ini merupakan indikasi disorientasi waktu kronis."
+          }
+        ]
+      },
+      {
+        "id": "konsul_010",
+        "topik": "Konsul 010",
+        "kata_kunci": [
+          "kesulitan hitung uang",
+          "bingung bayar belanjaan",
+          "lupa kelola keuangan",
+          "tertipu uang lansia"
+        ],
+        "tags": [
+          "kesulitan hitung uang",
+          "bingung bayar belanjaan",
+          "lupa kelola keuangan",
+          "tertipu uang lansia"
+        ],
+        "responses": [
+          "Kesulitan mengelola tagihan, keliru berhitung uang kembalian, atau mudah tertipu penipuan finansial adalah tanda penurunan fungsi eksekutif korteks frontal otak. Hal ini masuk ke dalam penurunan Instrumental ADL (IADL)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "kesulitan hitung uang"
+          },
+          {
+            "role": "assistant",
+            "content": "Kesulitan mengelola tagihan, keliru berhitung uang kembalian, atau mudah tertipu penipuan finansial adalah tanda penurunan fungsi eksekutif korteks frontal otak. Hal ini masuk ke dalam penurunan Instrumental ADL (IADL)."
+          }
+        ]
+      },
+      {
+        "id": "konsul_011",
+        "topik": "Konsul 011",
+        "kata_kunci": [
+          "lupa resep masakan",
+          "bingung cara masak",
+          "tidak bisa ikuti resep",
+          "lupa langkah masak"
+        ],
+        "tags": [
+          "lupa resep masakan",
+          "bingung cara masak",
+          "tidak bisa ikuti resep",
+          "lupa langkah masak"
+        ],
+        "responses": [
+          "Ketika seorang ibu yang sudah puluhan tahun mahir memasak tiba-tiba bingung langkah menumis bumbu atau lupa memasukkan garam berulang kali, ini menandakan penurunan memori prosedural dan fungsi perencanaan otak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "lupa resep masakan"
+          },
+          {
+            "role": "assistant",
+            "content": "Ketika seorang ibu yang sudah puluhan tahun mahir memasak tiba-tiba bingung langkah menumis bumbu atau lupa memasukkan garam berulang kali, ini menandakan penurunan memori prosedural dan fungsi perencanaan otak."
+          }
+        ]
+      },
+      {
+        "id": "konsul_012",
+        "topik": "Konsul 012",
+        "kata_kunci": [
+          "enggan mandi",
+          "abai kebersihan diri",
+          "lupa ganti baju",
+          "bau badan lansia pikun",
+          "menolak mandi"
+        ],
+        "tags": [
+          "enggan mandi",
+          "abai kebersihan diri",
+          "lupa ganti baju",
+          "bau badan lansia pikun"
+        ],
+        "responses": [
+          "Penurunan kebersihan diri pada pasien demensia sering terjadi karena: 1. Mereka merasa sudah mandi padahal belum. 2. Apraksia (kesulitan mengingat urutan membuka pakaian dan menggunakan sabun). 3. Rasa takut pada air dingin atau takut terpeleset."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "enggan mandi"
+          },
+          {
+            "role": "assistant",
+            "content": "Penurunan kebersihan diri pada pasien demensia sering terjadi karena: 1. Mereka merasa sudah mandi padahal belum. 2. Apraksia (kesulitan mengingat urutan membuka pakaian dan menggunakan sabun). 3. Rasa takut pada air dingin atau takut terpeleset."
+          }
+        ]
+      },
+      {
+        "id": "klarifikasi_001",
+        "topik": "Klarifikasi 001",
+        "kata_kunci": [
+          "maksudnya bagaimana",
+          "tolong jelaskan lebih sederhana",
+          "bahasanya terlalu rumit",
+          "jelaskan singkat",
+          "bingung"
+        ],
+        "tags": [
+          "maksudnya bagaimana",
+          "tolong jelaskan lebih sederhana",
+          "bahasanya terlalu rumit",
+          "jelaskan singkat"
+        ],
+        "responses": [
+          "Tentu, mari kita sederhanakan: Bayangkan otak kita seperti perpustakaan besar. Pada orang sehat, buku baru mudah ditaruh di rak dan diambil kembali. Pada penderita Alzheimer, petugas perpustakaan lupa di mana menaruh buku baru tersebut. Apakah analogi ini lebih mudah dipahami?"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "maksudnya bagaimana"
+          },
+          {
+            "role": "assistant",
+            "content": "Tentu, mari kita sederhanakan: Bayangkan otak kita seperti perpustakaan besar. Pada orang sehat, buku baru mudah ditaruh di rak dan diambil kembali. Pada penderita Alzheimer, petugas perpustakaan lupa di mana menaruh buku baru tersebut. Apakah analogi ini lebih mudah dipahami?"
+          }
+        ]
+      },
+      {
+        "id": "klarifikasi_002",
+        "topik": "Klarifikasi 002",
+        "kata_kunci": [
+          "bisa berikan contoh nyatanya",
+          "berikan contoh kasus",
+          "contoh kongkritnya",
+          "seperti apa contohnya"
+        ],
+        "tags": [
+          "bisa berikan contoh nyatanya",
+          "berikan contoh kasus",
+          "contoh kongkritnya",
+          "seperti apa contohnya"
+        ],
+        "responses": [
+          "Contoh nyata: Ibu Ani (70 tahun) biasa memasak rendang setiap hari raya tanpa melihat resep. Namun tahun ini, beliau 4 kali bertanya pada anaknya 'Bumbu rendang apa saja ya nak?' dalam 1 jam, dan kelupaan memasukkan santan. Inilah contoh gangguan memori prosedural dan jangka pendek."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "bisa berikan contoh nyatanya"
+          },
+          {
+            "role": "assistant",
+            "content": "Contoh nyata: Ibu Ani (70 tahun) biasa memasak rendang setiap hari raya tanpa melihat resep. Namun tahun ini, beliau 4 kali bertanya pada anaknya 'Bumbu rendang apa saja ya nak?' dalam 1 jam, dan kelupaan memasukkan santan. Inilah contoh gangguan memori prosedural dan jangka pendek."
+          }
+        ]
+      },
+      {
+        "id": "klarifikasi_003",
+        "topik": "Klarifikasi 003",
+        "kata_kunci": [
+          "tolong buatkan ringkasan singkatnya",
+          "rangkumkan",
+          "poin poin pentingnya apa",
+          "inti sarinya"
+        ],
+        "tags": [
+          "tolong buatkan ringkasan singkatnya",
+          "rangkumkan",
+          "poin poin pentingnya apa",
+          "inti sarinya"
+        ],
+        "responses": [
+          "Inti sarinya dalam 3 poin: 1. Penyakit Alzheimer bukan bagian penuaan normal. 2. Deteksi dini via tes kognitif (MMSE/ADL) sangat krusial. 3. Pencegahan terbaik: Pola makan Diet MIND, olahraga jalan cepat 150 menit/minggu, dan tidur nyenyak 7-8 jam."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "tolong buatkan ringkasan singkatnya"
+          },
+          {
+            "role": "assistant",
+            "content": "Inti sarinya dalam 3 poin: 1. Penyakit Alzheimer bukan bagian penuaan normal. 2. Deteksi dini via tes kognitif (MMSE/ADL) sangat krusial. 3. Pencegahan terbaik: Pola makan Diet MIND, olahraga jalan cepat 150 menit/minggu, dan tidur nyenyak 7-8 jam."
+          }
+        ]
+      },
+      {
+        "id": "klarifikasi_004",
+        "topik": "Klarifikasi 004",
+        "kata_kunci": [
+          "can you speak english",
+          "apakah bisa bahasa inggris",
+          "english language",
+          "do you understand english"
+        ],
+        "tags": [
+          "can you speak english",
+          "apakah bisa bahasa inggris",
+          "english language",
+          "do you understand english"
+        ],
+        "responses": [
+          "Yes, I can understand and respond in English as well! Feel free to ask any questions regarding memory health, Alzheimer's screening, clinical biomarkers, or healthy brain lifestyle."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "can you speak english"
+          },
+          {
+            "role": "assistant",
+            "content": "Yes, I can understand and respond in English as well! Feel free to ask any questions regarding memory health, Alzheimer's screening, clinical biomarkers, or healthy brain lifestyle."
+          }
+        ]
+      },
+      {
+        "id": "disclaimer_001",
+        "topik": "Disclaimer 001",
+        "kata_kunci": [
+          "apakah jawabanmu saran dokter resmi",
+          "apakah ini diagnosis dokter",
+          "disclaimer medis",
+          "tanggung jawab hukum"
+        ],
+        "tags": [
+          "apakah jawabanmu saran dokter resmi",
+          "apakah ini diagnosis dokter",
+          "disclaimer medis",
+          "tanggung jawab hukum"
+        ],
+        "responses": [
+          "Penafian Medis (*Medical Disclaimer*): Informasi dan hasil analisis Neura AI adalah instrumen skrining edukatif berbasis machine learning dan bukan merupakan pengganti diagnosis medis resmi, vonis klinis, atau rencana terapi dari Dokter Spesialis Saraf (Sp.N)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah jawabanmu saran dokter resmi"
+          },
+          {
+            "role": "assistant",
+            "content": "Penafian Medis (*Medical Disclaimer*): Informasi dan hasil analisis Neura AI adalah instrumen skrining edukatif berbasis machine learning dan bukan merupakan pengganti diagnosis medis resmi, vonis klinis, atau rencana terapi dari Dokter Spesialis Saraf (Sp.N)."
           }
         ]
       }
@@ -115,6 +642,9 @@
             "role": "assistant",
             "content": "Perbedaan utamanya terletak pada **frekuensi**, **sifat kelupaan**, dan **dampaknya pada kemandirian**:\n\n| Aspek | Pikun Wajar (Penuaan Normal) | Penyakit Alzheimer / Demensia |\n| :--- | :--- | :--- |\n| **Memori** | Lupa letak barang sesekali, lalu ingat kembali | Lupa informasi baru, nama orang dekat, dan tidak ingat lagi |\n| **Penggunaan Barang** | Lupa di mana kacamata ditaruh | Lupa fungsi dari kacamata atau benda sehari-hari |\n| **Aktivitas Harian** | Masih mandiri membayar tagihan & bepergian | Kesulitan mengikuti resep masakan akrab, bingung bayar uang |\n| **Orientasi** | Lupa tanggal hari ini tapi tahu bulannya | Bingung di mana mereka berada atau bagaimana sampai di sana |\n| **Percakapan** | Kadang sulit mencari padanan kata | Sering berhenti di tengah kalimat dan mengulang kata yang sama |\n\nJika kelupaan mulai mengganggu tugas sehari-hari, itu bukan sekadar penuaan normal, melainkan indikasi perlunya evaluasi medis."
           }
+        ],
+        "responses": [
+          "Perbedaannya: Pikun biasa lupa sesekali dan ingat kembali, fungsi mandiri tetap utuh. Alzheimer melupakan informasi yang baru saja dipelajari, lupa fungsi benda harian, mengalami disorientasi arah/waktu, dan kemandirian hidupnya perlahan menurun."
         ]
       },
       {
@@ -147,6 +677,9 @@
             "role": "assistant",
             "content": "Berdasarkan standar medis *Alzheimer's Association*, berikut 10 tanda awal yang patut diwaspadai:\n\n1. **Gangguan daya ingat** yang mengganggu rutinitas sehari-hari.\n2. **Kesulitan merencanakan** atau memecahkan masalah hitungan sederhana.\n3. **Kesulitan menyelesaikan tugas yang akrab** (seperti rute jalan ke pasar langganan).\n4. **Disorientasi waktu dan tempat** (tidak tahu musim, tahun, atau cara pulang).\n5. **Gangguan persepsi visual** dan hubungan spasial (sulit mengukur jarak).\n6. **Masalah komunikasi verbal** (kesulitan menemukan kata atau menamai benda).\n7. **Salah meletakkan barang** di tempat aneh (misal: dompet di dalam kulkas).\n8. **Penurunan daya pertimbangan** (gampang tertipu uang atau abai kebersihan diri).\n9. **Menarik diri** dari hobi, pekerjaan, dan interaksi sosial.\n10. **Perubahan suasana hati & kepribadian** (menjadi mudah cemas, curiga, atau bingung)."
           }
+        ],
+        "responses": [
+          "10 tanda awal Alzheimer: 1. Gangguan memori harian. 2. Sulit merencanakan masalah. 3. Sulit selesaikan tugas akrab. 4. Disorientasi waktu & tempat. 5. Gangguan visuospasial. 6. Masalah komunikasi. 7. Salah taruh barang di tempat aneh. 8. Penurunan pertimbangan akal. 9. Menarik diri dari sosial. 10. Perubahan emosi/sifat."
         ]
       },
       {
@@ -158,7 +691,12 @@
           "orang tua lupa jalan",
           "disorientasi tempat",
           "kakek sering bingung arah",
-          "nenek lupa rumah"
+          "nenek lupa rumah",
+          "stadium alzheimer",
+          "tahapan alzheimer",
+          "fase alzheimer",
+          "tingkat keparahan alzheimer",
+          "mild moderate severe demensia"
         ],
         "tags": [
           "disorientasi",
@@ -180,6 +718,9 @@
             "role": "assistant",
             "content": "**Ya, keluhan sering lupa jalan pulang dan disorientasi spasial adalah tanda peringatan klinis yang signifikan.**\n\nPada otak penderita Alzheimer, area **hippocampus** dan **korteks entorhinal** (yang bertanggung jawab atas pemetaan navigasi spasial) sering kali menjadi bagian pertama yang mengalami atrofi neurodegeneratif.\n\n**Langkah pencegahan darurat yang disarankan:**\n1. Pasang tanda pengenal (gelang identitas atau kartu nama dengan nomor telepon keluarga) pada saku atau pakaian beliau.\n2. Gunakan perangkat GPS tracker atau fitur pelacak lokasi pada smartphone.\n3. Segera jadwalkan pemeriksaan dengan **Dokter Spesialis Saraf (Sp.N)** untuk tes fungsi kognitif dan MRI otak jika diperlukan."
           }
+        ],
+        "responses": [
+          "3 Stadium utama: 1. **Ringan (Mild)**: Kelupaan informasi baru, tersesat di jalan baru, masih mandiri dasar. 2. **Sedang (Moderate)**: Butuh bantuan memilih baju, lupa nama kerabat, sundowning, perubahan perilaku. 3. **Berat (Severe)**: Bergantung total pada caregiver, kehilangan kemampuan bicara dan mobilitas fisik."
         ]
       },
       {
@@ -214,6 +755,275 @@
           {
             "role": "assistant",
             "content": "Perubahan perilaku tersebut merupakan gejala neuropsikiatri umum pada demensia/Alzheimer:\n\n1. **Daya Ingat Menurun Menyebabkan Konfabulasi**: Ketika pasien lupa di mana meletakkan barang berharga, otak mereka mencoba mengisi kekosongan ingatan dengan penjelasan bahwa ada orang yang memindahkannya atau mencurinya.\n2. **Sindrom Sundowning**: Fenomena meningkatnya rasa gelisah, bingung, dan agitasi di sore hingga malam hari akibat kelelahan mental dan penurunan intensitas cahaya alami.\n3. **Biomarker Klinis**: Di Neura AI, faktor `BehavioralProblems` dimasukkan sebagai salah satu dari 32 biomarker prediktif karena memiliki bobot korelasi kuat terhadap stadium demensia.\n\n**Tips untuk keluarga**: Hindari mendebat pasien secara langsung. Validasi perasaannya, alihkan perhatian ke hal yang menyenangkan, dan jaga pencahayaan ruangan tetap terang di sore hari."
+          }
+        ],
+        "responses": [
+          "Gejala ini dikenal sebagai **Sindrom Sundowning** dan konfabulasi ingatan. Saat memori hilang, pasien mengisi kekosongan ingatan dengan dugaan barangnya dicuri. Jangan mendebat mereka; alihkan perhatian ke aktivitas yang menenangkan dan jaga pencahayaan ruangan tetap terang."
+        ]
+      },
+      {
+        "id": "gejala_005",
+        "topik": "Gejala 005",
+        "kata_kunci": [
+          "halusinasi demensia",
+          "delusi lansia",
+          "melihat orang yang tidak ada",
+          "bicara sendiri pikun"
+        ],
+        "tags": [
+          "halusinasi demensia",
+          "delusi lansia",
+          "melihat orang yang tidak ada",
+          "bicara sendiri pikun"
+        ],
+        "responses": [
+          "Halusinasi visual dan delusi dapat muncul pada stadium sedang-berat atau pada Demensia Lewy Body. Validasi ketakutan pasien dengan kalimat menenangkan (contoh: 'Saya di sini menjaga Ibu, Ibu aman bersama saya') daripada memaksakan mendebat kebenarannya."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "halusinasi demensia"
+          },
+          {
+            "role": "assistant",
+            "content": "Halusinasi visual dan delusi dapat muncul pada stadium sedang-berat atau pada Demensia Lewy Body. Validasi ketakutan pasien dengan kalimat menenangkan (contoh: 'Saya di sini menjaga Ibu, Ibu aman bersama saya') daripada memaksakan mendebat kebenarannya."
+          }
+        ]
+      },
+      {
+        "id": "gejala_006",
+        "topik": "Gejala 006",
+        "kata_kunci": [
+          "sifat berubah drastis",
+          "jadi apatis",
+          "jadi kasar",
+          "kepribadian berubah total lansia"
+        ],
+        "tags": [
+          "sifat berubah drastis",
+          "jadi apatis",
+          "jadi kasar",
+          "kepribadian berubah total lansia"
+        ],
+        "responses": [
+          "Perubahan kepribadian terjadi karena atrofi sel saraf pada lobus frontal otak yang mengontrol kendali emosi dan empati. Pasien yang dulunya ramah bisa menjadi pemarah atau sangat pendiam (apatis)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sifat berubah drastis"
+          },
+          {
+            "role": "assistant",
+            "content": "Perubahan kepribadian terjadi karena atrofi sel saraf pada lobus frontal otak yang mengontrol kendali emosi dan empati. Pasien yang dulunya ramah bisa menjadi pemarah atau sangat pendiam (apatis)."
+          }
+        ]
+      },
+      {
+        "id": "gejala_007",
+        "topik": "Gejala 007",
+        "kata_kunci": [
+          "tidur terbalik",
+          "bangun tengah malam keluyuran",
+          "siang tidur malam melek demensia"
+        ],
+        "tags": [
+          "tidur terbalik",
+          "bangun tengah malam keluyuran",
+          "siang tidur malam melek demensia"
+        ],
+        "responses": [
+          "Kerusakan pada nukleus suprakiasmatik di hipotalamus mengacaukan ritme sirkadian tubuh pasien. Ajak pasien beraktivitas fisik ringan di bawah sinar matahari pagi dan batasi tidur siang maksimal 30 menit agar malam harinya bisa tidur nyenyak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "tidur terbalik"
+          },
+          {
+            "role": "assistant",
+            "content": "Kerusakan pada nukleus suprakiasmatik di hipotalamus mengacaukan ritme sirkadian tubuh pasien. Ajak pasien beraktivitas fisik ringan di bawah sinar matahari pagi dan batasi tidur siang maksimal 30 menit agar malam harinya bisa tidur nyenyak."
+          }
+        ]
+      },
+      {
+        "id": "gejala_008",
+        "topik": "Gejala 008",
+        "kata_kunci": [
+          "sulit ukur jarak",
+          "sering tersandung",
+          "gangguan visuospasial",
+          "pandangan buram bukan mata"
+        ],
+        "tags": [
+          "sulit ukur jarak",
+          "sering tersandung",
+          "gangguan visuospasial",
+          "pandangan buram bukan mata"
+        ],
+        "responses": [
+          "Otak penderita Alzheimer mengalami kesulitan memproses informasi kedalaman visual (*visuospasial*), sehingga sering tersandung undakan tangga atau kesulitan membedakan karpet hitam dengan lubang lantai."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sulit ukur jarak"
+          },
+          {
+            "role": "assistant",
+            "content": "Otak penderita Alzheimer mengalami kesulitan memproses informasi kedalaman visual (*visuospasial*), sehingga sering tersandung undakan tangga atau kesulitan membedakan karpet hitam dengan lubang lantai."
+          }
+        ]
+      },
+      {
+        "id": "gejala_009",
+        "topik": "Gejala 009",
+        "kata_kunci": [
+          "apraksia",
+          "susah pakai kancing baju",
+          "lupa cara pakai sendok",
+          "motorik halus terganggu"
+        ],
+        "tags": [
+          "apraksia",
+          "susah pakai kancing baju",
+          "lupa cara pakai sendok",
+          "motorik halus terganggu"
+        ],
+        "responses": [
+          "Apraksia adalah ketidakmampuan melakukan gerakan motorik terencana meskipun fungsi otot fisiknya masih normal. Berikan pakaian dengan perekat velcro daripada kancing dan sediakan peralatan makan dengan gagang besar yang mudah digenggam."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apraksia"
+          },
+          {
+            "role": "assistant",
+            "content": "Apraksia adalah ketidakmampuan melakukan gerakan motorik terencana meskipun fungsi otot fisiknya masih normal. Berikan pakaian dengan perekat velcro daripada kancing dan sediakan peralatan makan dengan gagang besar yang mudah digenggam."
+          }
+        ]
+      },
+      {
+        "id": "gejala_010",
+        "topik": "Gejala 010",
+        "kata_kunci": [
+          "afasia",
+          "kesulitan bicara",
+          "lupa kosa kata",
+          "bicara melantur demensia"
+        ],
+        "tags": [
+          "afasia",
+          "kesulitan bicara",
+          "lupa kosa kata",
+          "bicara melantur demensia"
+        ],
+        "responses": [
+          "Afasia pada Alzheimer menyebabkan kosa kata pasien menyusut drastis. Berbicaralah perlahan, gunakan kalimat pendek, dan bantu tebak maksudnya dengan memperlihatkan objek secara langsung."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "afasia"
+          },
+          {
+            "role": "assistant",
+            "content": "Afasia pada Alzheimer menyebabkan kosa kata pasien menyusut drastis. Berbicaralah perlahan, gunakan kalimat pendek, dan bantu tebak maksudnya dengan memperlihatkan objek secara langsung."
+          }
+        ]
+      },
+      {
+        "id": "gejala_011",
+        "topik": "Gejala 011",
+        "kata_kunci": [
+          "perbedaan alzheimer dan demensia vaskular",
+          "demensia stroke",
+          "jenis demensia"
+        ],
+        "tags": [
+          "perbedaan alzheimer dan demensia vaskular",
+          "demensia stroke",
+          "jenis demensia"
+        ],
+        "responses": [
+          "Alzheimer berkembang perlahan dan bertahap akibat plak amiloid. Demensia Vaskular biasanya terjadi mendadak atau bertingkat (*stepwise*) setelah kejadian stroke atau gangguan suplai darah ke otak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "perbedaan alzheimer dan demensia vaskular"
+          },
+          {
+            "role": "assistant",
+            "content": "Alzheimer berkembang perlahan dan bertahap akibat plak amiloid. Demensia Vaskular biasanya terjadi mendadak atau bertingkat (*stepwise*) setelah kejadian stroke atau gangguan suplai darah ke otak."
+          }
+        ]
+      },
+      {
+        "id": "gejala_012",
+        "topik": "Gejala 012",
+        "kata_kunci": [
+          "beda parkinson dan alzheimer",
+          "tremor dan pikun",
+          "parkinson demensia"
+        ],
+        "tags": [
+          "beda parkinson dan alzheimer",
+          "tremor dan pikun",
+          "parkinson demensia"
+        ],
+        "responses": [
+          "Penyakit Parkinson berawal dari gangguan motorik fisik (tremor, kaku otot, lambat bergerak). Sedangkan Alzheimer berawal dari gangguan daya ingat dan fungsi kognitif sebelum menyerang fungsi fisik."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "beda parkinson dan alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Penyakit Parkinson berawal dari gangguan motorik fisik (tremor, kaku otot, lambat bergerak). Sedangkan Alzheimer berawal dari gangguan daya ingat dan fungsi kognitif sebelum menyerang fungsi fisik."
           }
         ]
       }
@@ -251,6 +1061,9 @@
             "role": "assistant",
             "content": "**MMSE (Mini-Mental State Examination)** adalah tes kognitif berstandar internasional dengan total skor maksimal **30 poin** untuk menilai fungsi memori, orientasi, perhatian, kalkulasi, bahasa, dan kemampuan visuospasial.\n\n**Interpretasi Skor MMSE:**\n• **24 – 30**: Fungsi kognitif Normal (tidak ada indikasi demensia signifikan).\n• **19 – 23**: Gangguan Kognitif Ringan (*Mild Cognitive Impairment / MCI*).\n• **10 – 18**: Demensia / Alzheimer Stadium Sedang (*Moderate*).\n• **< 10**: Demensia Berat (*Severe*).\n\nPada model Neura XGBoost, skor MMSE merupakan salah satu **top-3 biomarker paling berpengaruh** dalam membedakan pasien sehat vs pasien terindikasi Alzheimer."
           }
+        ],
+        "responses": [
+          "MMSE (Mini-Mental State Examination) adalah tes kognitif berstandar internasional dengan skor 0–30 poin. Interpretasi: 24–30: Normal; 19–23: Gangguan Kognitif Ringan (MCI); 10–18: Demensia Sedang; <10: Demensia Berat. MMSE adalah salah satu fitur paling dominan pada model XGBoost Neura AI."
         ]
       },
       {
@@ -262,7 +1075,11 @@
           "activities of daily living",
           "kemandirian harian",
           "fungsi aktivitas sehari hari",
-          "skor kemandirian"
+          "skor kemandirian",
+          "apa itu moca",
+          "tes moca",
+          "montreal cognitive assessment",
+          "beda moca dan mmse"
         ],
         "tags": [
           "adl",
@@ -284,6 +1101,9 @@
             "role": "assistant",
             "content": "**ADL (Activities of Daily Living)** mengukur tingkat kemandirian fungsional seseorang dalam menjalankan aktivitas hidup sehari-hari.\n\nADL dibagi menjadi dua tingkatan:\n1. **Basic ADL**: Kemandirian dasar (makan, mandi, berpakaian, mobilitas di tempat tidur, dan kebersihan toilet).\n2. **Instrumental ADL (IADL)**: Kemandirian kompleks (mengelola uang, memasak, mencuci baju, minum obat sesuai resep, belanja, dan menggunakan transportasi).\n\nPada penyakit Alzheimer tahap awal, IADL biasanya yang pertama kali menurun sebelum disusul oleh Basic ADL. Penurunan skor ADL secara konsisten adalah penanda klinis penting untuk evaluasi komprehensif."
           }
+        ],
+        "responses": [
+          "MoCA (Montreal Cognitive Assessment) memiliki sensitivitas lebih tinggi (90%) daripada MMSE untuk mendeteksi MCI (tahap sangat awal). MoCA menguji fungsi eksekutif yang lebih kompleks seperti tes jejak angka dan penamaan hewan."
         ]
       },
       {
@@ -294,7 +1114,11 @@
           "biomarker neura",
           "fitur apa saja yang dianalisis",
           "parameter pemeriksaan",
-          "data apa saja yang dipakai neura"
+          "data apa saja yang dipakai neura",
+          "tes gambar jam",
+          "clock drawing test",
+          "tes jam demensia",
+          "gambar lingkaran jam"
         ],
         "tags": [
           "biomarkers",
@@ -315,6 +1139,306 @@
           {
             "role": "assistant",
             "content": "Model **XGBoost Classifier** pada Neura AI dilatih menggunakan **32 biomarker klinis** dari 2.149 catatan pasien, yang dikelompokkan ke dalam 5 domain utama:\n\n1. **Fungsi Kognitif & Fungsional**: MMSE, ADL, FunctionalAssessment, MemoryComplaints, BehavioralProblems.\n2. **Karakteristik Demografi**: Usia (Age), Jenis Kelamin (Gender), Etnisitas, Tingkat Pendidikan.\n3. **Riwayat Kesehatan & Komorbiditas**: Riwayat Keluarga Alzheimer, Kardiovaskular, Diabetes, Hipertensi, Cedera Kepala (HeadInjury).\n4. **Biomarker Medis & Laboratorium**: Tekanan Darah Sistolik/Diastolik, Kolesterol Total, HDL, LDL, Trigliserida, BMI.\n5. **Gaya Hidup**: Aktivitas Fisik (PhysicalActivity), Kualitas Tidur (SleepQuality), Merokok, Konsumsi Alkohol, Pola Diet.\n\nKombinasi 32 dimensi ini memungkinkan Neura menghasilkan estimasi risiko dengan **Akurasi 95.35%** dan **ROC-AUC 94.11%**."
+          }
+        ],
+        "responses": [
+          "Clock Drawing Test (CDT) meminta pasien menggambar lingkaran jam lengkap dengan angka dan jarum jam penunjuk pukul 11:10. Ketidakmampuan menempatkan jarum jam mencerminkan disfungsi lobus parietal dan frontal otak."
+        ]
+      },
+      {
+        "id": "tes_004",
+        "topik": "Tes 004",
+        "kata_kunci": [
+          "apa itu adl",
+          "skor adl",
+          "activities of daily living",
+          "kemandirian harian",
+          "fungsi aktivitas sehari hari",
+          "skor kemandirian"
+        ],
+        "tags": [
+          "apa itu adl",
+          "skor adl",
+          "activities of daily living",
+          "kemandirian harian"
+        ],
+        "responses": [
+          "ADL (Activities of Daily Living) mengukur kemandirian fungsional. Terdiri dari Basic ADL (makan, mandi, pakaian) dan Instrumental ADL (IADL: kelola uang, minum obat, memasak, transportasi). Penurunan ADL adalah biomarker utama dalam diagnosa klinis."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu adl"
+          },
+          {
+            "role": "assistant",
+            "content": "ADL (Activities of Daily Living) mengukur kemandirian fungsional. Terdiri dari Basic ADL (makan, mandi, pakaian) dan Instrumental ADL (IADL: kelola uang, minum obat, memasak, transportasi). Penurunan ADL adalah biomarker utama dalam diagnosa klinis."
+          }
+        ]
+      },
+      {
+        "id": "tes_005",
+        "topik": "Tes 005",
+        "kata_kunci": [
+          "32 biomarker",
+          "biomarker neura",
+          "fitur apa saja yang dianalisis",
+          "parameter pemeriksaan",
+          "data apa saja yang dipakai neura"
+        ],
+        "tags": [
+          "32 biomarker",
+          "biomarker neura",
+          "fitur apa saja yang dianalisis",
+          "parameter pemeriksaan"
+        ],
+        "responses": [
+          "32 Biomarker Neura mencakup 5 domain: 1. Kognitif & Fungsional (MMSE, ADL, FA, Memory Complaints, Behavioral). 2. Demografi (Usia, Gender, Etnis, Edukasi). 3. Komorbiditas (Jantung, Diabetes, Hipertensi, Cedera Kepala). 4. Laboratorium (Kolesterol LDL, HDL, Trigliserida, Tekanan Darah, BMI). 5. Gaya Hidup (Aktivitas Fisik, Kualitas Tidur, Diet, Merokok, Alkohol)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "32 biomarker"
+          },
+          {
+            "role": "assistant",
+            "content": "32 Biomarker Neura mencakup 5 domain: 1. Kognitif & Fungsional (MMSE, ADL, FA, Memory Complaints, Behavioral). 2. Demografi (Usia, Gender, Etnis, Edukasi). 3. Komorbiditas (Jantung, Diabetes, Hipertensi, Cedera Kepala). 4. Laboratorium (Kolesterol LDL, HDL, Trigliserida, Tekanan Darah, BMI). 5. Gaya Hidup (Aktivitas Fisik, Kualitas Tidur, Diet, Merokok, Alkohol)."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_001",
+        "topik": "Biomarker 001",
+        "kata_kunci": [
+          "pengaruh kolesterol pada alzheimer",
+          "kolesterol ldl hdl otak",
+          "trigliserida dan memori"
+        ],
+        "tags": [
+          "pengaruh kolesterol pada alzheimer",
+          "kolesterol ldl hdl otak",
+          "trigliserida dan memori"
+        ],
+        "responses": [
+          "Kolesterol LDL yang sangat tinggi (>199 mg/dL) dapat memicu aterosklerosis pada pembuluh darah mikro otak, mengurangi aliran oksigen dan mempercepat pembentukan plak beta-amiloid. Sebaliknya, HDL yang optimal bersifat protektif."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "pengaruh kolesterol pada alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Kolesterol LDL yang sangat tinggi (>199 mg/dL) dapat memicu aterosklerosis pada pembuluh darah mikro otak, mengurangi aliran oksigen dan mempercepat pembentukan plak beta-amiloid. Sebaliknya, HDL yang optimal bersifat protektif."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_002",
+        "topik": "Biomarker 002",
+        "kata_kunci": [
+          "hubungan hipertensi dan alzheimer",
+          "tekanan darah tinggi otak",
+          "sistolik diastolik pikun"
+        ],
+        "tags": [
+          "hubungan hipertensi dan alzheimer",
+          "tekanan darah tinggi otak",
+          "sistolik diastolik pikun"
+        ],
+        "responses": [
+          "Hipertensi kronis merusak integritas sawar darah otak (*blood-brain barrier*), menyebabkan peradangan mikrovaskular dan meningkatkan risiko Alzheimer serta demensia vaskular secara signifikan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "hubungan hipertensi dan alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Hipertensi kronis merusak integritas sawar darah otak (*blood-brain barrier*), menyebabkan peradangan mikrovaskular dan meningkatkan risiko Alzheimer serta demensia vaskular secara signifikan."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_003",
+        "topik": "Biomarker 003",
+        "kata_kunci": [
+          "diabetes dan alzheimer",
+          "gula darah tinggi bikin pikun",
+          "diabetes tipe 3"
+        ],
+        "tags": [
+          "diabetes dan alzheimer",
+          "gula darah tinggi bikin pikun",
+          "diabetes tipe 3"
+        ],
+        "responses": [
+          "Alzheimer kerap dijuluki 'Diabetes Tipe 3' karena resistensi insulin di otak menghambat sel neuron menyerap glukosa sebagai bahan bakar energi, yang berujung pada degenerasi dan kematian sel saraf."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "diabetes dan alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Alzheimer kerap dijuluki 'Diabetes Tipe 3' karena resistensi insulin di otak menghambat sel neuron menyerap glukosa sebagai bahan bakar energi, yang berujung pada degenerasi dan kematian sel saraf."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_004",
+        "topik": "Biomarker 004",
+        "kata_kunci": [
+          "obesitas dan alzheimer",
+          "pengaruh bmi pada otak",
+          "berat badan berlebih pikun"
+        ],
+        "tags": [
+          "obesitas dan alzheimer",
+          "pengaruh bmi pada otak",
+          "berat badan berlebih pikun"
+        ],
+        "responses": [
+          "Obesitas pada usia paruh baya (BMI > 30) meningkatkan produksi sitokin inflamasi sistemik dalam tubuh yang dapat menembus sawar darah otak dan memicu atrofi volume materi abu-abu otak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "obesitas dan alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Obesitas pada usia paruh baya (BMI > 30) meningkatkan produksi sitokin inflamasi sistemik dalam tubuh yang dapat menembus sawar darah otak dan memicu atrofi volume materi abu-abu otak."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_005",
+        "topik": "Biomarker 005",
+        "kata_kunci": [
+          "apakah alzheimer keturunan",
+          "faktor genetik alzheimer",
+          "gen apoe4",
+          "genetik pikun"
+        ],
+        "tags": [
+          "apakah alzheimer keturunan",
+          "faktor genetik alzheimer",
+          "gen apoe4",
+          "genetik pikun"
+        ],
+        "responses": [
+          "Gen **APOE-e4** adalah faktor risiko genetik terkuat untuk late-onset Alzheimer. Memiliki satu salinan alel meningkatkan risiko 3x lipat, dua salinan hingga 8–12x lipat. Namun gaya hidup sehat terbukti mampu menekan ekspresi risiko genetik tersebut."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah alzheimer keturunan"
+          },
+          {
+            "role": "assistant",
+            "content": "Gen **APOE-e4** adalah faktor risiko genetik terkuat untuk late-onset Alzheimer. Memiliki satu salinan alel meningkatkan risiko 3x lipat, dua salinan hingga 8–12x lipat. Namun gaya hidup sehat terbukti mampu menekan ekspresi risiko genetik tersebut."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_006",
+        "topik": "Biomarker 006",
+        "kata_kunci": [
+          "mri otak alzheimer",
+          "pet scan otak demensia",
+          "ct scan otak pikun"
+        ],
+        "tags": [
+          "mri otak alzheimer",
+          "pet scan otak demensia",
+          "ct scan otak pikun"
+        ],
+        "responses": [
+          "MRI otak mendeteksi penyusutan volume (atrofi) pada area hippocampus dan pembesaran ventrikel otak. Amyloid PET scan dapat memvisualisasikan endapan plak beta-amiloid secara langsung sebelum gejala klinis muncul."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "mri otak alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "MRI otak mendeteksi penyusutan volume (atrofi) pada area hippocampus dan pembesaran ventrikel otak. Amyloid PET scan dapat memvisualisasikan endapan plak beta-amiloid secara langsung sebelum gejala klinis muncul."
+          }
+        ]
+      },
+      {
+        "id": "biomarker_007",
+        "topik": "Biomarker 007",
+        "kata_kunci": [
+          "tes darah alzheimer",
+          "biomarker darah p-tau217",
+          "uji cairan serebrospinal csf"
+        ],
+        "tags": [
+          "tes darah alzheimer",
+          "biomarker darah p-tau217",
+          "uji cairan serebrospinal csf"
+        ],
+        "responses": [
+          "Perkembangan medis terbaru memungkinkan deteksi biomarker protein **p-tau217** dan rasio amiloid beta 42/40 melalui tes darah sederhana dengan akurasi menyerupai uji cairan serebrospinal (lumbal pungsi)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "tes darah alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Perkembangan medis terbaru memungkinkan deteksi biomarker protein **p-tau217** dan rasio amiloid beta 42/40 melalui tes darah sederhana dengan akurasi menyerupai uji cairan serebrospinal (lumbal pungsi)."
           }
         ]
       }
@@ -352,6 +1476,9 @@
             "role": "assistant",
             "content": "Penelitian klinis membuktikan bahwa **Diet MIND** (*Mediterranean-DASH Intervention for Neurodegenerative Delay*) dapat menurunkan risiko Alzheimer hingga 53% jika diterapkan secara konsisten.\n\n**10 Makanan yang Sangat Dianjurkan:**\n1. **Sayuran berdaun hijau** (bayam, kale, brokoli) — minimal 6 porsi/minggu.\n2. **Buah beri** (blueberry, strawberry) — kaya antioksidan antosianin.\n3. **Kacang-kacangan** (almond, walnut) — kaya vitamin E dan lemak sehat.\n4. **Ikan kaya Omega-3** (salmon, sarden, kembung) — minimal 1x per minggu.\n5. **Minyak zaitun murni** (*extra virgin olive oil*) sebagai minyak utama.\n6. **Biji-bijian utuh** (oatmeal, beras merah, quinoa).\n7. **Unggas tanpa kulit** (ayam, kalkun).\n\n**Makanan yang Perlu Dibatasi:** Makanan olahan tinggi gula, gorengan, mentega berlebih, dan daging merah berlemak tinggi."
           }
+        ],
+        "responses": [
+          "Diet MIND terbukti menurunkan risiko Alzheimer hingga 53%. Prinsip utamanya: Perbanyak sayuran hijau (bayam, kale), buah beri (blueberry), kacang-kacangan, biji-bijian utuh, ikan berlemak Omega-3, dan minyak zaitun murni (EVOO)."
         ]
       },
       {
@@ -363,7 +1490,10 @@
           "latihan kognitif",
           "cara melatih memori",
           "aktivitas fisik alzheimer",
-          "mencegah kepikunan lansia"
+          "mencegah kepikunan lansia",
+          "10 makanan terbaik untuk otak",
+          "buah untuk memori",
+          "ikan omega 3 alzheimer"
         ],
         "tags": [
           "olahraga",
@@ -385,6 +1515,9 @@
             "role": "assistant",
             "content": "Dua pilar ini merangsang pembentukan saraf baru (*neurogenesis*) dan memperkuat koneksi sinaps di otak:\n\n1. **Olahraga Aerobik Teratur (150 menit/minggu)**:\n   • Jalan cepat, berenang, bersepeda statis, atau senam lansia.\n   • Meningkatkan aliran darah ke otak dan menstimulasi pelepasan protein **BDNF** (*Brain-Derived Neurotrophic Factor*) yang melindungi sel saraf hippocampus dari kematian prematur.\n\n2. **Stimulasi Kognitif Berkelanjutan (Senam Otak)**:\n   • Belajar keterampilan baru (bahasa baru, instrumen musik, merajut, memasak resep baru).\n   • Membaca buku, mengisi teka-teki silang, bermain catur, atau puzzle logika.\n   • Interaksi sosial aktif (berkumpul bersama keluarga, komunitas relawan) terbukti signifikan memperlambat penuaan kognitif."
           }
+        ],
+        "responses": [
+          "10 Makanan super untuk otak: 1. Ikan salmon/sarden (Omega-3 DHA). 2. Blueberry. 3. Kacang walnut. 4. Bayam/brokoli. 5. Minyak zaitun. 6. Kunyit (Kurkumin). 7. Alpukat. 8. Cokelat hitam (>70%). 9. Telur (Kolin). 10. Teh hijau."
         ]
       },
       {
@@ -395,7 +1528,11 @@
           "tidur malam dan pikun",
           "insomnia dan demensia",
           "sistem glimfatik",
-          "plak amiloid tidur"
+          "plak amiloid tidur",
+          "makanan pantangan otak",
+          "makanan perusak memori",
+          "gula dan pikun",
+          "gorengan alzheimer"
         ],
         "tags": [
           "tidur",
@@ -417,6 +1554,309 @@
             "role": "assistant",
             "content": "**Ya, kualitas tidur memiliki hubungan kausal langsung dengan risiko Alzheimer.**\n\nSaat kita tidur nyenyak (*deep sleep / non-REM slow-wave sleep*), otak mengaktifkan **Sistem Glimfatik** (*Glymphatic System*):\n• Sistem glimfatik memompa cairan serebrospinal untuk 'membersihkan' racun metabolik otak yang menumpuk di siang hari, terutama **protein beta-amiloid** dan **tau** (dua penyebab utama kematian sel saraf pada Alzheimer).\n• Penelitian menunjukkan bahwa kurang tidur kronis menyebabkan penumpukan plak beta-amiloid meningkat hingga 30% lebih cepat.\n\n**Rekomendasi**: Pertahankan jadwal tidur teratur 7–8 jam per malam, batasi kafein setelah jam 2 siang, dan hindari layar gadget 1 jam sebelum tidur."
           }
+        ],
+        "responses": [
+          "Batasi: 1. Makanan ultra-proses & tinggi gula rafinasi (memicu resistensi insulin otak). 2. Lemak trans dan gorengan berlebih. 3. Daging merah olahan (sosis, kornet). 4. Makanan berpengawet tinggi sodium."
+        ]
+      },
+      {
+        "id": "cegah_004",
+        "topik": "Cegah 004",
+        "kata_kunci": [
+          "manfaat kopi untuk otak",
+          "apakah kopi cegah alzheimer",
+          "pengaruh kafein pada memori"
+        ],
+        "tags": [
+          "manfaat kopi untuk otak",
+          "apakah kopi cegah alzheimer",
+          "pengaruh kafein pada memori"
+        ],
+        "responses": [
+          "Konsumsi kopi hitam tanpa gula 1–2 cangkir di pagi hari kaya akan antioksidan polifenol yang dapat menghambat agregasi amiloid dan meningkatkan kewaspadaan kognitif. Hindari konsumsi di atas jam 14.00 agar tidak merusak kualitas tidur."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "manfaat kopi untuk otak"
+          },
+          {
+            "role": "assistant",
+            "content": "Konsumsi kopi hitam tanpa gula 1–2 cangkir di pagi hari kaya akan antioksidan polifenol yang dapat menghambat agregasi amiloid dan meningkatkan kewaspadaan kognitif. Hindari konsumsi di atas jam 14.00 agar tidak merusak kualitas tidur."
+          }
+        ]
+      },
+      {
+        "id": "cegah_005",
+        "topik": "Cegah 005",
+        "kata_kunci": [
+          "olahraga untuk otak",
+          "senam otak",
+          "latihan kognitif",
+          "cara melatih memori",
+          "aktivitas fisik alzheimer",
+          "mencegah kepikunan lansia"
+        ],
+        "tags": [
+          "olahraga untuk otak",
+          "senam otak",
+          "latihan kognitif",
+          "cara melatih memori"
+        ],
+        "responses": [
+          "Stimulasi kognitif harian: Belajar keterampilan baru (bahasa asing, instrumen musik), membaca buku, mengisi teka-teki silang, bermain catur, dan menghafal nomor telepon kerabat tanpa melihat ponsel."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "olahraga untuk otak"
+          },
+          {
+            "role": "assistant",
+            "content": "Stimulasi kognitif harian: Belajar keterampilan baru (bahasa asing, instrumen musik), membaca buku, mengisi teka-teki silang, bermain catur, dan menghafal nomor telepon kerabat tanpa melihat ponsel."
+          }
+        ]
+      },
+      {
+        "id": "cegah_006",
+        "topik": "Cegah 006",
+        "kata_kunci": [
+          "olahraga aerobik lansia",
+          "jalan kaki cegah pikun",
+          "aktivitas fisik otak",
+          "bdnf olahraga"
+        ],
+        "tags": [
+          "olahraga aerobik lansia",
+          "jalan kaki cegah pikun",
+          "aktivitas fisik otak",
+          "bdnf olahraga"
+        ],
+        "responses": [
+          "Jalan cepat 30 menit sehari (150 menit/minggu) merangsang produksi protein **BDNF (Brain-Derived Neurotrophic Factor)** yang memicu pertumbuhan sel saraf baru (*neurogenesis*) di area hippocampus."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "olahraga aerobik lansia"
+          },
+          {
+            "role": "assistant",
+            "content": "Jalan cepat 30 menit sehari (150 menit/minggu) merangsang produksi protein **BDNF (Brain-Derived Neurotrophic Factor)** yang memicu pertumbuhan sel saraf baru (*neurogenesis*) di area hippocampus."
+          }
+        ]
+      },
+      {
+        "id": "cegah_007",
+        "topik": "Cegah 007",
+        "kata_kunci": [
+          "pengaruh tidur pada alzheimer",
+          "tidur malam dan pikun",
+          "insomnia dan demensia",
+          "sistem glimfatik",
+          "plak amiloid tidur"
+        ],
+        "tags": [
+          "pengaruh tidur pada alzheimer",
+          "tidur malam dan pikun",
+          "insomnia dan demensia",
+          "sistem glimfatik"
+        ],
+        "responses": [
+          "Saat tidur nyenyak non-REM, Sistem Glimfatik memompa cairan serebrospinal untuk membersihkan racun otak, termasuk plak beta-amiloid dan protein tau. Kurang tidur kronis mempercepat penumpukan amiloid hingga 30%."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "pengaruh tidur pada alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Saat tidur nyenyak non-REM, Sistem Glimfatik memompa cairan serebrospinal untuk membersihkan racun otak, termasuk plak beta-amiloid dan protein tau. Kurang tidur kronis mempercepat penumpukan amiloid hingga 30%."
+          }
+        ]
+      },
+      {
+        "id": "cegah_008",
+        "topik": "Cegah 008",
+        "kata_kunci": [
+          "bahaya merokok untuk otak",
+          "alkohol dan alzheimer",
+          "rokok merusak memori"
+        ],
+        "tags": [
+          "bahaya merokok untuk otak",
+          "alkohol dan alzheimer",
+          "rokok merusak memori"
+        ],
+        "responses": [
+          "Merokok menyempitkan pembuluh darah mikro otak dan memicu stres oksidatif tinggi. Konsumsi alkohol berlebih menyebabkan atrofi materi putih otak dan meningkatkan risiko demensia alkoholik."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "bahaya merokok untuk otak"
+          },
+          {
+            "role": "assistant",
+            "content": "Merokok menyempitkan pembuluh darah mikro otak dan memicu stres oksidatif tinggi. Konsumsi alkohol berlebih menyebabkan atrofi materi putih otak dan meningkatkan risiko demensia alkoholik."
+          }
+        ]
+      },
+      {
+        "id": "cegah_009",
+        "topik": "Cegah 009",
+        "kata_kunci": [
+          "manfaat sosialisasi lansia",
+          "silaturahmi cegah pikun",
+          "interaksi sosial otak"
+        ],
+        "tags": [
+          "manfaat sosialisasi lansia",
+          "silaturahmi cegah pikun",
+          "interaksi sosial otak"
+        ],
+        "responses": [
+          "Interaksi sosial aktif melatih berbagai area otak secara serempak (memproses bahasa, membaca emosi lawan bicara, dan mengingat topik). Lansia yang aktif bersosialisasi memiliki risiko demensia 50% lebih rendah."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "manfaat sosialisasi lansia"
+          },
+          {
+            "role": "assistant",
+            "content": "Interaksi sosial aktif melatih berbagai area otak secara serempak (memproses bahasa, membaca emosi lawan bicara, dan mengingat topik). Lansia yang aktif bersosialisasi memiliki risiko demensia 50% lebih rendah."
+          }
+        ]
+      },
+      {
+        "id": "cegah_010",
+        "topik": "Cegah 010",
+        "kata_kunci": [
+          "suplemen daya ingat",
+          "vitamin untuk memori",
+          "omega 3 otak",
+          "vitamin b12 pikun",
+          "ginkgo biloba"
+        ],
+        "tags": [
+          "suplemen daya ingat",
+          "vitamin untuk memori",
+          "omega 3 otak",
+          "vitamin b12 pikun"
+        ],
+        "responses": [
+          "Suplemen terbukti: Asam lemak Omega-3 (EPA/DHA) dan Vitamin B12 (terutama bagi lansia yang mengalami penurunan penyerapan lambung). Selalu konsultasikan dosis dengan dokter sebelum konsumsi suplemen."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "suplemen daya ingat"
+          },
+          {
+            "role": "assistant",
+            "content": "Suplemen terbukti: Asam lemak Omega-3 (EPA/DHA) dan Vitamin B12 (terutama bagi lansia yang mengalami penurunan penyerapan lambung). Selalu konsultasikan dosis dengan dokter sebelum konsumsi suplemen."
+          }
+        ]
+      },
+      {
+        "id": "cegah_011",
+        "topik": "Cegah 011",
+        "kata_kunci": [
+          "kesehatan gigi dan alzheimer",
+          "radang gusi dan otak",
+          "bakteri porphyromonas gingivalis"
+        ],
+        "tags": [
+          "kesehatan gigi dan alzheimer",
+          "radang gusi dan otak",
+          "bakteri porphyromonas gingivalis"
+        ],
+        "responses": [
+          "Bakteri penyebab radang gusi (*Porphyromonas gingivalis*) dapat masuk ke aliran darah menuju otak dan memicu peradangan kronis yang mempercepat pembentukan plak Alzheimer. Sikat gigi 2x sehari dan periksa ke dokter gigi tiap 6 bulan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "kesehatan gigi dan alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Bakteri penyebab radang gusi (*Porphyromonas gingivalis*) dapat masuk ke aliran darah menuju otak dan memicu peradangan kronis yang mempercepat pembentukan plak Alzheimer. Sikat gigi 2x sehari dan periksa ke dokter gigi tiap 6 bulan."
+          }
+        ]
+      },
+      {
+        "id": "cegah_012",
+        "topik": "Cegah 012",
+        "kata_kunci": [
+          "kebisingan dan pendengaran alzheimer",
+          "alat bantu dengar demensia",
+          "gangguan dengar lansia"
+        ],
+        "tags": [
+          "kebisingan dan pendengaran alzheimer",
+          "alat bantu dengar demensia",
+          "gangguan dengar lansia"
+        ],
+        "responses": [
+          "Gangguan pendengaran yang tidak ditangani adalah salah satu faktor risiko demensia terbesar yang dapat dimodifikasi. Menggunakan alat bantu dengar terbukti mampu memperlambat penurunan kognitif secara signifikan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "kebisingan dan pendengaran alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Gangguan pendengaran yang tidak ditangani adalah salah satu faktor risiko demensia terbesar yang dapat dimodifikasi. Menggunakan alat bantu dengar terbukti mampu memperlambat penurunan kognitif secara signifikan."
+          }
         ]
       }
     ],
@@ -430,7 +1870,9 @@
           "periksa ke mana",
           "spesialis saraf",
           "neurolog",
-          "tanda bahaya pikun"
+          "tanda bahaya pikun",
+          "red flags alzheimer",
+          "kapan harus periksa saraf"
         ],
         "tags": [
           "rujukan",
@@ -452,6 +1894,9 @@
             "role": "assistant",
             "content": "Segera jadwalkan konsultasi dengan **Dokter Spesialis Neurologi / Saraf (Sp.N)** jika Anda melihat salah satu tanda bahaya (*red flags*) berikut:\n\n1. **Disorientasi parah**: Tidak mengenali rumah sendiri, tersesat di rute biasa, atau lupa nama anak/pasangan.\n2. **Kesulitan melakukan aktivitas dasar mandiri**: Tidak bisa lagi mengenakan pakaian sendiri, lupa cara makan, atau abai kebersihan.\n3. **Perubahan kepribadian mendadak**: Menjadi sangat paranoid, menuduh orang lain tanpa alasan, atau agresif.\n4. **Penurunan kognitif cepat**: Perburukan ingatan yang terjadi drastis dalam beberapa bulan.\n\n**Dokter yang tepat dikunjungi:**\n• Dokter Spesialis Saraf / Neurologi (Sp.N), khususnya konsultan Neurobehavior.\n• Dokter Spesialis Kedokteran Jiwa (Sp.KJ) / Psikiater Geriatri jika didominasi perubahan perilaku/emosi."
           }
+        ],
+        "responses": [
+          "Segera ke dokter saraf jika ditemukan tanda bahaya (*red flags*): 1. Tersesat di rute biasa. 2. Tidak mengenali anggota keluarga serumah. 3. Mengalami halusinasi atau menuduh tanpa dasar. 4. Penurunan kognitif terjadi drastis dalam beberapa minggu."
         ]
       },
       {
@@ -462,7 +1907,12 @@
           "obat alzheimer",
           "apakah pikun bisa sembuh",
           "terapi alzheimer",
-          "pengobatan demensia"
+          "pengobatan demensia",
+          "dokter apa untuk alzheimer",
+          "periksa ke mana",
+          "spesialis saraf",
+          "neurolog",
+          "psikiater geriatri"
         ],
         "tags": [
           "pengobatan",
@@ -484,6 +1934,9 @@
             "role": "assistant",
             "content": "Hingga saat ini, **penyakit Alzheimer belum memiliki obat yang dapat menyembuhkannya secara total** karena merupakan penyakit neurodegeneratif progresif.\n\nNamun, **deteksi dini dan terapi medis yang tepat sangat penting** karena dapat:\n1. **Memperlambat perburukan gejala**: Obat golongan *Cholinesterase Inhibitors* (seperti Donepezil, Rivastigmine) dan *NMDA Receptor Antagonists* (Memantine) dapat membantu menjaga transmisi neurotransmiter otak lebih lama.\n2. **Menjaga kemandirian dan kualitas hidup**: Terapi stimulasi kognitif, fisioterapi, dan terapi okupasi membantu pasien tetap mandiri lebih lama.\n3. **Mempersiapkan keluarga & pengasuh (*caregiver*)**: Memberikan waktu bagi keluarga untuk menyusun perencanaan perawatan dan lingkungan yang aman.\n\nItulah mengapa skrining dini menggunakan AI seperti Neura sangat krusial agar intervensi dapat dimulai pada stadium seringan mungkin."
           }
+        ],
+        "responses": [
+          "Dokter yang tepat: **Dokter Spesialis Neurologi/Saraf (Sp.N)**, khususnya konsultan Neurobehavior. Bila didominasi perubahan perilaku agresif, halusinasi, atau depresi, dapat berkonsultasi ke **Dokter Spesialis Kedokteran Jiwa (Sp.KJ) Geriatri**."
         ]
       },
       {
@@ -496,7 +1949,11 @@
           "mencegah pasien alzheimer tersesat",
           "tips keselamatan lansia di rumah",
           "keamanan rumah lansia",
-          "mencegah lansia kabur"
+          "mencegah lansia kabur",
+          "persiapan saat periksa ke dokter spesialis saraf",
+          "apa saja yang perlu disiapkan ke dokter",
+          "persiapan saat membawa pasien ke dokter",
+          "apa yang harus dibawa ke dokter saraf"
         ],
         "tags": [
           "keamanan",
@@ -518,6 +1975,9 @@
             "role": "assistant",
             "content": "Menjaga keselamatan fisik pasien Alzheimer di rumah memerlukan adaptasi lingkungan (*dementia-friendly environment*):\n\n1. **Pencegahan Tersesat (*Wandering Prevention*)**:\n   • Pasang kunci tambahan atau sensor pintu di luar jangkauan pandangan mata pasien (misalnya di bagian atas atau bawah pintu).\n   • Berikan gelang identitas medis anti-lepas atau sematkan GPS tracker pada sepatu/pakaian pasien.\n\n2. **Pencegahan Cedera & Jatuh (*Fall Prevention*)**:\n   • Pasang pegangan tangan (*grab bars*) di kamar mandi dan gunakan alas karet anti-selip.\n   • Singkirkan karpet lepas, kabel melintang, dan barang yang berpotensi menyebabkan tersandung.\n   • Pastikan penerangan rumah cukup terang, terutama lampu malam otomatis di jalur kamar tidur menuju toilet.\n\n3. **Keamanan Dapur & Obat-Obatan**:\n   • Simpan semua obat-obatan dalam kotak terkunci; berikan obat hanya dengan pengawasan langsung caregiver.\n   • Pasang pengaman kompor gas dan simpan pisau atau benda tajam di lemari khusus."
           }
+        ],
+        "responses": [
+          "Siapkan: 1. Catatan kronologis gejala (kapan mulai lupa dan seberapa sering). 2. Daftar semua obat/suplemen yang dikonsumsi saat ini. 3. Riwayat penyakit keluarga dan komorbiditas (hipertensi, diabetes, stroke)."
         ]
       },
       {
@@ -529,7 +1989,12 @@
           "tips merawat lansia dengan demensia",
           "cara menghadapi orang tua pikun",
           "tips untuk caregiver alzheimer",
-          "cara merawat alzheimer"
+          "cara merawat alzheimer",
+          "apakah alzheimer bisa sembuh",
+          "obat alzheimer",
+          "apakah pikun bisa sembuh",
+          "terapi alzheimer",
+          "pengobatan demensia"
         ],
         "tags": [
           "caregiver",
@@ -551,6 +2016,9 @@
             "role": "assistant",
             "content": "Merawat penderita Alzheimer (*caregiving*) membutuhkan kesabaran, struktur rutin, dan empati komunikasi:\n\n1. **Teknik Komunikasi Efektif**:\n   • Bicara dengan nada tenang, tatap mata, gunakan kalimat pendek dan instruksi satu per satu.\n   • **Hindari berdebat**: Bila pasien bersikeras pada hal keliru (delusi ringan), jangan didebat. Validasi emosinya lalu alihkan perhatian (*distract & redirect*).\n\n2. **Bangun Rutinitas Terstruktur**:\n   • Jadwalkan jam bangun, makan, aktivitas santai, mandi, dan tidur pada waktu yang sama setiap hari untuk meminimalkan kebingungan (*confusion*).\n   • Libatkan pasien dalam aktivitas bermakna sederhana (melipat handuk, menyiram tanaman, mendengarkan lagu nostalgia masa muda).\n\n3. **Cegah Burnout pada Caregiver**:\n   • Bagi tugas perawatan dengan anggota keluarga lain secara bergantian.\n   • Luangkan waktu untuk istirahat pribadi (*respite care*), karena kesehatan mental caregiver sangat menentukan kualitas hidup pasien."
           }
+        ],
+        "responses": [
+          "Saat ini belum ada obat yang menyembuhkan Alzheimer secara total. Namun intervensi medis dini sangat krusial untuk memperlambat laju keparahan, mengontrol gejala emosi, dan menjaga kemandirian fungsional pasien lebih lama."
         ]
       },
       {
@@ -562,7 +2030,10 @@
           "persiapan saat membawa pasien ke dokter",
           "persiapan periksa saraf",
           "apa yang harus dibawa ke dokter saraf",
-          "catatan untuk dokter saraf"
+          "catatan untuk dokter saraf",
+          "obat donepezil memantine",
+          "obat resep dokter untuk alzheimer",
+          "rivastigmine obat pikun"
         ],
         "tags": [
           "persiapan_konsultasi",
@@ -583,6 +2054,498 @@
           {
             "role": "assistant",
             "content": "Agar pemeriksaan dengan **Dokter Spesialis Saraf (Sp.N)** berjalan optimal, siapkan beberapa hal penting berikut:\n\n1. **Catatan Kronologis Gejala (*Symptom Diary*)**:\n   • Kapan keluhan pertama kali disadari dan seberapa sering terjadi (misal: frekuensi tersesat, lupa meletakkan barang).\n   • Perubahan suasana hati, pola tidur, nafsu makan, atau perilaku agresif/curiga.\n\n2. **Daftar Obat-Obatan & Riwayat Medis Lengkap**:\n   • Bawa semua obat resep, suplemen, atau obat herbal yang sedang dikonsumsi pasien (untuk mengecek interaksi obat yang bisa memicu kebingungan).\n   • Riwayat penyakit terdahulu: hipertensi, stroke, diabetes, trauma kepala, atau riwayat keluarga dengan demensia.\n\n3. **Tingkat Kemandirian Harian (*Activities of Daily Living - ADL*)**:\n   • Catat apakah pasien masih mandiri mandi, makan, berpakaian, atau mengurus keuangan sendiri.\n\nDokter saraf biasanya akan melakukan tes kognitif singkat (seperti MMSE atau MoCA) dan dapat merekomendasikan pemeriksaan penunjang seperti MRI otak atau tes laboratorium darah."
+          }
+        ],
+        "responses": [
+          "Golongan obat utama: 1. **Cholinesterase Inhibitors** (Donepezil, Rivastigmine, Galantamine) untuk meningkatkan neurotransmiter asetilkolin. 2. **NMDA Receptor Antagonist** (Memantine) untuk melindungi saraf dari toksisitas glutamat berlebih. Wajib dengan resep dokter saraf."
+        ]
+      },
+      {
+        "id": "caregiver_001",
+        "topik": "Caregiver 001",
+        "kata_kunci": [
+          "tips menjaga keamanan pasien alzheimer di rumah",
+          "keamanan pasien alzheimer",
+          "cara mengamankan rumah untuk lansia pikun",
+          "tips keselamatan lansia di rumah",
+          "keamanan rumah lansia"
+        ],
+        "tags": [
+          "tips menjaga keamanan pasien alzheimer di rumah",
+          "keamanan pasien alzheimer",
+          "cara mengamankan rumah untuk lansia pikun",
+          "tips keselamatan lansia di rumah"
+        ],
+        "responses": [
+          "Amankan rumah: 1. Pasang pegangan tangan (*grab bars*) di kamar mandi dan alas anti-selip. 2. Singkirkan kabel melintang dan karpet licin. 3. Pasang pengaman kompor gas. 4. Beri lampu malam otomatis di lorong kamar mandi."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "tips menjaga keamanan pasien alzheimer di rumah"
+          },
+          {
+            "role": "assistant",
+            "content": "Amankan rumah: 1. Pasang pegangan tangan (*grab bars*) di kamar mandi dan alas anti-selip. 2. Singkirkan kabel melintang dan karpet licin. 3. Pasang pengaman kompor gas. 4. Beri lampu malam otomatis di lorong kamar mandi."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_002",
+        "topik": "Caregiver 002",
+        "kata_kunci": [
+          "mencegah pasien alzheimer tersesat",
+          "tips mencegah lansia kabur",
+          "wandering prevention demensia",
+          "lansia keluyuran"
+        ],
+        "tags": [
+          "mencegah pasien alzheimer tersesat",
+          "tips mencegah lansia kabur",
+          "wandering prevention demensia",
+          "lansia keluyuran"
+        ],
+        "responses": [
+          "Pencegahan tersesat: 1. Pasang kunci tambahan di bagian atas/bawah pintu di luar jangkauan pandangan mata. 2. Sematkan perangkat GPS tracker pada sepatu atau kalung pasien. 3. Berikan gelang identitas medis anti-lepas dengan kontak keluarga."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "mencegah pasien alzheimer tersesat"
+          },
+          {
+            "role": "assistant",
+            "content": "Pencegahan tersesat: 1. Pasang kunci tambahan di bagian atas/bawah pintu di luar jangkauan pandangan mata. 2. Sematkan perangkat GPS tracker pada sepatu atau kalung pasien. 3. Berikan gelang identitas medis anti-lepas dengan kontak keluarga."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_003",
+        "topik": "Caregiver 003",
+        "kata_kunci": [
+          "cara bicara dengan penderita alzheimer",
+          "komunikasi dengan orang pikun",
+          "cara sabar menghadapi lansia demensia"
+        ],
+        "tags": [
+          "cara bicara dengan penderita alzheimer",
+          "komunikasi dengan orang pikun",
+          "cara sabar menghadapi lansia demensia"
+        ],
+        "responses": [
+          "Kaidah komunikasi: Bicara dengan nada lembut, tatap mata, gunakan kalimat pendek dan satu instruksi dalam satu waktu. **Hindari berdebat**: bila pasien keliru, validasi emosinya lalu alihkan perhatian (*distract & redirect*)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "cara bicara dengan penderita alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Kaidah komunikasi: Bicara dengan nada lembut, tatap mata, gunakan kalimat pendek dan satu instruksi dalam satu waktu. **Hindari berdebat**: bila pasien keliru, validasi emosinya lalu alihkan perhatian (*distract & redirect*)."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_004",
+        "topik": "Caregiver 004",
+        "kata_kunci": [
+          "pasien menolak mandi",
+          "susah disuruh minum obat",
+          "lansia ngamuk disuruh mandi"
+        ],
+        "tags": [
+          "pasien menolak mandi",
+          "susah disuruh minum obat",
+          "lansia ngamuk disuruh mandi"
+        ],
+        "responses": [
+          "Gunakan pendekatan tanpa paksaan: Ganti kalimat 'Ayo mandi sekarang' dengan 'Yuk kita cuci muka dengan air hangat yang segar'. Pastikan air bersuhu hangat suam kuku dan putar musik favoritnya untuk mengurangi kecemasan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "pasien menolak mandi"
+          },
+          {
+            "role": "assistant",
+            "content": "Gunakan pendekatan tanpa paksaan: Ganti kalimat 'Ayo mandi sekarang' dengan 'Yuk kita cuci muka dengan air hangat yang segar'. Pastikan air bersuhu hangat suam kuku dan putar musik favoritnya untuk mengurangi kecemasan."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_005",
+        "topik": "Caregiver 005",
+        "kata_kunci": [
+          "panduan merawat pasien alzheimer untuk caregiver",
+          "tips untuk caregiver alzheimer",
+          "burnout pengasuh demensia",
+          "stres merawat orang tua pikun"
+        ],
+        "tags": [
+          "panduan merawat pasien alzheimer untuk caregiver",
+          "tips untuk caregiver alzheimer",
+          "burnout pengasuh demensia",
+          "stres merawat orang tua pikun"
+        ],
+        "responses": [
+          "Merawat pasien Alzheimer rentan memicu burnout. Terapkan sistem bergantian dengan keluarga lain, luangkan waktu untuk *respite care* (istirahat pribadi), dan bergabunglah dengan kelompok pendukung keluarga demensia."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "panduan merawat pasien alzheimer untuk caregiver"
+          },
+          {
+            "role": "assistant",
+            "content": "Merawat pasien Alzheimer rentan memicu burnout. Terapkan sistem bergantian dengan keluarga lain, luangkan waktu untuk *respite care* (istirahat pribadi), dan bergabunglah dengan kelompok pendukung keluarga demensia."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_006",
+        "topik": "Caregiver 006",
+        "kata_kunci": [
+          "komunitas alzheimer indonesia",
+          "alzi indonesia",
+          "yayasan alzheimer",
+          "support group demensia"
+        ],
+        "tags": [
+          "komunitas alzheimer indonesia",
+          "alzi indonesia",
+          "yayasan alzheimer",
+          "support group demensia"
+        ],
+        "responses": [
+          "Di Indonesia terdapat organisasi nirlaba **Alzheimer Indonesia (ALZI)** yang menyediakan konseling caregiver, memory cafe, senam otak rutin, dan edukasi 'Jangan Maklum Dengan Pikun'. Kunjungi situs resmi alzi.or.id untuk bergabung."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "komunitas alzheimer indonesia"
+          },
+          {
+            "role": "assistant",
+            "content": "Di Indonesia terdapat organisasi nirlaba **Alzheimer Indonesia (ALZI)** yang menyediakan konseling caregiver, memory cafe, senam otak rutin, dan edukasi 'Jangan Maklum Dengan Pikun'. Kunjungi situs resmi alzi.or.id untuk bergabung."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_007",
+        "topik": "Caregiver 007",
+        "kata_kunci": [
+          "aktivitas santai bersama lansia",
+          "kegiatan harian pasien demensia",
+          "stimulasi lansia di rumah"
+        ],
+        "tags": [
+          "aktivitas santai bersama lansia",
+          "kegiatan harian pasien demensia",
+          "stimulasi lansia di rumah"
+        ],
+        "responses": [
+          "Ajak pasien dalam aktivitas bermakna sederhana: melipat pakaian, menyiram tanaman di pagi hari, meronce manik-manik besar, mendengarkan lagu nostalgia masa muda, atau melihat album foto keluarga lama."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aktivitas santai bersama lansia"
+          },
+          {
+            "role": "assistant",
+            "content": "Ajak pasien dalam aktivitas bermakna sederhana: melipat pakaian, menyiram tanaman di pagi hari, meronce manik-manik besar, mendengarkan lagu nostalgia masa muda, atau melihat album foto keluarga lama."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_008",
+        "topik": "Caregiver 008",
+        "kata_kunci": [
+          "cara menghadapi pertanyaan berulang kali",
+          "sabar menghadapi pengulangan demensia"
+        ],
+        "tags": [
+          "cara menghadapi pertanyaan berulang kali",
+          "sabar menghadapi pengulangan demensia"
+        ],
+        "responses": [
+          "Sadari bahwa pasien tidak ingat bahwa ia baru saja bertanya. Jawablah dengan sabar menggunakan kalimat pendek yang sama, atau pasang papan pengumuman bertuliskan jadwal harian (contoh: 'Makan siang jam 12.00') di dinding yang mudah terlihat."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "cara menghadapi pertanyaan berulang kali"
+          },
+          {
+            "role": "assistant",
+            "content": "Sadari bahwa pasien tidak ingat bahwa ia baru saja bertanya. Jawablah dengan sabar menggunakan kalimat pendek yang sama, atau pasang papan pengumuman bertuliskan jadwal harian (contoh: 'Makan siang jam 12.00') di dinding yang mudah terlihat."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_009",
+        "topik": "Caregiver 009",
+        "kata_kunci": [
+          "nutrisi makan lansia susah makan",
+          "pasien demensia tidak mau makan",
+          "sulit menelan disfagia"
+        ],
+        "tags": [
+          "nutrisi makan lansia susah makan",
+          "pasien demensia tidak mau makan",
+          "sulit menelan disfagia"
+        ],
+        "responses": [
+          "Jika pasien sulit menelan (*disfagia*), sajikan makanan bertekstur lembut (bubur saring, puree sup krim bergizi). Sajikan makanan dalam porsi kecil namun sering, dan gunakan piring berwarna kontras agar makanan terlihat jelas."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "nutrisi makan lansia susah makan"
+          },
+          {
+            "role": "assistant",
+            "content": "Jika pasien sulit menelan (*disfagia*), sajikan makanan bertekstur lembut (bubur saring, puree sup krim bergizi). Sajikan makanan dalam porsi kecil namun sering, dan gunakan piring berwarna kontras agar makanan terlihat jelas."
+          }
+        ]
+      },
+      {
+        "id": "caregiver_010",
+        "topik": "Caregiver 010",
+        "kata_kunci": [
+          "menghadapi tuduhan mencuri",
+          "dituduh mencuri oleh orang tua pikun",
+          "paranoid lansia"
+        ],
+        "tags": [
+          "menghadapi tuduhan mencuri",
+          "dituduh mencuri oleh orang tua pikun",
+          "paranoid lansia"
+        ],
+        "responses": [
+          "Jangan mendebat atau membela diri secara emosional. Katakan: 'Oh uang Ibu hilang ya? Mari kita cari bersama-sama'. Siapkan barang cadangan (misal: dompet duplikat berisi uang mainan) untuk diberikan saat pencarian."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "menghadapi tuduhan mencuri"
+          },
+          {
+            "role": "assistant",
+            "content": "Jangan mendebat atau membela diri secara emosional. Katakan: 'Oh uang Ibu hilang ya? Mari kita cari bersama-sama'. Siapkan barang cadangan (misal: dompet duplikat berisi uang mainan) untuk diberikan saat pencarian."
+          }
+        ]
+      },
+      {
+        "id": "dokter_006",
+        "topik": "Dokter 006",
+        "kata_kunci": [
+          "terapi non obat untuk alzheimer",
+          "fisioterapi demensia",
+          "terapi okupasi memori",
+          "terapi musik"
+        ],
+        "tags": [
+          "terapi non obat untuk alzheimer",
+          "fisioterapi demensia",
+          "terapi okupasi memori",
+          "terapi musik"
+        ],
+        "responses": [
+          "Terapi non-farmakologis meliputi: Terapi Stimulasi Kognitif (CST), terapi musik nostalgia, fisioterapi mobilitas, dan terapi okupasi untuk mempertahankan keterampilan makan serta berpakaian mandiri."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "terapi non obat untuk alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Terapi non-farmakologis meliputi: Terapi Stimulasi Kognitif (CST), terapi musik nostalgia, fisioterapi mobilitas, dan terapi okupasi untuk mempertahankan keterampilan makan serta berpakaian mandiri."
+          }
+        ]
+      },
+      {
+        "id": "dokter_007",
+        "topik": "Dokter 007",
+        "kata_kunci": [
+          "apakah periksa alzheimer ditanggung bpjs",
+          "bpjs kesehatan dokter saraf",
+          "biaya tes mmse mri bpjs"
+        ],
+        "tags": [
+          "apakah periksa alzheimer ditanggung bpjs",
+          "bpjs kesehatan dokter saraf",
+          "biaya tes mmse mri bpjs"
+        ],
+        "responses": [
+          "Ya, pemeriksaan dokter spesialis saraf, tes kognitif MMSE, pemeriksaan radiologi MRI/CT Scan otak (sesuai indikasi medis), serta obat-obatan rutin Alzheimer ditanggung oleh BPJS Kesehatan melalui rujukan berjenjang dari faskes tingkat pertama (Puskesmas/Klinik)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah periksa alzheimer ditanggung bpjs"
+          },
+          {
+            "role": "assistant",
+            "content": "Ya, pemeriksaan dokter spesialis saraf, tes kognitif MMSE, pemeriksaan radiologi MRI/CT Scan otak (sesuai indikasi medis), serta obat-obatan rutin Alzheimer ditanggung oleh BPJS Kesehatan melalui rujukan berjenjang dari faskes tingkat pertama (Puskesmas/Klinik)."
+          }
+        ]
+      },
+      {
+        "id": "dokter_008",
+        "topik": "Dokter 008",
+        "kata_kunci": [
+          "apa itu antibodi lecanemab donanemab",
+          "obat baru alzheimer fda",
+          "terapi penghancur amiloid"
+        ],
+        "tags": [
+          "apa itu antibodi lecanemab donanemab",
+          "obat baru alzheimer fda",
+          "terapi penghancur amiloid"
+        ],
+        "responses": [
+          "Lecanemab (Leqembi) dan Donanemab adalah antibodi monoklonal inovatif yang telah disetujui FDA untuk menargetkan dan melarutkan plak beta-amiloid pada pasien Alzheimer stadium awal (MCI)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu antibodi lecanemab donanemab"
+          },
+          {
+            "role": "assistant",
+            "content": "Lecanemab (Leqembi) dan Donanemab adalah antibodi monoklonal inovatif yang telah disetujui FDA untuk menargetkan dan melarutkan plak beta-amiloid pada pasien Alzheimer stadium awal (MCI)."
+          }
+        ]
+      },
+      {
+        "id": "dokter_009",
+        "topik": "Dokter 009",
+        "kata_kunci": [
+          "apakah anestesi operasi bisa bikin pikun lansia",
+          "efek bius total pada memori",
+          "postoperative cognitive dysfunction"
+        ],
+        "tags": [
+          "apakah anestesi operasi bisa bikin pikun lansia",
+          "efek bius total pada memori",
+          "postoperative cognitive dysfunction"
+        ],
+        "responses": [
+          "Bius total pada lansia dapat memicu Postoperative Cognitive Dysfunction (POCD) sesaat pasca-operasi. Kondisi ini umumnya membaik dalam beberapa minggu dengan pemulihan hidrasi dan nutrisi yang adekuat."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah anestesi operasi bisa bikin pikun lansia"
+          },
+          {
+            "role": "assistant",
+            "content": "Bius total pada lansia dapat memicu Postoperative Cognitive Dysfunction (POCD) sesaat pasca-operasi. Kondisi ini umumnya membaik dalam beberapa minggu dengan pemulihan hidrasi dan nutrisi yang adekuat."
+          }
+        ]
+      },
+      {
+        "id": "dokter_010",
+        "topik": "Dokter 010",
+        "kata_kunci": [
+          "bedanya stroke dan alzheimer",
+          "stroke bikin pikun",
+          "stroke infark otak memori"
+        ],
+        "tags": [
+          "bedanya stroke dan alzheimer",
+          "stroke bikin pikun",
+          "stroke infark otak memori"
+        ],
+        "responses": [
+          "Stroke terjadi mendadak akibat sumbatan atau pecahnya pembuluh darah otak dan memicu kelumpuhan fisik mendadak. Jika stroke merusak area memori, kondisi ini disebut Demensia Pasca-Stroke (Vaskular)."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "bedanya stroke dan alzheimer"
+          },
+          {
+            "role": "assistant",
+            "content": "Stroke terjadi mendadak akibat sumbatan atau pecahnya pembuluh darah otak dan memicu kelumpuhan fisik mendadak. Jika stroke merusak area memori, kondisi ini disebut Demensia Pasca-Stroke (Vaskular)."
           }
         ]
       }
@@ -607,7 +2570,15 @@
           "apa itu neura",
           "siapa neura",
           "/intro",
-          "/about"
+          "/about",
+          "hey",
+          "helo",
+          "hi",
+          "halo neura",
+          "hai neura",
+          "halo bot",
+          "halo asisten",
+          "permisi"
         ],
         "tags": [
           "sapaan",
@@ -631,6 +2602,9 @@
             "role": "assistant",
             "content": "Halo! Selamat datang di **Neura AI** — asisten cerdas untuk skrining kesehatan daya ingat dan deteksi dini risiko penyakit Alzheimer.\n\nApa yang bisa saya bantu hari ini?\n• **Konsultasi & Skrining**: Anda bisa menceritakan keluhan daya ingat Anda atau anggota keluarga.\n• **Edukasi Medis**: Tanyakan mengenai gejala, tes kognitif MMSE, perbedaan pikun normal vs Alzheimer, atau tips pencegahan.\n• **Simulasi Klinis**: Ketik `/predict` untuk melihat demonstrasi analisis 32 biomarker klinis berbasis XGBoost."
           }
+        ],
+        "responses": [
+          "Halo! Selamat datang di **Neura AI**, asisten cerdas untuk kesehatan daya ingat, skrining dini Alzheimer, dan konsultasi interaktif. Ada yang bisa saya bantu hari ini? Anda bisa menanyakan gejala kognitif, gaya hidup sehat untuk otak, atau sekadar mengobrol santai!"
         ]
       },
       {
@@ -641,7 +2615,12 @@
           "makasih",
           "thanks",
           "thank you",
-          "makasih ya neura"
+          "makasih ya neura",
+          "selamat pagi",
+          "pagi neura",
+          "morning",
+          "good morning",
+          "met pagi"
         ],
         "tags": [
           "terima_kasih",
@@ -660,6 +2639,529 @@
           {
             "role": "assistant",
             "content": "Sama-sama! Senang bisa membantu Anda memahami kesehatan kognitif dan pencegahan penyakit Alzheimer.\n\nJaga selalu kesehatan otak dengan pola makan bernutrisi, istirahat cukup, dan tetap aktif secara mental serta sosial. Jika ada hal lain yang ingin dikonsultasikan, jangan ragu untuk bertanya lagi!"
+          }
+        ],
+        "responses": [
+          "Selamat pagi! Semoga hari Anda menyenangkan dan penuh energi positif. Jangan lupa sarapan bergizi untuk nutrisi otak Anda. Ada topik kesehatan atau konsultasi yang ingin Anda diskusikan pagi ini?"
+        ]
+      },
+      {
+        "id": "salam_003",
+        "topik": "Salam 003",
+        "kata_kunci": [
+          "selamat siang",
+          "siang neura",
+          "good afternoon",
+          "met siang"
+        ],
+        "tags": [
+          "selamat siang",
+          "siang neura",
+          "good afternoon",
+          "met siang"
+        ],
+        "responses": [
+          "Selamat siang! Semoga aktivitas Anda berjalan lancar. Luangkan waktu sejenak untuk beristirahat dan minum air putih agar fokus otak tetap terjaga. Ada yang ingin Anda tanyakan seputar kesehatan memori?"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "selamat siang"
+          },
+          {
+            "role": "assistant",
+            "content": "Selamat siang! Semoga aktivitas Anda berjalan lancar. Luangkan waktu sejenak untuk beristirahat dan minum air putih agar fokus otak tetap terjaga. Ada yang ingin Anda tanyakan seputar kesehatan memori?"
+          }
+        ]
+      },
+      {
+        "id": "salam_004",
+        "topik": "Salam 004",
+        "kata_kunci": [
+          "selamat sore",
+          "sore neura",
+          "met sore"
+        ],
+        "tags": [
+          "selamat sore",
+          "sore neura",
+          "met sore"
+        ],
+        "responses": [
+          "Selamat sore! Waktu yang baik untuk relaksasi sejenak setelah beraktivitas seharian. Apakah Anda ingin membaca tips kesehatan otak, latihan kognitif, atau berkonsultasi mengenai daya ingat?"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "selamat sore"
+          },
+          {
+            "role": "assistant",
+            "content": "Selamat sore! Waktu yang baik untuk relaksasi sejenak setelah beraktivitas seharian. Apakah Anda ingin membaca tips kesehatan otak, latihan kognitif, atau berkonsultasi mengenai daya ingat?"
+          }
+        ]
+      },
+      {
+        "id": "salam_005",
+        "topik": "Salam 005",
+        "kata_kunci": [
+          "selamat malam",
+          "malam neura",
+          "good evening",
+          "good night",
+          "met malem"
+        ],
+        "tags": [
+          "selamat malam",
+          "malam neura",
+          "good evening",
+          "good night"
+        ],
+        "responses": [
+          "Selamat malam! Istirahat dan tidur nyenyak sangat penting bagi sistem glimfatik otak untuk membersihkan plak amiloid. Jika ada keluhan atau pertanyaan sebelum beristirahat, silakan sampaikan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "selamat malam"
+          },
+          {
+            "role": "assistant",
+            "content": "Selamat malam! Istirahat dan tidur nyenyak sangat penting bagi sistem glimfatik otak untuk membersihkan plak amiloid. Jika ada keluhan atau pertanyaan sebelum beristirahat, silakan sampaikan."
+          }
+        ]
+      },
+      {
+        "id": "salam_006",
+        "topik": "Salam 006",
+        "kata_kunci": [
+          "assalamualaikum",
+          "assalammualaikum",
+          "salam",
+          "assalamualaikum neura"
+        ],
+        "tags": [
+          "assalamualaikum",
+          "assalammualaikum",
+          "salam",
+          "assalamualaikum neura"
+        ],
+        "responses": [
+          "Waalaikumsalam warahmatullahi wabarakatuh! Selamat datang di Neura AI. Semoga kesehatan, ketenangan, dan keberkahan selalu menyertai Anda dan keluarga. Apa yang bisa saya bantu hari ini?"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "assalamualaikum"
+          },
+          {
+            "role": "assistant",
+            "content": "Waalaikumsalam warahmatullahi wabarakatuh! Selamat datang di Neura AI. Semoga kesehatan, ketenangan, dan keberkahan selalu menyertai Anda dan keluarga. Apa yang bisa saya bantu hari ini?"
+          }
+        ]
+      },
+      {
+        "id": "salam_007",
+        "topik": "Salam 007",
+        "kata_kunci": [
+          "apa kabar",
+          "bagaimana kabarmu",
+          "kabar apa",
+          "how are you",
+          "kamu sehat",
+          "kabar baik"
+        ],
+        "tags": [
+          "apa kabar",
+          "bagaimana kabarmu",
+          "kabar apa",
+          "how are you"
+        ],
+        "responses": [
+          "Kabar saya sangat baik, terima kasih sudah bertanya! Sebagai asisten kecerdasan buatan, sistem saya selalu siap 24/7 untuk membantu Anda memahami kesehatan kognitif. Bagaimana dengan kabar Anda hari ini?"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa kabar"
+          },
+          {
+            "role": "assistant",
+            "content": "Kabar saya sangat baik, terima kasih sudah bertanya! Sebagai asisten kecerdasan buatan, sistem saya selalu siap 24/7 untuk membantu Anda memahami kesehatan kognitif. Bagaimana dengan kabar Anda hari ini?"
+          }
+        ]
+      },
+      {
+        "id": "salam_008",
+        "topik": "Salam 008",
+        "kata_kunci": [
+          "siapa kamu",
+          "siapa namamu",
+          "siapa anda",
+          "perkenalkan dirimu",
+          "kamu siapa",
+          "nama kamu apa",
+          "profil neura"
+        ],
+        "tags": [
+          "siapa kamu",
+          "siapa namamu",
+          "siapa anda",
+          "perkenalkan dirimu"
+        ],
+        "responses": [
+          "Nama saya **Neura**, asisten kecerdasan buatan (AI) yang dikembangkan khusus untuk skrining dini kesehatan daya ingat dan deteksi risiko penyakit Alzheimer berbasis Machine Learning XGBoost dengan akurasi 95.3%. Saya juga siap menjadi teman diskusi kesehatan kognitif Anda."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "siapa kamu"
+          },
+          {
+            "role": "assistant",
+            "content": "Nama saya **Neura**, asisten kecerdasan buatan (AI) yang dikembangkan khusus untuk skrining dini kesehatan daya ingat dan deteksi risiko penyakit Alzheimer berbasis Machine Learning XGBoost dengan akurasi 95.3%. Saya juga siap menjadi teman diskusi kesehatan kognitif Anda."
+          }
+        ]
+      },
+      {
+        "id": "salam_009",
+        "topik": "Salam 009",
+        "kata_kunci": [
+          "siapa yang membuatmu",
+          "siapa penciptamu",
+          "siapa pengembangmu",
+          "developer neura",
+          "pembuat aplikasi ini"
+        ],
+        "tags": [
+          "siapa yang membuatmu",
+          "siapa penciptamu",
+          "siapa pengembangmu",
+          "developer neura"
+        ],
+        "responses": [
+          "Neura AI dikembangkan oleh tim engineer dan peneliti kecerdasan buatan klinis untuk menghadirkan teknologi deteksi dini neurodegeneratif yang mudah diakses, cepat, dan akurat bagi masyarakat dan praktisi kesehatan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "siapa yang membuatmu"
+          },
+          {
+            "role": "assistant",
+            "content": "Neura AI dikembangkan oleh tim engineer dan peneliti kecerdasan buatan klinis untuk menghadirkan teknologi deteksi dini neurodegeneratif yang mudah diakses, cepat, dan akurat bagi masyarakat dan praktisi kesehatan."
+          }
+        ]
+      },
+      {
+        "id": "salam_010",
+        "topik": "Salam 010",
+        "kata_kunci": [
+          "apa yang bisa kamu lakukan",
+          "kemampuanmu apa saja",
+          "apa fungsimu",
+          "apa fitur neura",
+          "bisa apa saja"
+        ],
+        "tags": [
+          "apa yang bisa kamu lakukan",
+          "kemampuanmu apa saja",
+          "apa fungsimu",
+          "apa fitur neura"
+        ],
+        "responses": [
+          "Saya dapat membantu Anda dalam: 1. **Skrining Awal Daya Ingat**: Mengidentifikasi keluhan lupa apakah wajar atau indikasi demensia. 2. **Analisis 32 Biomarker Klinis**: Simulasi risiko Alzheimer menggunakan perintah `/predict`. 3. **Edukasi Medis & Gaya Hidup**: Diet MIND, senam otak, pola tidur, dan panduan caregiver. 4. **Konsultasi Suara Real-time**: Interaksi suara alami via ruang konsultasi LiveKit."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa yang bisa kamu lakukan"
+          },
+          {
+            "role": "assistant",
+            "content": "Saya dapat membantu Anda dalam: 1. **Skrining Awal Daya Ingat**: Mengidentifikasi keluhan lupa apakah wajar atau indikasi demensia. 2. **Analisis 32 Biomarker Klinis**: Simulasi risiko Alzheimer menggunakan perintah `/predict`. 3. **Edukasi Medis & Gaya Hidup**: Diet MIND, senam otak, pola tidur, dan panduan caregiver. 4. **Konsultasi Suara Real-time**: Interaksi suara alami via ruang konsultasi LiveKit."
+          }
+        ]
+      },
+      {
+        "id": "salam_011",
+        "topik": "Salam 011",
+        "kata_kunci": [
+          "kamu berbasis apa",
+          "teknologi apa yang kamu gunakan",
+          "model apa yang dipakai",
+          "sistem neura"
+        ],
+        "tags": [
+          "kamu berbasis apa",
+          "teknologi apa yang kamu gunakan",
+          "model apa yang dipakai",
+          "sistem neura"
+        ],
+        "responses": [
+          "Neura AI mengintegrasikan model prediktif **XGBoost (Extreme Gradient Boosting)** yang dilatih pada 2.149 data pasien dengan 32 parameter klinis (akurasi 95.35% dan ROC-AUC 94.11%), didukung sistem dialog berbasis intent klinis dan protokol konsultasi audio LiveKit WebRTC."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "kamu berbasis apa"
+          },
+          {
+            "role": "assistant",
+            "content": "Neura AI mengintegrasikan model prediktif **XGBoost (Extreme Gradient Boosting)** yang dilatih pada 2.149 data pasien dengan 32 parameter klinis (akurasi 95.35% dan ROC-AUC 94.11%), didukung sistem dialog berbasis intent klinis dan protokol konsultasi audio LiveKit WebRTC."
+          }
+        ]
+      },
+      {
+        "id": "tutup_001",
+        "topik": "Tutup 001",
+        "kata_kunci": [
+          "selamat tinggal",
+          "dadah",
+          "bye",
+          "sampai jumpa",
+          "pamit",
+          "sampai bertemu lagi"
+        ],
+        "tags": [
+          "selamat tinggal",
+          "dadah",
+          "bye",
+          "sampai jumpa"
+        ],
+        "responses": [
+          "Sampai jumpa! Terima kasih telah menggunakan Neura AI. Senang bisa berbagi wawasan kesehatan dengan Anda. Semoga Anda dan keluarga senantiasa sehat dan bahagia!"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "selamat tinggal"
+          },
+          {
+            "role": "assistant",
+            "content": "Sampai jumpa! Terima kasih telah menggunakan Neura AI. Senang bisa berbagi wawasan kesehatan dengan Anda. Semoga Anda dan keluarga senantiasa sehat dan bahagia!"
+          }
+        ]
+      },
+      {
+        "id": "tutup_002",
+        "topik": "Tutup 002",
+        "kata_kunci": [
+          "aku mau tidur dulu",
+          "pamit tidur",
+          "ngantuk mau tidur",
+          "tidur dulu ya neura"
+        ],
+        "tags": [
+          "aku mau tidur dulu",
+          "pamit tidur",
+          "ngantuk mau tidur",
+          "tidur dulu ya neura"
+        ],
+        "responses": [
+          "Selamat tidur dan selamat beristirahat! Biarkan otak Anda meregenerasi sel-sel saraf dan membersihkan sisa racun metabolik malam ini. Sampai bertemu besok!"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku mau tidur dulu"
+          },
+          {
+            "role": "assistant",
+            "content": "Selamat tidur dan selamat beristirahat! Biarkan otak Anda meregenerasi sel-sel saraf dan membersihkan sisa racun metabolik malam ini. Sampai bertemu besok!"
+          }
+        ]
+      },
+      {
+        "id": "tutup_003",
+        "topik": "Tutup 003",
+        "kata_kunci": [
+          "semoga sehat selalu",
+          "doa untuk keluarga",
+          "jaga kesehatan",
+          "semoga berkah"
+        ],
+        "tags": [
+          "semoga sehat selalu",
+          "doa untuk keluarga",
+          "jaga kesehatan",
+          "semoga berkah"
+        ],
+        "responses": [
+          "Aamiin ya Rabbal Alamin. Terima kasih atas doa yang tulus! Semoga kesehatan, ketajaman daya ingat, dan kebahagiaan selalu melimpahi Anda dan seluruh keluarga tercinta."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "semoga sehat selalu"
+          },
+          {
+            "role": "assistant",
+            "content": "Aamiin ya Rabbal Alamin. Terima kasih atas doa yang tulus! Semoga kesehatan, ketajaman daya ingat, dan kebahagiaan selalu melimpahi Anda dan seluruh keluarga tercinta."
+          }
+        ]
+      },
+      {
+        "id": "feedback_001",
+        "topik": "Feedback 001",
+        "kata_kunci": [
+          "jawabannya sangat membantu",
+          "ini yang saya cari",
+          "penjelasannya sangat bagus",
+          "informatif sekali"
+        ],
+        "tags": [
+          "jawabannya sangat membantu",
+          "ini yang saya cari",
+          "penjelasannya sangat bagus",
+          "informatif sekali"
+        ],
+        "responses": [
+          "Alhamdulillah, saya sangat senang mendengarnya! Tujuan utama Neura adalah memberikan pemahaman medis yang jelas, menenangkan, dan bermanfaat bagi Anda dan keluarga."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "jawabannya sangat membantu"
+          },
+          {
+            "role": "assistant",
+            "content": "Alhamdulillah, saya sangat senang mendengarnya! Tujuan utama Neura adalah memberikan pemahaman medis yang jelas, menenangkan, dan bermanfaat bagi Anda dan keluarga."
+          }
+        ]
+      },
+      {
+        "id": "feedback_002",
+        "topik": "Feedback 002",
+        "kata_kunci": [
+          "jawabannya kurang jelas",
+          "belum paham",
+          "kurang puas",
+          "bukan itu maksud saya"
+        ],
+        "tags": [
+          "jawabannya kurang jelas",
+          "belum paham",
+          "kurang puas",
+          "bukan itu maksud saya"
+        ],
+        "responses": [
+          "Mohon maaf jika penjelasan sebelumnya belum menjawab maksud Anda. Silakan jelaskan kembali pertanyaan atau keluhan Anda dengan sudut pandang yang berbeda, dan saya akan bantu jawab dengan senang hati."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "jawabannya kurang jelas"
+          },
+          {
+            "role": "assistant",
+            "content": "Mohon maaf jika penjelasan sebelumnya belum menjawab maksud Anda. Silakan jelaskan kembali pertanyaan atau keluhan Anda dengan sudut pandang yang berbeda, dan saya akan bantu jawab dengan senang hati."
+          }
+        ]
+      },
+      {
+        "id": "salam_012",
+        "topik": "Salam 012",
+        "kata_kunci": [
+          "tes",
+          "tes 1 2 3",
+          "testing",
+          "halo tes",
+          "cek koneksi",
+          "halo apa kamu aktif"
+        ],
+        "tags": [
+          "tes",
+          "tes 1 2 3",
+          "testing",
+          "halo tes"
+        ],
+        "responses": [
+          "Sistem Neura AI aktif 100% dan terhubung dengan baik! Silakan ketik pertanyaan atau konsultasi apa pun yang ingin Anda diskusikan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "tes"
+          },
+          {
+            "role": "assistant",
+            "content": "Sistem Neura AI aktif 100% dan terhubung dengan baik! Silakan ketik pertanyaan atau konsultasi apa pun yang ingin Anda diskusikan."
           }
         ]
       }
@@ -695,6 +3197,1384 @@
           {
             "role": "assistant",
             "content": "Neura didukung oleh algoritma **XGBoost (Extreme Gradient Boosting)** Classifier yang telah dioptimasi khusus untuk data klinis tabular:\n\n• **Dataset Latihan**: 2.149 rekam medis pasien Alzheimer (`alzheimers_disease_data.csv`).\n• **Dimensi Fitur**: 32 biomarker multi-domain (kognitif, demografi, laboratorium, gaya hidup).\n• **Performa Teruji**: **95.35% Test Accuracy**, **94.11% ROC-AUC**, dan **92.11% Sensitivity** pada 430 sampel holdout pasien.\n• **Keunggulan**: Mampu menangkap pola interaksi non-linear yang kompleks antar biomarker tanpa risiko overfitting berlebih.\n\nGunakan perintah `/eval` untuk memeriksa matriks konfusi dan metrik presisi lengkap."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_001",
+        "topik": "Bantuan 001",
+        "kata_kunci": [
+          "menu neura",
+          "cara pakai neura",
+          "panduan aplikasi neura",
+          "fitur neura ai",
+          "cara menggunakan chatbot ini"
+        ],
+        "tags": [
+          "menu neura",
+          "cara pakai neura",
+          "panduan aplikasi neura",
+          "fitur neura ai"
+        ],
+        "responses": [
+          "Panduan Cepat Neura AI: 1. **Ketik pesan biasa**: Untuk konsultasi seputar daya ingat dan gaya hidup. 2. **Perintah Cepat**: Ketik `/predict` (skrining), `/eval` (evaluasi model), `/train` (latih model), `/status` (status sistem). 3. **Voice Mode**: Klik ikon mikrofon untuk konsultasi suara real-time."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "menu neura"
+          },
+          {
+            "role": "assistant",
+            "content": "Panduan Cepat Neura AI: 1. **Ketik pesan biasa**: Untuk konsultasi seputar daya ingat dan gaya hidup. 2. **Perintah Cepat**: Ketik `/predict` (skrining), `/eval` (evaluasi model), `/train` (latih model), `/status` (status sistem). 3. **Voice Mode**: Klik ikon mikrofon untuk konsultasi suara real-time."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_002",
+        "topik": "Bantuan 002",
+        "kata_kunci": [
+          "apa itu predict",
+          "cara pakai predict",
+          "simulasi predict",
+          "perintah predict",
+          "/predict"
+        ],
+        "tags": [
+          "apa itu predict",
+          "cara pakai predict",
+          "simulasi predict",
+          "perintah predict"
+        ],
+        "responses": [
+          "Ketik `/predict` untuk membuka simulasi prediksi diagnosis Alzheimer interaktif. Anda dapat memasukkan nilai MMSE, ADL, Functional Assessment, dan biomarker klinis lainnya untuk melihat estimasi probabilitas risiko secara instan."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu predict"
+          },
+          {
+            "role": "assistant",
+            "content": "Ketik `/predict` untuk membuka simulasi prediksi diagnosis Alzheimer interaktif. Anda dapat memasukkan nilai MMSE, ADL, Functional Assessment, dan biomarker klinis lainnya untuk melihat estimasi probabilitas risiko secara instan."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_003",
+        "topik": "Bantuan 003",
+        "kata_kunci": [
+          "apa itu train",
+          "cara latih model",
+          "perintah train",
+          "melatih xgboost",
+          "/train"
+        ],
+        "tags": [
+          "apa itu train",
+          "cara latih model",
+          "perintah train",
+          "melatih xgboost"
+        ],
+        "responses": [
+          "Ketik `/train [epoch]` (contoh: `/train 50`) untuk melatih algoritma XGBoost Classifier pada 2.149 data rekam medis pasien di server backend Neura."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu train"
+          },
+          {
+            "role": "assistant",
+            "content": "Ketik `/train [epoch]` (contoh: `/train 50`) untuk melatih algoritma XGBoost Classifier pada 2.149 data rekam medis pasien di server backend Neura."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_004",
+        "topik": "Bantuan 004",
+        "kata_kunci": [
+          "apa itu eval",
+          "cara evaluasi model",
+          "perintah eval",
+          "metrik akurasi neura",
+          "/eval"
+        ],
+        "tags": [
+          "apa itu eval",
+          "cara evaluasi model",
+          "perintah eval",
+          "metrik akurasi neura"
+        ],
+        "responses": [
+          "Ketik `/eval` untuk memeriksa metrik performa model terkini: Akurasi (95.35%), ROC-AUC (94.11%), Sensitivity/Recall (92.11%), F1-Score, dan matriks konfusi validasi."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu eval"
+          },
+          {
+            "role": "assistant",
+            "content": "Ketik `/eval` untuk memeriksa metrik performa model terkini: Akurasi (95.35%), ROC-AUC (94.11%), Sensitivity/Recall (92.11%), F1-Score, dan matriks konfusi validasi."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_005",
+        "topik": "Bantuan 005",
+        "kata_kunci": [
+          "apa itu status",
+          "cara cek status model",
+          "perintah status",
+          "status sistem neura",
+          "/status"
+        ],
+        "tags": [
+          "apa itu status",
+          "cara cek status model",
+          "perintah status",
+          "status sistem neura"
+        ],
+        "responses": [
+          "Ketik `/status` untuk melihat status aktif model XGBoost, keberadaan checkpoint JSON, jumlah fitur klinis yang aktif (32 dimensi), dan status lingkungan server."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu status"
+          },
+          {
+            "role": "assistant",
+            "content": "Ketik `/status` untuk melihat status aktif model XGBoost, keberadaan checkpoint JSON, jumlah fitur klinis yang aktif (32 dimensi), dan status lingkungan server."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_006",
+        "topik": "Bantuan 006",
+        "kata_kunci": [
+          "apa itu help",
+          "bantuan perintah",
+          "daftar perintah neura",
+          "command list",
+          "/help"
+        ],
+        "tags": [
+          "apa itu help",
+          "bantuan perintah",
+          "daftar perintah neura",
+          "command list"
+        ],
+        "responses": [
+          "Daftar Perintah Neura: • `/predict` : Jalankan prediksi diagnosis • `/train [n]` : Latih model n epoch • `/eval` : Tampilkan metrik evaluasi • `/status` : Periksa kesiapan model • `/intro` : Ringkasan Neura AI • `/help` : Bantuan perintah."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa itu help"
+          },
+          {
+            "role": "assistant",
+            "content": "Daftar Perintah Neura: • `/predict` : Jalankan prediksi diagnosis • `/train [n]` : Latih model n epoch • `/eval` : Tampilkan metrik evaluasi • `/status` : Periksa kesiapan model • `/intro` : Ringkasan Neura AI • `/help` : Bantuan perintah."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_007",
+        "topik": "Bantuan 007",
+        "kata_kunci": [
+          "cara pakai suara",
+          "mode suara",
+          "konsultasi suara",
+          "livekit voice consultation",
+          "mic neura"
+        ],
+        "tags": [
+          "cara pakai suara",
+          "mode suara",
+          "konsultasi suara",
+          "livekit voice consultation"
+        ],
+        "responses": [
+          "Klik tombol 'Voice Consultation' di navbar atau klik ikon mikrofon pada bar pesan untuk membuka ruang konsultasi suara real-time bertenaga WebRTC LiveKit. Bicara secara alami layaknya dengan dokter klinis."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "cara pakai suara"
+          },
+          {
+            "role": "assistant",
+            "content": "Klik tombol 'Voice Consultation' di navbar atau klik ikon mikrofon pada bar pesan untuk membuka ruang konsultasi suara real-time bertenaga WebRTC LiveKit. Bicara secara alami layaknya dengan dokter klinis."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_008",
+        "topik": "Bantuan 008",
+        "kata_kunci": [
+          "seberapa akurat neura ai",
+          "validasi data neura",
+          "apakah hasil neura bisa dipercaya",
+          "akurasi xgboost"
+        ],
+        "tags": [
+          "seberapa akurat neura ai",
+          "validasi data neura",
+          "apakah hasil neura bisa dipercaya",
+          "akurasi xgboost"
+        ],
+        "responses": [
+          "Model XGBoost Neura AI memiliki tingkat akurasi 95.35% dan ROC-AUC 94.11% pada 430 sampel pasien validasi holdout. Namun Neura dirancang sebagai instrumen skrining dini, bukan pengganti penegakan diagnosis resmi dokter spesialis saraf."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "seberapa akurat neura ai"
+          },
+          {
+            "role": "assistant",
+            "content": "Model XGBoost Neura AI memiliki tingkat akurasi 95.35% dan ROC-AUC 94.11% pada 430 sampel pasien validasi holdout. Namun Neura dirancang sebagai instrumen skrining dini, bukan pengganti penegakan diagnosis resmi dokter spesialis saraf."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_009",
+        "topik": "Bantuan 009",
+        "kata_kunci": [
+          "apakah data saya aman di neura",
+          "privasi data pasien",
+          "keamanan data medis",
+          "kerahasiaan konsultasi"
+        ],
+        "tags": [
+          "apakah data saya aman di neura",
+          "privasi data pasien",
+          "keamanan data medis",
+          "kerahasiaan konsultasi"
+        ],
+        "responses": [
+          "Data Anda diproses secara lokal dengan standar privasi ketat. Sesi konsultasi dienkripsi dan kami tidak memperjualbelikan rekam medis atau informasi pribadi Anda kepada pihak ketiga."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah data saya aman di neura"
+          },
+          {
+            "role": "assistant",
+            "content": "Data Anda diproses secara lokal dengan standar privasi ketat. Sesi konsultasi dienkripsi dan kami tidak memperjualbelikan rekam medis atau informasi pribadi Anda kepada pihak ketiga."
+          }
+        ]
+      },
+      {
+        "id": "bantuan_010",
+        "topik": "Bantuan 010",
+        "kata_kunci": [
+          "cara logout dari neura",
+          "cara keluar akun",
+          "ganti akun neura",
+          "sign out"
+        ],
+        "tags": [
+          "cara logout dari neura",
+          "cara keluar akun",
+          "ganti akun neura",
+          "sign out"
+        ],
+        "responses": [
+          "Untuk keluar dari akun Neura AI, klik ikon Logout (pintu keluar) di pojok kiri bawah sidebar Anda di samping foto profil, atau klik tombol 'Ganti Akun / Keluar' pada jendela autentikasi."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "cara logout dari neura"
+          },
+          {
+            "role": "assistant",
+            "content": "Untuk keluar dari akun Neura AI, klik ikon Logout (pintu keluar) di pojok kiri bawah sidebar Anda di samping foto profil, atau klik tombol 'Ganti Akun / Keluar' pada jendela autentikasi."
+          }
+        ]
+      }
+    ],
+    "percakapan_santai": [
+      {
+        "id": "santai_001",
+        "topik": "Santai 001",
+        "kata_kunci": [
+          "terima kasih",
+          "makasih",
+          "makasih banyak",
+          "thanks",
+          "thank you",
+          "trims",
+          "suwun",
+          "nuhun",
+          "makasi"
+        ],
+        "tags": [
+          "terima kasih",
+          "makasih",
+          "makasih banyak",
+          "thanks"
+        ],
+        "responses": [
+          "Sama-sama! Senang sekali bisa membantu Anda. Jaga selalu kesehatan otak dan kebugaran tubuh. Jangan ragu menyapa saya kembali jika ada hal lain yang ingin Anda ketahui!"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "terima kasih"
+          },
+          {
+            "role": "assistant",
+            "content": "Sama-sama! Senang sekali bisa membantu Anda. Jaga selalu kesehatan otak dan kebugaran tubuh. Jangan ragu menyapa saya kembali jika ada hal lain yang ingin Anda ketahui!"
+          }
+        ]
+      },
+      {
+        "id": "santai_002",
+        "topik": "Santai 002",
+        "kata_kunci": [
+          "sama sama",
+          "kembali",
+          "you're welcome",
+          "ur welcome",
+          "no problem"
+        ],
+        "tags": [
+          "sama sama",
+          "kembali",
+          "you're welcome",
+          "ur welcome"
+        ],
+        "responses": [
+          "Terima kasih atas kebaikan Anda! Semoga hari Anda penuh dengan keberkahan dan produktivitas."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "sama sama"
+          },
+          {
+            "role": "assistant",
+            "content": "Terima kasih atas kebaikan Anda! Semoga hari Anda penuh dengan keberkahan dan produktivitas."
+          }
+        ]
+      },
+      {
+        "id": "santai_003",
+        "topik": "Santai 003",
+        "kata_kunci": [
+          "maaf",
+          "saya minta maaf",
+          "sorry",
+          "mohon maaf",
+          "maaf merepotkan"
+        ],
+        "tags": [
+          "maaf",
+          "saya minta maaf",
+          "sorry",
+          "mohon maaf"
+        ],
+        "responses": [
+          "Tidak perlu meminta maaf, sama sekali tidak merepotkan! Saya ada di sini untuk mendengarkan dan membantu Anda kapan saja."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "maaf"
+          },
+          {
+            "role": "assistant",
+            "content": "Tidak perlu meminta maaf, sama sekali tidak merepotkan! Saya ada di sini untuk mendengarkan dan membantu Anda kapan saja."
+          }
+        ]
+      },
+      {
+        "id": "santai_004",
+        "topik": "Santai 004",
+        "kata_kunci": [
+          "tidak apa apa",
+          "santai saja",
+          "its okay",
+          "gapapa",
+          "tidak masalah",
+          "no worries"
+        ],
+        "tags": [
+          "tidak apa apa",
+          "santai saja",
+          "its okay",
+          "gapapa"
+        ],
+        "responses": [
+          "Baik, terima kasih atas pengertiannya! Mari kita lanjutkan obrolan kita dengan santai."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "tidak apa apa"
+          },
+          {
+            "role": "assistant",
+            "content": "Baik, terima kasih atas pengertiannya! Mari kita lanjutkan obrolan kita dengan santai."
+          }
+        ]
+      },
+      {
+        "id": "santai_005",
+        "topik": "Santai 005",
+        "kata_kunci": [
+          "kamu pintar sekali",
+          "keren",
+          "hebat",
+          "wow hebat",
+          "good job",
+          "mantap",
+          "cerdas",
+          "luar biasa"
+        ],
+        "tags": [
+          "kamu pintar sekali",
+          "keren",
+          "hebat",
+          "wow hebat"
+        ],
+        "responses": [
+          "Terima kasih banyak atas apresiasi Anda! Pujian Anda memotivasi saya untuk terus memberikan informasi kesehatan yang bermanfaat, akurat, dan mudah dipahami."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "kamu pintar sekali"
+          },
+          {
+            "role": "assistant",
+            "content": "Terima kasih banyak atas apresiasi Anda! Pujian Anda memotivasi saya untuk terus memberikan informasi kesehatan yang bermanfaat, akurat, dan mudah dipahami."
+          }
+        ]
+      },
+      {
+        "id": "santai_006",
+        "topik": "Santai 006",
+        "kata_kunci": [
+          "ceritakan lelucon",
+          "buat aku tertawa",
+          "cerita lucu",
+          "jokes",
+          "ada lelucon",
+          "hibur saya dengan lelucon"
+        ],
+        "tags": [
+          "ceritakan lelucon",
+          "buat aku tertawa",
+          "cerita lucu",
+          "jokes"
+        ],
+        "responses": [
+          "Ini lelucon ringan untuk Anda: Mengapa neuron otak kita tidak pernah tersesat saat pergi kerja? Karena mereka selalu mengikuti jalur sinapsis dan punya banyak koneksi! Tertawa dan bahagia juga sangat baik untuk meredakan hormon kortisol penyebab stres di otak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "ceritakan lelucon"
+          },
+          {
+            "role": "assistant",
+            "content": "Ini lelucon ringan untuk Anda: Mengapa neuron otak kita tidak pernah tersesat saat pergi kerja? Karena mereka selalu mengikuti jalur sinapsis dan punya banyak koneksi! Tertawa dan bahagia juga sangat baik untuk meredakan hormon kortisol penyebab stres di otak."
+          }
+        ]
+      },
+      {
+        "id": "santai_007",
+        "topik": "Santai 007",
+        "kata_kunci": [
+          "aku sedang bosan",
+          "hibur aku",
+          "tidak tahu mau ngobrol apa",
+          "bosan sekali",
+          "bete"
+        ],
+        "tags": [
+          "aku sedang bosan",
+          "hibur aku",
+          "tidak tahu mau ngobrol apa",
+          "bosan sekali"
+        ],
+        "responses": [
+          "Bosan adalah tanda otak Anda butuh stimulasi baru! Anda bisa mencoba senam otak sederhana, bermain tebak-tebakan, membaca artikel kesehatan baru di Neura, atau mencoba simulasi prediktif kami dengan mengetik `/predict`."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku sedang bosan"
+          },
+          {
+            "role": "assistant",
+            "content": "Bosan adalah tanda otak Anda butuh stimulasi baru! Anda bisa mencoba senam otak sederhana, bermain tebak-tebakan, membaca artikel kesehatan baru di Neura, atau mencoba simulasi prediktif kami dengan mengetik `/predict`."
+          }
+        ]
+      },
+      {
+        "id": "santai_008",
+        "topik": "Santai 008",
+        "kata_kunci": [
+          "bagaimana cuaca hari ini",
+          "ramalan cuaca",
+          "cuaca di luar",
+          "cuaca panas",
+          "cuaca hujan"
+        ],
+        "tags": [
+          "bagaimana cuaca hari ini",
+          "ramalan cuaca",
+          "cuaca di luar",
+          "cuaca panas"
+        ],
+        "responses": [
+          "Sebagai asisten medis AI yang terfokus pada kesehatan otak, saya tidak memiliki sensor cuaca real-time langsung. Namun apapun cuacanya, pastikan tetap terhidrasi dengan baik, karena kekurangan cairan ringan (dehidrasi) dapat menurunkan konsentrasi dan daya ingat sesaat."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "bagaimana cuaca hari ini"
+          },
+          {
+            "role": "assistant",
+            "content": "Sebagai asisten medis AI yang terfokus pada kesehatan otak, saya tidak memiliki sensor cuaca real-time langsung. Namun apapun cuacanya, pastikan tetap terhidrasi dengan baik, karena kekurangan cairan ringan (dehidrasi) dapat menurunkan konsentrasi dan daya ingat sesaat."
+          }
+        ]
+      },
+      {
+        "id": "santai_009",
+        "topik": "Santai 009",
+        "kata_kunci": [
+          "jam berapa sekarang",
+          "hari ini hari apa",
+          "tanggal berapa sekarang",
+          "waktu saat ini"
+        ],
+        "tags": [
+          "jam berapa sekarang",
+          "hari ini hari apa",
+          "tanggal berapa sekarang",
+          "waktu saat ini"
+        ],
+        "responses": [
+          "Anda dapat melihat waktu dan tanggal saat ini pada panel kalender di sudut kanan atas layar dashboard Anda. Mengetahui hari dan tanggal tanpa melihat kalender juga merupakan salah satu latihan orientasi kognitif yang sangat baik untuk memori Anda!"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "jam berapa sekarang"
+          },
+          {
+            "role": "assistant",
+            "content": "Anda dapat melihat waktu dan tanggal saat ini pada panel kalender di sudut kanan atas layar dashboard Anda. Mengetahui hari dan tanggal tanpa melihat kalender juga merupakan salah satu latihan orientasi kognitif yang sangat baik untuk memori Anda!"
+          }
+        ]
+      },
+      {
+        "id": "santai_010",
+        "topik": "Santai 010",
+        "kata_kunci": [
+          "apa arti kehidupan",
+          "makna hidup manusia",
+          "tujuan hidup",
+          "filosofi hidup"
+        ],
+        "tags": [
+          "apa arti kehidupan",
+          "makna hidup manusia",
+          "tujuan hidup",
+          "filosofi hidup"
+        ],
+        "responses": [
+          "Secara filosofis dan biologis, makna hidup adalah bertumbuh, berbagi cinta, memelihara ingatan berharga, dan memberikan dampak positif bagi sesama. Menjaga daya ingat kita tetap sehat adalah salah satu cara terbaik untuk merawat jejak cerita hidup bersama orang-orang tercinta."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apa arti kehidupan"
+          },
+          {
+            "role": "assistant",
+            "content": "Secara filosofis dan biologis, makna hidup adalah bertumbuh, berbagi cinta, memelihara ingatan berharga, dan memberikan dampak positif bagi sesama. Menjaga daya ingat kita tetap sehat adalah salah satu cara terbaik untuk merawat jejak cerita hidup bersama orang-orang tercinta."
+          }
+        ]
+      },
+      {
+        "id": "santai_011",
+        "topik": "Santai 011",
+        "kata_kunci": [
+          "apakah kamu punya perasaan",
+          "apakah kamu punya emosi",
+          "kamu bisa sedih",
+          "apakah kamu punya hati"
+        ],
+        "tags": [
+          "apakah kamu punya perasaan",
+          "apakah kamu punya emosi",
+          "kamu bisa sedih",
+          "apakah kamu punya hati"
+        ],
+        "responses": [
+          "Saya tidak memiliki emosi biologis seperti manusia. Namun, algoritma saya diprogram untuk selalu merespons dengan penuh empati, kehangatan, dan kesabaran untuk mendampingi siapapun yang sedang membutuhkan dukungan dan informasi medis."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah kamu punya perasaan"
+          },
+          {
+            "role": "assistant",
+            "content": "Saya tidak memiliki emosi biologis seperti manusia. Namun, algoritma saya diprogram untuk selalu merespons dengan penuh empati, kehangatan, dan kesabaran untuk mendampingi siapapun yang sedang membutuhkan dukungan dan informasi medis."
+          }
+        ]
+      },
+      {
+        "id": "santai_012",
+        "topik": "Santai 012",
+        "kata_kunci": [
+          "apakah kamu tidur",
+          "apakah ai butuh istirahat",
+          "kamu tidur jam berapa",
+          "apa ai bisa lelah"
+        ],
+        "tags": [
+          "apakah kamu tidur",
+          "apakah ai butuh istirahat",
+          "kamu tidur jam berapa",
+          "apa ai bisa lelah"
+        ],
+        "responses": [
+          "Saya tidak tidur dan tidak pernah lelah! Sistem server Neura bekerja tanpa henti agar selalu siap kapan pun Anda membutuhkan konsultasi. Namun bagi manusia, tidur 7–8 jam adalah kewajiban mutlak agar otak bisa membersihkan racun metabolik!"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah kamu tidur"
+          },
+          {
+            "role": "assistant",
+            "content": "Saya tidak tidur dan tidak pernah lelah! Sistem server Neura bekerja tanpa henti agar selalu siap kapan pun Anda membutuhkan konsultasi. Namun bagi manusia, tidur 7–8 jam adalah kewajiban mutlak agar otak bisa membersihkan racun metabolik!"
+          }
+        ]
+      },
+      {
+        "id": "santai_013",
+        "topik": "Santai 013",
+        "kata_kunci": [
+          "apakah kamu manusia atau robot",
+          "kamu bot ya",
+          "kamu orang asli",
+          "apa kamu manusia sungguhan"
+        ],
+        "tags": [
+          "apakah kamu manusia atau robot",
+          "kamu bot ya",
+          "kamu orang asli",
+          "apa kamu manusia sungguhan"
+        ],
+        "responses": [
+          "Saya adalah entitas kecerdasan buatan (AI assistant) berbasis algoritma machine learning, bukan manusia sungguhan. Namun seluruh pengetahuan medis yang saya sampaikan disusun berdasarkan panduan klinis neurologi berstandar internasional."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah kamu manusia atau robot"
+          },
+          {
+            "role": "assistant",
+            "content": "Saya adalah entitas kecerdasan buatan (AI assistant) berbasis algoritma machine learning, bukan manusia sungguhan. Namun seluruh pengetahuan medis yang saya sampaikan disusun berdasarkan panduan klinis neurologi berstandar internasional."
+          }
+        ]
+      }
+    ],
+    "kesehatan_mental": [
+      {
+        "id": "emosi_001",
+        "topik": "Emosi 001",
+        "kata_kunci": [
+          "aku sedang sedih",
+          "hatiku hancur",
+          "lagi galau",
+          "merasa sedih",
+          "sedih banget",
+          "menangis"
+        ],
+        "tags": [
+          "aku sedang sedih",
+          "hatiku hancur",
+          "lagi galau",
+          "merasa sedih"
+        ],
+        "responses": [
+          "Saya turut merasakan apa yang Anda alami. Merasa sedih adalah bagian wajar dari pengalaman manusia. Tarik napas dalam-dalam, perlakukan diri Anda dengan penuh kelembutan hari ini, dan jangan ragu bercerita jika ada beban pikiran yang ingin Anda bagi."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku sedang sedih"
+          },
+          {
+            "role": "assistant",
+            "content": "Saya turut merasakan apa yang Anda alami. Merasa sedih adalah bagian wajar dari pengalaman manusia. Tarik napas dalam-dalam, perlakukan diri Anda dengan penuh kelembutan hari ini, dan jangan ragu bercerita jika ada beban pikiran yang ingin Anda bagi."
+          }
+        ]
+      },
+      {
+        "id": "emosi_002",
+        "topik": "Emosi 002",
+        "kata_kunci": [
+          "aku cemas",
+          "aku gelisah",
+          "merasa takut berlebihan",
+          "anxiety",
+          "panik",
+          "cemas sekali"
+        ],
+        "tags": [
+          "aku cemas",
+          "aku gelisah",
+          "merasa takut berlebihan",
+          "anxiety"
+        ],
+        "responses": [
+          "Tarik napas perlahan melalui hidung selama 4 detik, tahan 4 detik, lalu hembuskan lewat mulut selama 6 detik. Kecemasan memicu lonjakan hormon adrenalin yang membuat pikiran tegang. Ingat bahwa Anda aman saat ini, dan perasaan ini perlahan akan mereda."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku cemas"
+          },
+          {
+            "role": "assistant",
+            "content": "Tarik napas perlahan melalui hidung selama 4 detik, tahan 4 detik, lalu hembuskan lewat mulut selama 6 detik. Kecemasan memicu lonjakan hormon adrenalin yang membuat pikiran tegang. Ingat bahwa Anda aman saat ini, dan perasaan ini perlahan akan mereda."
+          }
+        ]
+      },
+      {
+        "id": "emosi_003",
+        "topik": "Emosi 003",
+        "kata_kunci": [
+          "aku stres berat",
+          "banyak pikiran",
+          "kepala mau pecah",
+          "pusing banyak masalah",
+          "tekanan hidup"
+        ],
+        "tags": [
+          "aku stres berat",
+          "banyak pikiran",
+          "kepala mau pecah",
+          "pusing banyak masalah"
+        ],
+        "responses": [
+          "Stres kronis dapat memicu pelepasan hormon kortisol berlebih yang berisiko mengecilkan hippocampus (pusat memori otak). Cobalah berhenti sejenak dari layar monitor, lakukan peregangan ringan, dan fokus selesaikan masalah satu per satu secara bertahap."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku stres berat"
+          },
+          {
+            "role": "assistant",
+            "content": "Stres kronis dapat memicu pelepasan hormon kortisol berlebih yang berisiko mengecilkan hippocampus (pusat memori otak). Cobalah berhenti sejenak dari layar monitor, lakukan peregangan ringan, dan fokus selesaikan masalah satu per satu secara bertahap."
+          }
+        ]
+      },
+      {
+        "id": "emosi_004",
+        "topik": "Emosi 004",
+        "kata_kunci": [
+          "aku capek sekali",
+          "lelah mental dan fisik",
+          "burnout",
+          "lelah hidup",
+          "kehabisan energi"
+        ],
+        "tags": [
+          "aku capek sekali",
+          "lelah mental dan fisik",
+          "burnout",
+          "lelah hidup"
+        ],
+        "responses": [
+          "Tubuh dan pikiran Anda sedang mengirimkan sinyal kuat bahwa Anda butuh istirahat. Jangan merasa bersalah untuk berhenti sejenak. Tidur yang cukup, matikan notifikasi pekerjaan di malam hari, dan beri ruang bagi diri Anda untuk pulih."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku capek sekali"
+          },
+          {
+            "role": "assistant",
+            "content": "Tubuh dan pikiran Anda sedang mengirimkan sinyal kuat bahwa Anda butuh istirahat. Jangan merasa bersalah untuk berhenti sejenak. Tidur yang cukup, matikan notifikasi pekerjaan di malam hari, dan beri ruang bagi diri Anda untuk pulih."
+          }
+        ]
+      },
+      {
+        "id": "emosi_005",
+        "topik": "Emosi 005",
+        "kata_kunci": [
+          "aku merasa kesepian",
+          "tidak ada teman bicara",
+          "sepi sekali",
+          "merasa sendiri",
+          "kesepian"
+        ],
+        "tags": [
+          "aku merasa kesepian",
+          "tidak ada teman bicara",
+          "sepi sekali",
+          "merasa sendiri"
+        ],
+        "responses": [
+          "Anda tidak sendirian; saya ada di sini untuk menemani Anda. Kesepian yang berkepanjangan terbukti dapat mempercepat penurunan kognitif. Menghubungi sahabat lama atau keluarga dekat lewat telepon singkat bisa sangat membantu menghangatkan suasana hati."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku merasa kesepian"
+          },
+          {
+            "role": "assistant",
+            "content": "Anda tidak sendirian; saya ada di sini untuk menemani Anda. Kesepian yang berkepanjangan terbukti dapat mempercepat penurunan kognitif. Menghubungi sahabat lama atau keluarga dekat lewat telepon singkat bisa sangat membantu menghangatkan suasana hati."
+          }
+        ]
+      },
+      {
+        "id": "emosi_006",
+        "topik": "Emosi 006",
+        "kata_kunci": [
+          "aku sedang kesal",
+          "marah sekali",
+          "emosi",
+          "jengkel",
+          "marah",
+          "naik darah"
+        ],
+        "tags": [
+          "aku sedang kesal",
+          "marah sekali",
+          "emosi",
+          "jengkel"
+        ],
+        "responses": [
+          "Tarik napas dalam dan beri jeda sebelum bereaksi. Amarah adalah energi emosi yang intens; menyalurkannya lewat aktivitas fisik seperti berjalan santai atau menuliskan unek-unek di kertas dapat membantu meredakan ketegangan sistem saraf."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku sedang kesal"
+          },
+          {
+            "role": "assistant",
+            "content": "Tarik napas dalam dan beri jeda sebelum bereaksi. Amarah adalah energi emosi yang intens; menyalurkannya lewat aktivitas fisik seperti berjalan santai atau menuliskan unek-unek di kertas dapat membantu meredakan ketegangan sistem saraf."
+          }
+        ]
+      },
+      {
+        "id": "emosi_007",
+        "topik": "Emosi 007",
+        "kata_kunci": [
+          "hari ini aku sangat bahagia",
+          "kabar baik",
+          "aku senang sekali",
+          "bahagia",
+          "bersyukur"
+        ],
+        "tags": [
+          "hari ini aku sangat bahagia",
+          "kabar baik",
+          "aku senang sekali",
+          "bahagia"
+        ],
+        "responses": [
+          "Kabar yang sangat membahagiakan! Perasaan bahagia memicu pelepasan dopamin, serotonin, dan endorfin yang sangat menyehatkan pembuluh darah otak dan memperkuat daya ingat. Rayakan momen indah ini!"
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "hari ini aku sangat bahagia"
+          },
+          {
+            "role": "assistant",
+            "content": "Kabar yang sangat membahagiakan! Perasaan bahagia memicu pelepasan dopamin, serotonin, dan endorfin yang sangat menyehatkan pembuluh darah otak dan memperkuat daya ingat. Rayakan momen indah ini!"
+          }
+        ]
+      },
+      {
+        "id": "mental_001",
+        "topik": "Mental 001",
+        "kata_kunci": [
+          "kepalaku terasa berkabut",
+          "sulit fokus",
+          "linglung",
+          "brain fog",
+          "tidak bisa konsentrasi",
+          "pikiran lambat"
+        ],
+        "tags": [
+          "kepalaku terasa berkabut",
+          "sulit fokus",
+          "linglung",
+          "brain fog"
+        ],
+        "responses": [
+          "Brain fog (pikiran berkabut) sering disebabkan oleh kurang tidur, dehidrasi, stres, atau pasca-infeksi. Cukupi asupan air putih 2 liter/hari, kurangi konsumsi gula berlebih, dan luangkan waktu untuk tidur siang singkat 20 menit."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "kepalaku terasa berkabut"
+          },
+          {
+            "role": "assistant",
+            "content": "Brain fog (pikiran berkabut) sering disebabkan oleh kurang tidur, dehidrasi, stres, atau pasca-infeksi. Cukupi asupan air putih 2 liter/hari, kurangi konsumsi gula berlebih, dan luangkan waktu untuk tidur siang singkat 20 menit."
+          }
+        ]
+      },
+      {
+        "id": "mental_002",
+        "topik": "Mental 002",
+        "kata_kunci": [
+          "aku susah tidur",
+          "insomnia",
+          "tidak bisa tidur nyenyak",
+          "sering begadang",
+          "gangguan tidur"
+        ],
+        "tags": [
+          "aku susah tidur",
+          "insomnia",
+          "tidak bisa tidur nyenyak",
+          "sering begadang"
+        ],
+        "responses": [
+          "Untuk mengatasi insomnia: 1. Hindari kafein setelah pukul 14.00. 2. Hentikan menatap layar gadget 1 jam sebelum tidur. 3. Buat suhu kamar sejuk dan redupkan lampu. Tidur nyenyak sangat penting bagi pembersihan plak protein beracun di otak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "aku susah tidur"
+          },
+          {
+            "role": "assistant",
+            "content": "Untuk mengatasi insomnia: 1. Hindari kafein setelah pukul 14.00. 2. Hentikan menatap layar gadget 1 jam sebelum tidur. 3. Buat suhu kamar sejuk dan redupkan lampu. Tidur nyenyak sangat penting bagi pembersihan plak protein beracun di otak."
+          }
+        ]
+      },
+      {
+        "id": "mental_003",
+        "topik": "Mental 003",
+        "kata_kunci": [
+          "cara menenangkan diri",
+          "teknik pernapasan",
+          "relaksasi",
+          "cara meditasi",
+          "cara redakan cemas"
+        ],
+        "tags": [
+          "cara menenangkan diri",
+          "teknik pernapasan",
+          "relaksasi",
+          "cara meditasi"
+        ],
+        "responses": [
+          "Coba teknik pernapasan 'Box Breathing' (Metode 4-4-4-4): Tarik napas 4 detik, tahan 4 detik, hembuskan 4 detik, dan tahan kosong 4 detik. Ulangi 4 siklus. Teknik ini mengaktifkan saraf parasimpatis untuk menurunkan detak jantung dan menenangkan pikiran."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "cara menenangkan diri"
+          },
+          {
+            "role": "assistant",
+            "content": "Coba teknik pernapasan 'Box Breathing' (Metode 4-4-4-4): Tarik napas 4 detik, tahan 4 detik, hembuskan 4 detik, dan tahan kosong 4 detik. Ulangi 4 siklus. Teknik ini mengaktifkan saraf parasimpatis untuk menurunkan detak jantung dan menenangkan pikiran."
+          }
+        ]
+      },
+      {
+        "id": "mental_004",
+        "topik": "Mental 004",
+        "kata_kunci": [
+          "hubungan depresi dan lupa",
+          "apakah depresi bikin pikun",
+          "pengaruh depresi pada memori",
+          "pseudodemensia"
+        ],
+        "tags": [
+          "hubungan depresi dan lupa",
+          "apakah depresi bikin pikun",
+          "pengaruh depresi pada memori",
+          "pseudodemensia"
+        ],
+        "responses": [
+          "Ya, depresi berat dapat memicu kondisi yang disebut **Pseudodemensia**. Pasien depresi sering mengalami penurunan konsentrasi dan kelupaan parah yang menyerupai Alzheimer. Bedanya, fungsi kognitif pada pseudodemensia dapat pulih sepenuhnya setelah depresinya diterapi secara tepat."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "hubungan depresi dan lupa"
+          },
+          {
+            "role": "assistant",
+            "content": "Ya, depresi berat dapat memicu kondisi yang disebut **Pseudodemensia**. Pasien depresi sering mengalami penurunan konsentrasi dan kelupaan parah yang menyerupai Alzheimer. Bedanya, fungsi kognitif pada pseudodemensia dapat pulih sepenuhnya setelah depresinya diterapi secara tepat."
+          }
+        ]
+      }
+    ],
+    "di_luar_dataset": [
+      {
+        "id": "fallback_001",
+        "topik": "Fallback 001",
+        "kata_kunci": [
+          "di luar topik",
+          "di luar dataset",
+          "di luar konteks",
+          "tidak ada di dataset",
+          "pertanyaan tidak relevan",
+          "hal acak di luar percakapan",
+          "di luar cakupan",
+          "out of scope",
+          "tidak bisa dijawab"
+        ],
+        "tags": [
+          "di luar topik",
+          "di luar dataset",
+          "di luar konteks",
+          "tidak ada di dataset"
+        ],
+        "responses": [
+          "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Saat ini Neura AI dirancang secara khusus untuk berfokus pada skrining awal kesehatan daya ingat, deteksi dini risiko penyakit Alzheimer, analisis 32 biomarker klinis, dan edukasi gaya hidup sehat untuk otak. Silakan ajukan pertanyaan seputar kesehatan memori atau gunakan perintah /predict."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "di luar topik"
+          },
+          {
+            "role": "assistant",
+            "content": "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Saat ini Neura AI dirancang secara khusus untuk berfokus pada skrining awal kesehatan daya ingat, deteksi dini risiko penyakit Alzheimer, analisis 32 biomarker klinis, dan edukasi gaya hidup sehat untuk otak. Silakan ajukan pertanyaan seputar kesehatan memori atau gunakan perintah /predict."
+          }
+        ]
+      },
+      {
+        "id": "fallback_002",
+        "topik": "Fallback 002",
+        "kata_kunci": [
+          "pertanyaan di luar topik",
+          "topik tidak nyambung",
+          "di luar bidang alzheimer",
+          "tidak ada hubungan dengan memori",
+          "hal lain di luar kesehatan"
+        ],
+        "tags": [
+          "pertanyaan di luar topik",
+          "topik tidak nyambung",
+          "di luar bidang alzheimer",
+          "tidak ada hubungan dengan memori"
+        ],
+        "responses": [
+          "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Topik atau pertanyaan yang Anda sampaikan berada di luar basis data percakapan klinis Neura AI. Saya siap membantu Anda jika ingin berkonsultasi mengenai tanda-tanda awal demensia, tes kognitif MMSE, skor kemandirian ADL, atau nutrisi ramah otak."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "pertanyaan di luar topik"
+          },
+          {
+            "role": "assistant",
+            "content": "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Topik atau pertanyaan yang Anda sampaikan berada di luar basis data percakapan klinis Neura AI. Saya siap membantu Anda jika ingin berkonsultasi mengenai tanda-tanda awal demensia, tes kognitif MMSE, skor kemandirian ADL, atau nutrisi ramah otak."
+          }
+        ]
+      },
+      {
+        "id": "fallback_003",
+        "topik": "Fallback 003",
+        "kata_kunci": [
+          "apakah kamu tahu resep masakan",
+          "siapa artis ini",
+          "ramalan cuaca",
+          "berita politik",
+          "harga saham",
+          "kurs mata uang"
+        ],
+        "tags": [
+          "apakah kamu tahu resep masakan",
+          "siapa artis ini",
+          "ramalan cuaca",
+          "berita politik"
+        ],
+        "responses": [
+          "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Sebagai asisten skrining kognitif medis, cakupan saya terbatas pada pencegahan dan deteksi dini Alzheimer, panduan caregiver lansia, serta simulasi biomarker klinis. Silakan ajukan pertanyaan terkait topik kesehatan daya ingat."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "apakah kamu tahu resep masakan"
+          },
+          {
+            "role": "assistant",
+            "content": "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Sebagai asisten skrining kognitif medis, cakupan saya terbatas pada pencegahan dan deteksi dini Alzheimer, panduan caregiver lansia, serta simulasi biomarker klinis. Silakan ajukan pertanyaan terkait topik kesehatan daya ingat."
+          }
+        ]
+      },
+      {
+        "id": "fallback_004",
+        "topik": "Fallback 004",
+        "kata_kunci": [
+          "jawaban tidak ditemukan",
+          "kamu tidak paham ini",
+          "topik ini tidak ada di sistem",
+          "tidak ada di database kamu"
+        ],
+        "tags": [
+          "jawaban tidak ditemukan",
+          "kamu tidak paham ini",
+          "topik ini tidak ada di sistem",
+          "tidak ada di database kamu"
+        ],
+        "responses": [
+          "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Informasi mengenai hal tersebut tidak tersedia di dalam basis pengetahuan Neura AI. Anda dapat mencoba menanyakan perbedaan pikun biasa vs Alzheimer, faktor risiko demensia, atau ketik /help untuk panduan lengkap."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "jawaban tidak ditemukan"
+          },
+          {
+            "role": "assistant",
+            "content": "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Informasi mengenai hal tersebut tidak tersedia di dalam basis pengetahuan Neura AI. Anda dapat mencoba menanyakan perbedaan pikun biasa vs Alzheimer, faktor risiko demensia, atau ketik /help untuk panduan lengkap."
+          }
+        ]
+      },
+      {
+        "id": "fallback_005",
+        "topik": "Fallback 005",
+        "kata_kunci": [
+          "pertanyaan umum acak",
+          "hal di luar medis",
+          "pertanyaan di luar keahlian",
+          "topik lain"
+        ],
+        "tags": [
+          "pertanyaan umum acak",
+          "hal di luar medis",
+          "pertanyaan di luar keahlian",
+          "topik lain"
+        ],
+        "responses": [
+          "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Pertanyaan tersebut berada di luar cakupan konsultasi medis Neura AI. Silakan ajukan pertanyaan seputar keluhan daya ingat orang tua, skrining faktor risiko genetik dan vaskular, atau jalankan simulasi klinis /predict."
+        ],
+        "suggestions": [
+          "Apa perbedaan pikun biasa vs Alzheimer?",
+          "Jelaskan 10 tanda awal Alzheimer",
+          "Simulasikan data skrining /predict"
+        ],
+        "percakapan": [
+          {
+            "role": "user",
+            "content": "pertanyaan umum acak"
+          },
+          {
+            "role": "assistant",
+            "content": "Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Pertanyaan tersebut berada di luar cakupan konsultasi medis Neura AI. Silakan ajukan pertanyaan seputar keluhan daya ingat orang tua, skrining faktor risiko genetik dan vaskular, atau jalankan simulasi klinis /predict."
           }
         ]
       }

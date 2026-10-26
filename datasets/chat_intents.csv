@@ -1,21 +1,688 @@
 intent,pattern,response
-konsul_001,"konsultasi, mulai konsultasi, mau konsultasi, skrining daya ingat, cek memori, tes ingatan, periksa daya ingat, bantu skrining, apakah saya pikun","Halo! Saya **Neura**, asisten cerdas untuk skrining awal kesehatan daya ingat dan deteksi dini risiko Alzheimer.  Untuk memulai konsultasi awal, Anda dapat menceritakan keluhan yang dirasakan atau menjawab 3 pertanyaan panduan ini: 1. **Berapa usia** Anda atau anggota keluarga yang dikonsultasikan? 2. **Keluhan apa yang paling sering muncul?** *(Contoh: sering lupa nama kerabat dekat, mengulang pertanyaan yang sama, atau bingung arah jalan)* 3. **Apakah keluhan tersebut mulai mengganggu kemandirian harian?** *(Contoh: kesulitan mengurus keuangan, minum obat, atau memasak sendiri)*  Ceritakan keluhan Anda dengan santai, dan saya akan bantu menganalisis indikasi awal serta tingkat risikonya.  *(💡 Catatan: Neura adalah alat skrining awal berbasis Machine Learning XGBoost dengan akurasi 95.3%, bukan pengganti diagnosis medis resmi dokter spesialis saraf)*"
-konsul_002,"cara skrining mandiri, langkah skrining, tes sendiri di rumah, cara periksa sendiri, tahapan skrining","Skrining awal mandiri dapat dilakukan dengan mengamati 4 aspek klinis utama:  1. **Uji Memori Jangka Pendek**: Perhatikan apakah seseorang sering melupakan percakapan atau janji yang baru saja terjadi beberapa jam lalu. 2. **Uji Orientasi Waktu & Tempat**: Tanyakan hari, tanggal, bulan, serta lokasi saat ini tanpa melihat kalender. 3. **Skrining Kemandirian Aktivitas (ADL)**: Amati apakah masih mandiri dalam mengelola obat harian, berhitung belanjaan, atau menggunakan telepon. 4. **Perubahan Afek & Perilaku**: Amati apakah ada penurunan minat sosial, rasa curiga berlebihan, atau mudah frustrasi saat berpikir.  Jika ditemukan lebih dari 2 tanda di atas, disarankan melakukan evaluasi kognitif standar (seperti tes MMSE) atau konsultasi langsung ke Dokter Spesialis Neurologi (Sp.N)."
-gejala_001,"beda pikun dan alzheimer, perbedaan pikun biasa, apakah pikun itu alzheimer, pikun normal, perbedaan demensia dan pikun, kapan pikun dianggap bahaya","Perbedaan utamanya terletak pada **frekuensi**, **sifat kelupaan**, dan **dampaknya pada kemandirian**:  | Aspek | Pikun Wajar (Penuaan Normal) | Penyakit Alzheimer / Demensia | | :--- | :--- | :--- | | **Memori** | Lupa letak barang sesekali, lalu ingat kembali | Lupa informasi baru, nama orang dekat, dan tidak ingat lagi | | **Penggunaan Barang** | Lupa di mana kacamata ditaruh | Lupa fungsi dari kacamata atau benda sehari-hari | | **Aktivitas Harian** | Masih mandiri membayar tagihan & bepergian | Kesulitan mengikuti resep masakan akrab, bingung bayar uang | | **Orientasi** | Lupa tanggal hari ini tapi tahu bulannya | Bingung di mana mereka berada atau bagaimana sampai di sana | | **Percakapan** | Kadang sulit mencari padanan kata | Sering berhenti di tengah kalimat dan mengulang kata yang sama |  Jika kelupaan mulai mengganggu tugas sehari-hari, itu bukan sekadar penuaan normal, melainkan indikasi perlunya evaluasi medis."
-gejala_002,"10 tanda alzheimer, gejala awal alzheimer, ciri ciri alzheimer, tanda tanda demensia, gejala kepikunan parah, ciri pikun alzheimer","Berdasarkan standar medis *Alzheimer's Association*, berikut 10 tanda awal yang patut diwaspadai:  1. **Gangguan daya ingat** yang mengganggu rutinitas sehari-hari. 2. **Kesulitan merencanakan** atau memecahkan masalah hitungan sederhana. 3. **Kesulitan menyelesaikan tugas yang akrab** (seperti rute jalan ke pasar langganan). 4. **Disorientasi waktu dan tempat** (tidak tahu musim, tahun, atau cara pulang). 5. **Gangguan persepsi visual** dan hubungan spasial (sulit mengukur jarak). 6. **Masalah komunikasi verbal** (kesulitan menemukan kata atau menamai benda). 7. **Salah meletakkan barang** di tempat aneh (misal: dompet di dalam kulkas). 8. **Penurunan daya pertimbangan** (gampang tertipu uang atau abai kebersihan diri). 9. **Menarik diri** dari hobi, pekerjaan, dan interaksi sosial. 10. **Perubahan suasana hati & kepribadian** (menjadi mudah cemas, curiga, atau bingung)."
-gejala_003,"sering lupa jalan pulang, tersesat, orang tua lupa jalan, disorientasi tempat, kakek sering bingung arah, nenek lupa rumah","**Ya, keluhan sering lupa jalan pulang dan disorientasi spasial adalah tanda peringatan klinis yang signifikan.**  Pada otak penderita Alzheimer, area **hippocampus** dan **korteks entorhinal** (yang bertanggung jawab atas pemetaan navigasi spasial) sering kali menjadi bagian pertama yang mengalami atrofi neurodegeneratif.  **Langkah pencegahan darurat yang disarankan:** 1. Pasang tanda pengenal (gelang identitas atau kartu nama dengan nomor telepon keluarga) pada saku atau pakaian beliau. 2. Gunakan perangkat GPS tracker atau fitur pelacak lokasi pada smartphone. 3. Segera jadwalkan pemeriksaan dengan **Dokter Spesialis Saraf (Sp.N)** untuk tes fungsi kognitif dan MRI otak jika diperlukan."
-gejala_004,"perubahan perilaku, mudah marah, sering curiga, halusinasi pikun, tuduh orang mencuri, emosi tidak stabil lansia, gelisah malam hari, sundowning","Perubahan perilaku tersebut merupakan gejala neuropsikiatri umum pada demensia/Alzheimer:  1. **Daya Ingat Menurun Menyebabkan Konfabulasi**: Ketika pasien lupa di mana meletakkan barang berharga, otak mereka mencoba mengisi kekosongan ingatan dengan penjelasan bahwa ada orang yang memindahkannya atau mencurinya. 2. **Sindrom Sundowning**: Fenomena meningkatnya rasa gelisah, bingung, dan agitasi di sore hingga malam hari akibat kelelahan mental dan penurunan intensitas cahaya alami. 3. **Biomarker Klinis**: Di Neura AI, faktor `BehavioralProblems` dimasukkan sebagai salah satu dari 32 biomarker prediktif karena memiliki bobot korelasi kuat terhadap stadium demensia.  **Tips untuk keluarga**: Hindari mendebat pasien secara langsung. Validasi perasaannya, alihkan perhatian ke hal yang menyenangkan, dan jaga pencahayaan ruangan tetap terang di sore hari."
-tes_001,"apa itu mmse, tes mmse, skor mmse, mini mental state examination, berapa skor normal mmse, interpretasi mmse, nilai mmse","**MMSE (Mini-Mental State Examination)** adalah tes kognitif berstandar internasional dengan total skor maksimal **30 poin** untuk menilai fungsi memori, orientasi, perhatian, kalkulasi, bahasa, dan kemampuan visuospasial.  **Interpretasi Skor MMSE:** • **24 – 30**: Fungsi kognitif Normal (tidak ada indikasi demensia signifikan). • **19 – 23**: Gangguan Kognitif Ringan (*Mild Cognitive Impairment / MCI*). • **10 – 18**: Demensia / Alzheimer Stadium Sedang (*Moderate*). • **< 10**: Demensia Berat (*Severe*).  Pada model Neura XGBoost, skor MMSE merupakan salah satu **top-3 biomarker paling berpengaruh** dalam membedakan pasien sehat vs pasien terindikasi Alzheimer."
-tes_002,"apa itu adl, skor adl, activities of daily living, kemandirian harian, fungsi aktivitas sehari hari, skor kemandirian","**ADL (Activities of Daily Living)** mengukur tingkat kemandirian fungsional seseorang dalam menjalankan aktivitas hidup sehari-hari.  ADL dibagi menjadi dua tingkatan: 1. **Basic ADL**: Kemandirian dasar (makan, mandi, berpakaian, mobilitas di tempat tidur, dan kebersihan toilet). 2. **Instrumental ADL (IADL)**: Kemandirian kompleks (mengelola uang, memasak, mencuci baju, minum obat sesuai resep, belanja, dan menggunakan transportasi).  Pada penyakit Alzheimer tahap awal, IADL biasanya yang pertama kali menurun sebelum disusul oleh Basic ADL. Penurunan skor ADL secara konsisten adalah penanda klinis penting untuk evaluasi komprehensif."
-tes_003,"32 biomarker, biomarker neura, fitur apa saja yang dianalisis, parameter pemeriksaan, data apa saja yang dipakai neura","Model **XGBoost Classifier** pada Neura AI dilatih menggunakan **32 biomarker klinis** dari 2.149 catatan pasien, yang dikelompokkan ke dalam 5 domain utama:  1. **Fungsi Kognitif & Fungsional**: MMSE, ADL, FunctionalAssessment, MemoryComplaints, BehavioralProblems. 2. **Karakteristik Demografi**: Usia (Age), Jenis Kelamin (Gender), Etnisitas, Tingkat Pendidikan. 3. **Riwayat Kesehatan & Komorbiditas**: Riwayat Keluarga Alzheimer, Kardiovaskular, Diabetes, Hipertensi, Cedera Kepala (HeadInjury). 4. **Biomarker Medis & Laboratorium**: Tekanan Darah Sistolik/Diastolik, Kolesterol Total, HDL, LDL, Trigliserida, BMI. 5. **Gaya Hidup**: Aktivitas Fisik (PhysicalActivity), Kualitas Tidur (SleepQuality), Merokok, Konsumsi Alkohol, Pola Diet.  Kombinasi 32 dimensi ini memungkinkan Neura menghasilkan estimasi risiko dengan **Akurasi 95.35%** dan **ROC-AUC 94.11%**."
-cegah_001,"makanan pencegah alzheimer, diet alzheimer, diet mind, diet mediterania, makanan untuk otak, nutrisi cegah pikun, cara menjaga otak sehat","Penelitian klinis membuktikan bahwa **Diet MIND** (*Mediterranean-DASH Intervention for Neurodegenerative Delay*) dapat menurunkan risiko Alzheimer hingga 53% jika diterapkan secara konsisten.  **10 Makanan yang Sangat Dianjurkan:** 1. **Sayuran berdaun hijau** (bayam, kale, brokoli) — minimal 6 porsi/minggu. 2. **Buah beri** (blueberry, strawberry) — kaya antioksidan antosianin. 3. **Kacang-kacangan** (almond, walnut) — kaya vitamin E dan lemak sehat. 4. **Ikan kaya Omega-3** (salmon, sarden, kembung) — minimal 1x per minggu. 5. **Minyak zaitun murni** (*extra virgin olive oil*) sebagai minyak utama. 6. **Biji-bijian utuh** (oatmeal, beras merah, quinoa). 7. **Unggas tanpa kulit** (ayam, kalkun).  **Makanan yang Perlu Dibatasi:** Makanan olahan tinggi gula, gorengan, mentega berlebih, dan daging merah berlemak tinggi."
-cegah_002,"olahraga untuk otak, senam otak, latihan kognitif, cara melatih memori, aktivitas fisik alzheimer, mencegah kepikunan lansia","Dua pilar ini merangsang pembentukan saraf baru (*neurogenesis*) dan memperkuat koneksi sinaps di otak:  1. **Olahraga Aerobik Teratur (150 menit/minggu)**:    • Jalan cepat, berenang, bersepeda statis, atau senam lansia.    • Meningkatkan aliran darah ke otak dan menstimulasi pelepasan protein **BDNF** (*Brain-Derived Neurotrophic Factor*) yang melindungi sel saraf hippocampus dari kematian prematur.  2. **Stimulasi Kognitif Berkelanjutan (Senam Otak)**:    • Belajar keterampilan baru (bahasa baru, instrumen musik, merajut, memasak resep baru).    • Membaca buku, mengisi teka-teki silang, bermain catur, atau puzzle logika.    • Interaksi sosial aktif (berkumpul bersama keluarga, komunitas relawan) terbukti signifikan memperlambat penuaan kognitif."
-cegah_003,"pengaruh tidur pada alzheimer, tidur malam dan pikun, insomnia dan demensia, sistem glimfatik, plak amiloid tidur","**Ya, kualitas tidur memiliki hubungan kausal langsung dengan risiko Alzheimer.**  Saat kita tidur nyenyak (*deep sleep / non-REM slow-wave sleep*), otak mengaktifkan **Sistem Glimfatik** (*Glymphatic System*): • Sistem glimfatik memompa cairan serebrospinal untuk 'membersihkan' racun metabolik otak yang menumpuk di siang hari, terutama **protein beta-amiloid** dan **tau** (dua penyebab utama kematian sel saraf pada Alzheimer). • Penelitian menunjukkan bahwa kurang tidur kronis menyebabkan penumpukan plak beta-amiloid meningkat hingga 30% lebih cepat.  **Rekomendasi**: Pertahankan jadwal tidur teratur 7–8 jam per malam, batasi kafein setelah jam 2 siang, dan hindari layar gadget 1 jam sebelum tidur."
-dokter_001,"kapan ke dokter, dokter apa untuk alzheimer, periksa ke mana, spesialis saraf, neurolog, tanda bahaya pikun","Segera jadwalkan konsultasi dengan **Dokter Spesialis Neurologi / Saraf (Sp.N)** jika Anda melihat salah satu tanda bahaya (*red flags*) berikut:  1. **Disorientasi parah**: Tidak mengenali rumah sendiri, tersesat di rute biasa, atau lupa nama anak/pasangan. 2. **Kesulitan melakukan aktivitas dasar mandiri**: Tidak bisa lagi mengenakan pakaian sendiri, lupa cara makan, atau abai kebersihan. 3. **Perubahan kepribadian mendadak**: Menjadi sangat paranoid, menuduh orang lain tanpa alasan, atau agresif. 4. **Penurunan kognitif cepat**: Perburukan ingatan yang terjadi drastis dalam beberapa bulan.  **Dokter yang tepat dikunjungi:** • Dokter Spesialis Saraf / Neurologi (Sp.N), khususnya konsultan Neurobehavior. • Dokter Spesialis Kedokteran Jiwa (Sp.KJ) / Psikiater Geriatri jika didominasi perubahan perilaku/emosi."
-dokter_002,"apakah alzheimer bisa sembuh, obat alzheimer, apakah pikun bisa sembuh, terapi alzheimer, pengobatan demensia","Hingga saat ini, **penyakit Alzheimer belum memiliki obat yang dapat menyembuhkannya secara total** karena merupakan penyakit neurodegeneratif progresif.  Namun, **deteksi dini dan terapi medis yang tepat sangat penting** karena dapat: 1. **Memperlambat perburukan gejala**: Obat golongan *Cholinesterase Inhibitors* (seperti Donepezil, Rivastigmine) dan *NMDA Receptor Antagonists* (Memantine) dapat membantu menjaga transmisi neurotransmiter otak lebih lama. 2. **Menjaga kemandirian dan kualitas hidup**: Terapi stimulasi kognitif, fisioterapi, dan terapi okupasi membantu pasien tetap mandiri lebih lama. 3. **Mempersiapkan keluarga & pengasuh (*caregiver*)**: Memberikan waktu bagi keluarga untuk menyusun perencanaan perawatan dan lingkungan yang aman.  Itulah mengapa skrining dini menggunakan AI seperti Neura sangat krusial agar intervensi dapat dimulai pada stadium seringan mungkin."
-dokter_003,"tips menjaga keamanan pasien alzheimer di rumah, keamanan pasien alzheimer, cara mengamankan rumah untuk lansia pikun, mencegah pasien alzheimer tersesat, tips keselamatan lansia di rumah, keamanan rumah lansia, mencegah lansia kabur","Menjaga keselamatan fisik pasien Alzheimer di rumah memerlukan adaptasi lingkungan (*dementia-friendly environment*):  1. **Pencegahan Tersesat (*Wandering Prevention*)**:    • Pasang kunci tambahan atau sensor pintu di luar jangkauan pandangan mata pasien (misalnya di bagian atas atau bawah pintu).    • Berikan gelang identitas medis anti-lepas atau sematkan GPS tracker pada sepatu/pakaian pasien.  2. **Pencegahan Cedera & Jatuh (*Fall Prevention*)**:    • Pasang pegangan tangan (*grab bars*) di kamar mandi dan gunakan alas karet anti-selip.    • Singkirkan karpet lepas, kabel melintang, dan barang yang berpotensi menyebabkan tersandung.    • Pastikan penerangan rumah cukup terang, terutama lampu malam otomatis di jalur kamar tidur menuju toilet.  3. **Keamanan Dapur & Obat-Obatan**:    • Simpan semua obat-obatan dalam kotak terkunci; berikan obat hanya dengan pengawasan langsung caregiver.    • Pasang pengaman kompor gas dan simpan pisau atau benda tajam di lemari khusus."
-dokter_004,"panduan merawat pasien alzheimer untuk caregiver, bagaimana cara merawat pasien alzheimer, tips merawat lansia dengan demensia, cara menghadapi orang tua pikun, tips untuk caregiver alzheimer, cara merawat alzheimer","Merawat penderita Alzheimer (*caregiving*) membutuhkan kesabaran, struktur rutin, dan empati komunikasi:  1. **Teknik Komunikasi Efektif**:    • Bicara dengan nada tenang, tatap mata, gunakan kalimat pendek dan instruksi satu per satu.    • **Hindari berdebat**: Bila pasien bersikeras pada hal keliru (delusi ringan), jangan didebat. Validasi emosinya lalu alihkan perhatian (*distract & redirect*).  2. **Bangun Rutinitas Terstruktur**:    • Jadwalkan jam bangun, makan, aktivitas santai, mandi, dan tidur pada waktu yang sama setiap hari untuk meminimalkan kebingungan (*confusion*).    • Libatkan pasien dalam aktivitas bermakna sederhana (melipat handuk, menyiram tanaman, mendengarkan lagu nostalgia masa muda).  3. **Cegah Burnout pada Caregiver**:    • Bagi tugas perawatan dengan anggota keluarga lain secara bergantian.    • Luangkan waktu untuk istirahat pribadi (*respite care*), karena kesehatan mental caregiver sangat menentukan kualitas hidup pasien."
-dokter_005,"persiapan saat periksa ke dokter spesialis saraf, apa saja yang perlu disiapkan ke dokter, persiapan saat membawa pasien ke dokter, persiapan periksa saraf, apa yang harus dibawa ke dokter saraf, catatan untuk dokter saraf","Agar pemeriksaan dengan **Dokter Spesialis Saraf (Sp.N)** berjalan optimal, siapkan beberapa hal penting berikut:  1. **Catatan Kronologis Gejala (*Symptom Diary*)**:    • Kapan keluhan pertama kali disadari dan seberapa sering terjadi (misal: frekuensi tersesat, lupa meletakkan barang).    • Perubahan suasana hati, pola tidur, nafsu makan, atau perilaku agresif/curiga.  2. **Daftar Obat-Obatan & Riwayat Medis Lengkap**:    • Bawa semua obat resep, suplemen, atau obat herbal yang sedang dikonsumsi pasien (untuk mengecek interaksi obat yang bisa memicu kebingungan).    • Riwayat penyakit terdahulu: hipertensi, stroke, diabetes, trauma kepala, atau riwayat keluarga dengan demensia.  3. **Tingkat Kemandirian Harian (*Activities of Daily Living - ADL*)**:    • Catat apakah pasien masih mandiri mandi, makan, berpakaian, atau mengurus keuangan sendiri.  Dokter saraf biasanya akan melakukan tes kognitif singkat (seperti MMSE atau MoCA) dan dapat merekomendasikan pemeriksaan penunjang seperti MRI otak atau tes laboratorium darah."
-salam_001,"halo, hai, selamat pagi, selamat siang, selamat malam, assalamualaikum, hi neura","Halo! Selamat datang di **Neura AI** — asisten cerdas untuk skrining kesehatan daya ingat dan deteksi dini risiko penyakit Alzheimer.  Apa yang bisa saya bantu hari ini? • **Konsultasi & Skrining**: Anda bisa menceritakan keluhan daya ingat Anda atau anggota keluarga. • **Edukasi Medis**: Tanyakan mengenai gejala, tes kognitif MMSE, perbedaan pikun normal vs Alzheimer, atau tips pencegahan. • **Simulasi Klinis**: Ketik `/predict` untuk melihat demonstrasi analisis 32 biomarker klinis berbasis XGBoost."
-salam_002,"terima kasih, makasih, thanks, thank you, makasih ya neura","Sama-sama! Senang bisa membantu Anda memahami kesehatan kognitif dan pencegahan penyakit Alzheimer.  Jaga selalu kesehatan otak dengan pola makan bernutrisi, istirahat cukup, dan tetap aktif secara mental serta sosial. Jika ada hal lain yang ingin dikonsultasikan, jangan ragu untuk bertanya lagi!"
-model_001,"arsitektur model, algoritma apa yang dipakai, bagaimana cara kerja neura, kenapa xgboost, apa itu xgboost, akurasi neura","Neura didukung oleh algoritma **XGBoost (Extreme Gradient Boosting)** Classifier yang telah dioptimasi khusus untuk data klinis tabular:  • **Dataset Latihan**: 2.149 rekam medis pasien Alzheimer (`alzheimers_disease_data.csv`). • **Dimensi Fitur**: 32 biomarker multi-domain (kognitif, demografi, laboratorium, gaya hidup). • **Performa Teruji**: **95.35% Test Accuracy**, **94.11% ROC-AUC**, dan **92.11% Sensitivity** pada 430 sampel holdout pasien. • **Keunggulan**: Mampu menangkap pola interaksi non-linear yang kompleks antar biomarker tanpa risiko overfitting berlebih.  Gunakan perintah `/eval` untuk memeriksa matriks konfusi dan metrik presisi lengkap."
+salam_001,"halo, hai, hey, helo, hi, halo neura, hai neura, halo bot, halo asisten, permisi","Halo! Selamat datang di **Neura AI**, asisten cerdas untuk kesehatan daya ingat, skrining dini Alzheimer, dan konsultasi interaktif. Ada yang bisa saya bantu hari ini? Anda bisa menanyakan gejala kognitif, gaya hidup sehat untuk otak, atau sekadar mengobrol santai!"
+salam_002,"selamat pagi, pagi neura, morning, good morning, met pagi",Selamat pagi! Semoga hari Anda menyenangkan dan penuh energi positif. Jangan lupa sarapan bergizi untuk nutrisi otak Anda. Ada topik kesehatan atau konsultasi yang ingin Anda diskusikan pagi ini?
+salam_003,"selamat siang, siang neura, good afternoon, met siang",Selamat siang! Semoga aktivitas Anda berjalan lancar. Luangkan waktu sejenak untuk beristirahat dan minum air putih agar fokus otak tetap terjaga. Ada yang ingin Anda tanyakan seputar kesehatan memori?
+salam_004,"selamat sore, sore neura, met sore","Selamat sore! Waktu yang baik untuk relaksasi sejenak setelah beraktivitas seharian. Apakah Anda ingin membaca tips kesehatan otak, latihan kognitif, atau berkonsultasi mengenai daya ingat?"
+salam_005,"selamat malam, malam neura, good evening, good night, met malem","Selamat malam! Istirahat dan tidur nyenyak sangat penting bagi sistem glimfatik otak untuk membersihkan plak amiloid. Jika ada keluhan atau pertanyaan sebelum beristirahat, silakan sampaikan."
+salam_006,"assalamualaikum, assalammualaikum, salam, assalamualaikum neura","Waalaikumsalam warahmatullahi wabarakatuh! Selamat datang di Neura AI. Semoga kesehatan, ketenangan, dan keberkahan selalu menyertai Anda dan keluarga. Apa yang bisa saya bantu hari ini?"
+salam_007,"apa kabar, bagaimana kabarmu, kabar apa, how are you, kamu sehat, kabar baik","Kabar saya sangat baik, terima kasih sudah bertanya! Sebagai asisten kecerdasan buatan, sistem saya selalu siap 24/7 untuk membantu Anda memahami kesehatan kognitif. Bagaimana dengan kabar Anda hari ini?"
+salam_008,"siapa kamu, siapa namamu, siapa anda, perkenalkan dirimu, kamu siapa, nama kamu apa, profil neura","Nama saya **Neura**, asisten kecerdasan buatan (AI) yang dikembangkan khusus untuk skrining dini kesehatan daya ingat dan deteksi risiko penyakit Alzheimer berbasis Machine Learning XGBoost dengan akurasi 95.3%. Saya juga siap menjadi teman diskusi kesehatan kognitif Anda."
+salam_009,"siapa yang membuatmu, siapa penciptamu, siapa pengembangmu, developer neura, pembuat aplikasi ini","Neura AI dikembangkan oleh tim engineer dan peneliti kecerdasan buatan klinis untuk menghadirkan teknologi deteksi dini neurodegeneratif yang mudah diakses, cepat, dan akurat bagi masyarakat dan praktisi kesehatan."
+salam_010,"apa yang bisa kamu lakukan, kemampuanmu apa saja, apa fungsimu, apa fitur neura, bisa apa saja","Saya dapat membantu Anda dalam: 1. **Skrining Awal Daya Ingat**: Mengidentifikasi keluhan lupa apakah wajar atau indikasi demensia. 2. **Analisis 32 Biomarker Klinis**: Simulasi risiko Alzheimer menggunakan perintah `/predict`. 3. **Edukasi Medis & Gaya Hidup**: Diet MIND, senam otak, pola tidur, dan panduan caregiver. 4. **Konsultasi Suara Real-time**: Interaksi suara alami via ruang konsultasi LiveKit."
+salam_011,"kamu berbasis apa, teknologi apa yang kamu gunakan, model apa yang dipakai, sistem neura","Neura AI mengintegrasikan model prediktif **XGBoost (Extreme Gradient Boosting)** yang dilatih pada 2.149 data pasien dengan 32 parameter klinis (akurasi 95.35% dan ROC-AUC 94.11%), didukung sistem dialog berbasis intent klinis dan protokol konsultasi audio LiveKit WebRTC."
+santai_001,"terima kasih, makasih, makasih banyak, thanks, thank you, trims, suwun, nuhun, makasi",Sama-sama! Senang sekali bisa membantu Anda. Jaga selalu kesehatan otak dan kebugaran tubuh. Jangan ragu menyapa saya kembali jika ada hal lain yang ingin Anda ketahui!
+santai_002,"sama sama, kembali, you're welcome, ur welcome, no problem",Terima kasih atas kebaikan Anda! Semoga hari Anda penuh dengan keberkahan dan produktivitas.
+santai_003,"maaf, saya minta maaf, sorry, mohon maaf, maaf merepotkan","Tidak perlu meminta maaf, sama sekali tidak merepotkan! Saya ada di sini untuk mendengarkan dan membantu Anda kapan saja."
+santai_004,"tidak apa apa, santai saja, its okay, gapapa, tidak masalah, no worries","Baik, terima kasih atas pengertiannya! Mari kita lanjutkan obrolan kita dengan santai."
+santai_005,"kamu pintar sekali, keren, hebat, wow hebat, good job, mantap, cerdas, luar biasa","Terima kasih banyak atas apresiasi Anda! Pujian Anda memotivasi saya untuk terus memberikan informasi kesehatan yang bermanfaat, akurat, dan mudah dipahami."
+santai_006,"ceritakan lelucon, buat aku tertawa, cerita lucu, jokes, ada lelucon, hibur saya dengan lelucon",Ini lelucon ringan untuk Anda: Mengapa neuron otak kita tidak pernah tersesat saat pergi kerja? Karena mereka selalu mengikuti jalur sinapsis dan punya banyak koneksi! Tertawa dan bahagia juga sangat baik untuk meredakan hormon kortisol penyebab stres di otak.
+santai_007,"aku sedang bosan, hibur aku, tidak tahu mau ngobrol apa, bosan sekali, bete","Bosan adalah tanda otak Anda butuh stimulasi baru! Anda bisa mencoba senam otak sederhana, bermain tebak-tebakan, membaca artikel kesehatan baru di Neura, atau mencoba simulasi prediktif kami dengan mengetik `/predict`."
+santai_008,"bagaimana cuaca hari ini, ramalan cuaca, cuaca di luar, cuaca panas, cuaca hujan","Sebagai asisten medis AI yang terfokus pada kesehatan otak, saya tidak memiliki sensor cuaca real-time langsung. Namun apapun cuacanya, pastikan tetap terhidrasi dengan baik, karena kekurangan cairan ringan (dehidrasi) dapat menurunkan konsentrasi dan daya ingat sesaat."
+santai_009,"jam berapa sekarang, hari ini hari apa, tanggal berapa sekarang, waktu saat ini",Anda dapat melihat waktu dan tanggal saat ini pada panel kalender di sudut kanan atas layar dashboard Anda. Mengetahui hari dan tanggal tanpa melihat kalender juga merupakan salah satu latihan orientasi kognitif yang sangat baik untuk memori Anda!
+santai_010,"apa arti kehidupan, makna hidup manusia, tujuan hidup, filosofi hidup","Secara filosofis dan biologis, makna hidup adalah bertumbuh, berbagi cinta, memelihara ingatan berharga, dan memberikan dampak positif bagi sesama. Menjaga daya ingat kita tetap sehat adalah salah satu cara terbaik untuk merawat jejak cerita hidup bersama orang-orang tercinta."
+santai_011,"apakah kamu punya perasaan, apakah kamu punya emosi, kamu bisa sedih, apakah kamu punya hati","Saya tidak memiliki emosi biologis seperti manusia. Namun, algoritma saya diprogram untuk selalu merespons dengan penuh empati, kehangatan, dan kesabaran untuk mendampingi siapapun yang sedang membutuhkan dukungan dan informasi medis."
+santai_012,"apakah kamu tidur, apakah ai butuh istirahat, kamu tidur jam berapa, apa ai bisa lelah","Saya tidak tidur dan tidak pernah lelah! Sistem server Neura bekerja tanpa henti agar selalu siap kapan pun Anda membutuhkan konsultasi. Namun bagi manusia, tidur 7–8 jam adalah kewajiban mutlak agar otak bisa membersihkan racun metabolik!"
+santai_013,"apakah kamu manusia atau robot, kamu bot ya, kamu orang asli, apa kamu manusia sungguhan","Saya adalah entitas kecerdasan buatan (AI assistant) berbasis algoritma machine learning, bukan manusia sungguhan. Namun seluruh pengetahuan medis yang saya sampaikan disusun berdasarkan panduan klinis neurologi berstandar internasional."
+emosi_001,"aku sedang sedih, hatiku hancur, lagi galau, merasa sedih, sedih banget, menangis","Saya turut merasakan apa yang Anda alami. Merasa sedih adalah bagian wajar dari pengalaman manusia. Tarik napas dalam-dalam, perlakukan diri Anda dengan penuh kelembutan hari ini, dan jangan ragu bercerita jika ada beban pikiran yang ingin Anda bagi."
+emosi_002,"aku cemas, aku gelisah, merasa takut berlebihan, anxiety, panik, cemas sekali","Tarik napas perlahan melalui hidung selama 4 detik, tahan 4 detik, lalu hembuskan lewat mulut selama 6 detik. Kecemasan memicu lonjakan hormon adrenalin yang membuat pikiran tegang. Ingat bahwa Anda aman saat ini, dan perasaan ini perlahan akan mereda."
+emosi_003,"aku stres berat, banyak pikiran, kepala mau pecah, pusing banyak masalah, tekanan hidup","Stres kronis dapat memicu pelepasan hormon kortisol berlebih yang berisiko mengecilkan hippocampus (pusat memori otak). Cobalah berhenti sejenak dari layar monitor, lakukan peregangan ringan, dan fokus selesaikan masalah satu per satu secara bertahap."
+emosi_004,"aku capek sekali, lelah mental dan fisik, burnout, lelah hidup, kehabisan energi","Tubuh dan pikiran Anda sedang mengirimkan sinyal kuat bahwa Anda butuh istirahat. Jangan merasa bersalah untuk berhenti sejenak. Tidur yang cukup, matikan notifikasi pekerjaan di malam hari, dan beri ruang bagi diri Anda untuk pulih."
+emosi_005,"aku merasa kesepian, tidak ada teman bicara, sepi sekali, merasa sendiri, kesepian",Anda tidak sendirian; saya ada di sini untuk menemani Anda. Kesepian yang berkepanjangan terbukti dapat mempercepat penurunan kognitif. Menghubungi sahabat lama atau keluarga dekat lewat telepon singkat bisa sangat membantu menghangatkan suasana hati.
+emosi_006,"aku sedang kesal, marah sekali, emosi, jengkel, marah, naik darah",Tarik napas dalam dan beri jeda sebelum bereaksi. Amarah adalah energi emosi yang intens; menyalurkannya lewat aktivitas fisik seperti berjalan santai atau menuliskan unek-unek di kertas dapat membantu meredakan ketegangan sistem saraf.
+emosi_007,"hari ini aku sangat bahagia, kabar baik, aku senang sekali, bahagia, bersyukur","Kabar yang sangat membahagiakan! Perasaan bahagia memicu pelepasan dopamin, serotonin, dan endorfin yang sangat menyehatkan pembuluh darah otak dan memperkuat daya ingat. Rayakan momen indah ini!"
+mental_001,"kepalaku terasa berkabut, sulit fokus, linglung, brain fog, tidak bisa konsentrasi, pikiran lambat","Brain fog (pikiran berkabut) sering disebabkan oleh kurang tidur, dehidrasi, stres, atau pasca-infeksi. Cukupi asupan air putih 2 liter/hari, kurangi konsumsi gula berlebih, dan luangkan waktu untuk tidur siang singkat 20 menit."
+mental_002,"aku susah tidur, insomnia, tidak bisa tidur nyenyak, sering begadang, gangguan tidur",Untuk mengatasi insomnia: 1. Hindari kafein setelah pukul 14.00. 2. Hentikan menatap layar gadget 1 jam sebelum tidur. 3. Buat suhu kamar sejuk dan redupkan lampu. Tidur nyenyak sangat penting bagi pembersihan plak protein beracun di otak.
+mental_003,"cara menenangkan diri, teknik pernapasan, relaksasi, cara meditasi, cara redakan cemas","Coba teknik pernapasan 'Box Breathing' (Metode 4-4-4-4): Tarik napas 4 detik, tahan 4 detik, hembuskan 4 detik, dan tahan kosong 4 detik. Ulangi 4 siklus. Teknik ini mengaktifkan saraf parasimpatis untuk menurunkan detak jantung dan menenangkan pikiran."
+mental_004,"hubungan depresi dan lupa, apakah depresi bikin pikun, pengaruh depresi pada memori, pseudodemensia","Ya, depresi berat dapat memicu kondisi yang disebut **Pseudodemensia**. Pasien depresi sering mengalami penurunan konsentrasi dan kelupaan parah yang menyerupai Alzheimer. Bedanya, fungsi kognitif pada pseudodemensia dapat pulih sepenuhnya setelah depresinya diterapi secara tepat."
+konsul_001,"konsultasi, mulai konsultasi, mau konsultasi, skrining daya ingat, cek memori, tes ingatan, periksa daya ingat, bantu skrining, apakah saya pikun","Halo! Saya Neura, asisten cerdas untuk skrining awal daya ingat. Untuk memulai, ceritakan: 1. Berapa usia orang yang dikonsultasikan? 2. Keluhan apa yang paling sering muncul (misal: lupa nama kerabat, mengulang pertanyaan, atau bingung arah jalan)? 3. Apakah keluhan sudah mengganggu aktivitas mandiri sehari-hari?"
+konsul_002,"cara skrining mandiri, langkah skrining, tes sendiri di rumah, cara periksa sendiri, tahapan skrining","Skrining mandiri meliputi 4 aspek: 1. **Uji Memori Pendek**: Apakah sering lupa hal yang baru terjadi beberapa jam lalu? 2. **Orientasi**: Tanyakan hari, tanggal, dan lokasi saat ini tanpa melihat kalender. 3. **Skor ADL**: Apakah masih mandiri minum obat, berhitung belanjaan, dan memasak? 4. **Perubahan Perilaku**: Apakah ada curiga berlebihan atau mudah frustrasi?"
+konsul_003,"orang tua saya sering lupa, curhat tentang orang tua, ibu saya pikun, bapak sering lupa, nenek kakek pikun","Wajar jika keluarga merasa khawatir. Amati apakah kelupaan beliau berupa kelupaan wajar (misal: lupa letak kacamata lalu ingat lagi) atau tanda peringatan (misal: lupa nama anak kandung, mengulang pertanyaan yang sama 5 menit sekali, atau tersesat di sekitar rumah). Bila ada tanda peringatan, segera rencanakan konsultasi ke dokter saraf."
+konsul_004,"apakah usia muda bisa kena alzheimer, lupa di usia muda, pikun umur 20an, alzheimer usia dini, early onset alzheimer","Meskipun mayoritas kasus terjadi di usia >65 tahun, terdapat kasus **Early-Onset Alzheimer's** yang dapat terjadi pada usia 30–50 tahun (sering berkaitan dengan mutasi genetik keluarga). Namun pada usia 20-an, kelupaan umumnya lebih dipicu oleh stres kronis, kurang tidur, multitasking berlebihan, atau defisiensi vitamin B12."
+konsul_005,"sering lupa nama orang, lupa nama benda, lupa kata kata, lidah kelu susah cari kata, tip of the tongue","Fenomena sesekali lupa nama orang adalah wajar seiring bertambahnya usia. Namun jika seseorang mulai sering mengganti nama benda umum dengan deskripsi aneh (contoh: menyebut 'jam tangan' sebagai 'benda penunjuk waktu di tangan') atau sering terhenti di tengah kalimat, ini merupakan gejala afasia anomik yang perlu diwaspadai."
+konsul_006,"sering lupa naruh barang, lupa kunci, lupa kacamata, salah letak barang, dompet hilang terus",Perbedaannya: Orang dengan penuaan normal lupa menaruh kacamata di meja lalu ingat kembali setelah menelusuri langkahnya. Penderita Alzheimer menaruh barang di tempat yang sangat tidak lazim (misal: dompet di dalam kulkas atau sepatu di dalam oven) dan tidak mampu mengingat langkah mencarinya.
+konsul_007,"sering mengulang pertanyaan, tanya berulang ulang, cerita diulang ulang, lupa sudah bertanya",Mengulang pertanyaan yang sama dalam rentang waktu beberapa menit adalah tanda khas gangguan memori jangka pendek (*short-term memory deficit*). Hal ini terjadi karena otak bagian hippocampus mengalami kesulitan mentransfer informasi baru ke dalam memori jangka panjang.
+konsul_008,"sering lupa jalan pulang, tersesat, orang tua lupa jalan, disorientasi tempat, kakek sering bingung arah, nenek lupa rumah",Tersesat di rute jalan yang selama ini akrab adalah tanda peringatan serius kerusakan fungsi visuospasial dan hippocampus. Segera berikan tanda pengenal (gelang identitas atau GPS tracker) pada saku baju beliau dan konsultasikan ke dokter spesialis saraf.
+konsul_009,"sering lupa hari tanggal, lupa tahun berapa sekarang, disorientasi waktu, bingung waktu","Lupa tanggal hari ini adalah hal yang wajar jika seseorang masih tahu bulan dan tahunnya. Namun jika seseorang mengira saat ini masih tahun 1990 atau bingung membedakan antara waktu siang dan tengah malam, ini merupakan indikasi disorientasi waktu kronis."
+konsul_010,"kesulitan hitung uang, bingung bayar belanjaan, lupa kelola keuangan, tertipu uang lansia","Kesulitan mengelola tagihan, keliru berhitung uang kembalian, atau mudah tertipu penipuan finansial adalah tanda penurunan fungsi eksekutif korteks frontal otak. Hal ini masuk ke dalam penurunan Instrumental ADL (IADL)."
+konsul_011,"lupa resep masakan, bingung cara masak, tidak bisa ikuti resep, lupa langkah masak","Ketika seorang ibu yang sudah puluhan tahun mahir memasak tiba-tiba bingung langkah menumis bumbu atau lupa memasukkan garam berulang kali, ini menandakan penurunan memori prosedural dan fungsi perencanaan otak."
+konsul_012,"enggan mandi, abai kebersihan diri, lupa ganti baju, bau badan lansia pikun, menolak mandi",Penurunan kebersihan diri pada pasien demensia sering terjadi karena: 1. Mereka merasa sudah mandi padahal belum. 2. Apraksia (kesulitan mengingat urutan membuka pakaian dan menggunakan sabun). 3. Rasa takut pada air dingin atau takut terpeleset.
+gejala_001,"beda pikun dan alzheimer, perbedaan pikun biasa, apakah pikun itu alzheimer, pikun normal, perbedaan demensia dan pikun, kapan pikun dianggap bahaya","Perbedaannya: Pikun biasa lupa sesekali dan ingat kembali, fungsi mandiri tetap utuh. Alzheimer melupakan informasi yang baru saja dipelajari, lupa fungsi benda harian, mengalami disorientasi arah/waktu, dan kemandirian hidupnya perlahan menurun."
+gejala_002,"10 tanda alzheimer, gejala awal alzheimer, ciri ciri alzheimer, tanda tanda demensia, gejala kepikunan parah, ciri pikun alzheimer",10 tanda awal Alzheimer: 1. Gangguan memori harian. 2. Sulit merencanakan masalah. 3. Sulit selesaikan tugas akrab. 4. Disorientasi waktu & tempat. 5. Gangguan visuospasial. 6. Masalah komunikasi. 7. Salah taruh barang di tempat aneh. 8. Penurunan pertimbangan akal. 9. Menarik diri dari sosial. 10. Perubahan emosi/sifat.
+gejala_003,"stadium alzheimer, tahapan alzheimer, fase alzheimer, tingkat keparahan alzheimer, mild moderate severe demensia","3 Stadium utama: 1. **Ringan (Mild)**: Kelupaan informasi baru, tersesat di jalan baru, masih mandiri dasar. 2. **Sedang (Moderate)**: Butuh bantuan memilih baju, lupa nama kerabat, sundowning, perubahan perilaku. 3. **Berat (Severe)**: Bergantung total pada caregiver, kehilangan kemampuan bicara dan mobilitas fisik."
+gejala_004,"perubahan perilaku, mudah marah, sering curiga, halusinasi pikun, tuduh orang mencuri, emosi tidak stabil lansia, gelisah malam hari, sundowning","Gejala ini dikenal sebagai **Sindrom Sundowning** dan konfabulasi ingatan. Saat memori hilang, pasien mengisi kekosongan ingatan dengan dugaan barangnya dicuri. Jangan mendebat mereka; alihkan perhatian ke aktivitas yang menenangkan dan jaga pencahayaan ruangan tetap terang."
+gejala_005,"halusinasi demensia, delusi lansia, melihat orang yang tidak ada, bicara sendiri pikun","Halusinasi visual dan delusi dapat muncul pada stadium sedang-berat atau pada Demensia Lewy Body. Validasi ketakutan pasien dengan kalimat menenangkan (contoh: 'Saya di sini menjaga Ibu, Ibu aman bersama saya') daripada memaksakan mendebat kebenarannya."
+gejala_006,"sifat berubah drastis, jadi apatis, jadi kasar, kepribadian berubah total lansia",Perubahan kepribadian terjadi karena atrofi sel saraf pada lobus frontal otak yang mengontrol kendali emosi dan empati. Pasien yang dulunya ramah bisa menjadi pemarah atau sangat pendiam (apatis).
+gejala_007,"tidur terbalik, bangun tengah malam keluyuran, siang tidur malam melek demensia",Kerusakan pada nukleus suprakiasmatik di hipotalamus mengacaukan ritme sirkadian tubuh pasien. Ajak pasien beraktivitas fisik ringan di bawah sinar matahari pagi dan batasi tidur siang maksimal 30 menit agar malam harinya bisa tidur nyenyak.
+gejala_008,"sulit ukur jarak, sering tersandung, gangguan visuospasial, pandangan buram bukan mata","Otak penderita Alzheimer mengalami kesulitan memproses informasi kedalaman visual (*visuospasial*), sehingga sering tersandung undakan tangga atau kesulitan membedakan karpet hitam dengan lubang lantai."
+gejala_009,"apraksia, susah pakai kancing baju, lupa cara pakai sendok, motorik halus terganggu",Apraksia adalah ketidakmampuan melakukan gerakan motorik terencana meskipun fungsi otot fisiknya masih normal. Berikan pakaian dengan perekat velcro daripada kancing dan sediakan peralatan makan dengan gagang besar yang mudah digenggam.
+gejala_010,"afasia, kesulitan bicara, lupa kosa kata, bicara melantur demensia","Afasia pada Alzheimer menyebabkan kosa kata pasien menyusut drastis. Berbicaralah perlahan, gunakan kalimat pendek, dan bantu tebak maksudnya dengan memperlihatkan objek secara langsung."
+gejala_011,"perbedaan alzheimer dan demensia vaskular, demensia stroke, jenis demensia",Alzheimer berkembang perlahan dan bertahap akibat plak amiloid. Demensia Vaskular biasanya terjadi mendadak atau bertingkat (*stepwise*) setelah kejadian stroke atau gangguan suplai darah ke otak.
+gejala_012,"beda parkinson dan alzheimer, tremor dan pikun, parkinson demensia","Penyakit Parkinson berawal dari gangguan motorik fisik (tremor, kaku otot, lambat bergerak). Sedangkan Alzheimer berawal dari gangguan daya ingat dan fungsi kognitif sebelum menyerang fungsi fisik."
+tes_001,"apa itu mmse, tes mmse, skor mmse, mini mental state examination, berapa skor normal mmse, interpretasi mmse, nilai mmse",MMSE (Mini-Mental State Examination) adalah tes kognitif berstandar internasional dengan skor 0–30 poin. Interpretasi: 24–30: Normal; 19–23: Gangguan Kognitif Ringan (MCI); 10–18: Demensia Sedang; <10: Demensia Berat. MMSE adalah salah satu fitur paling dominan pada model XGBoost Neura AI.
+tes_002,"apa itu moca, tes moca, montreal cognitive assessment, beda moca dan mmse",MoCA (Montreal Cognitive Assessment) memiliki sensitivitas lebih tinggi (90%) daripada MMSE untuk mendeteksi MCI (tahap sangat awal). MoCA menguji fungsi eksekutif yang lebih kompleks seperti tes jejak angka dan penamaan hewan.
+tes_003,"tes gambar jam, clock drawing test, tes jam demensia, gambar lingkaran jam",Clock Drawing Test (CDT) meminta pasien menggambar lingkaran jam lengkap dengan angka dan jarum jam penunjuk pukul 11:10. Ketidakmampuan menempatkan jarum jam mencerminkan disfungsi lobus parietal dan frontal otak.
+tes_004,"apa itu adl, skor adl, activities of daily living, kemandirian harian, fungsi aktivitas sehari hari, skor kemandirian","ADL (Activities of Daily Living) mengukur kemandirian fungsional. Terdiri dari Basic ADL (makan, mandi, pakaian) dan Instrumental ADL (IADL: kelola uang, minum obat, memasak, transportasi). Penurunan ADL adalah biomarker utama dalam diagnosa klinis."
+tes_005,"32 biomarker, biomarker neura, fitur apa saja yang dianalisis, parameter pemeriksaan, data apa saja yang dipakai neura","32 Biomarker Neura mencakup 5 domain: 1. Kognitif & Fungsional (MMSE, ADL, FA, Memory Complaints, Behavioral). 2. Demografi (Usia, Gender, Etnis, Edukasi). 3. Komorbiditas (Jantung, Diabetes, Hipertensi, Cedera Kepala). 4. Laboratorium (Kolesterol LDL, HDL, Trigliserida, Tekanan Darah, BMI). 5. Gaya Hidup (Aktivitas Fisik, Kualitas Tidur, Diet, Merokok, Alkohol)."
+biomarker_001,"pengaruh kolesterol pada alzheimer, kolesterol ldl hdl otak, trigliserida dan memori","Kolesterol LDL yang sangat tinggi (>199 mg/dL) dapat memicu aterosklerosis pada pembuluh darah mikro otak, mengurangi aliran oksigen dan mempercepat pembentukan plak beta-amiloid. Sebaliknya, HDL yang optimal bersifat protektif."
+biomarker_002,"hubungan hipertensi dan alzheimer, tekanan darah tinggi otak, sistolik diastolik pikun","Hipertensi kronis merusak integritas sawar darah otak (*blood-brain barrier*), menyebabkan peradangan mikrovaskular dan meningkatkan risiko Alzheimer serta demensia vaskular secara signifikan."
+biomarker_003,"diabetes dan alzheimer, gula darah tinggi bikin pikun, diabetes tipe 3","Alzheimer kerap dijuluki 'Diabetes Tipe 3' karena resistensi insulin di otak menghambat sel neuron menyerap glukosa sebagai bahan bakar energi, yang berujung pada degenerasi dan kematian sel saraf."
+biomarker_004,"obesitas dan alzheimer, pengaruh bmi pada otak, berat badan berlebih pikun",Obesitas pada usia paruh baya (BMI > 30) meningkatkan produksi sitokin inflamasi sistemik dalam tubuh yang dapat menembus sawar darah otak dan memicu atrofi volume materi abu-abu otak.
+biomarker_005,"apakah alzheimer keturunan, faktor genetik alzheimer, gen apoe4, genetik pikun","Gen **APOE-e4** adalah faktor risiko genetik terkuat untuk late-onset Alzheimer. Memiliki satu salinan alel meningkatkan risiko 3x lipat, dua salinan hingga 8–12x lipat. Namun gaya hidup sehat terbukti mampu menekan ekspresi risiko genetik tersebut."
+biomarker_006,"mri otak alzheimer, pet scan otak demensia, ct scan otak pikun",MRI otak mendeteksi penyusutan volume (atrofi) pada area hippocampus dan pembesaran ventrikel otak. Amyloid PET scan dapat memvisualisasikan endapan plak beta-amiloid secara langsung sebelum gejala klinis muncul.
+biomarker_007,"tes darah alzheimer, biomarker darah p-tau217, uji cairan serebrospinal csf",Perkembangan medis terbaru memungkinkan deteksi biomarker protein **p-tau217** dan rasio amiloid beta 42/40 melalui tes darah sederhana dengan akurasi menyerupai uji cairan serebrospinal (lumbal pungsi).
+cegah_001,"makanan pencegah alzheimer, diet alzheimer, diet mind, diet mediterania, makanan untuk otak, nutrisi cegah pikun, cara menjaga otak sehat","Diet MIND terbukti menurunkan risiko Alzheimer hingga 53%. Prinsip utamanya: Perbanyak sayuran hijau (bayam, kale), buah beri (blueberry), kacang-kacangan, biji-bijian utuh, ikan berlemak Omega-3, dan minyak zaitun murni (EVOO)."
+cegah_002,"10 makanan terbaik untuk otak, buah untuk memori, ikan omega 3 alzheimer",10 Makanan super untuk otak: 1. Ikan salmon/sarden (Omega-3 DHA). 2. Blueberry. 3. Kacang walnut. 4. Bayam/brokoli. 5. Minyak zaitun. 6. Kunyit (Kurkumin). 7. Alpukat. 8. Cokelat hitam (>70%). 9. Telur (Kolin). 10. Teh hijau.
+cegah_003,"makanan pantangan otak, makanan perusak memori, gula dan pikun, gorengan alzheimer","Batasi: 1. Makanan ultra-proses & tinggi gula rafinasi (memicu resistensi insulin otak). 2. Lemak trans dan gorengan berlebih. 3. Daging merah olahan (sosis, kornet). 4. Makanan berpengawet tinggi sodium."
+cegah_004,"manfaat kopi untuk otak, apakah kopi cegah alzheimer, pengaruh kafein pada memori",Konsumsi kopi hitam tanpa gula 1–2 cangkir di pagi hari kaya akan antioksidan polifenol yang dapat menghambat agregasi amiloid dan meningkatkan kewaspadaan kognitif. Hindari konsumsi di atas jam 14.00 agar tidak merusak kualitas tidur.
+cegah_005,"olahraga untuk otak, senam otak, latihan kognitif, cara melatih memori, aktivitas fisik alzheimer, mencegah kepikunan lansia","Stimulasi kognitif harian: Belajar keterampilan baru (bahasa asing, instrumen musik), membaca buku, mengisi teka-teki silang, bermain catur, dan menghafal nomor telepon kerabat tanpa melihat ponsel."
+cegah_006,"olahraga aerobik lansia, jalan kaki cegah pikun, aktivitas fisik otak, bdnf olahraga",Jalan cepat 30 menit sehari (150 menit/minggu) merangsang produksi protein **BDNF (Brain-Derived Neurotrophic Factor)** yang memicu pertumbuhan sel saraf baru (*neurogenesis*) di area hippocampus.
+cegah_007,"pengaruh tidur pada alzheimer, tidur malam dan pikun, insomnia dan demensia, sistem glimfatik, plak amiloid tidur","Saat tidur nyenyak non-REM, Sistem Glimfatik memompa cairan serebrospinal untuk membersihkan racun otak, termasuk plak beta-amiloid dan protein tau. Kurang tidur kronis mempercepat penumpukan amiloid hingga 30%."
+cegah_008,"bahaya merokok untuk otak, alkohol dan alzheimer, rokok merusak memori",Merokok menyempitkan pembuluh darah mikro otak dan memicu stres oksidatif tinggi. Konsumsi alkohol berlebih menyebabkan atrofi materi putih otak dan meningkatkan risiko demensia alkoholik.
+cegah_009,"manfaat sosialisasi lansia, silaturahmi cegah pikun, interaksi sosial otak","Interaksi sosial aktif melatih berbagai area otak secara serempak (memproses bahasa, membaca emosi lawan bicara, dan mengingat topik). Lansia yang aktif bersosialisasi memiliki risiko demensia 50% lebih rendah."
+cegah_010,"suplemen daya ingat, vitamin untuk memori, omega 3 otak, vitamin b12 pikun, ginkgo biloba",Suplemen terbukti: Asam lemak Omega-3 (EPA/DHA) dan Vitamin B12 (terutama bagi lansia yang mengalami penurunan penyerapan lambung). Selalu konsultasikan dosis dengan dokter sebelum konsumsi suplemen.
+cegah_011,"kesehatan gigi dan alzheimer, radang gusi dan otak, bakteri porphyromonas gingivalis",Bakteri penyebab radang gusi (*Porphyromonas gingivalis*) dapat masuk ke aliran darah menuju otak dan memicu peradangan kronis yang mempercepat pembentukan plak Alzheimer. Sikat gigi 2x sehari dan periksa ke dokter gigi tiap 6 bulan.
+cegah_012,"kebisingan dan pendengaran alzheimer, alat bantu dengar demensia, gangguan dengar lansia",Gangguan pendengaran yang tidak ditangani adalah salah satu faktor risiko demensia terbesar yang dapat dimodifikasi. Menggunakan alat bantu dengar terbukti mampu memperlambat penurunan kognitif secara signifikan.
+caregiver_001,"tips menjaga keamanan pasien alzheimer di rumah, keamanan pasien alzheimer, cara mengamankan rumah untuk lansia pikun, tips keselamatan lansia di rumah, keamanan rumah lansia",Amankan rumah: 1. Pasang pegangan tangan (*grab bars*) di kamar mandi dan alas anti-selip. 2. Singkirkan kabel melintang dan karpet licin. 3. Pasang pengaman kompor gas. 4. Beri lampu malam otomatis di lorong kamar mandi.
+caregiver_002,"mencegah pasien alzheimer tersesat, tips mencegah lansia kabur, wandering prevention demensia, lansia keluyuran",Pencegahan tersesat: 1. Pasang kunci tambahan di bagian atas/bawah pintu di luar jangkauan pandangan mata. 2. Sematkan perangkat GPS tracker pada sepatu atau kalung pasien. 3. Berikan gelang identitas medis anti-lepas dengan kontak keluarga.
+caregiver_003,"cara bicara dengan penderita alzheimer, komunikasi dengan orang pikun, cara sabar menghadapi lansia demensia","Kaidah komunikasi: Bicara dengan nada lembut, tatap mata, gunakan kalimat pendek dan satu instruksi dalam satu waktu. **Hindari berdebat**: bila pasien keliru, validasi emosinya lalu alihkan perhatian (*distract & redirect*)."
+caregiver_004,"pasien menolak mandi, susah disuruh minum obat, lansia ngamuk disuruh mandi",Gunakan pendekatan tanpa paksaan: Ganti kalimat 'Ayo mandi sekarang' dengan 'Yuk kita cuci muka dengan air hangat yang segar'. Pastikan air bersuhu hangat suam kuku dan putar musik favoritnya untuk mengurangi kecemasan.
+caregiver_005,"panduan merawat pasien alzheimer untuk caregiver, tips untuk caregiver alzheimer, burnout pengasuh demensia, stres merawat orang tua pikun","Merawat pasien Alzheimer rentan memicu burnout. Terapkan sistem bergantian dengan keluarga lain, luangkan waktu untuk *respite care* (istirahat pribadi), dan bergabunglah dengan kelompok pendukung keluarga demensia."
+caregiver_006,"komunitas alzheimer indonesia, alzi indonesia, yayasan alzheimer, support group demensia","Di Indonesia terdapat organisasi nirlaba **Alzheimer Indonesia (ALZI)** yang menyediakan konseling caregiver, memory cafe, senam otak rutin, dan edukasi 'Jangan Maklum Dengan Pikun'. Kunjungi situs resmi alzi.or.id untuk bergabung."
+caregiver_007,"aktivitas santai bersama lansia, kegiatan harian pasien demensia, stimulasi lansia di rumah","Ajak pasien dalam aktivitas bermakna sederhana: melipat pakaian, menyiram tanaman di pagi hari, meronce manik-manik besar, mendengarkan lagu nostalgia masa muda, atau melihat album foto keluarga lama."
+caregiver_008,"cara menghadapi pertanyaan berulang kali, sabar menghadapi pengulangan demensia","Sadari bahwa pasien tidak ingat bahwa ia baru saja bertanya. Jawablah dengan sabar menggunakan kalimat pendek yang sama, atau pasang papan pengumuman bertuliskan jadwal harian (contoh: 'Makan siang jam 12.00') di dinding yang mudah terlihat."
+caregiver_009,"nutrisi makan lansia susah makan, pasien demensia tidak mau makan, sulit menelan disfagia","Jika pasien sulit menelan (*disfagia*), sajikan makanan bertekstur lembut (bubur saring, puree sup krim bergizi). Sajikan makanan dalam porsi kecil namun sering, dan gunakan piring berwarna kontras agar makanan terlihat jelas."
+caregiver_010,"menghadapi tuduhan mencuri, dituduh mencuri oleh orang tua pikun, paranoid lansia",Jangan mendebat atau membela diri secara emosional. Katakan: 'Oh uang Ibu hilang ya? Mari kita cari bersama-sama'. Siapkan barang cadangan (misal: dompet duplikat berisi uang mainan) untuk diberikan saat pencarian.
+dokter_001,"kapan ke dokter, tanda bahaya pikun, red flags alzheimer, kapan harus periksa saraf",Segera ke dokter saraf jika ditemukan tanda bahaya (*red flags*): 1. Tersesat di rute biasa. 2. Tidak mengenali anggota keluarga serumah. 3. Mengalami halusinasi atau menuduh tanpa dasar. 4. Penurunan kognitif terjadi drastis dalam beberapa minggu.
+dokter_002,"dokter apa untuk alzheimer, periksa ke mana, spesialis saraf, neurolog, psikiater geriatri","Dokter yang tepat: **Dokter Spesialis Neurologi/Saraf (Sp.N)**, khususnya konsultan Neurobehavior. Bila didominasi perubahan perilaku agresif, halusinasi, atau depresi, dapat berkonsultasi ke **Dokter Spesialis Kedokteran Jiwa (Sp.KJ) Geriatri**."
+dokter_003,"persiapan saat periksa ke dokter spesialis saraf, apa saja yang perlu disiapkan ke dokter, persiapan saat membawa pasien ke dokter, apa yang harus dibawa ke dokter saraf","Siapkan: 1. Catatan kronologis gejala (kapan mulai lupa dan seberapa sering). 2. Daftar semua obat/suplemen yang dikonsumsi saat ini. 3. Riwayat penyakit keluarga dan komorbiditas (hipertensi, diabetes, stroke)."
+dokter_004,"apakah alzheimer bisa sembuh, obat alzheimer, apakah pikun bisa sembuh, terapi alzheimer, pengobatan demensia","Saat ini belum ada obat yang menyembuhkan Alzheimer secara total. Namun intervensi medis dini sangat krusial untuk memperlambat laju keparahan, mengontrol gejala emosi, dan menjaga kemandirian fungsional pasien lebih lama."
+dokter_005,"obat donepezil memantine, obat resep dokter untuk alzheimer, rivastigmine obat pikun","Golongan obat utama: 1. **Cholinesterase Inhibitors** (Donepezil, Rivastigmine, Galantamine) untuk meningkatkan neurotransmiter asetilkolin. 2. **NMDA Receptor Antagonist** (Memantine) untuk melindungi saraf dari toksisitas glutamat berlebih. Wajib dengan resep dokter saraf."
+dokter_006,"terapi non obat untuk alzheimer, fisioterapi demensia, terapi okupasi memori, terapi musik","Terapi non-farmakologis meliputi: Terapi Stimulasi Kognitif (CST), terapi musik nostalgia, fisioterapi mobilitas, dan terapi okupasi untuk mempertahankan keterampilan makan serta berpakaian mandiri."
+dokter_007,"apakah periksa alzheimer ditanggung bpjs, bpjs kesehatan dokter saraf, biaya tes mmse mri bpjs","Ya, pemeriksaan dokter spesialis saraf, tes kognitif MMSE, pemeriksaan radiologi MRI/CT Scan otak (sesuai indikasi medis), serta obat-obatan rutin Alzheimer ditanggung oleh BPJS Kesehatan melalui rujukan berjenjang dari faskes tingkat pertama (Puskesmas/Klinik)."
+dokter_008,"apa itu antibodi lecanemab donanemab, obat baru alzheimer fda, terapi penghancur amiloid",Lecanemab (Leqembi) dan Donanemab adalah antibodi monoklonal inovatif yang telah disetujui FDA untuk menargetkan dan melarutkan plak beta-amiloid pada pasien Alzheimer stadium awal (MCI).
+dokter_009,"apakah anestesi operasi bisa bikin pikun lansia, efek bius total pada memori, postoperative cognitive dysfunction",Bius total pada lansia dapat memicu Postoperative Cognitive Dysfunction (POCD) sesaat pasca-operasi. Kondisi ini umumnya membaik dalam beberapa minggu dengan pemulihan hidrasi dan nutrisi yang adekuat.
+dokter_010,"bedanya stroke dan alzheimer, stroke bikin pikun, stroke infark otak memori","Stroke terjadi mendadak akibat sumbatan atau pecahnya pembuluh darah otak dan memicu kelumpuhan fisik mendadak. Jika stroke merusak area memori, kondisi ini disebut Demensia Pasca-Stroke (Vaskular)."
+bantuan_001,"menu neura, cara pakai neura, panduan aplikasi neura, fitur neura ai, cara menggunakan chatbot ini","Panduan Cepat Neura AI: 1. **Ketik pesan biasa**: Untuk konsultasi seputar daya ingat dan gaya hidup. 2. **Perintah Cepat**: Ketik `/predict` (skrining), `/eval` (evaluasi model), `/train` (latih model), `/status` (status sistem). 3. **Voice Mode**: Klik ikon mikrofon untuk konsultasi suara real-time."
+bantuan_002,"apa itu predict, cara pakai predict, simulasi predict, perintah predict, /predict","Ketik `/predict` untuk membuka simulasi prediksi diagnosis Alzheimer interaktif. Anda dapat memasukkan nilai MMSE, ADL, Functional Assessment, dan biomarker klinis lainnya untuk melihat estimasi probabilitas risiko secara instan."
+bantuan_003,"apa itu train, cara latih model, perintah train, melatih xgboost, /train",Ketik `/train [epoch]` (contoh: `/train 50`) untuk melatih algoritma XGBoost Classifier pada 2.149 data rekam medis pasien di server backend Neura.
+bantuan_004,"apa itu eval, cara evaluasi model, perintah eval, metrik akurasi neura, /eval","Ketik `/eval` untuk memeriksa metrik performa model terkini: Akurasi (95.35%), ROC-AUC (94.11%), Sensitivity/Recall (92.11%), F1-Score, dan matriks konfusi validasi."
+bantuan_005,"apa itu status, cara cek status model, perintah status, status sistem neura, /status","Ketik `/status` untuk melihat status aktif model XGBoost, keberadaan checkpoint JSON, jumlah fitur klinis yang aktif (32 dimensi), dan status lingkungan server."
+bantuan_006,"apa itu help, bantuan perintah, daftar perintah neura, command list, /help",Daftar Perintah Neura: • `/predict` : Jalankan prediksi diagnosis • `/train [n]` : Latih model n epoch • `/eval` : Tampilkan metrik evaluasi • `/status` : Periksa kesiapan model • `/intro` : Ringkasan Neura AI • `/help` : Bantuan perintah.
+bantuan_007,"cara pakai suara, mode suara, konsultasi suara, livekit voice consultation, mic neura",Klik tombol 'Voice Consultation' di navbar atau klik ikon mikrofon pada bar pesan untuk membuka ruang konsultasi suara real-time bertenaga WebRTC LiveKit. Bicara secara alami layaknya dengan dokter klinis.
+bantuan_008,"seberapa akurat neura ai, validasi data neura, apakah hasil neura bisa dipercaya, akurasi xgboost","Model XGBoost Neura AI memiliki tingkat akurasi 95.35% dan ROC-AUC 94.11% pada 430 sampel pasien validasi holdout. Namun Neura dirancang sebagai instrumen skrining dini, bukan pengganti penegakan diagnosis resmi dokter spesialis saraf."
+bantuan_009,"apakah data saya aman di neura, privasi data pasien, keamanan data medis, kerahasiaan konsultasi",Data Anda diproses secara lokal dengan standar privasi ketat. Sesi konsultasi dienkripsi dan kami tidak memperjualbelikan rekam medis atau informasi pribadi Anda kepada pihak ketiga.
+bantuan_010,"cara logout dari neura, cara keluar akun, ganti akun neura, sign out","Untuk keluar dari akun Neura AI, klik ikon Logout (pintu keluar) di pojok kiri bawah sidebar Anda di samping foto profil, atau klik tombol 'Ganti Akun / Keluar' pada jendela autentikasi."
+tutup_001,"selamat tinggal, dadah, bye, sampai jumpa, pamit, sampai bertemu lagi",Sampai jumpa! Terima kasih telah menggunakan Neura AI. Senang bisa berbagi wawasan kesehatan dengan Anda. Semoga Anda dan keluarga senantiasa sehat dan bahagia!
+tutup_002,"aku mau tidur dulu, pamit tidur, ngantuk mau tidur, tidur dulu ya neura",Selamat tidur dan selamat beristirahat! Biarkan otak Anda meregenerasi sel-sel saraf dan membersihkan sisa racun metabolik malam ini. Sampai bertemu besok!
+tutup_003,"semoga sehat selalu, doa untuk keluarga, jaga kesehatan, semoga berkah","Aamiin ya Rabbal Alamin. Terima kasih atas doa yang tulus! Semoga kesehatan, ketajaman daya ingat, dan kebahagiaan selalu melimpahi Anda dan seluruh keluarga tercinta."
+klarifikasi_001,"maksudnya bagaimana, tolong jelaskan lebih sederhana, bahasanya terlalu rumit, jelaskan singkat, bingung","Tentu, mari kita sederhanakan: Bayangkan otak kita seperti perpustakaan besar. Pada orang sehat, buku baru mudah ditaruh di rak dan diambil kembali. Pada penderita Alzheimer, petugas perpustakaan lupa di mana menaruh buku baru tersebut. Apakah analogi ini lebih mudah dipahami?"
+klarifikasi_002,"bisa berikan contoh nyatanya, berikan contoh kasus, contoh kongkritnya, seperti apa contohnya","Contoh nyata: Ibu Ani (70 tahun) biasa memasak rendang setiap hari raya tanpa melihat resep. Namun tahun ini, beliau 4 kali bertanya pada anaknya 'Bumbu rendang apa saja ya nak?' dalam 1 jam, dan kelupaan memasukkan santan. Inilah contoh gangguan memori prosedural dan jangka pendek."
+klarifikasi_003,"tolong buatkan ringkasan singkatnya, rangkumkan, poin poin pentingnya apa, inti sarinya","Inti sarinya dalam 3 poin: 1. Penyakit Alzheimer bukan bagian penuaan normal. 2. Deteksi dini via tes kognitif (MMSE/ADL) sangat krusial. 3. Pencegahan terbaik: Pola makan Diet MIND, olahraga jalan cepat 150 menit/minggu, dan tidur nyenyak 7-8 jam."
+klarifikasi_004,"can you speak english, apakah bisa bahasa inggris, english language, do you understand english","Yes, I can understand and respond in English as well! Feel free to ask any questions regarding memory health, Alzheimer's screening, clinical biomarkers, or healthy brain lifestyle."
+disclaimer_001,"apakah jawabanmu saran dokter resmi, apakah ini diagnosis dokter, disclaimer medis, tanggung jawab hukum","Penafian Medis (*Medical Disclaimer*): Informasi dan hasil analisis Neura AI adalah instrumen skrining edukatif berbasis machine learning dan bukan merupakan pengganti diagnosis medis resmi, vonis klinis, atau rencana terapi dari Dokter Spesialis Saraf (Sp.N)."
+feedback_001,"jawabannya sangat membantu, ini yang saya cari, penjelasannya sangat bagus, informatif sekali","Alhamdulillah, saya sangat senang mendengarnya! Tujuan utama Neura adalah memberikan pemahaman medis yang jelas, menenangkan, dan bermanfaat bagi Anda dan keluarga."
+feedback_002,"jawabannya kurang jelas, belum paham, kurang puas, bukan itu maksud saya","Mohon maaf jika penjelasan sebelumnya belum menjawab maksud Anda. Silakan jelaskan kembali pertanyaan atau keluhan Anda dengan sudut pandang yang berbeda, dan saya akan bantu jawab dengan senang hati."
+salam_012,"tes, tes 1 2 3, testing, halo tes, cek koneksi, halo apa kamu aktif",Sistem Neura AI aktif 100% dan terhubung dengan baik! Silakan ketik pertanyaan atau konsultasi apa pun yang ingin Anda diskusikan.
+fallback_001,"di luar topik, di luar dataset, di luar konteks, tidak ada di dataset, pertanyaan tidak relevan, hal acak di luar percakapan, di luar cakupan, out of scope, tidak bisa dijawab","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Saat ini Neura AI dirancang secara khusus untuk berfokus pada skrining awal kesehatan daya ingat, deteksi dini risiko penyakit Alzheimer, analisis 32 biomarker klinis, dan edukasi gaya hidup sehat untuk otak. Silakan ajukan pertanyaan seputar kesehatan memori atau gunakan perintah /predict."
+fallback_002,"pertanyaan di luar topik, topik tidak nyambung, di luar bidang alzheimer, tidak ada hubungan dengan memori, hal lain di luar kesehatan","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Topik atau pertanyaan yang Anda sampaikan berada di luar basis data percakapan klinis Neura AI. Saya siap membantu Anda jika ingin berkonsultasi mengenai tanda-tanda awal demensia, tes kognitif MMSE, skor kemandirian ADL, atau nutrisi ramah otak."
+fallback_003,"apakah kamu tahu resep masakan, siapa artis ini, ramalan cuaca, berita politik, harga saham, kurs mata uang","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Sebagai asisten skrining kognitif medis, cakupan saya terbatas pada pencegahan dan deteksi dini Alzheimer, panduan caregiver lansia, serta simulasi biomarker klinis. Silakan ajukan pertanyaan terkait topik kesehatan daya ingat."
+fallback_004,"jawaban tidak ditemukan, kamu tidak paham ini, topik ini tidak ada di sistem, tidak ada di database kamu","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Informasi mengenai hal tersebut tidak tersedia di dalam basis pengetahuan Neura AI. Anda dapat mencoba menanyakan perbedaan pikun biasa vs Alzheimer, faktor risiko demensia, atau ketik /help untuk panduan lengkap."
+fallback_005,"pertanyaan umum acak, hal di luar medis, pertanyaan di luar keahlian, topik lain","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>. Pertanyaan tersebut berada di luar cakupan konsultasi medis Neura AI. Silakan ajukan pertanyaan seputar keluhan daya ingat orang tua, skrining faktor risiko genetik dan vaskular, atau jalankan simulasi klinis /predict."
+voice_salam_001,"halo neura, tes suara, apakah suaraku terdengar, halo asisten suara, tes mic","Halo! Suara Anda terdengar sangat jernih dan baik di sistem Neura AI.
+
+Saya adalah asisten suara klinis Neura yang siap mendampingi Anda berdiskusi seputar kesehatan daya ingat, fungsi kognitif otak, serta skrining awal risiko demensia Alzheimer.
+
+Silakan ceritakan apa yang sedang Anda rasakan atau keluhkan mengenai kesehatan memori hari ini."
+voice_salam_002,"selamat pagi neura, pagi suara, assalamualaikum neura suara, halo selamat pagi","Selamat pagi! Senang sekali bisa menyapa dan mendengar suara Anda di sesi konsultasi Neura hari ini.
+
+Pagi hari adalah waktu yang sangat baik untuk memantau kebugaran pikiran dan aktivitas harian Anda. Menjaga hidrasi dan sarapan bergizi seimbang merupakan awal terbaik untuk melindungi sel-sel saraf otak.
+
+Apakah ada topik kesehatan daya ingat atau pertanyaan khusus yang ingin Anda diskusikan bersama saya pagi ini?"
+voice_salam_003,"selamat siang neura, siang asisten suara, siang neura","Selamat siang! Terima kasih telah terhubung ke saluran konsultasi suara Neura AI.
+
+Jika di tengah kesibukan siang ini Anda atau anggota keluarga merasakan kelelahan mental, kesulitan berkonsentrasi, atau mudah lupa, saya siap membantu mengevaluasi keluhan tersebut secara terarah.
+
+Apa hal utama seputar memori atau kesehatan otak yang ingin Anda tanyakan saat ini?"
+voice_salam_004,"selamat sore neura, sore suara, sore asisten","Selamat sore! Selamat beristirahat sejenak setelah melewati rangkaian aktivitas hari ini.
+
+Sesi konsultasi suara Neura dirancang agar Anda dapat berbicara secara santai dan leluasa, baik mengenai pengamatan daya ingat pribadi maupun perubahan perilaku orang tua di rumah.
+
+Bagaimana kondisi daya ingat Anda atau kerabat terdekat Anda belakangan ini?"
+voice_salam_005,"selamat malam neura, malam suara, malam asisten neura","Selamat malam! Suasana yang tenang sangat mendukung untuk melakukan refleksi dan konsultasi kesehatan kognitif secara nyaman.
+
+Kualitas tidur malam yang cukup dan nyenyak memiliki peran biologis vital, yaitu mengaktifkan sistem glimfatik otak untuk membersihkan protein amiloid yang berpotensi memicu Alzheimer.
+
+Ada keluhan atau hal yang mengganjal di pikiran Anda sebelum beristirahat malam ini?"
+voice_salam_006,"bagaimana cara kerja konsultasi suara ini, bagaimana cara pakainya, panduan suara","Konsultasi suara Neura bekerja secara interaktif dan real-time layaknya Anda berbicara langsung dengan praktisi kesehatan kognitif.
+
+Anda cukup berbicara secara wajar tanpa terburu-buru. Sistem Neura akan mentranskripsikan suara Anda, menganalisis indikator keluhan secara cerdas, dan memberikan penjelasan klinis terstruktur serta ringkas.
+
+Kapan pun Anda siap, silakan mulai dengan menceritakan usia atau gejala memori yang ingin Anda konsultasikan."
+voice_salam_007,"apakah suaraku direkam, privasi suara, keamanan data suara neura","Privasi dan keamanan data klinis Anda merupakan prioritas integritas tertinggi di sistem Neura AI.
+
+Setiap percakapan suara diproses secara aman melalui protokol terenkripsi dan hanya dimanfaatkan untuk memfasilitasi analisis skrining kognitif pada sesi konsultasi Anda yang sedang berjalan.
+
+Anda dapat berkonsultasi dengan tenang dan leluasa tanpa rasa khawatir. Ada gejala yang ingin Anda bagikan?"
+voice_salam_008,"siapa kamu asisten suara, suara siapa ini, perkenalkan dirimu voice","Saya adalah **Neura Voice Assistant**, asisten kecerdasan buatan klinis untuk skrining awal kesehatan kognitif dan risiko penyakit Alzheimer.
+
+Saya terintegrasi dengan mesin pembelajaran mesin klinis Neura yang menganalisis 32 parameter biomarker medis, riwayat fungsional harian, serta indikator tes memori standar internasional.
+
+Saya siap membantu Anda memahami gejala daya ingat dengan bahasa yang ramah, jelas, dan berbasis fakta medis."
+voice_salam_009,"terima kasih suaranya sangat jelas, terima kasih neura voice, makasih ya","Sama-sama! Sangat membahagiakan bagi saya dapat membantu memberikan kejelasan dan ketenangan bagi Anda.
+
+Menjaga kepedulian terhadap kesehatan otak sejak dini adalah langkah preventif terbaik untuk memastikan kualitas hidup lansia yang mandiri dan bahagia di masa depan.
+
+Jika ada hal lain yang ingin Anda pastikan atau tanyakan kembali, saya selalu siap mendengarkan."
+voice_salam_010,"saya ingin mengakhiri sesi suara, pamit dulu neura, tutup voice consultation","Baik, terima kasih banyak telah meluangkan waktu berharga Anda untuk berkonsultasi bersama Neura Voice Assistant hari ini.
+
+Catatan rangkuman percakapan ini tersimpan rapi di riwayat sesi Anda. Jangan ragu untuk berkonsultasi kembali kapan pun Anda membutuhkan arahan seputar daya ingat.
+
+Semoga Anda dan keluarga selalu dilimpahi kesehatan dan kebahagiaan. Sampai jumpa di kesempatan berikutnya!"
+voice_gejala_001,"saya sering lupa menaruh kunci atau dompet, sering lupa naruh barang, apakah ini alzheimer","Lupa menaruh benda harian seperti kunci atau dompet adalah keluhan yang sangat sering dialami banyak orang.
+
+Pada penuaan wajar, seseorang umumnya masih mampu menelusuri kembali langkah-langkah sebelumnya hingga menemukan barang tersebut. Namun, pada indikasi awal demensia Alzheimer, penderita kerap menaruh barang di tempat yang sangat tidak lazim dan kehilangan kemampuan untuk mengingat kembali alur kejadiannya.
+
+Apakah keluhan lupa ini disertai dengan kesulitan mengingat nama orang terdekat atau tanggal hari ini?"
+voice_gejala_002,"sering mengulang pertanyaan yang sama, orang tua mengulang cerita berulang-ulang, repetisi ucapan","Mengulang pertanyaan atau cerita yang sama dalam rentang beberapa menit merupakan salah satu tanda khas gangguan memori jangka pendek.
+
+Kondisi ini terjadi karena hipokampus, bagian otak yang bertanggung jawab mentransfer informasi baru ke memori jangka panjang, mengalami penurunan fungsi sehingga percakapan barusan tidak tersimpan dengan sempurna.
+
+Saya menyarankan Anda menyikapi hal ini dengan sabar tanpa membantah, dan pertimbangkan untuk menjadwalkan pemeriksaan kognitif formal ke dokter saraf."
+voice_gejala_003,"kesulitan menemukan kata yang tepat, lupa nama benda umum, bicara tersendat-sendat","Kondisi kesulitan menemukan kosakata umum atau menamai objek sehari-hari dikenal dalam terminologi klinis sebagai gejala **afasia anomik**.
+
+Jika sesekali terjadi karena kelelahan, hal itu masih tergolong wajar. Namun, bila penderita mulai mengganti kata dengan istilah yang tidak pas secara terus-menerus, ini mengindikasikan adanya gangguan pada area pemrosesan bahasa di lobus temporal dan parietal otak.
+
+Apakah penderita juga mengalami hambatan dalam memahami percakapan yang agak panjang?"
+voice_gejala_004,"tersesat di jalan yang biasa dilewati, disorientasi arah jalan pulang, lupa jalan pulang","Disorientasi spasial atau tersesat di rute yang sudah bertahun-tahun dihafal merupakan tanda waspada penting yang memerlukan perhatian segera.
+
+Gangguan ini mencerminkan berkurangnya pemetaan spasial dan fungsi navigasi otak di area parahipokampus dan korteks entorhinal, yang sering kali menjadi manifestasi awal penyakit Alzheimer tahap ringan hingga sedang.
+
+Untuk keselamatan, pastikan penderita selalu didampingi saat bepergian dan lengkapi dengan kartu identitas darurat atau perangkat pelacak GPS."
+voice_gejala_005,"lupa hari tanggal dan waktu, disorientasi waktu, sering mengira siang padahal malam","Kehilangan orientasi waktu, seperti lupa hari, bulan, tahun, atau tertukar antara siang dan malam, adalah salah satu parameter penting dalam evaluasi fungsi kognitif.
+
+Pada individu sehat, kekeliruan tanggal dapat segera disadari saat melihat penanggalan. Sebaliknya, pada gangguan neurokognitif, penderita sering kali kehilangan persepsi kesinambungan waktu secara menyeluruh.
+
+Mamasang jam dinding berangka besar dan kalender dengan penanda harian yang kontras di rumah dapat sangat membantu menjaga orientasi penderita."
+voice_gejala_006,"kesulitan menghitung uang kembalian, sulit mengatur keuangan, keliru berhitung","Kesulitan berhitung atau mengelola transaksi finansial sederhana menunjukkan adanya penurunan pada fungsi eksekutif lobus frontal otak.
+
+Fungsi eksekutif mengatur kemampuan merencanakan, memecahkan masalah angka, serta menjaga konsentrasi berurutan. Penurunan di area ini sering membuat penderita rentan terhadap kekeliruan membayar atau risiko penipuan finansial.
+
+Sangat disarankan agar anggota keluarga mulai mendampingi pengelolaan transaksi perbankan dan pembayaran tagihan rutin secara bijaksana."
+voice_gejala_007,"apakah lupa nama cucu atau anak itu normal, lupa nama kerabat dekat","Lupa sesaat terhadap nama kenalan jauh masih wajar, namun melupakan nama anak kandung, pasangan, atau cucu dekat merupakan tanda yang memerlukan evaluasi klinis mendalam.
+
+Memori relasional keluarga tersimpan di jaringan saraf yang sangat kokoh. Ketika memori tersebut mulai terganggu, hal ini mengindikasikan bahwa proses neurodegenerasi telah melibatkan area representasi memori autobiografis jangka panjang.
+
+Sebaiknya hindari menguji atau mendesak penderita, dan gunakan bantuan album foto bertuliskan nama untuk memicu asosiasi memori secara lembut."
+voice_gejala_008,"sulit fokus saat membaca atau menonton tv, konsentrasi cepat buyar, perhatian mudah teralihkan","Menurunnya rentang perhatian dan kesulitan mengikuti alur cerita buku atau acara televisi merupakan cerminan dari gangguan memori kerja (*working memory*).
+
+Kondisi ini dapat dipicu oleh proses neurodegeneratif dini, namun dapat pula diperberat oleh defisiensi vitamin B12, gangguan tidur apnea, atau fluktuasi hormon tiroid yang belum terdiagnosis.
+
+Pemeriksaan laboratorium penunjang sangat dianjurkan untuk menyingkirkan penyebab medis lain yang berpotensi dapat dipulihkan."
+voice_gejala_009,"keliru mengenali cermin, mengira bayangan di cermin orang lain, halusinasi cermin","Kondisi tidak mengenali bayangan diri di cermin dan mengiranya sebagai orang asing dikenal dalam ilmu neurologi sebagai fenomena **tanda cermin (*mirror sign*)**.
+
+Fenomena ini berkaitan dengan agnosia visual dan disfungsi pemrosesan persepsi diri di korteks parieto-oksipital, yang umumnya dijumpai pada stadium demensia sedang menuju lanjut.
+
+Bila bayangan tersebut memicu kecemasan atau kegelisahan pada penderita, sebaiknya tutupi cermin di kamar tidur dengan tirai tipis untuk menciptakan rasa aman."
+voice_gejala_010,"mengabaikan kebersihan diri, tidak mau mandi, malas menyisir rambut dan ganti baju","Penurunan inisiatif merawat kebersihan diri, seperti enggan mandi atau berganti pakaian, sering berakar dari kombinasi apati dan hilangnya memori prosedural harian.
+
+Penderita mungkin lupa urutan langkah membersihkan tubuh atau merasa cemas terhadap sensasi air dan suhu dingin di kamar mandi, bukan sekadar penolakan yang disengaja.
+
+Pendekatan terbaik adalah dengan menyiapkan perlengkapan mandi secara berurutan, memastikan suhu air hangat yang nyaman, dan membimbing secara bertahap."
+voice_gejala_011,"mudah tertipu rayuan atau sales, penilaian buruk, kehilangan logika pertimbangan","Penurunan kemampuan memberikan penilaian rasional (*impaired judgment*) merupakan manifestasi penting dari kemunduran fungsi korteks prefrontal.
+
+Kondisi ini membuat penderita kehilangan kepekaan terhadap risiko bahaya, mudah mempercayai tawaran yang tidak masuk akal, atau memberikan uang secara cuma-cuma kepada orang yang tidak dikenal.
+
+Langkah proteksi hukum dan finansial secara kekeluargaan sangat krusial untuk melindungi aset dan martabat penderita sedini mungkin."
+voice_gejala_012,"sering lupa mematikan kompor gas, lupa mengunci pintu rumah, bahaya keamanan rumah","Lupa mematikan kompor gas atau membiarkan pintu rumah terbuka tanpa terkunci merupakan sinyal bahaya keamanan lingkungan yang amat mendesak.
+
+Penurunan memori prospektif—yakni kemampuan mengingat rencana tindakan yang harus diselesaikan di waktu mendatang—dapat berisiko fatal bagi keselamatan seluruh penghuni rumah.
+
+Sangat direkomendasikan untuk memasang detektor gas dan asap otomatis, kompor berfitur pemutus otomatis, serta kunci pintu digital berkode."
+voice_gejala_013,"apakah ada perbedaan gejala pada usia muda dan usia tua, alzheimer usia muda, early onset","Penyakit Alzheimer pada usia di bawah 65 tahun (*Young/Early-Onset Alzheimer's*) memiliki karakteristik presentasi klinis yang agak berbeda dibanding pada usia lanjut.
+
+Pada usia yang lebih muda, gejala awal kerap muncul dalam bentuk gangguan fungsi visual-spasial, kesulitan merencanakan pekerjaan kompleks, atau perubahan kepribadian yang mendahului keluhan memori berat.
+
+Faktor genetik familial yang diturunkan secara dominan sering kali memiliki kontribusi lebih kuat pada kelompok usia muda ini."
+voice_gejala_014,"keluarga saya curiga orang lain mencuri barangnya, paranoid mencurigai pembantu, menuduh tetangga","Waham kecurigaan atau delusi pencurian (*delusion of theft*) adalah salah satu gejala neuropsikiatri yang sangat sering dialami pasien demensia.
+
+Ketika penderita lupa di mana menaruh perhiasan atau uangnya, otak mereka mencoba mengisi celah memori yang hilang dengan menciptakan penjelasan defensif bahwa ada orang lain yang mengambilnya.
+
+Hindari mendebat atau membuktikan bahwa mereka salah; cukup dengarkan dengan empati dan ajak mereka mencari bersama ke tempat-tempat yang biasa dijadikan penyimpanan rahasia."
+voice_gejala_015,"apa tanda-tanda tahap awal menuju tahap sedang alzheimer, perkembangan stadium","Transisi dari stadium ringan ke stadium sedang biasanya ditandai dengan semakin meluasnya hambatan kemandirian dalam aktivitas sehari-hari.
+
+Tanda-tanda utamanya meliputi meningkatnya kebingungan terhadap waktu dan tempat, kesulitan memilih pakaian yang sesuai musim atau acara, gangguan tidur, serta munculnya perubahan suasana hati seperti mudah cemas atau gelisah.
+
+Pencatatan perkembangan gejala harian secara berkala akan sangat bernilai bagi dokter neurologi dalam menyesuaikan intervensi farmakologis dan terapi kognitif."
+voice_mmse_001,"apa itu tes mmse, jelaskan pemeriksaan mmse, tes mini mental","**Mini-Mental State Examination (MMSE)** adalah instrumen skrining kognitif standar emas berdurasi singkat yang digunakan secara global oleh dokter saraf dan geriatri.
+
+Tes ini memiliki skor total maksimal 30 poin, yang menilai lima fungsi kognitif fundamental: orientasi waktu dan tempat, registrasi memori seketika, atensi dan kalkulasi serial, mengingat kembali (*recall*), serta fungsi bahasa dan konstruksi motorik.
+
+Skor MMSE di bawah 24 umumnya mengindikasikan perlunya pemeriksaan lanjutan terhadap kemungkinan gangguan fungsi kognitif."
+voice_mmse_002,"skor mmse 28 artinya apa, hasil tes mmse 27, apakah skor 29 normal","Skor MMSE pada rentang 27 hingga 30 poin dikategorikan sebagai fungsi kognitif yang berada dalam batas **normal dan baik**.
+
+Meskipun skor angka menunjukkan hasil optimal, apabila pasien atau keluarga tetap merasakan adanya penurunan daya ingat yang signifikan dalam kehidupan sehari-hari, evaluasi instrumen yang lebih sensitif seperti tes MoCA tetap dapat dipertimbangkan.
+
+Pertahankan pola hidup sehat untuk otak dan lakukan pemeriksaan kognitif pembanding secara berkala setiap tahun."
+voice_mmse_003,"skor mmse 22 artinya apa, skor mmse 20 sampai 23, gangguan kognitif ringan mmse","Skor MMSE antara 20 hingga 23 poin mengindikasikan adanya **gangguan fungsi kognitif tingkat ringan (*Mild Cognitive Impairment* / demensia ringan)**.
+
+Pada rentang ini, individu biasanya masih mampu melakukan sebagian besar perawatan fisik pribadi, namun mulai membutuhkan bantuan dalam aktivitas kompleks seperti administrasi keuangan, navigasi jalan baru, atau kepatuhan minum obat.
+
+Sangat disarankan segera berkonsultasi dengan dokter spesialis neurologi untuk mengidentifikasi etiologi spesifik dan memulai terapi dini."
+voice_mmse_004,"skor mmse 15 artinya apa, skor mmse 12 sampai 18, demensia sedang mmse","Skor MMSE pada rentang 10 hingga 19 poin mencerminkan kondisi **demensia tingkat sedang (*moderate cognitive impairment*)**.
+
+Pada tahap ini, gangguan memori dan orientasi telah mempengaruhi kemandirian hidup sehari-hari secara nyata, dan penderita membutuhkan pendampingan aktif dari pengasuh (*caregiver*) untuk memastikan keselamatan dan kenyamanan.
+
+Pendekatan manajemen terpadu yang mencakup modifikasi lingkungan rumah, stimulasi kognitif ramah lansia, dan penanganan gejala perilaku menjadi prioritas utama."
+voice_mmse_005,"skor mmse di bawah 10, skor mmse 8, demensia berat skor mmse","Skor MMSE di bawah 10 poin menunjukkan stadium **demensia tingkat lanjut atau berat (*severe impairment*)**.
+
+Pada fase ini, kemampuan komunikasi verbal menjadi sangat terbatas dan penderita bergantung sepenuhnya pada bantuan orang lain untuk makan, berpakaian, berpindah, dan mandi.
+
+Fokus perawatan klinis bergeser pada perawatan paliatif suportif, pencegahan komplikasi fisik seperti luka tekan (*dekubitus*) atau infeksi paru, serta menjaga kenyamanan emosional penderita."
+voice_mmse_006,"apa beda tes mmse dan moca, tes moca kognitif, montreal cognitive assessment","Meskipun keduanya bernilai maksimal 30 poin, **MoCA (Montreal Cognitive Assessment)** dirancang dengan sensitivitas yang jauh lebih tinggi untuk mendeteksi *Mild Cognitive Impairment* (MCI) stadium sangat awal.
+
+MoCA menguji fungsi eksekutif, kemampuan visuospasial (seperti uji menggambar jam dinding dan meniru kubus 3D), serta memori asosiatif secara lebih mendalam dibanding MMSE yang lebih fokus pada fungsi orientasi dan memori verbal.
+
+Dokter saraf sering kali memilih MoCA apabila pasien memiliki tingkat pendidikan tinggi namun mulai mengeluhkan gangguan ketajaman berpikir."
+voice_mmse_007,"apa itu tes menggambar jam dinding, clock drawing test, uji jam cdt","**Clock Drawing Test (CDT)** adalah tes kognitif sederhana namun sangat kuat yang meminta pasien menggambar lingkaran jam lengkap dengan angka dan jarum yang menunjuk pukul tertentu (misal 11 lewat 10 menit).
+
+Uji ini secara simultan mengevaluasi pemahaman auditorik, memori jangka panjang, perencanaan spasial, serta fungsi kontrol eksekutif otak kanan dan lobus parietal.
+
+Ketidakmampuan menyusun angka secara proporsional atau salah meletakkan jarum jam merupakan indikator visual kuat adanya disfungsi kognitif struktural."
+voice_mmse_008,"apakah tingkat pendidikan mempengaruhi hasil tes mmse, bias pendidikan mmse","Ya, tingkat pendidikan formal terbukti secara ilmiah dapat mempengaruhi skor pencapaian tes MMSE dan MoCA.
+
+Individu dengan pendidikan tinggi sering kali memiliki cadangan kognitif (*cognitive reserve*) yang memungkinkan mereka menutupi penurunan kognitif awal pada tes skrining dasar, sedangkan individu dengan pendidikan dasar berisiko memperoleh skor lebih rendah secara semu.
+
+Oleh sebab itu, dokter saraf selalu melakukan penyesuaian interpretasi skor (*education-adjusted cutoff*) agar kesimpulan klinis yang diambil tepat dan adil."
+voice_mmse_009,"berapa sering tes kognitif harus diulang, jadwal evaluasi kognitif berkala","Untuk pemantauan perkembangan kognitif, evaluasi tes standar umumnya direkomendasikan untuk diulang setiap **6 hingga 12 bulan sekali**.
+
+Pengulangan dengan jeda yang wajar diperlukan untuk mengukur laju progresi penyakit, menilai efektivitas terapi obat yang diberikan, serta menghindari efek hafalan (*practice effect*) yang dapat mengaburkan hasil tes sesungguhnya.
+
+Bila Anda mencatat adanya kemunduran mendadak dalam hitungan hari atau minggu, segera periksakan pasien tanpa harus menunggu jadwal rutin."
+voice_mmse_010,"apakah tes mmse bisa mendiagnosis alzheimer secara pasti, apakah mmse vonis pasti","Penting untuk ditegaskan bahwa tes MMSE adalah **alat skrining awal**, bukan diagnosis definitif tunggal penyakit Alzheimer.
+
+Skor yang rendah menunjukkan adanya gangguan kognitif objektif, namun penyebabnya harus dikonfirmasi melalui wawancara klinis menyeluruh, penelusuran riwayat medis, pemeriksaan MRI/CT-scan otak, dan tes biomarker laboratorium.
+
+Hasil tes ini memberikan peta arah yang berharga bagi dokter untuk menentukan rangkaian investigasi medis selanjutnya."
+voice_adl_001,"apa itu skor adl, apa arti adl, activities of daily living","**Activities of Daily Living (ADL)** adalah ukuran klinis standar untuk menilai tingkat kemandirian fisik fungsional seseorang dalam merawat diri sehari-hari.
+
+ADL mencakup 6 fungsi biologis dasar: kemampuan makan mandiri, kontinensia (menahan buang air), kemampuan ke toilet, mobilitas berpindah tempat, mengenakan pakaian, dan mandi secara bersih.
+
+Dalam model prediksi Neura, skor ADL yang optimal berkorelasi kuat dengan rendahnya ketergantungan perawatan dan kualitas hidup kognitif yang lebih stabil."
+voice_adl_002,"apa beda adl dan iadl, instrumental adl, aktivitas instrumental","Perbedaan mendasar terletak pada tingkat kompleksitas kognitif yang dibutuhkan untuk menjalankan aktivitas tersebut.
+
+**Basic ADL** mencakup fungsi bertahan hidup dasar seperti makan dan mandi, sedangkan **Instrumental ADL (IADL)** mencakup tugas sosial kompleks seperti memasak, mengelola keuangan, berbelanja, menggunakan gawai telepon, dan minum obat teratur.
+
+Pada penyakit Alzheimer, penurunan fungsi IADL hampir selalu terjadi jauh lebih awal sebelum kemunduran pada Basic ADL tampak nyata."
+voice_adl_003,"orang tua lupa cara memasang kancing baju, keliru urutan pakai pakaian, apraksia berpakaian","Kesulitan menyusun urutan memakai pakaian, seperti mengenakan pakaian dalam di luar celana atau salah mengancingkan baju, dikenal sebagai **apraksia berpakaian (*dressing apraxia*)**.
+
+Kondisi ini disebabkan oleh terganggunya persepsi tubuh terhadap ruang dan hilangnya rencana gerak motorik di lobus parietal non-dominan otak.
+
+Solusi praktis yang dianjurkan adalah menata pakaian di tempat tidur sesuai urutan pemakaian dari kiri ke kanan dan memilih pakaian berkancing velcro atau berpinggang karet elastis."
+voice_adl_004,"keliru jadwal minum obat, sering dobel minum obat, kepatuhan minum obat lansia","Kekeliruan jadwal minum obat atau meminum dosis ganda adalah risiko berbahaya yang sangat sering dialami lansia dengan gangguan memori prospektif.
+
+Overdosis obat antihipertensi, antidiabetes, atau obat jantung akibat lupa dapat memicu syok, penurunan kesadaran, hingga komplikasi gawat darurat.
+
+Gunakan kotak obat bersekat harian (*pill organizer*) dengan penanda pagi-siang-malam, dan pastikan pemberian obat diawasi langsung oleh anggota keluarga atau pendamping."
+voice_adl_005,"sering ngompol tiba-tiba, inkontinensia urin demensia, tidak sempat ke toilet","Inkontinensia urin pada demensia dapat bersumber dari ketidakmampuan mengenali sinyal kandung kemih, lupa letak toilet, atau keterlambatan membuka kancing celana.
+
+Dalam istilah medis, ini sering digolongkan sebagai inkontinensia fungsional, di mana organ saluran kemih sebenarnya sehat namun jalur perintah kognitif motoriknya terhambat.
+
+Menerapkan jadwal buang air rutin setiap 2 hingga 3 jam sekali dan memasang tanda gambar toilet yang terang di pintu kamar mandi terbukti sangat efektif mengurangi insiden ini."
+voice_adl_006,"orang tua menolak makan, nafsu makan turun drastis, lupa sudah makan atau belum","Gangguan pola makan pada demensia dapat berupa lupa bahwa dirinya baru saja makan, atau sebaliknya kehilangan nafsu makan akibat penurunan indra penciuman dan pengecap.
+
+Pada beberapa kasus, kesulitan mengunyah atau menelan (*disfagia*) juga membuat penderita enggan menghabiskan porsi makanan mereka.
+
+Sajikan makanan dalam piring berwarna kontras dengan tekstur lembut yang mudah ditelan, serta ciptakan suasana makan yang tenang tanpa gangguan kebisingan televisi."
+voice_adl_007,"lansia sering tersandung dan jatuh di rumah, risiko jatuh lansia, keseimbangan buruk","Risiko jatuh pada penderita Alzheimer meningkat signifikan karena penurunan persepsi kedalaman visual, ketidakstabilan langkah motorik, dan efek samping obat sedatif.
+
+Jatuh pada lansia berpotensi mengakibatkan cedera serius seperti fraktur tulang panggul yang dapat mempercepat kemunduran fisik dan mental secara drastis.
+
+Modifikasi rumah sangat esensial: singkirkan karpet licin, pasang pegangan tangan (*grab bars*) di kamar mandi, dan pastikan lorong serta tangga memiliki pencahayaan terang."
+voice_adl_008,"apakah masih boleh mengemudi mobil atau motor, lansia menyetir kendaraan","Mengemudi menuntut integrasi reaksi visual kilat, koordinasi motorik kaki-tangan yang presisi, dan pengambilan keputusan navigasi yang cepat.
+
+Pada individu yang terdiagnosis Alzheimer meskipun tahap awal, kemampuan merespons rem mendadak atau mengenali rambu lalu lintas menurun secara signifikan, sehingga sangat membahayakan diri sendiri dan pengguna jalan lain.
+
+Keluarga dianjurkan berdiskusi secara bijak dan penuh kasih untuk mengalihkan peran mengemudi kepada keluarga atau menggunakan transportasi publik yang didampingi."
+voice_adl_009,"bagaimana cara melatih kemandirian tanpa membuat lansia merasa direndahkan, memelihara martabat","Kunci utama pemberdayaan fungsional lansia adalah memberikan bantuan minimal yang diperlukan (*assisted independence*) tanpa mengambil alih seluruh tugas mereka.
+
+Biarkan mereka melakukan bagian yang masih mampu dikerjakan sendiri, misalnya memegang sendok atau memilih baju dari dua opsi sederhana yang Anda siapkan.
+
+Pendekatan ini memelihara harga diri, merangsang neuron motorik tetap aktif, dan mencegah timbulnya rasa tidak berdaya yang berujung pada depresi."
+voice_adl_010,"skor functional assessment apa maksudnya, penilaian fungsional fa","Parameter **Functional Assessment** dalam sistem klinis Neura mengukur derajat efisiensi dan adaptasi seseorang dalam berinteraksi dengan lingkungan sosial dan fisiknya.
+
+Skor ini menggabungkan penilaian terhadap mobilitas, kemandirian instrumen harian, serta kapasitas pemecahan masalah sederhana saat menghadapi situasi darurat.
+
+Skor fungsional yang stabil merupakan indikasi positif bahwa kualitas penanganan dan lingkungan tempat tinggal pasien bekerja secara efektif."
+voice_bpsd_001,"apa itu sundowning syndrome, lansia gelisah saat matahari terbenam, rewel sore hari","**Sundowning Syndrome** adalah fenomena klinis di mana penderita demensia mengalami peningkatan kebingungan, kecemasan, dan kegelisahan saat sore menjelang malam hari.
+
+Pemicu utamanya adalah gangguan ritme sirkadian internal otak, kelelahan mental setelah beraktivitas seharian, serta memudarnya cahaya alami yang mempertegas bayangan di dalam rumah.
+
+Nyalakan lampu ruangan lebih awal sebelum senja tiba, putar musik relaksasi yang tenang, dan hindari minuman berkafein di sore hari untuk meredakan gejala ini."
+voice_bpsd_002,"orang tua sering marah-marah tanpa sebab, agresi emosional demensia, membentak tiba-tiba","Ledakan emosi atau agresi verbal pada penderita Alzheimer jarang terjadi tanpa alasan; kondisi ini hampir selalu merupakan respons frustrasi terhadap rasa takut atau ketidaknyamanan fisik.
+
+Karena keterbatasan kosakata, penderita mungkin tidak mampu mengungkapkan rasa nyeri lambung, sakit gigi, pakaian yang sempit, atau rasa lelah yang luar biasa.
+
+Tetaplah bersikap tenang, gunakan nada bicara rendah dan menenangkan, serta periksa kenyamanan fisik pasien daripada membalas kemarahan mereka."
+voice_bpsd_003,"merasa ingin pulang ke rumah padahal sudah di rumah sendiri, mencari rumah masa kecil","Permintaan 'ingin pulang' sangat umum dijumpai, di mana kata 'rumah' bagi penderita sering melambangkan memori masa muda saat mereka merasa paling aman dan memiliki kendali.
+
+Mendebat dengan mengatakan 'ini kan rumahmu sendiri' justru akan memicu kebingungan dan kepanikan karena memori visual rumah saat ini tidak cocok dengan memori emosional di kepalanya.
+
+Katakan secara menenangkan: 'Kita aman di sini malam ini, besok pagi kita bisa keluar berjalan-jalan', lalu alihkan perhatian dengan teh hangat atau album kenangan."
+voice_bpsd_004,"lansia berjalan mondar-mandir tanpa tujuan, wandering demensia, suka keluyuran","Perilaku mondar-mandir (*wandering*) sering dipicu oleh rasa bosan, dorongan mencari sesuatu yang hilang, atau keinginan melepaskan kelebihan energi fisik.
+
+Bahaya utama dari perilaku ini adalah risiko tersesat atau mengalami kecelakaan di luar rumah tanpa disadari oleh keluarga.
+
+Solusi pencegahannya meliputi mengajak jalan santai teratur di pagi hari, memasang kunci pengaman tambahan di pintu gerbang yang tidak mencolok, dan mengenakan gelang penanda identitas."
+voice_bpsd_005,"melihat bayangan orang yang sudah meninggal, halusinasi visual lansia, halusinasi demensia","Halusinasi visual—seperti melihat kerabat yang sudah lama wafat atau hewan peliharaan masa kecil—disebabkan oleh kekeliruan sirkuit saraf di korteks asosiasi visual.
+
+Apabila halusinasi tersebut tidak membuat pasien merasa takut atau terancam, Anda tidak perlu membantahnya secara keras; cukup berikan rasa aman dan alihkan perhatiannya.
+
+Namun, bila halusinasi menimbulkan kepanikan atau ketakutan hebat, segera laporkan ke dokter saraf untuk evaluasi penyesuaian medikasi."
+voice_bpsd_006,"menimbun barang bekas, menyembunyikan makanan di lemari baju, perilaku hoarding","Menimbun sampah, koran lama, atau menyembunyikan makanan basi di laci pakaian (*hoarding behavior*) berakar dari rasa cemas kehilangan kepemilikan dan rasa aman.
+
+Mengambil barang-barang tersebut secara paksa di depan mata pasien dapat menimbulkan kemarahan dan kecurigaan yang intens.
+
+Bersihkan tempat penyimpanan secara bertahap dan rahasia saat pasien sedang mandi atau beraktivitas lain, dan sisakan barang-barang yang aman agar mereka tetap merasa memiliki kendali."
+voice_bpsd_007,"kehilangan minat hobi, apatis total, hanya melamun sepanjang hari","Apati klinis ditandai dengan hilangnya inisiatif, penurunan respons emosi terhadap kabar gembira atau duka, serta penghentian hobi yang sebelumnya sangat dicintai.
+
+Apati berbeda dari depresi; apati pada Alzheimer berkaitan langsung dengan hipometabolisme di area korteks cingulata anterior dan ganglia basalis.
+
+Bantu rangsang keterlibatan penderita dengan mengajak melakukan aktivitas sensori sederhana tanpa beban target, seperti merawat tanaman hias, mengelus hewan peliharaan, atau mendengarkan lagu nostalgia."
+voice_bpsd_008,"gangguan tidur malam parah, bangun tengah malam masak atau beres-beres, insomnia demensia","Inversi ritme tidur—yakni tidur sepanjang siang hari dan terjaga aktif di tengah malam—terjadi akibat degenerasi nukleus suprakiasmatik di hipotalamus yang mengatur jam biologis tubuh.
+
+Kondisi ini sangat menguras energi fisik pengasuh keluarga jika tidak ditangani dengan strategi higiene tidur yang sistematis.
+
+Maksimalkan paparan sinar matahari pagi selama 30 menit, batasi tidur siang tidak lebih dari 30 menit, dan ciptakan rutinitas relaksasi sebelum waktu tidur malam tiba."
+voice_bpsd_009,"tertawa atau menangis tiba-tiba tanpa pemicu, ketidakstabilan emosi pseudobulbar","Emosi yang meledak tiba-tiba antara tertawa dan menangis tanpa stimulus yang sesuai dapat mencerminkan gangguan regulasi afek (*Pseudobulbar Affect*).
+
+Kondisi ini terjadi ketika koneksi saraf antara korteks serebri yang mengendalikan emosi dan pusat ekspresi batang otak mengalami diskoneksi akibat lesi mikrovaskular atau neurodegenerasi.
+
+Sikap terbaik adalah dengan tidak menertawakan atau mengkritik reaksi tersebut, bersikap tenang, dan menunggu gelombang emosi mereda secara alami."
+voice_bpsd_010,"apa obat untuk menenangkan pasien alzheimer yang mengamuk, obat penenang demensia","Penanganan pertama untuk kegelisahan atau amarah pada demensia selalu mengedepankan **intervensi non-farmakologis** lingkungan terlebih dahulu.
+
+Penggunaan obat penenang seperti antipsikotik atipikal atau sedatif harus diawasi secara sangat ketat oleh dokter spesialis neurologi atau psikiatri geriatri, karena berisiko meningkatkan efek samping mengantuk, jatuh, dan gangguan vaskular.
+
+Jangan pernah memberikan obat penenang tanpa resep dan evaluasi medis langsung dari dokter yang merawat."
+voice_cegah_001,"apa itu diet mind untuk alzheimer, pola makan pencegah pikun, nutrisi otak","**Diet MIND** (*Mediterranean-DASH Intervention for Neurodegenerative Delay*) adalah pola nutrisi yang diformulasikan secara khusus untuk memperlambat penuaan kognitif dan menurunkan risiko Alzheimer.
+
+Diet ini menitikberatkan pada konsumsi sayuran berdaun hijau gelap, buah beri kaya antioksidan (seperti blueberry dan stroberi), kacang-kacangan, biji-bijian utuh, minyak zaitun murni, serta ikan kaya omega-3.
+
+Secara bersamaan, asupan daging merah berlemak, mentega, keju olahan, makanan cepat saji, dan gula berlebih sangat dibatasi untuk meminimalkan peradangan sel saraf."
+voice_cegah_002,"apakah olahraga fisik bisa mencegah alzheimer, manfaat olahraga untuk otak","Aktivitas fisik aerobik teratur merupakan salah satu pilar intervensi non-obat paling efektif untuk menjaga integritas volume hipokampus otak.
+
+Olahraga aerobik intensitas sedang seperti jalan cepat, berenang, atau bersepeda selama minimal 150 menit per minggu terbukti merangsang pelepasan **BDNF (*Brain-Derived Neurotrophic Factor*)** yang memicu pembentukan sinaps saraf baru.
+
+Selain itu, olahraga memperbaiki elastisitas pembuluh darah otak dan memperlancar aliran oksigen ke jaringan saraf."
+voice_cegah_003,"apakah main catur atau teka-teki silang tts berguna, senam otak, latihan kognitif","Aktivitas stimulasi kognitif seperti bermain catur, mengisi TTS, membaca buku bermutu, atau belajar memainkan alat musik baru sangat bermanfaat memperkaya **cadangan kognitif (*cognitive reserve*)**.
+
+Cadangan kognitif yang kuat bertindak sebagai bantalan pelindung yang memungkinkan jaringan otak mengalihkan fungsi berpikir melalui jalur sinaps alternatif saat jalur utama mengalami kerusakan.
+
+Prinsip terpenting adalah variasi dan tantangan baru; pilihlah aktivitas yang menuntut proses belajar baru secara berkelanjutan."
+voice_cegah_004,"berapa jam tidur malam yang ideal untuk kesehatan otak, tidur cukup mencegah amiloid","Durasi tidur malam yang ideal untuk orang dewasa dan lansia adalah berkisar antara **7 hingga 8 jam** dengan kualitas tidur yang lelap dan berkesinambungan.
+
+Fase tidur gelombang lambat (*Slow-Wave Sleep*) mengaktifkan mekanisme pembersihan biologis sistem glimfatik, yang mengalirkan cairan serebrospinal untuk membilas plak protein beta-amiloid dan tau dari ruang antarsel otak.
+
+Kurang tidur kronis terbukti meningkatkan akumulasi biomarker patologis pemicu demensia."
+voice_cegah_005,"apakah stres kronis bisa memicu alzheimer, pengaruh depresi pada memori","Stres psikologis berkepanjangan memicu pelepasan hormon kortisol tingkat tinggi secara terus-menerus ke dalam sirkulasi darah.
+
+Tingginya kadar kortisol dalam jangka panjang bersifat neurotoksik dan dapat memicu atrofi atau penyusutan neuron di hipokampus, pusat penyimpanan memori baru.
+
+Praktik manajemen stres seperti meditasi pernapasan dalam, beribadah dengan khusyuk, dan menjaga interaksi sosial hangat terbukti melindungi kesehatan sirkuit saraf otak."
+voice_cegah_006,"apakah berhenti merokok membantu mencegah kepikunan, rokok dan risiko alzheimer","Berhenti merokok memberikan proteksi vaskular dan kognitif yang luar biasa besar bagi kesehatan jaringan otak.
+
+Zat racun dalam asap rokok menimbulkan stres oksidatif masif, merusak dinding endotel pembuluh darah mikro otak, dan melipatgandakan risiko aterosklerosis serebral yang memicu stroke mini maupun Alzheimer.
+
+Menghentikan kebiasaan merokok dapat segera memperbaiki oksigenasi jaringan otak dan menurunkan laju penurunan fungsi kognitif seiring usia."
+voice_cegah_007,"bagaimana hubungan diabetes gula darah dengan alzheimer, diabetes tipe 3","Korelasi antara diabetes melitus tipe 2 dan penyakit Alzheimer sangat erat, sampai-sampai sebagian peneliti medis menjulukinya sebagai fenomena **Diabetes Tipe 3**.
+
+Resistensi insulin di jaringan otak mengganggu kemampuan sel saraf menyerap glukosa sebagai sumber energi utama, sekaligus menghambat enzim pembersih protein amiloid (*Insulin-Degrading Enzyme*).
+
+Mengendalikan kadar gula darah (target HbA1c stabil) dan menerapkan pola makan indeks glikemik rendah merupakan langkah pencegahan demensia yang sangat vital."
+voice_cegah_008,"apakah tekanan darah tinggi bisa membuat cepat pikun, hipertensi dan demensia","Hipertensi kronis yang tidak terkontrol, terutama yang terjadi pada usia paruh baya (40–60 tahun), merupakan salah satu faktor risiko vaskular utama penyebab demensia.
+
+Tekanan darah tinggi merusak pembuluh darah kapiler yang memberi makan substansia alba otak, memicu infark lakunar kecil (*silent stroke*), dan mempercepat penumpukan amiloid.
+
+Menjaga tekanan darah sistolik di bawah 130 mmHg melalui pola makan rendah natrium dan terapi antihipertensi terbukti efektif melindungi fungsi memori."
+voice_cegah_009,"apakah gangguan pendengaran bisa memicu demensia, pengaruh tuli atau kurang dengar","Laporan komisi medis internasional *The Lancet* menegaskan bahwa gangguan pendengaran usia paruh baya yang tidak dikoreksi adalah salah satu faktor risiko demensia terbesar yang dapat dimodifikasi.
+
+Ketika input auditorik berkurang, otak harus mengalihkan sumber daya kognitif ekstra hanya untuk memproses suara, yang mempercepat atrofi lobus temporal serta memicu isolasi sosial dan depresi.
+
+Menggunakan alat bantu dengar (*hearing aid*) sedini mungkin terbukti ampuh mempertahankan ketajaman kognitif lansia secara signifikan."
+voice_cegah_010,"apakah suplemen otak ginkgo biloba atau omega 3 benar-benar ampuh, vitamin otak","Bukti ilmiah terkini menunjukkan bahwa tidak ada suplemen tunggal dalam botol yang dapat mencegah atau menyembuhkan penyakit Alzheimer secara instan.
+
+Meskipun asam lemak Omega-3 (DHA/EPA), vitamin D, dan vitamin B kompleks penting untuk metabolisme sel saraf, manfaat terbaiknya diperoleh melalui pola makanan utuh (*whole foods*) dalam diet seimbang.
+
+Konsultasikan terlebih dahulu dengan dokter sebelum mengonsumsi suplemen dosis tinggi guna menghindari interaksi berbahaya dengan obat rutin lainnya."
+voice_cegah_011,"manfaat interaksi sosial bagi lansia, mengobrol dengan teman mencegah pikun","Menjaga interaksi sosial aktif dan bermakna memiliki dampak protektif yang setara dengan latihan intelektual intensif bagi otak lansia.
+
+Percakapan hangat, berdiskusi, dan tertawa bersama sahabat merangsang pelepasan neurotransmiter dopamin dan oksitosin, serta mengaktifkan sirkuit bahasa, empati, dan memori emosional secara serempak.
+
+Mendorong lansia bergabung dalam komunitas pengajian, klub senam lansia, atau perkumpulan hobi adalah investasi berharga untuk kebugaran kognitif mereka."
+voice_cegah_012,"pengaruh konsumsi alkohol terhadap kesehatan otak, alkohol dan alzheimer","Konsumsi alkohol berlebih secara kronis bersifat neurotoksik langsung terhadap neuron korteks serebri dan menyebabkan defisiensi tiamin (vitamin B1).
+
+Kondisi ini dapat memicu sindrom Wernicke-Korsakoff serta mempercepat timbulnya demensia alkoholik dan atrofi substansia alba otak.
+
+Membatasi atau sepenuhnya menghindari konsumsi minuman beralkohol adalah keputusan paling bijak untuk menjaga kejernihan pikiran jangka panjang."
+voice_cegah_013,"bahaya cedera kepala atau gegar otak, trauma kepala dan alzheimer","Riwayat cedera kepala traumatis (*Traumatic Brain Injury*), terutama yang disertai kehilangan kesadaran atau terjadi berulang kali, meningkatkan risiko neurodegenerasi di masa tua.
+
+Trauma fisik pada kepala dapat memicu kaskade peradangan saraf kronis dan mempercepat polimerisasi protein tau yang merusak akson sel saraf.
+
+Selalu kenakan helm pelindung saat berkendara roda dua atau berolahraga, dan pastikan lingkungan rumah aman dari bahaya benturan kepala."
+voice_cegah_014,"kegiatan seni dan musik untuk stimulasi memori, terapi musik alzheimer","Terapi musik dan aktivitas seni memiliki keistimewaan luar biasa karena jalur pemrosesan melodi dan ritme di otak relatif terlindungi lebih lama dari kerusakan demensia.
+
+Mendengarkan lagu-lagu kenangan masa muda dapat membangkitkan memori autobiografis emosional yang tertidur, meredakan kecemasan, dan memicu senyuman pada penderita.
+
+Aktivitas melukis atau mewarnai juga merangsang koordinasi motorik halus dan menjadi saluran komunikasi ekspresif non-verbal yang sangat menenangkan."
+voice_cegah_015,"apakah ada obat herbal alami untuk mencegah pikun, kunyit jahe pegagan","Senyawa alami seperti kurkumin pada kunyit dan ekstrak pegagan (*Centella asiatica*) memiliki sifat antiinflamasi dan antioksidan yang menjanjikan dalam riset laboratorium.
+
+Meskipun rempah-rempah tersebut sangat baik dikonsumsi sebagai bumbu masakan harian yang sehat, penggunaannya tidak boleh menggantikan terapi medis terstandar dari dokter saraf.
+
+Jadikan rempah alami sebagai bagian komplementer dari gaya hidup sehat holistik tanpa mengabaikan pemantauan klinis berkala."
+voice_biomarker_001,"apa itu plak beta amiloid dan protein tau, penyebab biologis alzheimer","Secara patofisiologi biologis, penyakit Alzheimer ditandai oleh dua kelainan protein utama di dalam jaringan otak.
+
+Pertama adalah penumpukan **plak peptida Beta-Amiloid** di ruang ekstraseluler antarsel saraf yang menghambat transmisi sinyal kimia. Kedua adalah kekusutan neurofibrilar dari **protein Tau terfosforilasi** di dalam badan sel yang meruntuhkan struktur mikrotubulus penyokong neuron.
+
+Kombinasi kedua proses patologis ini berujung pada kematian sel saraf masif dan penyusutan volume otak."
+voice_biomarker_002,"apa itu gen apoe4, apakah alzheimer penyakit keturunan, faktor genetik alzheimer","Apolipoprotein E varian epsilon 4 (**APOE-e4**) adalah faktor risiko genetik paling signifikan yang teridentifikasi untuk Alzheimer tipe sporadis pada usia lanjut.
+
+Memiliki satu atau dua salinan alel APOE-e4 meningkatkan kerentanan biologis terhadap penumpukan amiloid, namun gen ini adalah **faktor risiko kerentanan, bukan takdir mutlak** yang pasti menimbulkan penyakit.
+
+Banyak individu pembawa gen ini yang tetap sehat kognitif hingga usia senja berkat penerapan gaya hidup sehat protektif yang ketat."
+voice_biomarker_003,"apa peran mri otak dalam pemeriksaan alzheimer, ct scan kepala demensia","Pemeriksaan **MRI Otak (Magnetic Resonance Imaging)** beresolusi tinggi merupakan modalitas pencitraan struktural standar dalam evaluasi diagnostik demensia.
+
+MRI bertujuan mengukur derajat atrofi spesifik di area hipokampus dan lobus temporal medial, serta mendeteksi adanya beban lesi mikrovaskular substansia alba.
+
+Selain itu, MRI krusial untuk menyingkirkan penyebab kepikunan lain yang dapat dioperasi, seperti tumor otak, hematoma subdural kronis, atau hidrosefalus tekanan normal."
+voice_biomarker_004,"apa itu pet scan amiloid, amyloid pet scan, pencitraan fungsional otak","**Amyloid PET Scan** adalah teknologi pencitraan molekuler canggih yang menggunakan pelacak radiofarmaka khusus untuk memvisualisasikan persebaran plak amiloid di otak hidup secara langsung.
+
+Pemeriksaan ini memberikan konfirmasi objektif tingkat tinggi apakah patologi biologis Alzheimer sudah mulai terdeposit di korteks serebri, bahkan bertahun-tahun sebelum gejala klinis berat muncul.
+
+Pemeriksaan ini sangat bernilai dalam seleksi pasien untuk terapi antibodi monoklonal generasi baru."
+voice_biomarker_005,"apakah tes darah bisa mendeteksi alzheimer, biomarker darah p-tau217","Perkembangan teknologi biomarker darah terkini, khususnya penanda **plasma p-tau217** dan rasio amiloid beta 42/40, telah merevolusi bidang diagnostik neurokognitif global.
+
+Tes darah inovatif ini memiliki akurasi korelasi yang sangat tinggi terhadap hasil PET scan dan pungsi lumbal, membuka peluang skrining awal yang cepat, terjangkau, dan non-invasif.
+
+Meskipun sangat menjanjikan, penggunaannya tetap harus diintegrasikan dengan evaluasi klinis dokter spesialis."
+voice_biomarker_006,"bagaimana pengaruh kolesterol ldl dan trigliserida terhadap otak, lipid profile","Kadar kolesterol LDL dan trigliserida yang tinggi dalam darah berkontribusi langsung terhadap kekakuan dinding arteri dan proses aterosklerosis pembuluh darah serebrovaskular.
+
+Sirkulasi darah mikro otak yang terganggu oleh plak lipid mempercepat iskemia kronis jaringan saraf dan memfasilitasi pembentukan plak amiloid.
+
+Dalam 32 biomarker model Neura, keseimbangan profil lipid (termasuk nilai HDL pelindung) menjadi variabel penting penentu stabilitas skor risiko pasien."
+voice_biomarker_007,"apakah defisiensi vitamin b12 bisa menyebabkan pikun, asam folat dan memori","Defisiensi **Vitamin B12 (Kobalamin)** dan asam folat adalah salah satu penyebab gangguan fungsi memori yang **bersifat reversibel (dapat disembuhkan)** bila ditangani tepat waktu.
+
+Kekurangan vitamin B12 merusak selubung mielin saraf dan meningkatkan kadar homosistein darah yang bersifat racun vaskular bagi sel otak.
+
+Pemeriksaan kadar vitamin B12 serum selalu menjadi prosedur wajib pertama yang dilakukan dokter saraf sebelum mendiagnosis demensia degeneratif."
+voice_biomarker_008,"pengaruh hormon tiroid hipotiroid pada daya ingat, tes tsh ft4","Kondisi **hipotiroidisme** (penurunan hormon tiroid fT4 dengan peningkatan TSH) dapat memperlambat seluruh proses metabolisme seluler tubuh, termasuk kerja sistem saraf pusat.
+
+Pasien hipotiroid kerap menunjukkan gejala 'kabut otak' (*brain fog*), kelambatan berpikir, penurunan daya ingat, serta gejala mirip depresi.
+
+Koreksi kadar hormon tiroid melalui terapi sulih levotiroksin di bawah supervisi dokter sering kali memulihkan kejernihan kognitif pasien secara nyata."
+voice_biomarker_009,"apa itu pungsi lumbal pemeriksaan cairan otak csf, tes cairan sumsum tulang belakang","Pungsi lumbal adalah prosedur pengambilan sampel cairan serebrospinal (CSF) melalui ruang antartulang belakang bagian pinggang bawah.
+
+Analisis laboratorium terhadap CSF mengukur konsentrasi protein Abeta-42, total tau, dan fosfo-tau sebagai tolok ukur definitif kelainan biokimiawi di dalam susunan saraf pusat.
+
+Prosedur ini dilakukan secara steril dan aman oleh dokter spesialis neurologi untuk kasus-kasus klinis yang memerlukan konfirmasi presisi tinggi."
+voice_biomarker_010,"bagaimana model xgboost neura mengolah 32 biomarker, akurasi prediksi neura","Model pembelajaran mesin Neura mengadopsi algoritma **XGBoost (Extreme Gradient Boosting)** yang dilatih pada ribuan profil data klinis terstandardisasi internasional.
+
+Algoritma ini memetakan interaksi multi-faktor yang kompleks antara usia, profil lipid, tensi darah, skor MMSE, indeks ADL, keluhan memori, dan komorbiditas vaskular dengan akurasi validasi 95.3%.
+
+Hasil prediksi Neura memberikan estimasi probabilitas risiko awal yang objektif guna mempercepat deteksi dini sebelum kerusakan otak meluas."
+voice_caregiver_001,"bagaimana cara berbicara dengan penderita alzheimer, tips komunikasi demensia","Kunci utama komunikasi efektif dengan penderita demensia adalah berbicara dengan **kalimat pendek, nada suara tenang, dan tempo perlahan**.
+
+Selalu buat kontak mata hangat sejajar sebelum mulai berbicara, sebutkan nama penderita dengan santun, dan ajukan satu pertanyaan sederhana pada satu waktu agar tidak membebani pemrosesan informasi di otaknya.
+
+Berikan waktu jeda yang cukup bagi mereka untuk merespons tanpa dipotong atau disela secara terburu-buru."
+voice_caregiver_002,"apakah boleh membantah ucapan penderita alzheimer, jangan membantah lansia","Prinsip etika emas dalam pendampingan demensia adalah **jangan pernah mendebat, mengoreksi kasar, atau memaksakan realitas logika** pada penderita.
+
+Memori penderita adalah realitas yang mereka rasakan nyata; membantah hanya akan memicu rasa terancam, panik, frustrasi mendalam, atau amarah defensif.
+
+Terapkan teknik validasi emosi terlebih dahulu, lalu alihkan percakapan (*validate and redirect*) secara halus ke topik yang membahagiakan."
+voice_caregiver_003,"saya merasa lelah dan stres merawat orang tua, burnout caregiver, depresi merawat lansia","Kelelahan fisik dan emosional yang Anda rasakan adalah hal yang sangat manusiawi; merawat penderita demensia adalah salah satu peran hidup paling menantang di dunia.
+
+Sindrom *Caregiver Burnout* dapat membahayakan kesehatan mental dan imunitas tubuh Anda sendiri jika Anda menanggung seluruh beban pengasuhan sendirian tanpa jeda istirahat.
+
+Ingatlah prinsip keselamatan: Anda tidak dapat merawat orang lain dengan baik jika diri Anda sendiri tumbang. Carilah pembagian giliran dengan keluarga atau manfaatkan layanan *respite care*."
+voice_caregiver_004,"bagaimana modifikasi rumah agar aman untuk penderita alzheimer, home safety demensia","Modifikasi lingkungan fisik rumah bertujuan menciptakan ruang tinggal yang ramah dan meminimalkan bahaya kecelakaan.
+
+Langkah prioritas meliputi: memastikan pencahayaan terang merata tanpa bayangan tajam, memasang pegangan besi di kamar mandi dan kloset, mengunci lemari obat serta bahan pembersih kimiawi, dan menyingkirkan kabel yang melintang di lantai.
+
+Menempelkan label gambar dan teks besar pada pintu kamar, lemari pakaian, dan dapur juga sangat membantu kemandirian spasial lansia."
+voice_caregiver_005,"bagaimana cara memandikan penderita alzheimer yang menolak mandi, tips memandikan lansia","Menolak mandi sering kali bukan bentuk pembangkangan, melainkan rasa takut terhadap sensasi dingin, lantai licin, atau rasa malu saat pakaian dibuka.
+
+Pastikan ruangan kamar mandi hangat, gunakan air suam-suam kuku yang nyaman, tutupi tubuh pasien dengan handuk besar saat dibasuh bertahap, dan putar musik kesukaan mereka.
+
+Bila mandi konvensional memicu kepanikan hebat, membasuh tubuh menggunakan waslap busa hangat tanpa bilas adalah alternatif higienis yang sangat manusiawi."
+voice_caregiver_006,"orang tua tidak mengenali saya sebagai anaknya lagi, sakit hati orang tua lupa anak","Mengalami momen ketika orang tua sendiri menatap Anda seperti orang asing adalah pengalaman emosional yang luar biasa menyakitkan bagi seorang anak.
+
+Ingatlah di dalam hati Anda bahwa yang melupakan Anda adalah **penyakit keroposnya sirkuit otak**, bukan hati nurani atau cinta kasih orang tua Anda yang sesungguhnya.
+
+Meskipun nama Anda memudar dari ingatannya, perasaan aman dan kehangatan kasih sayang yang Anda pancarkan lewat pelukan dan sentuhan lembut tetap dirasakan oleh jiwanya."
+voice_caregiver_007,"bagaimana mengatasi lansia yang sering menuduh pasangan selingkuh, cemburu patologis othello","Waham cemburu patologis (*Othello Syndrome*) merupakan salah satu manifestasi neuropsikiatri demensia di mana penderita yakin pasangannya berkhianat.
+
+Gejala ini lahir dari rasa tidak aman yang ekstrem dan hilangnya pemahaman konteks usia akibat penurunan kognitif.
+
+Jangan pernah memperdebatkan tuduhan tersebut secara emosional; tanggapi dengan penegasan cinta yang menenangkan dan konsultasikan dengan dokter saraf untuk penanganan farmakoterapi bila perlu."
+voice_caregiver_008,"apa itu validation therapy, terapi validasi naomi feil, cara merespons halusinasi","**Validation Therapy** adalah metode komunikasi humanistik yang dikembangkan untuk memvalidasi perasaan dan kebutuhan emosional di balik ucapan pasien demensia.
+
+Alih-alih menyangkal fakta yang keliru, Anda mendengarkan dan merespons emosi yang mendasarinya. Sebagai contoh, jika pasien mencari ibunya yang telah tiada, tanyakanlah: 'Ibu pasti sangat merindukan sosok ibu ya? Apa masakan terenak yang dulu sering beliau buatkan?'.
+
+Pendekatan ini menyembuhkan luka kecemasan batin dan mengembalikan rasa dihargai pada penderita."
+voice_caregiver_009,"bagaimana membuat jadwal rutinitas harian lansia, jadwal harian terstruktur","Rutinitas harian yang konsisten dan terprediksi adalah jangkar penenang terbaik bagi pikiran penderita demensia yang rentan bingung.
+
+Tetapkan jam yang sama setiap hari untuk bangun pagi, sarapan, aktivitas fisik ringan, istirahat siang, mandi sore, dan persiapan tidur malam.
+
+Keteraturan ritme waktu mengurangi ketidakpastian lingkungan, meminimalkan kecemasan, dan membantu menstabilkan jam biologis sirkadian tubuh."
+voice_caregiver_010,"persiapan hukum dan keuangan keluarga, surat kuasa perwalian demensia, legal planning","Menyiapkan rencana legalitas hukum dan keuangan saat penderita masih berada pada stadium awal (*mild stage*) dan masih memiliki kapasitas hukum (*competency*) adalah langkah yang sangat bijak.
+
+Langkah ini mencakup pembuatan surat kuasa pengampuan finansial (*Power of Attorney*), penunjukan wali medis, serta inventarisasi dokumen perbankan dan asuransi kesehatan.
+
+Kesiapan administrasi ini mencegah timbulnya konflik keluarga di kemudian hari dan memastikan kebutuhan perawatan pasien terjamin dengan lancar."
+voice_caregiver_011,"tips memilih suster pendamping perawat lansia, caregiver profesional","Dalam memilih perawat pendamping (*formal caregiver*), kriteria terpenting melampaui keterampilan medis dasar adalah **kesabaran tinggi, empati emosional, dan pemahaman terhadap perilaku demensia**.
+
+Pastikan perawat memiliki pelatihan perawatan geriatri, tidak mudah tersinggung saat menghadapi pengulangan pertanyaan, dan mampu menjaga protokol keselamatan fisik lansia.
+
+Lakukan masa orientasi bersama keluarga selama 1 hingga 2 minggu pertama agar lansia merasa nyaman dan terbiasa dengan kehadiran pendamping baru."
+voice_caregiver_012,"apakah ada komunitas pendukung caregiver di indonesia, support group alzheimer","Di Indonesia, organisasi nirlaba seperti **Alzheimer's Indonesia (ALZI)** menyediakan jejaring komunitas pendukung (*caregiver support group*) yang sangat aktif dan suportif.
+
+Bergabung dalam kelompok dukungan memberi Anda ruang aman untuk berbagi cerita, memperoleh wawasan praktis dari sesama pengasuh, dan menyadari bahwa Anda tidak sendirian dalam perjuangan ini.
+
+ALZI juga rutin menyelenggarakan program edukasi, senam otak, dan *memory cafe* yang sangat bermanfaat."
+voice_caregiver_013,"cara mengajak lansia berobat ke dokter saraf tanpa menakut-nakuti, trik ke dokter","Hindari mengatakan 'kita mau periksa ke dokter saraf karena Ibu mulai pikun', karena kalimat ini dapat memicu stigma negatif dan penolakan keras dari lansia.
+
+Gunakan pendekatan pemeriksaan kesehatan umum yang netral dan wajar, seperti: 'Kita mau kontrol tensi dan cek kesehatan rutin tahunan agar stamina Ibu tetap bugar untuk jalan-jalan bersama cucu'.
+
+Hubungi pihak klinik atau dokter terlebih dahulu sebelum jadwal konsultasi agar dokter telah memahami maksud evaluasi kognitif tanpa membuat pasien canggung."
+voice_caregiver_014,"menghadapi rasa bersalah caregiver, merasa bukan anak yang berbakti, guilt caregiver","Rasa bersalah (*caregiver guilt*)—seperti merasa kurang sabar, sempat mengeluh lelah, atau merasa tidak mampu memberikan perawatan sempurna—adalah beban emosional yang lazim dirasakan pengasuh.
+
+Maafkanlah diri Anda sendiri; Anda adalah manusia biasa dengan keterbatasan energi fisik dan psikologis, bukan malaikat tanpa lelah.
+
+Tolak ukur bakti Anda terbukti dari kehadiran dan komitmen Anda mendampingi mereka setiap hari di tengah segala tantangan yang ada."
+voice_caregiver_015,"kapan waktu yang tepat mempertimbangkan panti rawat wredha nursing home, panti jompo","Mempertimbangkan fasilitas perawatan khusus (*memory care / nursing home*) bukanlah bentuk penelantaran atau kegagalan cinta kasih keluarga.
+
+Keputusan ini menjadi rasional dan penuh tanggung jawab apabila kebutuhan medis pasien sudah menuntut pengawasan 24 jam penuh yang tidak lagi dapat disediakan secara aman di rumah, atau ketika kesehatan fisik pengasuh keluarga telah terancam kolaps.
+
+Pilihlah fasilitas yang memiliki reputasi profesional, rasio staf yang memadai, dan lingkungan yang memanusiakan lansia secara bermartabat."
+voice_klinis_001,"kapan saya harus ke dokter spesialis saraf, tanda harus periksa ke spesialis","Konsultasi ke **Dokter Spesialis Neurologi (Sp.N)** sangat dianjurkan jika keluhan lupa mulai mengganggu kelancaran pekerjaan, kemandirian keuangan, atau interaksi sosial sehari-hari.
+
+Tanda-tanda bahaya lain meliputi tersesat di jalan pulang, perubahan kepribadian mendadak, kesulitan berbicara yang makin nyata, atau keluhan memori yang memburuk secara progresif dalam rentang 6 bulan terakhir.
+
+Deteksi pada fase *Mild Cognitive Impairment* membuka jendela peluang intervensi yang jauh lebih efektif untuk mempertahankan kualitas hidup pasien."
+voice_klinis_002,"apa obat yang biasa diresepkan dokter saraf untuk alzheimer, donepezil memantine","Dokter spesialis saraf umumnya meresepkan dua kelompok obat utama yang telah disetujui badan pengawas obat internasional untuk menstabilkan fungsi kognitif.
+
+Pertama adalah kelompok **Inhibitor Kolinesterase** (seperti Donepezil, Rivastigmine, dan Galantamine) yang bekerja meningkatkan kadar neurotransmiter asetilkolin di otak. Kedua adalah **Antagonis Reseptor NMDA** (seperti Memantine) yang melindungi sel saraf dari kerusakan akibat kelebihan zat glutamat.
+
+Seluruh obat ini merupakan obat keras yang wajib dikonsumsi di bawah resep dan evaluasi berkala dokter spesialis saraf."
+voice_klinis_003,"apa obat baru terapi antibodi lecanemab donanemab, obat pembersih plak amiloid","Terapi antibodi monoklonal generasi baru seperti **Lecanemab (Leqembi)** dan **Donanemab (Kisunla)** merupakan terobosan ilmiah pertama yang mampu memperlambat progresi penyakit dengan membersihkan plak beta-amiloid di otak.
+
+Namun, obat-obat ini ditujukan secara spesifik hanya untuk pasien stadium sangat awal (*Early-stage / MCI*) dengan bukti konfirmasi biomarker amiloid positif.
+
+Terapi infus berkala ini menuntut pemantauan MRI serial yang sangat ketat untuk mengawasi efek samping pembengkakan atau perdarahan mikro di otak (*ARIA*)."
+voice_klinis_004,"apa saja yang harus disiapkan sebelum ke dokter saraf, persiapan konsultasi neurologi","Agar sesi konsultasi dokter berjalan optimal dan akurat, siapkan dokumen riwayat kesehatan berikut sebelum berangkat:
+
+1. Catatan kronologis contoh kejadian lupa atau perubahan perilaku nyata selama beberapa bulan terakhir.
+2. Daftar lengkap seluruh obat rutin, vitamin, dan suplemen yang sedang dikonsumsi pasien beserta dosisnya.
+3. Hasil pemeriksaan laboratorium darah, rontgen, atau CT-scan/MRI kepala terdahulu bila ada.
+
+Kehadiran anggota keluarga yang tinggal serumah sangat krusial untuk memberikan informasi pengamatan harian yang objektif kepada dokter."
+voice_klinis_005,"apa beda dokter spesialis saraf neurologi dan psikiater geriatri, dokter mana yang dituju","Kedua dokter spesialis ini saling melengkapi dalam tata laksana komprehensif penyakit neurokognitif geriatri.
+
+**Dokter Spesialis Neurologi (Sp.N)** berfokus mendalam pada penegakan diagnosis struktural otak, pemetaan fungsi saraf, evaluasi biomarker, dan terapi farmakologis penstabil memori. Sementara itu, **Psikiater Geriatri (Sp.KJ Konsultan Geriatri)** memiliki keahlian khusus dalam menangani komplikasi perilaku berat, depresi lansia, psikosis, dan agitasi.
+
+Untuk langkah pertama evaluasi keluhan daya ingat, berkonsultasi ke Dokter Spesialis Saraf adalah pintu masuk yang paling tepat."
+voice_klinis_006,"apakah alzheimer bisa sembuh total, apakah ada obat penyembuh permanen","Hingga saat ini, ilmu kedokteran dunia belum menemukan obat yang dapat menyembuhkan kerusakan neurodegeneratif penyakit Alzheimer secara total atau mengembalikan jaringan otak yang telah mati.
+
+Namun, tata laksana medis modern yang memadukan farmakoterapi dini, stimulasi kognitif terstruktur, diet MIND, dan modifikasi lingkungan terbukti mampu **memperlambat laju perburukan penyakit secara signifikan**.
+
+Intervensi dini memungkinkan pasien menikmati tahun-tahun kehidupan yang berharga dengan kualitas fungsional dan kemandirian yang jauh lebih baik."
+voice_klinis_007,"apa beda alzheimer dan demensia vaskular, demensia pasca stroke","Perbedaan utamanya terletak pada mekanisme penyebab kerusakan sel saraf di dalam otak.
+
+**Alzheimer** disebabkan oleh penumpukan protein toksik amiloid dan tau yang merusak sinaps secara bertahap dan perlahan. Sedangkan **Demensia Vaskular** dipicu oleh penyumbatan atau perdarahan pembuluh darah otak (seperti pasca stroke) yang menyebabkan kematian jaringan otak secara mendadak dengan pola penurunan kognitif bertangga (*step-wise decline*).
+
+Banyak lansia yang sebenarnya mengalami demensia tipe campuran (*mixed dementia*) yang menggabungkan kedua patologi ini."
+voice_klinis_008,"apa itu demensia lewy body dan frontotemporal, jenis demensia lain","Selain Alzheimer, terdapat tipe demensia degeneratif penting lainnya yang memiliki karakteristik unik.
+
+**Dementia with Lewy Bodies (DLB)** ditandai oleh fluktuasi tajam kesadaran, halusinasi visual yang hidup sejak awal, dan gejala kekakuan gerak mirip Parkinson. Sedangkan **Frontotemporal Dementia (FTD)** menyerang lobus depan dan samping otak pada usia lebih muda, dengan manifestasi awal berupa perubahan drastis perilaku sosial, hilangnya rasa malu, atau gangguan bicara (*afasia*).
+
+Pembedaan diagnosis ini sangat menentukan pemilihan jenis obat yang aman bagi pasien."
+voice_klinis_009,"apa peran fisioterapi dan terapi okupasi untuk demensia, terapi rehabilitasi","Layanan rehabilitasi medis memegang peranan krusial dalam mempertahankan kapasitas fisik dan kemandirian penderita.
+
+**Fisioterapi** berfokus pada latihan keseimbangan, kekuatan otot tungkai, dan kelancaran pola jalan untuk mencegah bahaya jatuh. Sementara itu, **Terapi Okupasi** melatih kembali adaptasi melakukan tugas-tugas harian praktis dengan menggunakan alat bantu yang mempermudah pasien di rumah.
+
+Kombinasi kedua terapi ini juga memberikan stimulasi sensorik yang menyegarkan suasana hati lansia."
+voice_klinis_010,"bagaimana status skrining neura di mata hukum medis, legalitas hasil prediksi neura","Hasil analisis dan kalkulasi probabilitas risiko yang dihasilkan oleh platform Neura AI berkedudukan sebagai **instrumen skrining awal dan edukasi kognitif (*early risk screening tool*)**.
+
+Platform Neura tidak menggantikan penilaian diagnosis formal, pemeriksaan fisik langsung, maupun keputusan terapeutik dari dokter spesialis neurologi yang berwenang.
+
+Gunakanlah laporan ringkasan Neura sebagai bahan rujukan awal yang konstruktif saat Anda berkonsultasi langsung ke fasilitas pelayanan kesehatan terdekat."
+voice_fallback_001,"harga saham hari ini, siapa presiden perancis, resep memasak rendang, lirik lagu barat","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>.
+
+Sebagai asisten suara klinis Neura, lingkup keahlian saya didedikasikan secara khusus untuk konsultasi kesehatan kognitif, evaluasi keluhan memori, skrining awal penyakit Alzheimer, dan panduan gaya hidup sehat untuk otak.
+
+Silakan sampaikan pertanyaan atau gejala seputar kesehatan daya ingat Anda atau anggota keluarga, atau gunakan perintah suara untuk skrining risiko klinis."
+voice_fallback_002,"cuaca besok hujan tidak, ramalan zodiak hari ini, berita gosip artis terkini","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>.
+
+Topik yang Anda tanyakan berada di luar domain basis data klinis kesehatan otak Neura AI. Saya siap mendampingi Anda jika ingin berdiskusi mengenai interpretasi skor tes MMSE, tips diet MIND, atau cara membedakan pikun wajar vs demensia.
+
+Apakah ada topik seputar kesehatan memori yang ingin Anda diskusikan bersama saya?"
+voice_fallback_003,"koding python membuat game, perbaiki error javascript, rumus fisika kuantum","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>.
+
+Basis pengetahuan Neura Voice Assistant berfokus pada analisis 32 biomarker medis klinis, riwayat fungsional ADL, dan edukasi pencegahan neurodegeneratif lansia.
+
+Jika Anda tertarik mengetahui bagaimana model machine learning Neura memprediksi risiko Alzheimer dari data klinis, silakan ketik atau sampaikan pertanyaan tentang biomarker Neura."
+voice_fallback_004,"ceritakan lelucon lucu, tebak-tebakan humor, bernyanyilah untukku suara","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>.
+
+Meskipun saya senang dapat menemani Anda dengan nada suara yang hangat dan ramah, fokus utama saya adalah memberikan panduan medis yang akurat dan terpercaya seputar kesehatan daya ingat keluarga Anda.
+
+Bagaimana kondisi konsentrasi dan daya ingat Anda hari ini? Ada yang terasa berbeda atau ingin Anda pastikan?"
+voice_fallback_005,"siapa pemenang piala dunia kemarin, rekomendasi film horor, beli tiket pesawat murah","Mohon maaf tidak bisa menjawab sesuai pertanyaan <<nama>>.
+
+Informasi tersebut berada di luar cakupan layanan asisten medis Neura AI. Anda dapat menanyakan tentang langkah awal perawatan demensia di rumah, rekomendasi latihan fisik untuk lansia, atau konsultasi mengenai hasil skor skrining.
+
+Silakan ajukan pertanyaan seputar kesehatan otak Anda kapan pun Anda siap."
+voice_stop_001,"stop, berhenti, stop bicara, diam, cukup, tunggu dulu, berhenti bicara, pause","Baik, saya telah menghentikan penjelasan sebelumnya.
+
+Saya sedang mendengarkan Anda dengan saksama. Silakan lanjutkan apa yang ingin Anda sampaikan atau tanyakan seputar kesehatan memori."
+voice_stop_002,"sebentar, tunggu sebentar, tahan dulu, sudah cukup, batalkan","Siap, saya jeda sejenak.
+
+Silakan ambil waktu Anda dengan santai. Kapan pun Anda siap melanjutkan konsultasi, Anda bisa langsung berbicara kepada saya."

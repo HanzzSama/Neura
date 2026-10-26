@@ -505,16 +505,18 @@ def api_chat_message():
         from features.chat_manager import ChatDatasetManager
         body = request.get_json(silent=True) or {}
         message = body.get("message", "").strip()
+        user_name = (body.get("user_name") or body.get("name") or "").strip()
 
         if not message:
             return jsonify({"error": "Empty message"}), 400
 
         mgr = ChatDatasetManager()
-        res = mgr.find_consultation_response(message)
+        res = mgr.find_consultation_response(message, user_name=user_name)
 
         return jsonify({
             "matched": res.get("matched", False),
             "reply": res.get("reply", ""),
+            "responses": res.get("responses", [res.get("reply", "")]),
             "category": res.get("category", "konsultasi_skrining"),
             "topic": res.get("topic", "Konsultasi Neura AI"),
             "suggestions": res.get("suggestions", []),

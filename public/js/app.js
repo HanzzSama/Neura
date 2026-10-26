@@ -1344,7 +1344,30 @@ async function processMLInput(rawText, typingId, startTime) {
         sub: 'Matching intent \u2022 chat_dataset.py',
         main: 'Thinking'
       });
-      const chatRes = await fetchJSON('/api/chat', 'POST', { message: text });
+
+      let currentUserName = '';
+      try {
+        const authRaw = localStorage.getItem('neura_auth_user');
+        if (authRaw) {
+          const u = JSON.parse(authRaw);
+          currentUserName = u.name || (u.displayName ? u.displayName : '') || (u.email ? u.email.split('@')[0] : '');
+        }
+        if (!currentUserName) {
+          const prof = getUserProfile();
+          if (prof && prof.name) currentUserName = prof.name;
+        }
+        if (!currentUserName) {
+          const nameEl = document.getElementById('sidebar-user-name');
+          if (nameEl && nameEl.textContent && nameEl.textContent.trim()) {
+            currentUserName = nameEl.textContent.trim();
+          }
+        }
+      } catch (err) {}
+      if (!currentUserName || currentUserName === 'Pengguna') {
+        currentUserName = 'Hanzz';
+      }
+
+      const chatRes = await fetchJSON('/api/chat', 'POST', { message: text, user_name: currentUserName });
       await waitLoad(startTime, 500);
       removeTypingIndicator(typingId);
       if (chatRes && chatRes.reply) {
@@ -1352,7 +1375,14 @@ async function processMLInput(rawText, typingId, startTime) {
           sub: `Konsultasi \u2022 ${chatRes.topic || 'Neura Clinical AI'}`,
           main: 'Generating'
         });
-        const formatted = formatConsultationReply(chatRes.reply);
+        let replyText = chatRes.reply;
+        if (Array.isArray(replyText)) {
+          replyText = replyText[0] || '';
+        }
+        if (typeof replyText === 'string' && replyText.includes('<<nama>>')) {
+          replyText = replyText.replace(/<<nama>>/g, currentUserName);
+        }
+        const formatted = formatConsultationReply(replyText);
         appendAssistantMessage(formatted, {
           stream: true,
           suggestions: chatRes.suggestions || []
@@ -2650,6 +2680,9 @@ async function startPersonalizedConsultation(profile) {
 // --------------------------------------------------------------------------
 function formatConsultationReply(rawText) {
   if (!rawText) return '';
+  if (Array.isArray(rawText)) {
+    rawText = rawText.join('\n\n');
+  }
 
   // Process markdown tables if present
   if (rawText.includes('|')) {
@@ -2755,14 +2788,45 @@ function generateConversationalReply(text) {
       suggestions: ['/eval', '/predict']
     };
   }
+  let currentUserName = '';
+  try {
+    const authRaw = localStorage.getItem('neura_auth_user');
+    if (authRaw) {
+      const u = JSON.parse(authRaw);
+      currentUserName = u.name || (u.displayName ? u.displayName : '') || (u.email ? u.email.split('@')[0] : '');
+    }
+    if (!currentUserName) {
+      const prof = getUserProfile();
+      if (prof && prof.name) currentUserName = prof.name;
+    }
+    if (!currentUserName) {
+      const nameEl = document.getElementById('sidebar-user-name');
+      if (nameEl && nameEl.textContent && nameEl.textContent.trim()) {
+        currentUserName = nameEl.textContent.trim();
+      }
+    }
+  } catch (err) {}
+  if (!currentUserName || currentUserName === 'Pengguna') {
+    currentUserName = 'Hanzz';
+  }
+
+  const fallbackIntentResponses = [
+    `Mohon maaf tidak bisa menjawab sesuai pertanyaan ${escapeHtml(currentUserName)}. Saat ini <strong>Neura AI</strong> dirancang secara khusus untuk berfokus pada skrining awal kesehatan daya ingat, deteksi dini risiko penyakit Alzheimer, analisis 32 biomarker klinis, dan edukasi gaya hidup sehat untuk otak. Silakan ajukan pertanyaan seputar kesehatan memori atau gunakan perintah <code>/predict</code>.`,
+    `Mohon maaf tidak bisa menjawab sesuai pertanyaan ${escapeHtml(currentUserName)}. Topik atau pertanyaan yang Anda sampaikan berada di luar basis data percakapan klinis Neura AI. Saya siap membantu Anda jika ingin berkonsultasi mengenai tanda-tanda awal demensia, tes kognitif MMSE, skor kemandirian ADL, atau nutrisi ramah otak.`,
+    `Mohon maaf tidak bisa menjawab sesuai pertanyaan ${escapeHtml(currentUserName)}. Sebagai asisten skrining kognitif medis, cakupan saya terbatas pada pencegahan dan deteksi dini Alzheimer, panduan caregiver lansia, serta simulasi biomarker klinis. Silakan ajukan pertanyaan terkait topik kesehatan daya ingat.`,
+    `Mohon maaf tidak bisa menjawab sesuai pertanyaan ${escapeHtml(currentUserName)}. Informasi mengenai hal tersebut tidak tersedia di dalam basis pengetahuan Neura AI. Anda dapat mencoba menanyakan perbedaan pikun biasa vs Alzheimer, faktor risiko demensia, atau ketik <code>/help</code> untuk panduan lengkap.`,
+    `Mohon maaf tidak bisa menjawab sesuai pertanyaan ${escapeHtml(currentUserName)}. Pertanyaan tersebut berada di luar cakupan konsultasi medis Neura AI. Silakan ajukan pertanyaan seputar keluhan daya ingat orang tua, skrining faktor risiko genetik dan vaskular, atau jalankan simulasi klinis <code>/predict</code>.`
+  ];
+
+  const chosenReply = fallbackIntentResponses[Math.floor(Math.random() * fallbackIntentResponses.length)];
+
   return {
-    html: `
-      <p>Saya menerima pesan Anda: <em>"${escapeHtml(text)}"</em>.</p>
-      <p>Sebagai asisten skrining daya ingat Neura, Anda dapat berkonsultasi seputar gejala Alzheimer, tes MMSE, pencegahan kepikunan, atau menggunakan perintah: <code>/predict</code>, <code>/train 5</code>, <code>/eval</code>, <code>/status</code>, dan <code>/help</code>.</p>
-    `,
+    html: `<p>${chosenReply}</p>`,
+    responses: fallbackIntentResponses,
     suggestions: [
       'Saya ingin konsultasi daya ingat',
       'Apa saja 10 tanda awal Alzheimer?',
+      'Makanan apa yang ramah otak?',
       '/predict'
     ]
   };

@@ -487,6 +487,14 @@
         <div id="voice-status-bar">
           <span id="voice-status-dot"></span>
           <span id="voice-status-text">Mendengarkan...</span>
+          <button id="voice-stop-speaking-btn" class="voice-stop-btn" style="display:none;"
+            onclick="window.interruptVoiceSpeaking && window.interruptVoiceSpeaking('button_click')"
+            title="Hentikan Neura berbicara (Katakan 'Stop' atau tekan Spasi)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="5" y="5" width="14" height="14" rx="2" />
+            </svg>
+            <span>Stop Bicara (Spasi)</span>
+          </button>
           <button id="voice-send-now-btn" class="voice-send-now-btn" style="display:none;"
             onclick="window.commitVoiceSpeechNow && window.commitVoiceSpeechNow()" title="Kirim ucapan sekarang tanpa menunggu">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

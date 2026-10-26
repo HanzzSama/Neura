@@ -59,7 +59,7 @@
   // DOM Elements
   var vcView, vcScrollArea, vcThread, vcOrbCanvas, vcOrbCtx;
   var vcCenterBubbleCanvas, vcCenterBubbleCtx;
-  var vcStatusDot, vcStatusText, vcMuteBtn, vcTimer, vcSendNowBtn;
+  var vcStatusDot, vcStatusText, vcMuteBtn, vcTimer, vcSendNowBtn, vcStopBtn;
 
   // --------------------------------------------------------------------------
   // Open / Close Voice Chat Room
@@ -78,6 +78,8 @@
     vcTimer = document.getElementById('voice-session-timer');
     vcSendNowBtn = document.getElementById('voice-send-now-btn');
     if (vcSendNowBtn) vcSendNowBtn.style.display = 'none';
+    vcStopBtn = document.getElementById('voice-stop-speaking-btn');
+    if (vcStopBtn) vcStopBtn.style.display = 'none';
 
     if (!vcView) {
       isVoiceOpen = false;
@@ -184,7 +186,7 @@
     setOrbState('speaking');
     setVoiceStatus('Menghubungkan...', 'dot-speaking');
 
-    document.addEventListener('keydown', onEscClose);
+    document.addEventListener('keydown', onVoiceKeyDown);
 
     // Initial greeting from Neura (plays immediately after panel transition)
     setTimeout(function () {
@@ -195,16 +197,64 @@
     }, 380);
   }
 
+  // --------------------------------------------------------------------------
+  // Voice Interruption & Stop Keyword Detection (Barge-in System)
+  // --------------------------------------------------------------------------
+  var STOP_WORDS_REGEX = /\b(stop|berhenti|tunggu|tunggu dulu|cukup|diam|sebentar|sudah|udahan|pause|wait|quiet|hold on|batal)\b/i;
+
+  function checkStopKeyword(str) {
+    if (!str) return false;
+    return STOP_WORDS_REGEX.test(str);
+  }
+
+  function interruptVoiceSpeaking(reason) {
+    if (!isAgentSpeaking && !window.speechSynthesis.speaking) return;
+
+    if (window.speechSynthesis) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (_) {}
+    }
+
+    if (speakSafetyTimer) {
+      clearTimeout(speakSafetyTimer);
+      speakSafetyTimer = null;
+    }
+
+    currentUtterance = null;
+    isAgentSpeaking = false;
+
+    // Reset user text buffers so the stop command itself is not sent to the AI
+    accumulatedFinalText = '';
+    currentInterimText = '';
+    lastRecognizedSpeechText = '';
+    removeLiveUserBubble();
+
+    if (vcStopBtn) vcStopBtn.style.display = 'none';
+    if (vcSendNowBtn) vcSendNowBtn.style.display = 'none';
+
+    // Visual feedback
+    setVoiceStatus('Bicara dihentikan — Mendengarkan Anda...', 'dot-listening');
+    setOrbState('listening');
+
+    // Trigger visual pulse shockwave on liquid cluster
+    var clusterEl = document.getElementById('voice-bubble-cluster');
+    if (clusterEl) {
+      clusterEl.classList.add('cluster-stop-pulse');
+      setTimeout(function () {
+        clusterEl.classList.remove('cluster-stop-pulse');
+      }, 550);
+    }
+
+    // Safely resume normal recognition listening loop
+    resumeListening();
+  }
+  window.interruptVoiceSpeaking = interruptVoiceSpeaking;
+
   function handleCenterBubbleClick() {
     // If agent is speaking, clicking immediately stops TTS and listens to user
     if (isAgentSpeaking) {
-      if (window.speechSynthesis) {
-        try { window.speechSynthesis.cancel(); } catch (_) {}
-      }
-      isAgentSpeaking = false;
-      setVoiceStatus('Mendengarkan...', 'dot-listening');
-      setOrbState('listening');
-      resumeListening();
+      interruptVoiceSpeaking('center_bubble_click');
       return;
     }
 
@@ -246,7 +296,7 @@
     }
     if (window.speechSynthesis) window.speechSynthesis.cancel();
 
-    document.removeEventListener('keydown', onEscClose);
+    document.removeEventListener('keydown', onVoiceKeyDown);
 
     // Export summary to main chat session
     exportVoiceToChat();
@@ -309,8 +359,17 @@
     // ─────────────────────────────────────────────────────────────────────
   }
 
-  function onEscClose(e) {
-    if (e.key === 'Escape') closeVoiceChat();
+  function onVoiceKeyDown(e) {
+    if (e.key === 'Escape') {
+      if (isAgentSpeaking) {
+        interruptVoiceSpeaking('escape_key');
+      } else {
+        closeVoiceChat();
+      }
+    } else if (e.code === 'Space' && isAgentSpeaking) {
+      e.preventDefault();
+      interruptVoiceSpeaking('space_key');
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -507,11 +566,135 @@
     }
   }
 
+  /**
+   * formatProse — renders Neura voice output text into well-structured HTML.
+   *
+   * Supported conventions (international prose standards):
+   *   **bold**          → <strong>
+   *   *italic*          → <em>
+   *   `code`            → <code>
+   *   • / - / * bullet  → <ul><li>
+   *   1. / 2. numbered  → <ol><li>
+   *   > blockquote      → <blockquote>
+   *   ## Heading 2      → <h3> (scaled down for chat)
+   *   ### Heading 3     → <h4>
+   *   Blank line        → new <p> paragraph
+   *   Single newline    → space continuation (natural prose flow)
+   *
+   * Intentionally keeps output readable both as text (for TTS) and as HTML
+   * (for display). Does NOT escape HTML tags already in the text to allow
+   * pre-built HTML snippets to pass through.
+   */
   function formatProse(text) {
-    var escaped = esc(text)
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>');
-    return '<p>' + escaped + '</p>';
+    if (!text || !text.trim()) return '';
+
+    var raw = String(text).trim();
+
+    // ── 1. Normalize line endings ─────────────────────────────────────────────
+    raw = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // ── 2. Split into logical blocks on blank lines ───────────────────────────
+    var blocks = raw.split(/\n{2,}/);
+    var html = '';
+
+    for (var b = 0; b < blocks.length; b++) {
+      var block = blocks[b].trim();
+      if (!block) continue;
+
+      var lines = block.split('\n');
+
+      // ── Heading 2 (##) ──────────────────────────────────────────────────────
+      if (/^##\s+/.test(lines[0]) && lines.length === 1) {
+        var htext = lines[0].replace(/^##\s+/, '');
+        html += '<h3 class="voice-prose-heading">' + inlineFormat(htext) + '</h3>';
+        continue;
+      }
+
+      // ── Heading 3 (###) ─────────────────────────────────────────────────────
+      if (/^###\s+/.test(lines[0]) && lines.length === 1) {
+        var htext3 = lines[0].replace(/^###\s+/, '');
+        html += '<h4 class="voice-prose-subheading">' + inlineFormat(htext3) + '</h4>';
+        continue;
+      }
+
+      // ── Blockquote (lines starting with >) ───────────────────────────────────
+      if (lines.every(function (l) { return /^>\s*/.test(l); })) {
+        var qlines = lines.map(function (l) { return inlineFormat(l.replace(/^>\s*/, '')); });
+        html += '<blockquote class="voice-prose-quote">' + qlines.join('<br>') + '</blockquote>';
+        continue;
+      }
+
+      // ── Unordered list (bullets: • - *) ──────────────────────────────────────
+      var isBulletBlock = lines.every(function (l) { return /^(\u2022|-|\*)\s+.+/.test(l.trim()); });
+      if (isBulletBlock) {
+        html += '<ul class="voice-prose-list">';
+        for (var li = 0; li < lines.length; li++) {
+          var liText = lines[li].trim().replace(/^(\u2022|-|\*)\s+/, '');
+          html += '<li>' + inlineFormat(liText) + '</li>';
+        }
+        html += '</ul>';
+        continue;
+      }
+
+      // ── Ordered / Numbered list (1. 2. 3.) ───────────────────────────────────
+      var isNumBlock = lines.every(function (l) { return /^\d+\.\s+.+/.test(l.trim()); });
+      if (isNumBlock) {
+        html += '<ol class="voice-prose-list">';
+        for (var oli = 0; oli < lines.length; oli++) {
+          var oliText = lines[oli].trim().replace(/^\d+\.\s+/, '');
+          html += '<li>' + inlineFormat(oliText) + '</li>';
+        }
+        html += '</ol>';
+        continue;
+      }
+
+      // ── Mixed paragraph with embedded bullets ─────────────────────────────────
+      var hasMixedBullets = lines.some(function (l) { return /^(\u2022|-|\*|\d+\.)\s+/.test(l.trim()); });
+      if (hasMixedBullets) {
+        var mixHtml = '';
+        var inUl = false;
+        for (var ml = 0; ml < lines.length; ml++) {
+          var mline = lines[ml].trim();
+          if (/^(\u2022|-|\*)\s+/.test(mline)) {
+            if (!inUl) { mixHtml += '<ul class="voice-prose-list">'; inUl = true; }
+            mixHtml += '<li>' + inlineFormat(mline.replace(/^(\u2022|-|\*)\s+/, '')) + '</li>';
+          } else if (/^\d+\.\s+/.test(mline)) {
+            if (!inUl) { mixHtml += '<ol class="voice-prose-list">'; inUl = true; }
+            mixHtml += '<li>' + inlineFormat(mline.replace(/^\d+\.\s+/, '')) + '</li>';
+          } else {
+            if (inUl) { mixHtml += '</ul>'; inUl = false; }
+            if (mline) mixHtml += '<p>' + inlineFormat(mline) + '</p>';
+          }
+        }
+        if (inUl) mixHtml += '</ul>';
+        html += mixHtml;
+        continue;
+      }
+
+      // ── Standard paragraph block ──────────────────────────────────────────────
+      // Single newlines within a block are treated as soft-wraps (joined with space),
+      // matching international prose standards where a manual line break ≠ new paragraph.
+      var paraText = lines.join(' ');
+      html += '<p class="voice-prose-para">' + inlineFormat(paraText) + '</p>';
+    }
+
+    return html || '<p>' + inlineFormat(raw) + '</p>';
+  }
+
+  /**
+   * inlineFormat — applies inline markdown formatting to a single text span.
+   * Handles: **bold**, *italic*, `code`, and escapes HTML entities.
+   */
+  function inlineFormat(str) {
+    if (!str) return '';
+    var s = esc(str);
+    // Bold (**text**)
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Italic (*text*) — only single asterisks NOT part of **
+    s = s.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+    // Inline code (`text`)
+    s = s.replace(/`([^`]+)`/g, '<code class="voice-inline-code">$1</code>');
+    return s;
   }
 
   function esc(str) {
@@ -621,10 +804,10 @@
   }
 
   // --------------------------------------------------------------------------
-  // Speech Recognition
+  // Speech Recognition (with Duplex Voice Stop / Barge-in Listener)
   // --------------------------------------------------------------------------
   function resumeListening() {
-    if (!isCallActive || isAgentSpeaking || isMuted) return;
+    if (!isCallActive || isMuted) return;
     accumulatedFinalText = '';
     currentInterimText = '';
     lastRecognizedSpeechText = '';
@@ -637,6 +820,7 @@
     recRestartLocked = false;
     if (recRetryTimer) { clearTimeout(recRetryTimer); recRetryTimer = null; }
     if (vcSendNowBtn) vcSendNowBtn.style.display = 'none';
+    if (vcStopBtn) vcStopBtn.style.display = 'none';
     startRecognitionTurn();
   }
 
@@ -649,20 +833,20 @@
   // Safely schedule a restart, preventing double-invocation
   function scheduleRestart(delayMs) {
     if (recRestartLocked) return;
-    if (!isCallActive || isAgentSpeaking || isMuted) return;
+    if (!isCallActive || isMuted) return;
     recRestartLocked = true;
     if (recRetryTimer) clearTimeout(recRetryTimer);
     recRetryTimer = setTimeout(function () {
       recRestartLocked = false;
       recRetryTimer = null;
-      if (isCallActive && !isAgentSpeaking && !isMuted) {
+      if (isCallActive && !isMuted) {
         startRecognitionTurn();
       }
     }, delayMs);
   }
 
   function startRecognitionTurn() {
-    if (!isCallActive || isAgentSpeaking || isMuted) return;
+    if (!isCallActive || isMuted) return;
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
       appendVoiceAIMessage('Browser ini tidak mendukung Web Speech API. Silakan gunakan Google Chrome atau Microsoft Edge untuk konsultasi suara.');
@@ -687,15 +871,32 @@
     speechRec = rec;
 
     rec.onstart = function () {
-      if (!isCallActive || isAgentSpeaking || isMuted) return;
+      if (!isCallActive || isMuted) return;
       recRetryCount = 0;   // successful start — reset backoff
       recLastError = null;
-      setVoiceStatus('Mendengarkan...', 'dot-listening');
-      setOrbState('listening');
+      if (!isAgentSpeaking) {
+        setVoiceStatus('Mendengarkan...', 'dot-listening');
+        setOrbState('listening');
+      }
     };
 
     rec.onresult = function (event) {
-      if (isAgentSpeaking || isMuted || !isCallActive) return;
+      if (isMuted || !isCallActive) return;
+
+      // ── DUPLEX BARGE-IN: DETECT USER SAYING 'STOP' WHILE NEURA SPEAKS ─────
+      if (isAgentSpeaking) {
+        var bargeText = '';
+        for (var bi = event.resultIndex; bi < event.results.length; bi++) {
+          bargeText += ' ' + event.results[bi][0].transcript;
+        }
+        bargeText = bargeText.trim().toLowerCase();
+
+        // Check if user spoke a stop keyword
+        if (checkStopKeyword(bargeText)) {
+          interruptVoiceSpeaking('voice_command: ' + bargeText);
+        }
+        return;
+      }
 
       var interim = '';
       for (var i = event.resultIndex; i < event.results.length; i++) {
@@ -750,7 +951,7 @@
       if (e.error === 'network' || e.error === 'aborted') {
         recRetryCount++;
         var delay = getBackoffDelay();
-        if (e.error === 'network') {
+        if (e.error === 'network' && !isAgentSpeaking) {
           if (recRetryCount <= 2) {
             setVoiceStatus('Mencoba ulang koneksi suara...', 'dot-listening');
           } else {
@@ -762,7 +963,7 @@
         recRetryTimer = setTimeout(function () {
           recRestartLocked = false;
           recRetryTimer = null;
-          if (isCallActive && !isAgentSpeaking && !isMuted) startRecognitionTurn();
+          if (isCallActive && !isMuted) startRecognitionTurn();
         }, delay);
         return;
       }
@@ -777,6 +978,12 @@
       // Fatal errors — do not restart
       if (recLastError === 'not-allowed' || recLastError === 'service-not-allowed') return;
 
+      // While Neura is speaking, keep duplex recognition active for stop command
+      if (isAgentSpeaking) {
+        scheduleRestart(100);
+        return;
+      }
+
       var text = (accumulatedFinalText + ' ' + currentInterimText).trim();
 
       if (text && text.length >= 2 && !isAgentSpeaking) {
@@ -787,7 +994,7 @@
       // If a restart is already scheduled (from onerror backoff) — do nothing
       if (recRestartLocked || recRetryTimer) return;
 
-      if (isAgentSpeaking || isMuted) return;
+      if (isMuted) return;
 
       // Benign end (no-speech timeout or normal end): restart with tiny delay
       var restartDelay = (recLastError === 'no-speech') ? 150 : 250;
@@ -797,7 +1004,7 @@
     try {
       rec.start();
     } catch (e) {
-      scheduleRestart(350);
+      scheduleRestart(300);
     }
   }
 
@@ -883,8 +1090,9 @@
     }
 
     isAgentSpeaking = true;
-    setVoiceStatus('Neura sedang berbicara...', 'dot-speaking');
+    setVoiceStatus('Neura sedang berbicara... (Katakan "Stop" atau tekan Spasi)', 'dot-speaking');
     setOrbState('speaking');
+    if (vcStopBtn) vcStopBtn.style.display = 'inline-flex';
 
     try {
       window.speechSynthesis.cancel();
@@ -894,6 +1102,7 @@
     var clean = (text || '').replace(/[*_#`]/g, '').replace(/<[^>]+>/g, '').trim();
     if (!clean) {
       isAgentSpeaking = false;
+      if (vcStopBtn) vcStopBtn.style.display = 'none';
       resumeListening();
       return;
     }
@@ -921,6 +1130,7 @@
       }
       currentUtterance = null;
       isAgentSpeaking = false;
+      if (vcStopBtn) vcStopBtn.style.display = 'none';
       if (isCallActive && !isMuted) {
         setVoiceStatus('Mendengarkan...', 'dot-listening');
         setOrbState('listening');
@@ -943,6 +1153,12 @@
           window.speechSynthesis.resume();
         }
         window.speechSynthesis.speak(utter);
+        // Start duplex listener to detect stop command while Neura is speaking
+        setTimeout(function () {
+          if (isAgentSpeaking && isCallActive && !isMuted) {
+            startRecognitionTurn();
+          }
+        }, 120);
       } catch (err) {
         console.warn('SpeechSynthesis speak error:', err);
         finishSpeaking();
