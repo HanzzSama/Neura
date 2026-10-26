@@ -222,6 +222,14 @@ def api_status():
         except Exception:
             pass
 
+    intents_count = 241
+    try:
+        from features.chat_manager import ChatDatasetManager
+        mgr = ChatDatasetManager()
+        intents_count = mgr.get_statistics().get("total_percakapan", 241)
+    except Exception:
+        pass
+
     return jsonify({
         "model_name": config.get("model.name", "AlzheimersXGBoost"),
         "algorithm": "XGBoost Classifier",
@@ -230,6 +238,7 @@ def api_status():
         "checkpoint": str(checkpoint_path) if model_ready else None,
         "training_running": _training_status["running"],
         "features_count": 32,
+        "intents_count": intents_count,
         "dataset": "alzheimers_disease_data.csv",
         "metrics": metrics,
     })

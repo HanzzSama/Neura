@@ -552,5 +552,34 @@ if __name__ == "__main__":
    .\venv\Scripts\python.exe scripts/predict_xgboost_alzheimer.py
 
 ================================================================================
+7. SISTEM DYNAMIC ISLAND & VOICE AI CONSULTATION (INTEGRATED CLINICAL HUB)
+================================================================================
+
+Fitur Dynamic Island Neura telah ditingkatkan menjadi pusat kontrol interaktif:
+1. Status Indikator Suara Real-time:
+   - State 'voice-speaking': Menampilkan soundwave animasi gelombang suara (5 bar pulsing),
+     badge tema oranye, timer aktif, serta tombol stop notch inline.
+   - State 'voice-listening': Menampilkan soundwave cyan aktif saat mikrofon mendengarkan user.
+   - State 'voice-stopped': Indikator saat suara TTS Neura dipotong/diinterupsi pengguna.
+   - State 'thinking', 'diagnosing', 'training', 'ready': Menggunakan icon pixel loader Neura.
+
+2. Expanded Grid Metrik Klinis (4 Kolom):
+   - 32 Biomarkers (Dimensi Klinis terverifikasi)
+   - 2 Classes (Non-Alzheimer 0 / Alzheimer 1)
+   - 242+ Clinical Intents (Dataset percakapan terintegrasi chat_dataset.py)
+   - 95.4% Accuracy (Akurasi model XGBoost aktif)
+
+3. User Profile Chip & Aksi Cepat:
+   - Menampilkan nama pengguna aktif tersinkronisasi dari localStorage (neura_auth_user).
+   - Tombol 'Voice AI' untuk membuka sesi konsultasi suara langsung dari Dynamic Island.
+   - 4 Quick Consultation Pills: '🧠 Beda Pikun', '📋 Skor MMSE', '🥗 Diet MIND', '🛡️ Caregiver'.
+
+4. Duplex Voice Interruption (Barge-in):
+   - Pengenalan kata henti (stop, berhenti, tunggu, cukup, diam, sebentar, pause, wait).
+   - SpeechRecognition duplex tetap aktif secara cerdas saat Neura berbicara untuk menangkap
+     perintah stop tanpa memicu false positive.
+
+================================================================================
 AKHIR DOKUMEN IMPLEMENTASI
 ================================================================================
+

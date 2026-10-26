@@ -104,8 +104,17 @@
       };
       mainView.addEventListener('animationend', _mainExitHandler);
     }
-    // Slide island up out of view
-    if (islandWrapper) islandWrapper.classList.add('island-voice-hidden');
+    // Keep dynamic island ceiling-anchored for active voice consultation
+    if (islandWrapper) {
+      islandWrapper.classList.remove('island-voice-hidden');
+      islandWrapper.classList.add('island-in-voice');
+    }
+    if (window.setDynamicIslandState) {
+      window.setDynamicIslandState('voice-speaking', {
+        sub: 'Voice AI Consultation \u2022 Connecting',
+        main: 'Connecting'
+      });
+    }
 
     // 2. After blur-out settles (~320ms), reveal voice panel
     setTimeout(function () {
@@ -236,6 +245,12 @@
     // Visual feedback
     setVoiceStatus('Bicara dihentikan — Mendengarkan Anda...', 'dot-listening');
     setOrbState('listening');
+    if (window.setDynamicIslandState) {
+      window.setDynamicIslandState('voice-stopped', {
+        sub: 'Voice Interrupted \u2022 Microphone Active',
+        main: 'Stopped'
+      });
+    }
 
     // Trigger visual pulse shockwave on liquid cluster
     var clusterEl = document.getElementById('voice-bubble-cluster');
@@ -320,9 +335,12 @@
         // 3. Restore main floating input
         if (fi) fi.style.display = '';
 
-        // 4. Slide island back down
+        // 4. Restore dynamic island from voice mode
         var islandWrapperClose = document.querySelector('.dynamic-island-wrapper');
-        if (islandWrapperClose) islandWrapperClose.classList.remove('island-voice-hidden');
+        if (islandWrapperClose) islandWrapperClose.classList.remove('island-in-voice', 'island-voice-hidden');
+        if (window.setDynamicIslandState) {
+          window.setDynamicIslandState('ready', { keepTimer: false });
+        }
 
         // 5. Bloom the chat back in
         if (mainView) {
@@ -345,7 +363,10 @@
           vcView.classList.remove('is-exiting');
           if (fi) fi.style.display = '';
           var islandFallback = document.querySelector('.dynamic-island-wrapper');
-          if (islandFallback) islandFallback.classList.remove('island-voice-hidden');
+          if (islandFallback) islandFallback.classList.remove('island-in-voice', 'island-voice-hidden');
+          if (window.setDynamicIslandState) {
+            window.setDynamicIslandState('ready', { keepTimer: false });
+          }
           if (mainView) {
             mainView.classList.remove('chat-is-exiting');
             mainView.classList.add('chat-is-entering');
@@ -877,6 +898,12 @@
       if (!isAgentSpeaking) {
         setVoiceStatus('Mendengarkan...', 'dot-listening');
         setOrbState('listening');
+        if (window.setDynamicIslandState) {
+          window.setDynamicIslandState('voice-listening', {
+            sub: 'Voice AI Consultation \u2022 Listening',
+            main: 'Listening'
+          });
+        }
       }
     };
 
@@ -1053,6 +1080,12 @@
     showVoiceTyping();
     setVoiceStatus('Menganalisa jawaban klinis...', 'dot-processing');
     setOrbState('processing');
+    if (window.setDynamicIslandState) {
+      window.setDynamicIslandState('thinking', {
+        sub: 'Analyzing Clinical Query \u2022 Neura Voice AI',
+        main: 'Thinking'
+      });
+    }
 
     fetch('/api/chat', {
       method: 'POST',
@@ -1093,6 +1126,12 @@
     setVoiceStatus('Neura sedang berbicara... (Katakan "Stop" atau tekan Spasi)', 'dot-speaking');
     setOrbState('speaking');
     if (vcStopBtn) vcStopBtn.style.display = 'inline-flex';
+    if (window.setDynamicIslandState) {
+      window.setDynamicIslandState('voice-speaking', {
+        sub: 'Neura Speaking \u2022 Voice Consultation',
+        main: 'Speaking'
+      });
+    }
 
     try {
       window.speechSynthesis.cancel();
@@ -1134,6 +1173,12 @@
       if (isCallActive && !isMuted) {
         setVoiceStatus('Mendengarkan...', 'dot-listening');
         setOrbState('listening');
+        if (window.setDynamicIslandState) {
+          window.setDynamicIslandState('voice-listening', {
+            sub: 'Voice AI Consultation \u2022 Listening',
+            main: 'Listening'
+          });
+        }
         resumeListening();
       }
     }
@@ -1395,7 +1440,7 @@
 
     // Ensure island is always visible on page load
     var islandWrapper = document.querySelector('.dynamic-island-wrapper');
-    if (islandWrapper) islandWrapper.classList.remove('island-voice-hidden');
+    if (islandWrapper) islandWrapper.classList.remove('island-voice-hidden', 'island-in-voice');
 
     var voiceView = document.getElementById('voice-chat-view');
     if (voiceView) {

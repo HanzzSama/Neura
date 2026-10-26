@@ -35,7 +35,21 @@
                 <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
               </svg>
             </div>
+            <!-- Live Voice Soundwave visualizer bars -->
+            <div class="island-soundwave" id="island-soundwave" style="display:none" title="Voice AI Active">
+              <span class="soundwave-bar bar-1"></span>
+              <span class="soundwave-bar bar-2"></span>
+              <span class="soundwave-bar bar-3"></span>
+              <span class="soundwave-bar bar-4"></span>
+              <span class="soundwave-bar bar-5"></span>
+            </div>
             <span class="island-notch-main" id="island-main-text">Ready</span>
+            <!-- Inline notch stop button for live voice barge-in -->
+            <button class="island-notch-stop-btn" id="island-notch-stop-btn" style="display:none" onclick="event.stopPropagation(); if(window.interruptVoiceSpeaking){window.interruptVoiceSpeaking('island_notch_click');}" title="Hentikan Suara Neura">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="5" y="5" width="14" height="14" rx="2" />
+              </svg>
+            </button>
             <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
           </div>
         </div>
@@ -50,21 +64,34 @@
                 </svg>
               </div>
               <div>
-                <div class="island-model-name" id="island-model-name">Neura AI</div>
+                <div class="island-model-name" id="island-model-name">Neura AI Clinical Hub</div>
                 <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
               </div>
             </div>
-            <span class="island-badge-live" id="island-badge-live">Live XGBoost 3.x</span>
+            <div class="island-header-right">
+              <span class="island-user-badge" id="island-user-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span id="island-user-name">Guest</span>
+              </span>
+              <span class="island-badge-live" id="island-badge-live">Live XGBoost 3.x</span>
+            </div>
           </div>
 
           <div class="island-metrics-row">
             <div class="island-stat-box stat-default">
               <span class="island-stat-num" id="island-stat-features">32</span>
-              <span class="island-stat-lbl">Clinical Dims</span>
+              <span class="island-stat-lbl">Biomarkers</span>
             </div>
             <div class="island-stat-box stat-purple">
               <span class="island-stat-num" id="island-stat-classes">2</span>
               <span class="island-stat-lbl">Classes (0/1)</span>
+            </div>
+            <div class="island-stat-box stat-cyan" id="island-stat-box-intents">
+              <span class="island-stat-num" id="island-stat-intents" style="color:#06b6d4">241</span>
+              <span class="island-stat-lbl">Clinical Intents</span>
             </div>
             <div class="island-stat-box stat-green" id="island-stat-box-status">
               <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
@@ -85,6 +112,14 @@
               </svg>
               <span>Diagnose</span>
             </button>
+            <button class="island-btn btn-cyan" onclick="globalIslandAction('voice')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+              </svg>
+              <span>Voice AI</span>
+            </button>
             <button class="island-btn btn-green" onclick="globalIslandAction('/eval')">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
@@ -97,6 +132,13 @@
               </svg>
               <span>Specs</span>
             </button>
+          </div>
+
+          <div class="island-prompts-row">
+            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Apa perbedaan pikun biasa dan alzheimer?')">🧠 Beda Pikun</button>
+            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Bagaimana interpretasi skor tes MMSE?')">📋 Skor MMSE</button>
+            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Bagaimana pola diet MIND untuk pencegahan?')">🥗 Diet MIND</button>
+            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Bagaimana tips merawat lansia dengan demensia?')">🛡️ Caregiver</button>
           </div>
         </div>
       </div>
@@ -137,7 +179,7 @@
     if (!timerEl) return;
     if (keepVisibleMs > 0) {
       setTimeout(() => {
-        if (currentIslandState === 'ready') {
+        if (currentIslandState === 'ready' || currentIslandState === 'idle') {
           timerEl.style.display = 'none';
         }
       }, keepVisibleMs);
@@ -152,15 +194,54 @@
     const island = document.getElementById('dynamic-island');
     const subEl = document.getElementById('island-sub-text');
     const mainEl = document.getElementById('island-main-text');
+    const pixelLoader = document.getElementById('island-pixel-loader');
+    const soundwave = document.getElementById('island-soundwave');
+    const notchStopBtn = document.getElementById('island-notch-stop-btn');
 
     if (!island || !subEl || !mainEl) return;
 
     island.classList.remove(
       'theme-orange', 'theme-purple', 'theme-green', 'theme-default',
+      'theme-cyan', 'theme-voice-listening', 'theme-voice-speaking', 'theme-stopped', 'theme-voice-stopped',
       'is-thinking', 'is-training', 'is-ready'
     );
 
+    // Default icon states
+    if (pixelLoader) pixelLoader.style.display = 'flex';
+    if (soundwave) soundwave.style.display = 'none';
+    if (notchStopBtn) notchStopBtn.style.display = 'none';
+
     switch (state) {
+      case 'voice-speaking':
+        island.classList.add('theme-voice-speaking', 'theme-orange', 'is-thinking');
+        if (pixelLoader) pixelLoader.style.display = 'none';
+        if (soundwave) soundwave.style.display = 'flex';
+        if (notchStopBtn) notchStopBtn.style.display = 'inline-flex';
+        subEl.textContent = options.sub || 'Neura Voice AI \u2022 Speaking';
+        mainEl.textContent = options.main || 'Speaking';
+        if (!islandTimerInterval) window.startIslandTimer();
+        break;
+
+      case 'voice-listening':
+        island.classList.add('theme-voice-listening', 'theme-cyan', 'is-thinking');
+        if (pixelLoader) pixelLoader.style.display = 'none';
+        if (soundwave) soundwave.style.display = 'flex';
+        if (notchStopBtn) notchStopBtn.style.display = 'none';
+        subEl.textContent = options.sub || 'Voice AI Consultation \u2022 Listening';
+        mainEl.textContent = options.main || 'Listening';
+        if (!islandTimerInterval) window.startIslandTimer();
+        break;
+
+      case 'voice-stopped':
+        island.classList.add('theme-voice-stopped', 'theme-stopped');
+        if (pixelLoader) pixelLoader.style.display = 'flex';
+        if (soundwave) soundwave.style.display = 'none';
+        if (notchStopBtn) notchStopBtn.style.display = 'none';
+        subEl.textContent = options.sub || 'Voice Interrupted \u2022 Standby';
+        mainEl.textContent = options.main || 'Stopped';
+        window.stopIslandTimer(options.keepTimer ? 3500 : 0);
+        break;
+
       case 'thinking':
         island.classList.add('theme-orange', 'is-thinking');
         subEl.textContent = options.sub || 'Matching clinical intent \u2022 chat_dataset.py';
@@ -221,7 +302,29 @@
     }
   };
 
+  window.triggerIslandPrompt = function (query) {
+    if (!query) return;
+    if (typeof window.submitCommand === 'function') {
+      const input = document.getElementById('chat-input') || document.querySelector('.floating-input');
+      if (input) input.value = query;
+      window.submitCommand(query);
+    } else {
+      sessionStorage.setItem('pending_neura_action', query);
+      window.location.href = '/app';
+    }
+  };
+
   window.globalIslandAction = function (action) {
+    if (action === 'voice') {
+      if (typeof window.openVoiceChat === 'function') {
+        window.openVoiceChat();
+      } else {
+        sessionStorage.setItem('pending_neura_action', '__open_voice__');
+        window.location.href = '/app';
+      }
+      return;
+    }
+
     if (typeof window.submitCommand === 'function') {
       if (action === 'specs') {
         if (window.openModelModal) window.openModelModal();
@@ -242,6 +345,23 @@
   // 5. Background Poller for Live Model Sync
   async function syncStatus() {
     try {
+      // Sync user badge from localStorage
+      const userBadgeEl = document.getElementById('island-user-name');
+      if (userBadgeEl) {
+        try {
+          const rawUser = localStorage.getItem('neura_auth_user');
+          if (rawUser) {
+            const parsed = JSON.parse(rawUser);
+            const name = parsed.name || parsed.username || parsed.email || 'Dr. Hanzz';
+            userBadgeEl.textContent = name;
+          } else {
+            userBadgeEl.textContent = 'Guest';
+          }
+        } catch (_) {
+          userBadgeEl.textContent = 'Dr. Hanzz';
+        }
+      }
+
       const res = await fetch('/api/status');
       if (!res.ok) return;
       const data = await res.json();
@@ -249,7 +369,15 @@
       const islandStat = document.getElementById('island-stat-status');
       const islandStatBox = document.getElementById('island-stat-box-status');
       const islandEnv = document.getElementById('island-env-tag');
-      const islandBadge = document.getElementById('island-badge-live');
+      const islandStatFeatures = document.getElementById('island-stat-features');
+      const islandStatIntents = document.getElementById('island-stat-intents');
+
+      if (islandStatFeatures && data.features_count) {
+        islandStatFeatures.textContent = data.features_count;
+      }
+      if (islandStatIntents && data.intents_count) {
+        islandStatIntents.textContent = data.intents_count;
+      }
 
       if (islandStat) {
         if (data.training_running) {
@@ -276,6 +404,11 @@
         islandEnv.textContent = `${data.model_name || 'AlzheimersXGBoost'} \u2022 ${data.environment || 'development'}`;
       }
 
+      // Do not override voice states while active
+      if (currentIslandState === 'voice-speaking' || currentIslandState === 'voice-listening' || currentIslandState === 'voice-stopped') {
+        return;
+      }
+
       if (currentIslandState === 'ready' || currentIslandState === 'idle') {
         if (data.training_running) {
           window.setDynamicIslandState('training', { sub: 'Training active in background...', main: 'Training...' });
@@ -300,7 +433,11 @@
       const pending = sessionStorage.getItem('pending_neura_action');
       if (pending) {
         sessionStorage.removeItem('pending_neura_action');
-        setTimeout(() => window.submitCommand(pending), 400);
+        if (pending === '__open_voice__') {
+          setTimeout(() => { if (window.openVoiceChat) window.openVoiceChat(); }, 500);
+        } else {
+          setTimeout(() => window.submitCommand(pending), 400);
+        }
       }
     }
   }

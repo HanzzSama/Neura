@@ -16,7 +16,15 @@
               box-shadow 0.3s ease;
 }
 
-/* Hidden in voice room — slides up above viewport */
+/* Active in voice room — neatly docked ceiling notch */
+.dynamic-island-wrapper.island-in-voice {
+  z-index: 40;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translate3d(0, 0, 0) scale(0.96);
+}
+
+/* Hidden in voice room fallback */
 .dynamic-island-wrapper.island-voice-hidden {
   transform: translateX(-50%) translate3d(0, -120%, 0) scale(var(--island-parallax-scale, 1));
   opacity: 0;
@@ -82,8 +90,8 @@
 }
 
 .dynamic-island:hover {
-  width: 420px;
-  height: 208px;
+  width: 440px;
+  height: 260px;
   border-bottom-left-radius: 26px;
   border-bottom-right-radius: 26px;
   box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35),
@@ -268,6 +276,102 @@
   border-color: rgba(148, 163, 184, 0.35);
 }
 
+/* CYAN THEME (Voice Listening / VAD Active) */
+.dynamic-island.theme-cyan,
+.dynamic-island.theme-voice-listening {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -1px rgba(56, 189, 248, 0.35),
+              0 0 0 1px rgba(56, 189, 248, 0.4);
+}
+.dynamic-island.theme-cyan .island-notch-main,
+.dynamic-island.theme-voice-listening .island-notch-main { color: #BAE6FD; }
+.dynamic-island.theme-cyan .island-notch-timer,
+.dynamic-island.theme-voice-listening .island-notch-timer {
+  color: #38BDF8;
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+/* VOICE SPEAKING THEME (TTS Output) */
+.dynamic-island.theme-voice-speaking {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 18px -1px rgba(217, 119, 87, 0.4),
+              0 0 0 1px rgba(217, 119, 87, 0.45);
+}
+.dynamic-island.theme-voice-speaking .island-notch-main { color: #FED7AA; }
+.dynamic-island.theme-voice-speaking .island-notch-timer {
+  color: #FDBA74;
+  background: rgba(217, 119, 87, 0.22);
+  border-color: rgba(217, 119, 87, 0.45);
+}
+
+/* VOICE STOPPED THEME (Interruption Pulse) */
+.dynamic-island.theme-stopped,
+.dynamic-island.theme-voice-stopped {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -1px rgba(239, 68, 68, 0.4),
+              0 0 0 1px rgba(239, 68, 68, 0.45);
+}
+.dynamic-island.theme-stopped .island-notch-main,
+.dynamic-island.theme-voice-stopped .island-notch-main { color: #FCA5A5; }
+
+/* Live Soundwave Bars in Compact Notch */
+.island-soundwave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 14px;
+  margin-right: 2px;
+}
+.soundwave-bar {
+  display: inline-block;
+  width: 2.5px;
+  height: 5px;
+  border-radius: 99px;
+  background-color: #38BDF8;
+  animation: soundwave-pulse 1.1s infinite ease-in-out;
+}
+.soundwave-bar.bar-1 { animation-delay: 0s; height: 5px; }
+.soundwave-bar.bar-2 { animation-delay: 0.25s; height: 11px; }
+.soundwave-bar.bar-3 { animation-delay: 0.5s; height: 14px; }
+.soundwave-bar.bar-4 { animation-delay: 0.15s; height: 7px; }
+
+.theme-voice-speaking .soundwave-bar {
+  background-color: #FB923C;
+}
+
+@keyframes soundwave-pulse {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.55; }
+  50% { transform: scaleY(1.35); opacity: 1; }
+}
+
+/* Notch Compact Stop Button */
+.island-notch-stop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(239, 68, 68, 0.25);
+  color: #FCA5A5;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 99px;
+  padding: 1px 7px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: 4px;
+}
+.island-notch-stop-btn:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+  border-color: #EF4444;
+  transform: scale(1.08);
+}
+
 /* PIXEL KEYFRAMES */
 @keyframes px-chase-orange {
   0% { fill: #FED7AA; opacity: 1; }
@@ -417,6 +521,43 @@
   white-space: nowrap;
 }
 
+.island-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.island-user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  padding: 2px 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.85);
+  transition: all 0.2s ease;
+}
+
+.island-user-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+  flex-shrink: 0;
+}
+
+.island-user-name {
+  font-weight: 500;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .island-badge-live {
   font-family: 'JetBrains Mono', 'Google Sans Code', monospace;
   font-size: 10.5px;
@@ -430,11 +571,11 @@
   flex-shrink: 0;
 }
 
-/* Metrics Row */
+/* Metrics Row (4-Grid Layout) */
 .island-metrics-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
   margin: 10px 0;
 }
 
@@ -442,7 +583,7 @@
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 7px 8px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -469,6 +610,12 @@
 }
 .island-stat-box.stat-green .island-stat-num { color: #86EFAC; }
 
+.island-stat-box.stat-cyan {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+.island-stat-box.stat-cyan .island-stat-num { color: #7DD3FC; }
+
 .island-stat-box.stat-orange {
   background: rgba(234, 88, 12, 0.08);
   border-color: rgba(234, 88, 12, 0.25);
@@ -477,14 +624,14 @@
 
 .island-stat-num {
   font-family: 'JetBrains Mono', 'Google Sans Code', monospace;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: #FFFFFF;
   white-space: nowrap;
 }
 
 .island-stat-lbl {
-  font-size: 10px;
+  font-size: 9.5px;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -495,7 +642,7 @@
 .island-quick-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .island-btn {
@@ -503,14 +650,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  height: 28px;
-  padding: 0 8px;
+  gap: 4px;
+  height: 27px;
+  padding: 0 6px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.08);
   color: #F1F5F9;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
@@ -524,6 +671,20 @@
 
 .island-btn:hover svg {
   transform: scale(1.1);
+}
+
+.island-btn.btn-cyan {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.32);
+  color: #BAE6FD;
+}
+.island-btn.btn-cyan svg { color: #38BDF8; }
+.island-btn.btn-cyan:hover {
+  background: rgba(56, 189, 248, 0.24);
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+  transform: translateY(-1px);
 }
 
 .island-btn.btn-orange {
@@ -579,5 +740,49 @@
   border-color: rgba(255, 255, 255, 0.35);
   color: #FFFFFF;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Quick Clinical Suggestions Row */
+.island-prompts-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.island-prompts-row::-webkit-scrollbar { display: none; }
+
+.island-prompts-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.island-prompt-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.78);
+  border-radius: 99px;
+  padding: 3px 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.island-prompt-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.28);
   transform: translateY(-1px);
 }

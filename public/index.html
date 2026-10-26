@@ -83,7 +83,23 @@
               <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
             </svg>
           </div>
+          <!-- Live Voice Soundwave Equalizer (Visible when Voice is active) -->
+          <div class="island-soundwave" id="island-soundwave" style="display:none;" title="Live Audio Wave">
+            <span class="soundwave-bar bar-1"></span>
+            <span class="soundwave-bar bar-2"></span>
+            <span class="soundwave-bar bar-3"></span>
+            <span class="soundwave-bar bar-4"></span>
+          </div>
           <span class="island-notch-main" id="island-main-text">Ready</span>
+          <!-- Compact stop button inside notch -->
+          <button class="island-notch-stop-btn" id="island-notch-stop-btn" style="display:none;"
+            onclick="event.stopPropagation(); window.interruptVoiceSpeaking && window.interruptVoiceSpeaking('island_notch')"
+            title="Stop Neura Bicara">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="4" y="4" width="16" height="16" rx="3" />
+            </svg>
+            <span>Stop</span>
+          </button>
           <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
         </div>
       </div>
@@ -99,17 +115,24 @@
               </svg>
             </div>
             <div>
-              <div class="island-model-name">Neura AI</div>
+              <div class="island-model-name">Neura Clinical AI</div>
               <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
             </div>
           </div>
-          <span class="island-badge-live">Live XGBoost 3.x</span>
+          <div class="island-header-right">
+            <div class="island-user-badge" id="island-user-badge" title="Status Pengguna">
+              <span class="island-user-dot"></span>
+              <span class="island-user-name" id="island-user-name">Guest</span>
+            </div>
+            <span class="island-badge-live">Live 3.x</span>
+          </div>
         </div>
 
+        <!-- 4-Column Clinical Metrics Row -->
         <div class="island-metrics-row">
           <div class="island-stat-box stat-default">
             <span class="island-stat-num" id="island-stat-features">32</span>
-            <span class="island-stat-lbl">Clinical Dims</span>
+            <span class="island-stat-lbl">Biomarkers</span>
           </div>
           <div class="island-stat-box stat-purple">
             <span class="island-stat-num" id="island-stat-classes">2</span>
@@ -119,21 +142,33 @@
             <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
             <span class="island-stat-lbl">Accuracy</span>
           </div>
+          <div class="island-stat-box stat-cyan" id="island-stat-box-intents">
+            <span class="island-stat-num" id="island-stat-intents" style="color:#38bdf8">241</span>
+            <span class="island-stat-lbl">Intents</span>
+          </div>
         </div>
 
+        <!-- Quick Action Buttons -->
         <div class="island-quick-actions">
+          <button class="island-btn btn-purple" onclick="globalIslandAction('/predict')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+            </svg>
+            <span>Diagnose</span>
+          </button>
+          <button class="island-btn btn-cyan" onclick="globalIslandAction('voice')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            </svg>
+            <span>Voice AI</span>
+          </button>
           <button class="island-btn btn-orange" onclick="submitCommand('/train 50')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z" />
             </svg>
             <span>Train</span>
-          </button>
-          <button class="island-btn btn-purple" onclick="submitCommand('/predict')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
-            </svg>
-            <span>Diagnose</span>
           </button>
           <button class="island-btn btn-green" onclick="submitCommand('/eval')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
@@ -150,6 +185,15 @@
             </svg>
             <span>Specs</span>
           </button>
+        </div>
+
+        <!-- Quick Clinical Suggestions Row -->
+        <div class="island-prompts-row">
+          <span class="island-prompts-label">Quick Consult:</span>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('perbedaan pikun biasa vs alzheimer')">Beda Pikun</button>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('berapa skor normal tes mmse')">Skor MMSE</button>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('apa itu diet mind untuk alzheimer')">Diet MIND</button>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('bagaimana cara merawat penderita alzheimer')">Caregiver</button>
         </div>
       </div>
     </div>
