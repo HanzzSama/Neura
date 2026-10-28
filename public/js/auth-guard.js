@@ -21,6 +21,9 @@
     }
     var shield = document.getElementById('auth-shield-style');
     if (shield) shield.remove();
+    try {
+      window.dispatchEvent(new CustomEvent('neura:auth-cleared'));
+    } catch (e) {}
   }
 
   function redirectToWelcome(reason, email) {
@@ -30,6 +33,9 @@
     try {
       localStorage.removeItem('neura_auth_user');
       localStorage.removeItem('neura_user_profile');
+      sessionStorage.setItem('neura_iris_active', 'true');
+      sessionStorage.setItem('neura_iris_x', String(window.innerWidth / 2));
+      sessionStorage.setItem('neura_iris_y', String(window.innerHeight / 2));
     } catch (e) {}
 
     var targetUrl = '/welcome?auth_required=true';

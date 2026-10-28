@@ -2,8 +2,11 @@
 <html lang="en" data-theme="light">
 
 <head>
+  <!-- ═══ Neura Iris Transition Engine: FIRST in head for pre-render blocking ═══ -->
+  <script src="/js/page-transition.js?v=10"></script>
   <!-- Theme Restore — runs before CSS to prevent flash-of-wrong-theme -->
   <script>try{var t=localStorage.getItem('neura_theme_v1');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Claude &bull; Neura AI</title>
@@ -754,7 +757,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-guard.js?v=1"></script>
+  <script src="/js/auth-guard.js?v=2"></script>
 
 </body>
 

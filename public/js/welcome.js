@@ -573,7 +573,7 @@
   // -------------------------------------------------------------------------
   (function initShowcaseParallax() {
     const showcaseSection = document.querySelector('.showcase-section');
-    const appWindowFrame = document.querySelector('.app-window-frame');
+    const appWindowFrame = document.querySelector('.sil-window, .app-window-frame');
     if (!showcaseSection || !appWindowFrame) return;
 
     let ticking = false;
@@ -606,8 +606,14 @@
 
       // Dynamic cinematic depth shadow expanding on approach
       const shadowSpread = 20 + eased * 68;
-      const shadowAlpha = 0.08 + eased * 0.12;
-      appWindowFrame.style.boxShadow = `0 ${shadowSpread.toFixed(0)}px 84px -16px rgba(31, 30, 29, ${shadowAlpha.toFixed(2)}), 0 0 0 1px var(--color-border)`;
+      const isSil = appWindowFrame.classList.contains('sil-window');
+      if (isSil) {
+        const shadowAlpha = 0.35 + eased * 0.25;
+        appWindowFrame.style.boxShadow = `0 ${shadowSpread.toFixed(0)}px 90px -15px rgba(0, 0, 0, ${shadowAlpha.toFixed(2)}), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.04)`;
+      } else {
+        const shadowAlpha = 0.08 + eased * 0.12;
+        appWindowFrame.style.boxShadow = `0 ${shadowSpread.toFixed(0)}px 84px -16px rgba(31, 30, 29, ${shadowAlpha.toFixed(2)}), 0 0 0 1px var(--color-border)`;
+      }
 
       ticking = false;
     }

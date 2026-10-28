@@ -892,17 +892,884 @@ a {
 
 
 /* ==========================================================================
-   Showcase / IDE Window Frame
+   Showcase / IDE Window Frame — Silhouette Edition
    ========================================================================== */
 .showcase-section {
   position: relative;
-  max-width: 1260px;
+  max-width: 1240px;
   margin: 100px auto 160px;
-  padding: 0 24px;
+  padding: 0 28px;
   z-index: 10;
-  perspective: 1200px;
-  -webkit-perspective: 1200px;
+  perspective: 1400px;
 }
+
+/* ── Window shell ──────────────────────────────────────────────────────── */
+.sil-window {
+  background: #191815;
+  border-radius: 18px;
+  box-shadow:
+    0 40px 100px -20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(237, 235, 230, 0.08),
+    inset 0 0 0 1px rgba(237, 235, 230, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform-origin: center top;
+  will-change: transform;
+  transition: box-shadow 0.3s ease;
+}
+
+/* ── Title-bar ─────────────────────────────────────────────────────────── */
+.sil-titlebar {
+  height: 40px;
+  background: #1F1E1B;
+  border-bottom: 1px solid rgba(237, 235, 230, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.sil-dots {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.sil-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+.sil-dot-r { background: #ff5f57; }
+.sil-dot-y { background: #febc2e; }
+.sil-dot-g { background: #28c840; }
+
+.sil-url-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(237, 235, 230, 0.04);
+  border: 1px solid rgba(237, 235, 230, 0.07);
+  border-radius: 9999px;
+  padding: 3px 14px;
+  height: 24px;
+  width: 280px;
+}
+
+.sil-lock-icon {
+  color: rgba(237, 235, 230, 0.3);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sil-url-bar {
+  flex: 1;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.1);
+}
+
+.sil-live-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 9999px;
+  padding: 3px 12px;
+  height: 24px;
+}
+
+.sil-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 7px rgba(34, 197, 94, 0.7);
+  animation: silPulse 2.2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes silPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(0.82); }
+}
+
+/* ── Body layout ───────────────────────────────────────────────────────── */
+.sil-body {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  min-height: 590px;
+  max-height: 670px;
+}
+
+/* ── Sidebar (Precisely matching Neura Obsidian Palette) ──────────────── */
+.sil-sidebar {
+  background: #191815;
+  border-right: 1px solid rgba(237, 235, 230, 0.06);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 14px 14px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+/* Skeleton line utility — warm ivory tones */
+.sil-line {
+  display: block;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.12);
+  height: 8px;
+  flex-shrink: 0;
+}
+.sil-line--xs    { width: 50%; }
+.sil-line--sm    { width: 65%; }
+.sil-line--md    { width: 80%; }
+.sil-line--lg    { width: 100%; }
+
+/* Top group: Brand + New Chat + Dashboard */
+.sil-sb-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Brand row */
+.sil-sb-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 2px 6px;
+}
+
+.sil-sb-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(217, 119, 87, 0.14);
+  border: 1px solid rgba(217, 119, 87, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sil-sb-name-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.sil-brand-title-line {
+  display: block;
+  width: 55px;
+  height: 11px;
+  border-radius: 3.5px;
+  background: rgba(237, 235, 230, 0.85);
+}
+
+.sil-brand-tag {
+  display: block;
+  width: 18px;
+  height: 10px;
+  border-radius: 2.5px;
+  background: rgba(217, 119, 87, 0.18);
+  border: 1px solid rgba(217, 119, 87, 0.35);
+}
+
+.sil-sb-icon-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(237, 235, 230, 0.04);
+  border: 1px solid rgba(237, 235, 230, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(237, 235, 230, 0.4);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* New chat button */
+.sil-sb-newchat {
+  height: 38px;
+  padding: 0 10px;
+  background: #252320;
+  border: 1px solid rgba(237, 235, 230, 0.08);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.sil-plus-icon {
+  color: rgba(237, 235, 230, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sil-line--newchat {
+  display: block;
+  width: 88px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.72);
+}
+
+.sil-shortcut-chip {
+  width: 38px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.05);
+  border: 1px solid rgba(237, 235, 230, 0.08);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Dashboard button (Hub) */
+.sil-sb-dashboard {
+  height: 38px;
+  padding: 0 10px;
+  background: #252320;
+  border: 1px solid rgba(237, 235, 230, 0.07);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.sil-dash-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sil-line--dash {
+  display: block;
+  width: 72px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.75);
+}
+
+.sil-hub-badge {
+  width: 30px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(217, 119, 87, 0.18);
+  border: 1px solid rgba(217, 119, 87, 0.38);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Middle Navigation section */
+.sil-sb-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.sil-nav-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 6px 4px;
+  margin-bottom: 2px;
+}
+
+.sil-nav-heading--gap {
+  margin-top: 14px;
+}
+
+.sil-nav-label {
+  display: block;
+  height: 6px;
+  width: 78px;
+  border-radius: 3px;
+  background: rgba(237, 235, 230, 0.22);
+}
+
+.sil-nav-label--cmd {
+  width: 84px;
+}
+
+.sil-chevron-icon {
+  color: rgba(237, 235, 230, 0.3);
+  display: flex;
+  align-items: center;
+}
+
+.sil-nav-item {
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s ease;
+}
+
+.sil-nav-item--active {
+  background: #2F2D28;
+  border: 1px solid rgba(237, 235, 230, 0.08);
+}
+
+.sil-chat-icon {
+  color: rgba(237, 235, 230, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sil-nav-item--active .sil-chat-icon {
+  color: #d97757;
+}
+
+.sil-line--chat-active {
+  display: block;
+  width: 115px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.85);
+}
+
+.sil-line--chat-2 {
+  display: block;
+  width: 110px;
+  height: 7px;
+  border-radius: 3.5px;
+  background: rgba(237, 235, 230, 0.35);
+}
+
+.sil-line--chat-3 {
+  display: block;
+  width: 100px;
+  height: 7px;
+  border-radius: 3.5px;
+  background: rgba(237, 235, 230, 0.35);
+}
+
+.sil-line--chat-4 {
+  display: block;
+  width: 82px;
+  height: 7px;
+  border-radius: 3.5px;
+  background: rgba(237, 235, 230, 0.35);
+}
+
+/* Footer */
+.sil-sb-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(237, 235, 230, 0.07);
+}
+
+.sil-model-strip {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 9px;
+  background: #252320;
+  border: 1px solid rgba(237, 235, 230, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.sil-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+  flex-shrink: 0;
+}
+
+.sil-line--model-ready {
+  display: block;
+  width: 78px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.75);
+}
+
+.sil-info-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: rgba(237, 235, 230, 0.35);
+  flex-shrink: 0;
+}
+
+.sil-info-line {
+  display: block;
+  width: 22px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(237, 235, 230, 0.25);
+}
+
+.sil-info-icon {
+  font-size: 11px;
+  color: rgba(237, 235, 230, 0.35);
+  line-height: 1;
+}
+
+.sil-user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 2px;
+}
+
+.sil-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #d97757;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(217, 119, 87, 0.35);
+}
+
+.sil-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sil-line--user-name {
+  display: block;
+  width: 75px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(237, 235, 230, 0.85);
+}
+
+.sil-line--user-sub {
+  display: block;
+  width: 95px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(237, 235, 230, 0.28);
+}
+
+.sil-user-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.sil-action-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(237, 235, 230, 0.38);
+  flex-shrink: 0;
+}
+
+/* ── Main area (Obsidian Dark #21201C) ─────────────────────────────────── */
+.sil-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #21201C;
+  overflow: hidden;
+}
+
+/* Dynamic island */
+.sil-island {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #141310;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  padding: 5px 18px 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  z-index: 5;
+  pointer-events: none;
+  gap: 3px;
+}
+
+.sil-island-sub {
+  display: block;
+  width: 110px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(237, 235, 230, 0.16);
+}
+
+.sil-island-body {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sil-pixel-grid {
+  width: 10px;
+  height: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px;
+}
+
+.sil-pixel-grid span {
+  background: #22c55e;
+  border-radius: 0.5px;
+}
+
+.sil-island-status {
+  display: block;
+  width: 36px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.55);
+}
+
+/* Top-right icon circles */
+.sil-topbar-icons {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  display: flex;
+  gap: 10px;
+  z-index: 4;
+}
+
+.sil-icon-circ {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(237, 235, 230, 0.08);
+}
+
+/* ── Hero greeting center ──────────────────────────────────────────────── */
+.sil-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 42px 28px 146px;
+  gap: 0;
+}
+
+.sil-hero-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(217, 119, 87, 0.14);
+  border: 1px solid rgba(217, 119, 87, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(217, 119, 87, 0.15);
+}
+
+.sil-greeting-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+/* Hero title: prominent warm ivory */
+.sil-headline-line {
+  display: block;
+  width: 270px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(237, 235, 230, 0.85);
+}
+
+.sil-sub-line {
+  display: block;
+  width: 360px;
+  height: 9px;
+  border-radius: 5px;
+  background: rgba(237, 235, 230, 0.35);
+}
+
+.sil-sub-line--short {
+  width: 280px;
+}
+
+/* 2×2 card grid — matches exact width of input box */
+.sil-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 620px;
+}
+
+.sil-card {
+  background: #282622;
+  border: 1px solid rgba(237, 235, 230, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.sil-card:hover {
+  background: #2F2D29;
+  border-color: rgba(217, 119, 87, 0.3);
+  transform: translateY(-2px);
+}
+
+.sil-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sil-card-head .sil-line--bold {
+  background: rgba(237, 235, 230, 0.75);
+}
+
+.sil-card > .sil-line--lg {
+  background: rgba(237, 235, 230, 0.3);
+}
+
+.sil-card > .sil-line--md,
+.sil-card > .sil-line--sm {
+  background: rgba(237, 235, 230, 0.22);
+}
+
+/* Calibrated Harmonious Card Badges */
+.sil-card-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(217, 119, 87, 0.22);
+  border: 1px solid rgba(217, 119, 87, 0.4);
+  flex-shrink: 0;
+}
+
+.sil-card-icon--alt    { background: rgba(217, 160, 87, 0.2); border: 1px solid rgba(217, 160, 87, 0.38); }
+.sil-card-icon--green  { background: rgba(34, 197, 94, 0.2);  border: 1px solid rgba(34, 197, 94, 0.38); }
+.sil-card-icon--purple { background: rgba(96, 165, 250, 0.2); border: 1px solid rgba(96, 165, 250, 0.38); }
+
+/* ── Bottom input area: Latest Neura Chat Input Architecture ─────────────── */
+.sil-input-wrap {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 64px);
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+}
+
+/* Ambient glow ring matching Neura signature terracotta */
+.sil-input-glow {
+  width: 100%;
+  position: relative;
+  border-radius: 18px;
+  box-shadow:
+    0 4px 30px -4px rgba(217, 119, 87, 0.24),
+    0 -2px 20px -2px rgba(217, 119, 87, 0.12);
+}
+
+.sil-input-box {
+  width: 100%;
+  background: #272622;
+  border: 1px solid rgba(217, 119, 87, 0.4);
+  border-radius: 18px;
+  padding: 13px 16px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  box-sizing: border-box;
+}
+
+.sil-input-top {
+  display: flex;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.sil-placeholder-line {
+  display: block;
+  width: 150px;
+  height: 9px;
+  border-radius: 5px;
+  background: rgba(237, 235, 230, 0.3);
+}
+
+.sil-input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sil-input-left {
+  display: flex;
+  align-items: center;
+}
+
+/* Quick Commands / Attach Button (+) */
+.sil-ib-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(237, 235, 230, 0.05);
+  border: 1px solid rgba(237, 235, 230, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(237, 235, 230, 0.45);
+}
+
+.sil-input-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Model pill label ("Neura Clinical") */
+.sil-model-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  background: rgba(237, 235, 230, 0.04);
+  border: 1px solid rgba(237, 235, 230, 0.09);
+}
+
+.sil-model-pill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.sil-model-pill-text {
+  display: block;
+  width: 54px;
+  height: 7px;
+  border-radius: 3px;
+  background: rgba(237, 235, 230, 0.45);
+}
+
+/* Mic / Send Button */
+.sil-send-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d97757 0%, #c66545 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(217, 119, 87, 0.45);
+  flex-shrink: 0;
+}
+
+/* Voice Waveform Button */
+.sil-wave-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(237, 235, 230, 0.05);
+  border: 1px solid rgba(237, 235, 230, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5px;
+  flex-shrink: 0;
+}
+
+.sil-wave-bar {
+  display: inline-block;
+  width: 2px;
+  border-radius: 1px;
+  background: rgba(237, 235, 230, 0.6);
+}
+
+.sil-wb-1 { height: 6px; }
+.sil-wb-2 { height: 13px; }
+.sil-wb-3 { height: 9px; }
+.sil-wb-4 { height: 5px; }
+
+/* Disclaimer text line under input */
+.sil-disclaimer-line {
+  display: block;
+  width: 240px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(237, 235, 230, 0.18);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sil-body {
+    grid-template-columns: 1fr;
+  }
+
+  .sil-sidebar {
+    display: none;
+  }
+
+  .sil-cards-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .sil-input-wrap {
+    width: calc(100% - 32px);
+    max-width: 100%;
+  }
+
+  .sil-url-pill {
+    display: none;
+  }
+}
+
+
 
 .app-window-frame {
   background: var(--color-bg);

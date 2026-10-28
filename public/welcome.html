@@ -2,6 +2,8 @@
 <html lang="id">
 
 <head>
+  <!-- ═══ Neura Iris Transition Engine: must be FIRST in head for pre-render blocking ═══ -->
+  <script src="/js/page-transition.js?v=10"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Neura &bull; AI Deteksi &amp; Diagnosis Dini Alzheimer</title>
@@ -15,11 +17,11 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=40">
+  <link rel="stylesheet" href="/css/welcome.css?v=44">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=40">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=40">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
-  <link rel="stylesheet" href="/css/auth-hero.css?v=51">
+  <link rel="stylesheet" href="/css/auth-hero.css?v=57">
 </head>
 
 <body>
@@ -46,6 +48,7 @@
     <div class="nav-container">
       <!-- Brand on Left -->
       <a href="/" class="brand-container" title="Neura AI - Halaman Utama"
+        data-no-transition
         onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
         <div class="brand-badge-icon">
           <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="brand-logo-img"
@@ -195,19 +198,9 @@
               <button type="button" class="comp1-mode-toggle" id="comp1-mode-toggle" title="Ganti mode formulir">Sign up</button>
             </div>
 
-            <!-- Title & Google One-Click Pill -->
+            <!-- Title -->
             <div class="comp1-title-row">
               <h2 class="comp1-title" id="comp1-title">Log in</h2>
-              <button type="button" class="comp1-google-pill" id="auth-google-btn" title="Masuk cepat dengan Google">
-                <svg class="comp1-google-icon" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                <span id="auth-google-btn-text">Google</span>
-                <span class="auth-btn-spinner"></span>
-              </button>
             </div>
 
             <!-- Error / Alert Notification Box -->
@@ -257,8 +250,9 @@
                         Tidak semua keputusan klinis mudah, evaluasi 32 biomarker Neura hadir membantu ketepatan diagnosis presisi.
                       </p>
                       <button type="submit" class="comp1-capsule-submit" id="login-submit-btn" title="Masuk ke Workspace">
+                        <span class="comp1-submit-label">Log in</span>
                         <span class="capsule-circle-arrow">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"/>
                           </svg>
                         </span>
@@ -314,8 +308,9 @@
                         Registrasi akun klinis praktisi medis untuk validasi 32 biomarker terenkripsi standar AES-256.
                       </p>
                       <button type="submit" class="comp1-capsule-submit" id="register-submit-btn" title="Buat Akun Klinis">
+                        <span class="comp1-submit-label">Sign up</span>
                         <span class="capsule-circle-arrow">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"/>
                           </svg>
                         </span>
@@ -448,15 +443,54 @@
 
             <!-- Logged In View (Interactive Profile State) -->
             <div class="auth-logged-view" id="auth-logged-view">
-              <div class="auth-avatar-wrap" id="auth-logged-avatar">
-                <div class="auth-avatar-fallback">D</div>
+              <!-- Profile Top Header -->
+              <div class="auth-logged-top">
+                <span class="auth-logged-brand">Neura Clinical AI</span>
+                <span class="auth-logged-online-pill">
+                  <span class="auth-status-dot"></span>
+                  <span>Sesi Aktif</span>
+                </span>
               </div>
-              <h3 class="auth-logged-name" id="auth-logged-name">dr. Pengguna Klinis</h3>
-              <p class="auth-logged-email" id="auth-logged-email">dokter@neura.ai</p>
-              <div class="auth-logged-badge">
-                <span class="auth-status-dot"></span>
-                <span>Sesi Klinis Aktif &bull; Terverifikasi</span>
+
+              <!-- Main Profile Center Stage -->
+              <div class="auth-logged-center">
+                <div class="auth-avatar-wrap" id="auth-logged-avatar">
+                  <div class="auth-avatar-fallback">D</div>
+                  <span class="auth-avatar-badge" title="Akun Terverifikasi">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="auth-logged-name" id="auth-logged-name">dr. Pengguna Klinis</h3>
+                <p class="auth-logged-email" id="auth-logged-email">dokter@neura.ai</p>
+                <div class="auth-logged-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  <span>Praktisi Medis &bull; Terverifikasi</span>
+                </div>
               </div>
+
+              <!-- Middle: Clinical Metrics Overview Pill Box -->
+              <div class="auth-logged-summary-box">
+                <div class="auth-summary-col">
+                  <span class="summary-label">Biomarker</span>
+                  <span class="summary-value">32 Parameter</span>
+                </div>
+                <div class="auth-summary-sep"></div>
+                <div class="auth-summary-col">
+                  <span class="summary-label">Model Engine</span>
+                  <span class="summary-value">XGBoost 3.x</span>
+                </div>
+                <div class="auth-summary-sep"></div>
+                <div class="auth-summary-col">
+                  <span class="summary-label">Keamanan</span>
+                  <span class="summary-value text-success">AES-256</span>
+                </div>
+              </div>
+
+              <!-- Actions -->
               <div class="auth-logged-actions">
                 <a href="/app" class="auth-open-app-btn">
                   <span>Buka Workspace Pasien</span>
@@ -464,11 +498,49 @@
                     <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
                   </svg>
                 </a>
-                <button type="button" class="auth-logout-btn" id="auth-logout-btn">Ganti Akun / Keluar</button>
+                <button type="button" class="auth-logout-btn" id="auth-logout-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  <span>Ganti Akun / Keluar</span>
+                </button>
+              </div>
+
+              <!-- Micro footer compliance note -->
+              <div class="auth-logged-footer-hint">
+                <span>Enkripsi Sesi Klinis Aktif &bull; HIPAA Compliant</span>
               </div>
             </div>
 
           </div> <!-- /auth-comp-form-card -->
+
+          <!-- COMPONENT 1.5: Google Auth Button (Black Card Style) -->
+          <button type="button" class="auth-card-comp auth-comp-google-card" id="auth-google-btn" title="Masuk cepat dengan Google">
+            <div class="google-card-left">
+              <div class="google-card-icon-wrap">
+                <svg class="comp1-google-icon" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+              </div>
+              <div class="google-card-text-group">
+                <span class="google-card-title" id="auth-google-title">Log in with <span id="auth-google-btn-text">Google</span></span>
+                <span class="google-card-sub" id="auth-google-sub">Single Sign-On Klinis Terverifikasi</span>
+              </div>
+            </div>
+            <div class="google-card-right">
+              <span class="google-card-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </span>
+              <span class="auth-btn-spinner"></span>
+            </div>
+          </button>
 
           <!-- COMPONENT 2: Dark References Card -->
           <div class="auth-card-comp auth-comp-ref-card" id="auth-comp-ref-card">
@@ -542,264 +614,312 @@
   </aside>
 
 
-  <!-- Live App Interactive Showcase Window Frame (Mockup Halaman App Neura) -->
+  <!-- Live App Interactive Showcase Window Frame (Silhouette) -->
   <section class="showcase-section">
-    <div class="app-window-frame">
-      <!-- Browser / Window Title Bar -->
-      <div class="app-window-title-bar">
-        <div class="window-dots">
-          <div class="dot dot-red"></div>
-          <div class="dot dot-yellow"></div>
-          <div class="dot dot-green"></div>
+    <div class="sil-window">
+      <!-- Title bar -->
+      <div class="sil-titlebar">
+        <div class="sil-dots">
+          <span class="sil-dot sil-dot-r"></span>
+          <span class="sil-dot sil-dot-y"></span>
+          <span class="sil-dot sil-dot-g"></span>
         </div>
-        <div class="app-window-url-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-          <span>neura.ai/app &mdash; Clinical Consultation Console</span>
+        <div class="sil-url-pill">
+          <span class="sil-lock-icon">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <span class="sil-url-bar"></span>
         </div>
-        <a href="/app" class="app-window-status-pill" title="Buka Workspace Lengkap">
-          <span class="live-pulse-dot"></span>
-          <span>Buka Workspace &rarr;</span>
-        </a>
+        <div class="sil-live-pill">
+          <span class="sil-live-dot"></span>
+          <span class="sil-pill-line sil-pill-line--sm"></span>
+        </div>
       </div>
 
-      <!-- App Interface Layout -->
-      <div class="mockup-app-layout">
-        <!-- Mockup Sidebar -->
-        <aside class="mockup-sidebar">
-          <div class="mockup-sidebar-top">
-            <div class="mockup-brand-row">
-              <div class="mockup-brand-left">
-                <img src="/assets/neura_logo.jpg" alt="Neura" class="mockup-logo-img" />
-                <span class="mockup-brand-title">Neura</span>
-                <span class="mockup-brand-badge">ML</span>
-              </div>
-              <button class="mockup-icon-btn" title="Sidebar">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <line x1="9" y1="3" x2="9" y2="21" />
+      <!-- App body -->
+      <div class="sil-body">
+
+        <!-- Sidebar (Directly mirrors real Neura sidebar from Image 2 in silhouette form) -->
+        <aside class="sil-sidebar">
+          <!-- Top Group: Brand + New Chat + Dashboard -->
+          <div class="sil-sb-top">
+            <!-- Brand row -->
+            <div class="sil-sb-brand">
+              <div class="sil-sb-logo" title="Neura Logo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
-              </button>
-            </div>
-
-            <button class="mockup-new-chat-btn">
-              <div class="mockup-new-chat-left">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>Start new chat</span>
               </div>
-              <span class="mockup-shortcut-badge">Ctrl K</span>
-            </button>
-          </div>
-
-          <div class="mockup-sidebar-nav">
-            <div class="mockup-nav-title">RECENT CHATS</div>
-            <div class="mockup-history-item active">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              <span>Train 5 Epochs</span>
+              <div class="sil-sb-name-group">
+                <span class="sil-brand-title-line"></span>
+                <span class="sil-brand-tag"></span>
+              </div>
+              <span class="sil-sb-icon-btn" title="Toggle Sidebar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <line x1="9" y1="3" x2="9" y2="21"/>
+                </svg>
+              </span>
             </div>
 
-            <div class="mockup-nav-title" style="margin-top: 18px;">ML COMMANDS <span
-                style="font-size: 10px; opacity: 0.6;">▼</span></div>
-            <div class="mockup-cmd-item">
-              <span>Check Status</span>
-              <span class="mockup-cmd-tag">/status</span>
+            <!-- Start new chat button -->
+            <div class="sil-sb-newchat" title="Start new chat">
+              <span class="sil-plus-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </span>
+              <span class="sil-line sil-line--newchat"></span>
+              <span class="sil-shortcut-chip"></span>
             </div>
-            <div class="mockup-cmd-item">
-              <span>Train 5 Epochs</span>
-              <span class="mockup-cmd-tag">/train 5</span>
-            </div>
-            <div class="mockup-cmd-item">
-              <span>Evaluate Model</span>
-              <span class="mockup-cmd-tag">/eval</span>
-            </div>
-            <div class="mockup-cmd-item">
-              <span>Run Prediction</span>
-              <span class="mockup-cmd-tag">/predict</span>
-            </div>
-            <div class="mockup-cmd-item">
-              <span>Live Progress</span>
-              <span class="mockup-cmd-tag">/progress</span>
-            </div>
-            <div class="mockup-cmd-item">
-              <span>Command List</span>
-              <span class="mockup-cmd-tag">/help</span>
+
+            <!-- Dashboard Hub button (Direct from Image 2) -->
+            <div class="sil-sb-dashboard" title="Dashboard">
+              <span class="sil-dash-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e07a5f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                  <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                </svg>
+              </span>
+              <span class="sil-line sil-line--dash"></span>
+              <span class="sil-hub-badge"></span>
             </div>
           </div>
 
-          <div class="mockup-sidebar-footer">
-            <div class="mockup-model-strip">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span class="mockup-status-dot"></span>
-                <span>Model Ready</span>
-              </div>
-              <span style="font-size: 11px; opacity: 0.7;">Info ℹ</span>
+          <!-- Middle Navigation section -->
+          <div class="sil-sb-nav">
+            <!-- RECENT CHATS Heading -->
+            <div class="sil-nav-heading">
+              <span class="sil-nav-label"></span>
             </div>
-            <div class="mockup-user-row">
-              <div class="mockup-user-left">
-                <div class="mockup-avatar">H</div>
-                <div>
-                  <div class="mockup-user-name">Hanzz</div>
-                  <div class="mockup-user-sub">TensorFlow Dev</div>
-                </div>
+
+            <!-- Item 1: Active ("Voice Consultation") -->
+            <div class="sil-nav-item sil-nav-item--active">
+              <span class="sil-chat-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </span>
+              <span class="sil-line sil-line--chat-active"></span>
+            </div>
+
+            <!-- Item 2: ("Voice Consultation") -->
+            <div class="sil-nav-item">
+              <span class="sil-chat-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </span>
+              <span class="sil-line sil-line--chat-2"></span>
+            </div>
+
+            <!-- Item 3: ("Model Evaluation") -->
+            <div class="sil-nav-item">
+              <span class="sil-chat-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </span>
+              <span class="sil-line sil-line--chat-3"></span>
+            </div>
+
+            <!-- Item 4: ("Check Status") -->
+            <div class="sil-nav-item">
+              <span class="sil-chat-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </span>
+              <span class="sil-line sil-line--chat-4"></span>
+            </div>
+
+            <!-- ML COMMANDS Heading (Collapsed with chevron arrow > just like Image 2) -->
+            <div class="sil-nav-heading sil-nav-heading--gap">
+              <span class="sil-nav-label sil-nav-label--cmd"></span>
+              <span class="sil-chevron-icon">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Bottom Footer section (Mirrors Image 2 exactly) -->
+          <div class="sil-sb-footer">
+            <!-- Model Ready strip -->
+            <div class="sil-model-strip" title="Model Ready">
+              <span class="sil-status-dot"></span>
+              <span class="sil-line sil-line--model-ready"></span>
+              <div class="sil-info-chip">
+                <span class="sil-info-line"></span>
+                <span class="sil-info-icon">ℹ</span>
               </div>
-              <span style="font-size: 13px; opacity: 0.7;">☼</span>
+            </div>
+
+            <!-- User profile row: Haidar Rifky -->
+            <div class="sil-user-row">
+              <div class="sil-avatar">H</div>
+              <div class="sil-user-info">
+                <span class="sil-line sil-line--user-name"></span>
+                <span class="sil-line sil-line--user-sub"></span>
+              </div>
+              <div class="sil-user-actions">
+                <!-- Theme Toggle Icon (Sun) -->
+                <span class="sil-action-icon" title="Theme">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <!-- Logout Icon -->
+                <span class="sil-action-icon" title="Logout">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
         </aside>
 
-        <!-- Mockup Main Workspace -->
-        <main class="mockup-main-area">
-          <!-- Dynamic Island Notch Mount -->
-          <div class="mockup-island-notch">
-            <span class="mockup-island-sub">XGBoost &bull; 32 Biomarkers</span>
-            <div class="mockup-island-main">
-              <div class="mockup-pixel-icon">
+        <!-- Main area -->
+        <main class="sil-main">
+          <!-- Dynamic island notch -->
+          <div class="sil-island">
+            <span class="sil-island-sub"></span>
+            <div class="sil-island-body">
+              <div class="sil-pixel-grid">
                 <span></span><span></span><span></span>
                 <span></span><span></span><span></span>
                 <span></span><span></span><span></span>
               </div>
-              <span class="mockup-island-status">Ready</span>
+              <span class="sil-island-status"></span>
             </div>
           </div>
 
-          <!-- Top Action Icons -->
-          <div class="mockup-top-actions">
-            <span class="mockup-action-icon" title="Edit">✎</span>
-            <span class="mockup-action-icon" title="Theme">☾</span>
+          <!-- Top right icons -->
+          <div class="sil-topbar-icons">
+            <span class="sil-icon-circ"></span>
+            <span class="sil-icon-circ"></span>
           </div>
 
-          <!-- Main Welcome Hero Container (Initial Chat State) -->
-          <div class="mockup-hero-container">
-            <div class="mockup-hero-logo-box">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="5" y="5" width="4.5" height="4.5" rx="1.2" />
-                <rect x="14.5" y="5" width="4.5" height="4.5" rx="1.2" />
-                <rect x="5" y="14.5" width="4.5" height="4.5" rx="1.2" />
-                <rect x="14.5" y="14.5" width="4.5" height="4.5" rx="1.2" />
-              </svg>
+          <!-- Hero greeting center -->
+          <div class="sil-hero">
+            <div class="sil-hero-logo">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
 
-            <h1 class="mockup-hero-greeting">Good afternoon</h1>
-            <p class="mockup-hero-subhead">How can Neura assist you with your TensorFlow machine learning workflows
-              today?</p>
-
-            <div class="mockup-hero-cards-grid">
-              <a href="/app" class="mockup-hero-card">
-                <div class="mockup-hero-card-header">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="3.5" y="13" width="4" height="8" rx="1" />
-                    <rect x="10" y="8" width="4" height="13" rx="1" />
-                    <rect x="16.5" y="3" width="4" height="18" rx="1" />
-                  </svg>
-                  <span>Train Neural Network</span>
-                </div>
-                <div class="mockup-hero-card-desc">Execute 5 epochs of backpropagation on synthetic data</div>
-              </a>
-
-              <a href="/app" class="mockup-hero-card">
-                <div class="mockup-hero-card-header">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 10.414V6a1 1 0 1 0-2 0v7a1 1 0 0 0 1 1h5a1 1 0 1 0 0-2h-4z"
-                      clip-rule="evenodd" />
-                  </svg>
-                  <span>Run Inference</span>
-                </div>
-                <div class="mockup-hero-card-desc">Sample a 128-dim input and inspect top class probabilities</div>
-              </a>
-
-              <a href="/app" class="mockup-hero-card">
-                <div class="mockup-hero-card-header">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L17.5 9H13V4.5zM8 12h8a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2z" />
-                  </svg>
-                  <span>Evaluate Metrics</span>
-                </div>
-                <div class="mockup-hero-card-desc">Compute test loss and test accuracy against validation sets</div>
-              </a>
-
-              <a href="/app" class="mockup-hero-card">
-                <div class="mockup-hero-card-header">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="2" y="3" width="20" height="7.5" rx="2" />
-                    <circle cx="6" cy="6.75" r="1.3" fill="#FAF9F5" />
-                    <rect x="2" y="13.5" width="20" height="7.5" rx="2" />
-                    <circle cx="6" cy="17.25" r="1.3" fill="#FAF9F5" />
-                  </svg>
-                  <span>Model Architecture</span>
-                </div>
-                <div class="mockup-hero-card-desc">Verify checkpoints, weights readiness, and server health</div>
-              </a>
+            <!-- Greeting text silhouettes -->
+            <div class="sil-greeting-block">
+              <span class="sil-headline-line"></span>
+              <span class="sil-sub-line"></span>
+              <span class="sil-sub-line sil-sub-line--short"></span>
             </div>
-          </div>
 
-          <!-- Floating Bottom Input Area -->
-          <div class="mockup-bottom-input-wrapper">
-            <div class="mockup-input-box">
-              <div class="mockup-input-placeholder">Tanya tentang diagnosis Alzheimer atau ketik /train, /eval,
-                /predict...</div>
-              <div class="mockup-input-actions-row">
-                <div class="mockup-input-chips">
-                  <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-train" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z" />
-                    </svg>
-                    /train 50
-                  </span>
-                  <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-predict" width="12" height="12" viewBox="0 0 24 24"
-                      fill="currentColor">
-                      <path
-                        d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
-                    </svg>
-                    /predict
-                  </span>
-                  <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-eval" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z" />
-                    </svg>
-                    /eval
-                  </span>
-                  <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-konsultasi" width="12" height="12" viewBox="0 0 24 24"
-                      fill="currentColor">
-                      <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                    </svg>
-                    Konsultasi
-                  </span>
-                  <span class="mockup-input-chip">
-                    <svg class="mchip-icon mchip-status" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd"
-                        d="M10.5 3.75a6.75 6.75 0 1 0 4.19 12.05l4.78 4.78a1 1 0 0 0 1.41-1.41l-4.78-4.78A6.75 6.75 0 0 0 10.5 3.75zm-4.75 6.75a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0z"
-                        clip-rule="evenodd" />
-                    </svg>
-                    /status
-                  </span>
+            <!-- 2×2 card grid -->
+            <div class="sil-cards-grid">
+              <div class="sil-card">
+                <div class="sil-card-head">
+                  <span class="sil-card-icon"></span>
+                  <span class="sil-line sil-line--md sil-line--bold"></span>
                 </div>
-                <a href="/app" class="mockup-send-btn" title="Kirim">↑</a>
+                <span class="sil-line sil-line--lg"></span>
+                <span class="sil-line sil-line--md"></span>
+              </div>
+              <div class="sil-card">
+                <div class="sil-card-head">
+                  <span class="sil-card-icon sil-card-icon--alt"></span>
+                  <span class="sil-line sil-line--md sil-line--bold"></span>
+                </div>
+                <span class="sil-line sil-line--lg"></span>
+                <span class="sil-line sil-line--sm"></span>
+              </div>
+              <div class="sil-card">
+                <div class="sil-card-head">
+                  <span class="sil-card-icon sil-card-icon--green"></span>
+                  <span class="sil-line sil-line--md sil-line--bold"></span>
+                </div>
+                <span class="sil-line sil-line--lg"></span>
+                <span class="sil-line sil-line--md"></span>
+              </div>
+              <div class="sil-card">
+                <div class="sil-card-head">
+                  <span class="sil-card-icon sil-card-icon--purple"></span>
+                  <span class="sil-line sil-line--md sil-line--bold"></span>
+                </div>
+                <span class="sil-line sil-line--lg"></span>
+                <span class="sil-line sil-line--sm"></span>
               </div>
             </div>
-            <div class="mockup-input-disclaimer">
-              Neura can make mistakes. Verify important medical predictions and clinical evaluations.
+          </div>
+
+          <!-- Bottom input area: Latest Neura Chat Input Architecture -->
+          <div class="sil-input-wrap">
+            <div class="sil-input-glow">
+              <div class="sil-input-box">
+                <!-- Textarea silhouette line -->
+                <div class="sil-input-top">
+                  <span class="sil-placeholder-line"></span>
+                </div>
+
+                <!-- Input bottom bar: Replicating real Neura input-bottom-bar -->
+                <div class="sil-input-footer">
+                  <!-- Left: Attach / Quick Commands (+) -->
+                  <div class="sil-input-left">
+                    <span class="sil-ib-btn" title="Aksi / Perintah">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </span>
+                  </div>
+
+                  <!-- Right: Model badge + Mic / Send button + Voice Waveform button -->
+                  <div class="sil-input-right">
+                    <!-- Model Tier Badge -->
+                    <div class="sil-model-pill">
+                      <span class="sil-model-pill-dot"></span>
+                      <span class="sil-model-pill-text"></span>
+                    </div>
+
+                    <!-- Mic / Send Circular Button -->
+                    <span class="sil-send-btn" title="Kirim / Bicara">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                      </svg>
+                    </span>
+
+                    <!-- Voice Waveform Button -->
+                    <span class="sil-wave-btn" title="Voice Room">
+                      <span class="sil-wave-bar sil-wb-1"></span>
+                      <span class="sil-wave-bar sil-wb-2"></span>
+                      <span class="sil-wave-bar sil-wb-3"></span>
+                      <span class="sil-wave-bar sil-wb-4"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Disclaimer line -->
+            <span class="sil-disclaimer-line"></span>
           </div>
         </main>
+
       </div>
     </div>
   </section>
 
   <!-- Horizontal Tool Icons Parallax Strip -->
+
   <section class="tools-carousel-section" id="tools-carousel-section">
     <div class="tools-carousel-track" id="tools-carousel-track">
       <!-- Row 1 (slides left on scroll) -->
@@ -1736,7 +1856,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="/js/lenis.min.js"></script>
   <script src="/js/smooth-scroll.js?v=42"></script>
   <script src="/js/dynamic-island.js?v=42"></script>
-  <script src="/js/welcome.js?v=46"></script>
+  <script src="/js/welcome.js?v=47"></script>
   <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
   <script src="/js/voice-consultation.js?v=64"></script>
 
@@ -1745,7 +1865,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-hero.js?v=53"></script>
+  <script src="/js/auth-hero.js?v=57"></script>
 </body>
 
 </html>

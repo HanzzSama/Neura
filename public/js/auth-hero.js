@@ -18,7 +18,7 @@
   var tabsNav, tabGlider, tabLoginBtn, tabRegisterBtn;
   var sliderTrack;
   var loginForm, registerForm;
-  var googleBtn, googleBtnText, dividerText;
+  var googleBtn, googleBtnText, googleTitle, googleSub, dividerText;
   var alertBox, alertText;
   var loggedView, loggedAvatar, loggedName, loggedEmail, logoutBtn;
   var loginSubmitBtn, registerSubmitBtn;
@@ -55,6 +55,8 @@
     registerForm = document.getElementById('auth-register-form');
     googleBtn = document.getElementById('auth-google-btn');
     googleBtnText = document.getElementById('auth-google-btn-text');
+    googleTitle = document.getElementById('auth-google-title');
+    googleSub = document.getElementById('auth-google-sub');
     dividerText = document.getElementById('auth-divider-text');
     alertBox = document.getElementById('auth-alert');
     alertText = document.getElementById('auth-alert-text');
@@ -156,7 +158,8 @@
       if (tabLoginBtn) tabLoginBtn.classList.remove('active');
       if (tabRegisterBtn) tabRegisterBtn.classList.add('active');
       if (sliderTrack) sliderTrack.className = 'auth-slider-track show-register';
-      if (googleBtnText) googleBtnText.textContent = 'Google';
+      if (googleTitle) googleTitle.innerHTML = 'Sign up with <span id="auth-google-btn-text">Google</span>';
+      if (googleSub) googleSub.textContent = 'Registrasi akun klinis cepat & instan';
       if (googleBtn) googleBtn.title = 'Daftar Akun Baru dengan Google';
       if (dividerText) dividerText.textContent = 'atau daftar dengan email';
       if (comp1Title) comp1Title.textContent = 'Sign up';
@@ -166,12 +169,14 @@
       if (tabLoginBtn) tabLoginBtn.classList.add('active');
       if (tabRegisterBtn) tabRegisterBtn.classList.remove('active');
       if (sliderTrack) sliderTrack.className = 'auth-slider-track show-login';
-      if (googleBtnText) googleBtnText.textContent = 'Google';
+      if (googleTitle) googleTitle.innerHTML = 'Log in with <span id="auth-google-btn-text">Google</span>';
+      if (googleSub) googleSub.textContent = 'Single Sign-On Klinis Terverifikasi';
       if (googleBtn) googleBtn.title = 'Masuk dengan Akun Google Terdaftar';
       if (dividerText) dividerText.textContent = 'atau masuk dengan email';
       if (comp1Title) comp1Title.textContent = 'Log in';
       if (comp1ModeToggle) comp1ModeToggle.textContent = 'Sign up';
     }
+    googleBtnText = document.getElementById('auth-google-btn-text');
   }
 
   // Menampilkan Slide 3: Verifikasi Email
@@ -371,16 +376,24 @@
 
     var displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Pengguna Klinis');
     var email = user.email || '';
+    var formattedName = displayName.startsWith('dr.') ? displayName : ('dr. ' + displayName.charAt(0).toUpperCase() + displayName.slice(1));
 
-    if (loggedName) loggedName.textContent = displayName;
+    if (loggedName) loggedName.textContent = formattedName;
     if (loggedEmail) loggedEmail.textContent = email;
 
     if (loggedAvatar) {
+      var initial = (displayName.charAt(0) || 'D').toUpperCase();
+      var badgeSvg = '<span class="auth-avatar-badge" title="Akun Terverifikasi"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>';
+
       if (user.photoURL) {
-        loggedAvatar.innerHTML = '<img src="' + user.photoURL + '" alt="' + displayName + '" class="auth-avatar-img" />';
+        loggedAvatar.innerHTML =
+          '<img src="' + user.photoURL + '" alt="' + displayName + '" class="auth-avatar-img" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'; if(this.nextElementSibling) this.nextElementSibling.style.display=\'flex\';" />' +
+          '<div class="auth-avatar-fallback" style="display:none">' + initial + '</div>' +
+          badgeSvg;
       } else {
-        var initial = (displayName.charAt(0) || 'D').toUpperCase();
-        loggedAvatar.innerHTML = '<div class="auth-avatar-fallback">' + initial + '</div>';
+        loggedAvatar.innerHTML =
+          '<div class="auth-avatar-fallback">' + initial + '</div>' +
+          badgeSvg;
       }
     }
 
@@ -393,24 +406,31 @@
       navLoginBtn.title = 'Sesi Klinis Aktif: ' + displayName;
     }
 
+    // Add .is-logged-in to card to hide login headers ("Log in" / "Sign up")
+    var formCard = document.getElementById('auth-comp-form-card');
+    if (formCard) formCard.classList.add('is-logged-in');
+
     // Hide input forms and slider tabs
     if (tabsNav) tabsNav.style.display = 'none';
     if (googleBtn) googleBtn.style.display = 'none';
     var divider = document.querySelector('.auth-divider');
     if (divider) divider.style.display = 'none';
-    if (sliderTrack) sliderTrack.parentElement.style.display = 'none';
+    if (sliderTrack && sliderTrack.parentElement) sliderTrack.parentElement.style.display = 'none';
 
     // Show logged view
     loggedView.style.display = 'flex';
   }
 
   function showUnloggedState() {
+    var formCard = document.getElementById('auth-comp-form-card');
+    if (formCard) formCard.classList.remove('is-logged-in');
+
     if (loggedView) loggedView.style.display = 'none';
     if (tabsNav) tabsNav.style.display = 'grid';
-    if (googleBtn) googleBtn.style.display = 'inline-flex';
+    if (googleBtn) googleBtn.style.display = 'flex';
     var divider = document.querySelector('.auth-divider');
     if (divider) divider.style.display = 'flex';
-    if (sliderTrack) sliderTrack.parentElement.style.display = 'block';
+    if (sliderTrack && sliderTrack.parentElement) sliderTrack.parentElement.style.display = 'block';
 
     if (navLoginText) navLoginText.textContent = 'Masuk';
     if (navLoginBtn) navLoginBtn.title = 'Buka Form Masuk / Registrasi';
