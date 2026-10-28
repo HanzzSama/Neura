@@ -4029,14 +4029,25 @@ function renderProgressOutput(data) {
   `).join('');
 
   const statusBadge = data.running ? 'Running...' : data.report ? 'Complete' : 'Stopped';
+  const needsClamp = data.progress.length > 8;
+  const clampClass = needsClamp ? 'is-clamped' : '';
 
   appendAssistantMessage(`
     <h4>Training Session Progress &bull; ${statusBadge}</h4>
-    <div class="claude-card">
-      <table class="claude-table">
-        <thead><tr><th>Epoch</th><th>Loss</th><th>Val Loss</th><th>Acc</th><th>Val Acc</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
+    <div class="training-progress-card ${clampClass}">
+      <div class="training-card-body">
+        <table class="claude-table" style="margin:0;border-radius:0;border:none">
+          <thead><tr><th>Epoch</th><th>Loss</th><th>Val Loss</th><th>Acc</th><th>Val Acc</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      ${needsClamp ? `
+      <div class="training-card-expand-bar">
+        <button type="button" class="training-card-expand-btn" onclick="toggleTrainingCardClamp(this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="expand-text">Selengkapnya</span>
+        </button>
+      </div>` : ''}
     </div>
   `);
 }
@@ -4840,6 +4851,25 @@ window.appendVoiceSessionToChat = function(summaryMarkdown) {
 window.toggleVoiceSessionClamp = function(btn) {
   if (!btn) return;
   const card = btn.closest('.voice-session-summary');
+  if (!card) return;
+  const isClamped = card.classList.contains('is-clamped');
+  const textEl = btn.querySelector('.expand-text');
+
+  if (isClamped) {
+    card.classList.remove('is-clamped');
+    card.classList.add('is-expanded');
+    if (textEl) textEl.textContent = 'Ciutkan';
+  } else {
+    card.classList.remove('is-expanded');
+    card.classList.add('is-clamped');
+    if (textEl) textEl.textContent = 'Selengkapnya';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+};
+
+window.toggleTrainingCardClamp = function(btn) {
+  if (!btn) return;
+  const card = btn.closest('.training-progress-card');
   if (!card) return;
   const isClamped = card.classList.contains('is-clamped');
   const textEl = btn.querySelector('.expand-text');

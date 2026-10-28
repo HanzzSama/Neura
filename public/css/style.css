@@ -1535,6 +1535,104 @@ html, body {
   transform: rotate(180deg);
 }
 
+/* ------------------------------------------------------------------ */
+/* Training Progress Card — Collapsible (sama pola voice session card) */
+/* ------------------------------------------------------------------ */
+.training-progress-card {
+  position: relative;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  background: var(--bg-card);
+}
+
+.training-progress-card .training-card-body {
+  padding: 0;
+  position: relative;
+  transition: max-height 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Clamped state */
+.training-progress-card.is-clamped .training-card-body {
+  max-height: 220px;
+  overflow: hidden;
+}
+
+.training-progress-card.is-clamped .training-card-body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 72px;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg-card) 95%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+:root[data-theme="dark"] .training-progress-card.is-clamped .training-card-body::after {
+  background: linear-gradient(to bottom, rgba(30, 28, 26, 0) 0%, var(--bg-card) 95%);
+}
+
+/* Expanded state */
+.training-progress-card.is-expanded .training-card-body {
+  max-height: none;
+  overflow: visible;
+}
+
+.training-progress-card.is-expanded .training-card-body::after {
+  display: none;
+}
+
+/* Expand/Collapse footer bar */
+.training-card-expand-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px 12px;
+  background: var(--bg-card);
+  border-top: 1px dashed var(--border-subtle);
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.training-card-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 6px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-terracotta);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.training-card-expand-btn:hover {
+  background-color: var(--bg-badge);
+  border-color: var(--accent-terracotta);
+  color: var(--accent-terracotta-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(217, 119, 87, 0.16);
+}
+
+.training-card-expand-btn svg {
+  transition: transform 0.22s ease;
+}
+
+.training-progress-card.is-expanded .training-card-expand-btn svg {
+  transform: rotate(180deg);
+}
+
 /* Minimalist Anti-SLOP In-Chat Metric System (No Bulky White Container) */
 .claude-card {
   background-color: transparent;
