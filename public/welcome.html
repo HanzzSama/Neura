@@ -17,9 +17,9 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=44">
+  <link rel="stylesheet" href="/css/welcome.css?v=47">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=40">
-  <link rel="stylesheet" href="/css/smooth-scroll.css?v=40">
+  <link rel="stylesheet" href="/css/smooth-scroll.css?v=42">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
   <link rel="stylesheet" href="/css/auth-hero.css?v=57">
 </head>
@@ -29,10 +29,10 @@
   <!-- Sub Nav / Minimalist Clinical Announcement Ribbon (Top Ribbon) -->
   <aside class="announcement-bar" id="announcement-bar">
     <div class="announcement-content">
-      <span class="announcement-pill">✦ RISET KLINIS</span>
-      <span class="announcement-text">Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi
+      <span class="announcement-pill" data-i18n="announcement_pill">✦ RISET KLINIS</span>
+      <span class="announcement-text" data-i18n="announcement_text">Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi
         94.4% (ROC-AUC 0.933)</span>
-      <a href="/app" class="announcement-link">Pelajari lebih lanjut &rarr;</a>
+      <a href="/app" class="announcement-link" data-i18n="announcement_link">Pelajari lebih lanjut &rarr;</a>
     </div>
     <button class="announcement-close" id="announcement-close" aria-label="Tutup pemberitahuan">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -60,11 +60,11 @@
 
       <!-- Center Minimalist Navigation Links -->
       <nav class="nav-center-menu" aria-label="Menu Utama">
-        <a href="#about" class="nav-menu-link">Tentang</a>
-        <a href="#pipeline" class="nav-menu-link">Alur Analisis</a>
-        <a href="#security" class="nav-menu-link">Keamanan</a>
-        <a href="#specification" class="nav-menu-link">Spesifikasi</a>
-        <a href="/app" class="nav-menu-link">Workspace</a>
+        <a href="#about" class="nav-menu-link" data-i18n="nav_about">Tentang</a>
+        <a href="#pipeline" class="nav-menu-link" data-i18n="nav_pipeline">Alur Analisis</a>
+        <a href="#security" class="nav-menu-link" data-i18n="nav_security">Keamanan</a>
+        <a href="#specification" class="nav-menu-link" data-i18n="nav_specification">Spesifikasi</a>
+        <a href="/app" class="nav-menu-link" data-i18n="nav_workspace">Workspace</a>
       </nav>
 
       <!-- Right Action Items -->
@@ -83,7 +83,7 @@
             <polyline points="10 17 15 12 10 7"/>
             <line x1="15" y1="12" x2="3" y2="12"/>
           </svg>
-          <span id="nav-login-text">Masuk</span>
+          <span id="nav-login-text" data-i18n="nav_login">Masuk</span>
         </button>
 
         <!-- Primary CTA Button -->
@@ -117,14 +117,14 @@
 
     <!-- Mobile Drawer Dropdown -->
     <div class="nav-mobile-drawer" id="nav-mobile-drawer">
-      <a href="#about" class="mobile-nav-link">Tentang Platform</a>
-      <a href="#pipeline" class="mobile-nav-link">Alur Analisis</a>
-      <a href="#security" class="mobile-nav-link">Keamanan Data</a>
-      <a href="#specification" class="mobile-nav-link">Spesifikasi Model</a>
-      <a href="/app" class="mobile-nav-link">Buka Workspace</a>
+      <a href="#about" class="mobile-nav-link" data-i18n="mobile_about">Tentang Platform</a>
+      <a href="#pipeline" class="mobile-nav-link" data-i18n="mobile_pipeline">Alur Analisis</a>
+      <a href="#security" class="mobile-nav-link" data-i18n="mobile_security">Keamanan Data</a>
+      <a href="#specification" class="mobile-nav-link" data-i18n="mobile_specification">Spesifikasi Model</a>
+      <a href="/app" class="mobile-nav-link" data-i18n="mobile_workspace">Buka Workspace</a>
       <div class="mobile-nav-actions">
-        <button type="button" class="mobile-login-btn" id="mobile-login-btn">Masuk / Registrasi &rarr;</button>
-        <a href="/app" class="mobile-cta-btn">Mulai Diagnosis Klinis &rarr;</a>
+        <button type="button" class="mobile-login-btn" id="mobile-login-btn" data-i18n="mobile_login">Masuk / Registrasi &rarr;</button>
+        <a href="/app" class="mobile-cta-btn" data-i18n="mobile_cta">Mulai Diagnosis Klinis &rarr;</a>
       </div>
     </div>
   </header>
@@ -134,24 +134,24 @@
     <!-- Left Column: Text -->
     <div class="hero-left">
       <div class="hero-left-inner">
-        <h1 class="hero-headline">
+        <h1 class="hero-headline" data-i18n="hero_headline">
           Mendeteksi Alzheimer<br>Lebih Awal,<br>Lebih Tepat.
         </h1>
-        <p class="hero-lead-text">
+        <p class="hero-lead-text" data-i18n="hero_lead">
           Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal,
           dengan akurasi 94.4% yang telah divalidasi pada 430 rekam medis.
         </p>
         <div class="hero-actions">
           <a href="/app" class="hero-download-btn">
-            <span>Mulai Diagnosis Klinis</span>
+            <span data-i18n="hero_cta_btn">Mulai Diagnosis Klinis</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
             </svg>
           </a>
-          <a href="#hero-right" class="hero-secondary-btn" id="hero-open-auth-btn">Buka Workspace Pasien &rarr;</a>
+          <a href="#hero-right" class="hero-secondary-btn" id="hero-open-auth-btn" data-i18n="hero_sub_btn">Buka Workspace Pasien &rarr;</a>
         </div>
         <div class="hero-tagline-bar">
-          <span>94.4% AKURASI &bull; ROC-AUC 0.933 &bull; 32 BIOMARKER KLINIS &bull; &lt;1.2s INFERENSI</span>
+          <span data-i18n="hero_stats">94.4% AKURASI &bull; ROC-AUC 0.933 &bull; 32 BIOMARKER KLINIS &bull; &lt;1.2s INFERENSI</span>
         </div>
       </div>
     </div>
@@ -1114,8 +1114,8 @@
     <!-- 1. Alur Proses Kognitif Neura (Reasoning Pipeline) -->
     <div class="product-row" id="pipeline">
       <div class="product-info">
-        <h2 class="product-title" data-i18n="app_title">Neura Reasoning Pipeline</h2>
-        <p class="product-description" data-i18n="app_desc">
+        <h2 class="product-title" data-i18n="pipeline_title">Neura Reasoning Pipeline</h2>
+        <p class="product-description" data-i18n="pipeline_desc">
           Sistem penalaran kognitif transparan dari ekstraksi data hingga hasil klinis. Membaca 32 biomarker,
           menganalisa korelasi risiko, mengolah parameter mentah, menyusun narasi diagnostik, serta menerbitkan output
           secara presisi.
@@ -1154,7 +1154,7 @@
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub">32 biomarker klinis &amp; riwayat kognitif MMSE dimuat</span>
+                <span class="pipeline-step-sub" data-i18n="pipeline_step1_sub">32 biomarker klinis &amp; riwayat kognitif MMSE dimuat</span>
               </div>
             </div>
 
@@ -1173,7 +1173,7 @@
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub">Korelasi multivariat &amp; evaluasi signifikansi klinis</span>
+                <span class="pipeline-step-sub" data-i18n="pipeline_step2_sub">Korelasi multivariat &amp; evaluasi signifikansi klinis</span>
               </div>
             </div>
 
@@ -1192,7 +1192,7 @@
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub">Inferensi ansambel pohon keputusan XGBoost</span>
+                <span class="pipeline-step-sub" data-i18n="pipeline_step3_sub">Inferensi ansambel pohon keputusan XGBoost</span>
               </div>
             </div>
 
@@ -1211,7 +1211,7 @@
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub">Normalisasi vektor risiko &amp; pemetaan ambang batas</span>
+                <span class="pipeline-step-sub" data-i18n="pipeline_step4_sub">Normalisasi vektor risiko &amp; pemetaan ambang batas</span>
               </div>
             </div>
 
@@ -1230,7 +1230,7 @@
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub">Sintesis penjelasan medis &amp; rasionalisasi diagnostik</span>
+                <span class="pipeline-step-sub" data-i18n="pipeline_step5_sub">Sintesis penjelasan medis &amp; rasionalisasi diagnostik</span>
               </div>
             </div>
 
@@ -1251,7 +1251,7 @@
                     </svg>
                   </span>
                 </div>
-                <span class="pipeline-step-sub step-active-sub">Laporan diagnosis, skor risiko 94.4%, &amp; rekomendasi
+                <span class="pipeline-step-sub step-active-sub" data-i18n="pipeline_step6_sub">Laporan diagnosis, skor risiko 94.4%, &amp; rekomendasi
                   klinis diterbitkan</span>
               </div>
             </div>
@@ -1288,8 +1288,8 @@
                 </svg>
               </div>
               <div class="security-hero-meta">
-                <h3 class="security-hero-heading">Zero-Knowledge Clinical Vault</h3>
-                <p class="security-hero-caption">Rekam medis terenkripsi langsung di browser lokal sebelum evaluasi
+                <h3 class="security-hero-heading" data-i18n="sec_heading">Zero-Knowledge Clinical Vault</h3>
+                <p class="security-hero-caption" data-i18n="sec_caption">Rekam medis terenkripsi langsung di browser lokal sebelum evaluasi
                   biomarker</p>
               </div>
             </div>
@@ -1327,8 +1327,8 @@
                   </svg>
                 </span>
                 <div class="sec-clean-text">
-                  <span class="sec-clean-title">HIPAA Safe Harbor De-Identification</span>
-                  <span class="sec-clean-desc">18 identifier pasien (nama, NIK, kontak) dihilangkan otomatis sebelum
+                  <span class="sec-clean-title" data-i18n="sec_feat1_title">HIPAA Safe Harbor De-Identification</span>
+                  <span class="sec-clean-desc" data-i18n="sec_feat1_desc">18 identifier pasien (nama, NIK, kontak) dihilangkan otomatis sebelum
                     evaluasi</span>
                 </div>
               </div>
@@ -1341,8 +1341,8 @@
                   </svg>
                 </span>
                 <div class="sec-clean-text">
-                  <span class="sec-clean-title">Local Browser Memory Sandbox</span>
-                  <span class="sec-clean-desc">Inferensi machine learning berjalan lokal di RAM tanpa jejak data di
+                  <span class="sec-clean-title" data-i18n="sec_feat2_title">Local Browser Memory Sandbox</span>
+                  <span class="sec-clean-desc" data-i18n="sec_feat2_desc">Inferensi machine learning berjalan lokal di RAM tanpa jejak data di
                     server</span>
                 </div>
               </div>
@@ -1355,8 +1355,8 @@
                   </svg>
                 </span>
                 <div class="sec-clean-text">
-                  <span class="sec-clean-title">Cryptographic SHA-256 Checksum</span>
-                  <span class="sec-clean-desc">Validasi integritas dataset 32 biomarker secara tamper-proof</span>
+                  <span class="sec-clean-title" data-i18n="sec_feat3_title">Cryptographic SHA-256 Checksum</span>
+                  <span class="sec-clean-desc" data-i18n="sec_feat3_desc">Validasi integritas dataset 32 biomarker secara tamper-proof</span>
                 </div>
               </div>
             </div>
@@ -1375,8 +1375,8 @@
         </div>
       </div>
       <div class="product-info">
-        <h2 class="product-title" data-i18n="ide_title">Neura Data Security</h2>
-        <p class="product-description" data-i18n="ide_desc">
+        <h2 class="product-title" data-i18n="security_title">Neura Data Security</h2>
+        <p class="product-description" data-i18n="security_desc">
           Perlindungan data medis berstandar klinis dengan enkripsi end-to-end AES-256. Menjamin kerahasiaan rekam medis
           pasien, anonimisasi biomarker otomatis, serta kepatuhan penuh terhadap regulasi privasi kesehatan HIPAA &amp;
           GDPR.
@@ -1526,13 +1526,13 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           <span class="blog-media-badge"><span class="sparkle-google">✦</span> Model Klinis</span>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Validasi Akurasi 94.4% Model XGBoost pada Deteksi Dini Alzheimer</h3>
+          <h3 class="blog-card-title" data-i18n="blog_card1_title">Validasi Akurasi 94.4% Model XGBoost pada Deteksi Dini Alzheimer</h3>
           <div class="blog-card-meta">
             <span>Okt 2026</span>
             <span>Model AI</span>
           </div>
           <div class="blog-card-link">
-            <span>Baca riset</span>
+            <span data-i18n="blog_read_link">Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -1556,13 +1556,13 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Peran 32 Biomarker Kritis dalam Deteksi Risiko Demensia</h3>
+          <h3 class="blog-card-title" data-i18n="blog_card2_title">Peran 32 Biomarker Kritis dalam Deteksi Risiko Demensia</h3>
           <div class="blog-card-meta">
             <span>Sep 2026</span>
             <span>Biomarker</span>
           </div>
           <div class="blog-card-link">
-            <span>Baca riset</span>
+            <span data-i18n="blog_read_link">Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -1577,13 +1577,13 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           <span class="blog-media-badge"><span class="sparkle-google">✦</span> Deteksi MCI</span>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Mendeteksi Mild Cognitive Impairment Sebelum Gejala Klinis Akut</h3>
+          <h3 class="blog-card-title" data-i18n="blog_card3_title">Mendeteksi Mild Cognitive Impairment Sebelum Gejala Klinis Akut</h3>
           <div class="blog-card-meta">
             <span>Sep 2026</span>
             <span>Diagnostik</span>
           </div>
           <div class="blog-card-link">
-            <span>Baca riset</span>
+            <span data-i18n="blog_read_link">Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -1605,14 +1605,14 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           </div>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">AI Sebagai Rekan Analisis Bagi Dokter Spesialis Saraf</h3>
+          <h3 class="blog-card-title" data-i18n="blog_card4_title">AI Sebagai Rekan Analisis Bagi Dokter Spesialis Saraf</h3>
           <div class="blog-card-meta">
             <span>Agu 2026</span>
             <span>Kedokteran</span>
             <span>Riset</span>
           </div>
           <div class="blog-card-link">
-            <span>Baca riset</span>
+            <span data-i18n="blog_read_link">Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -1627,13 +1627,13 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           <span class="blog-media-badge"><span class="sparkle-google">✦</span> Kohort Data</span>
         </div>
         <div class="blog-card-content">
-          <h3 class="blog-card-title">Uji Validasi Multimodal pada 430 Rekam Medis Pasien</h3>
+          <h3 class="blog-card-title" data-i18n="blog_card5_title">Uji Validasi Multimodal pada 430 Rekam Medis Pasien</h3>
           <div class="blog-card-meta">
             <span>Agu 2026</span>
             <span>Validasi Data</span>
           </div>
           <div class="blog-card-link">
-            <span>Baca riset</span>
+            <span data-i18n="blog_read_link">Baca riset</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -1670,10 +1670,10 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           <span>NEURA CLINICAL DISPATCH &bull; 2026</span>
         </div>
 
-        <h2 class="sync-updates-title">
+        <h2 class="sync-updates-title" data-i18n="sync_title">
           Riset &amp; Publikasi Klinis Neura
         </h2>
-        <p class="sync-updates-sub">
+        <p class="sync-updates-sub" data-i18n="sync_sub">
           Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur AlzheimersXGBoost, serta telaah kasus
           kognitif langsung ke inbox Anda.
         </p>
@@ -1685,7 +1685,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
               stroke-width="2.6">
               <polyline points="20 6 9 17 4 12" />
             </svg>
-            <span>Semua Riset</span>
+            <span data-i18n="sync_pill_all">Semua Riset</span>
           </button>
           <button type="button" class="sync-pill" onclick="toggleSyncPill(this)">
             <span class="sync-topic-dot"></span>
@@ -1714,10 +1714,11 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
             <input type="email" class="sync-email-input" id="sync-email-field"
+              data-i18n-ph="sync_email_ph"
               placeholder="Masukkan email institusi atau klinis Anda..." required />
           </div>
           <button type="submit" class="sync-subscribe-btn">
-            <span>Langganan Riset</span>
+            <span data-i18n="sync_btn">Langganan Riset</span>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -1729,7 +1730,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
         <!-- Terms & Privacy Agreement -->
         <label class="sync-consent-row">
           <input type="checkbox" id="sync-consent-check" required />
-          <span>Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti
+          <span data-i18n="sync_consent">Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti
             langganan kapan saja.</span>
         </label>
       </div>
@@ -1742,16 +1743,16 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
       <canvas id="cta-stars-canvas" class="cta-stars-canvas"></canvas>
 
       <div class="download-card-content">
-        <h2 class="download-card-title">
+        <h2 class="download-card-title" data-i18n="bottom_headline">
           Mulai Deteksi Dini<br />
           dengan Neura AI<span class="blinking-google-cursor"></span>
         </h2>
 
         <div class="download-buttons-row">
-          <a href="/app" class="btn-download-white">
+          <a href="/app" class="btn-download-white" data-i18n="bottom_btn_white">
             Buka Neura Workspace
           </a>
-          <a href="/app" class="btn-download-dark">
+          <a href="/app" class="btn-download-dark" data-i18n="bottom_btn_dark">
             Unduh Aplikasi Klinis
           </a>
         </div>
@@ -1777,7 +1778,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
               <span class="footer-brand-tag">Clinical AI</span>
             </div>
           </div>
-          <p class="footer-brand-desc">
+          <p class="footer-brand-desc" data-i18n="footer_desc">
             Infrastruktur kecerdasan buatan klinis untuk deteksi dini risiko Alzheimer dan neurodegenerasi berbasis 32
             biomarker multimodal.
           </p>
@@ -1837,16 +1838,16 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
 
       <!-- Bottom Bar -->
       <div class="footer-bottom">
-        <div class="footer-copy">
+        <div class="footer-copy" data-i18n="footer_copy">
           &copy; 2026 Neura Health AI. Hak Cipta Dilindungi.
         </div>
         <div class="footer-center-tag">
-          <span>Model Machine Learning Tervalidasi Klinis</span>
+          <span data-i18n="footer_tag">Model Machine Learning Tervalidasi Klinis</span>
         </div>
         <div class="footer-bottom-links">
-          <a href="/app">Kebijakan Privasi</a>
-          <a href="/app">Syarat Layanan</a>
-          <a href="/app">Keamanan Data</a>
+          <a href="/app" data-i18n="footer_privacy">Kebijakan Privasi</a>
+          <a href="/app" data-i18n="footer_terms">Syarat Layanan</a>
+          <a href="/app" data-i18n="footer_sec">Keamanan Data</a>
           <span class="footer-lang-tag">ID</span>
         </div>
       </div>
@@ -1854,9 +1855,9 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   </footer>
 
   <script src="/js/lenis.min.js"></script>
-  <script src="/js/smooth-scroll.js?v=42"></script>
+  <script src="/js/smooth-scroll.js?v=43"></script>
   <script src="/js/dynamic-island.js?v=42"></script>
-  <script src="/js/welcome.js?v=47"></script>
+  <script src="/js/welcome.js?v=49"></script>
   <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
   <script src="/js/voice-consultation.js?v=64"></script>
 

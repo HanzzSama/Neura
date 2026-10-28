@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=4.6" />
+  <link rel="stylesheet" href="/css/style.css?v=5.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=62" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
 
@@ -236,7 +236,7 @@
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            <span>Start new chat</span>
+            <span data-i18n="nav_new_chat">Start new chat</span>
           </div>
           <span class="shortcut-badge">Ctrl K</span>
         </button>
@@ -251,7 +251,7 @@
                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                 <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
               </svg>
-              <span>Dashboard</span>
+              <span data-i18n="nav_dashboard">Dashboard</span>
             </div>
             <span class="sidebar-nav-tag">Hub</span>
           </a>
@@ -261,7 +261,7 @@
       <!-- Sidebar Body -->
       <div class="sidebar-body" data-lenis-prevent="true">
         <div>
-          <div class="nav-group-title">Recent Chats</div>
+          <div class="nav-group-title" data-i18n="nav_recent_chats">Recent Chats</div>
           <div class="chat-history-list" id="chat-history-list">
             <!-- Populated dynamically by JavaScript -->
           </div>
@@ -271,7 +271,7 @@
         <div class="nav-group-section">
           <button class="nav-group-header" id="ml-commands-toggle-btn" onclick="toggleMLCommandsDropdown()"
             aria-expanded="true">
-            <span class="nav-group-title">ML Commands</span>
+            <span class="nav-group-title" data-i18n="nav_ml_commands">ML Commands</span>
             <svg class="dropdown-chevron-icon" id="ml-commands-chevron" width="13" height="13" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9" />
@@ -279,31 +279,31 @@
           </button>
           <div class="ml-commands-list" id="ml-commands-list">
             <button class="ml-command-item" onclick="submitCommand('/status')">
-              <span>Check Status</span>
+              <span data-i18n="cmd_status">Check Status</span>
               <span class="ml-tag">/status</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('/train 5')">
-              <span>Train 5 Epochs</span>
+              <span data-i18n="cmd_train">Train 5 Epochs</span>
               <span class="ml-tag">/train 5</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('/eval')">
-              <span>Evaluate Model</span>
+              <span data-i18n="cmd_eval">Evaluate Model</span>
               <span class="ml-tag">/eval</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('/predict')">
-              <span>Run Prediction</span>
+              <span data-i18n="cmd_predict">Run Prediction</span>
               <span class="ml-tag">/predict</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('/progress')">
-              <span>Live Progress</span>
+              <span data-i18n="cmd_progress">Live Progress</span>
               <span class="ml-tag">/progress</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('/help')">
-              <span>Command List</span>
+              <span data-i18n="cmd_help">Command List</span>
               <span class="ml-tag">/help</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('Pengenalan Neura AI')">
-              <span>Pengenalan Neura</span>
+              <span data-i18n="cmd_intro">Pengenalan Neura</span>
               <span class="ml-tag">/intro</span>
             </button>
           </div>
@@ -315,7 +315,7 @@
         <div class="model-status-strip" onclick="openModelModal()">
           <div class="model-status-left">
             <span class="status-dot dot-offline" id="sb-status-dot"></span>
-            <span id="sb-status-text" style="font-weight:500">Checking model...</span>
+            <span id="sb-status-text" style="font-weight:500" data-i18n="checking_model">Checking model...</span>
           </div>
           <span style="font-size:11px;color:var(--text-muted)">Info ℹ</span>
         </div>
@@ -325,36 +325,661 @@
             <div class="user-avatar-circle" id="sidebar-user-avatar">H</div>
             <div class="user-text-meta">
               <div class="user-meta-name" id="sidebar-user-name">Hanzz</div>
-              <div class="user-meta-role" id="sidebar-user-role">Dokter / Peneliti</div>
+              <div class="user-meta-role" id="sidebar-user-role" data-i18n="user_role">Dokter / Peneliti</div>
             </div>
           </div>
           <div class="user-profile-actions">
-            <button class="nav-icon-btn" title="Toggle Light / Dark mode" onclick="toggleTheme()">
-              <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="12" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            </button>
-            <button class="nav-icon-btn logout-btn" id="sidebar-logout-btn" title="Keluar / Logout" onclick="handleLogout()">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-            </button>
+            <!-- 3-dot menu trigger -->
+            <div class="user-dot-menu" id="user-dot-menu">
+              <button class="user-dot-btn" id="user-dot-trigger" title="More options" onclick="toggleUserDotMenu(event)" aria-haspopup="true" aria-expanded="false">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+                </svg>
+              </button>
+
+              <!-- Popup Menu -->
+              <div class="user-dot-popup" id="user-dot-popup" role="menu">
+                <!-- Translate -->
+                <button class="dot-menu-item" id="dot-lang-btn" role="menuitem" onclick="toggleAppLanguage(); closeUserDotMenu()">
+                  <span class="dot-menu-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                  </span>
+                  <span class="dot-menu-label" id="dot-lang-label">Ganti Bahasa</span>
+                  <span class="dot-menu-badge" id="dot-lang-badge">ID</span>
+                </button>
+
+                <!-- Theme -->
+                <button class="dot-menu-item" id="dot-theme-btn" role="menuitem" onclick="toggleTheme(); closeUserDotMenu()">
+                  <span class="dot-menu-icon">
+                    <svg id="dot-theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5"/>
+                      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                  </span>
+                  <span class="dot-menu-label" id="dot-theme-label">Mode Terang</span>
+                </button>
+
+                <!-- Settings -->
+                <button class="dot-menu-item" role="menuitem" onclick="openSettingsPanel(); closeUserDotMenu()">
+                  <span class="dot-menu-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                  </span>
+                  <span class="dot-menu-label" id="dot-settings-label">Pengaturan</span>
+                </button>
+
+                <div class="dot-menu-divider"></div>
+
+                <!-- Logout -->
+                <button class="dot-menu-item dot-menu-item--danger" role="menuitem" onclick="handleLogout(); closeUserDotMenu()">
+                  <span class="dot-menu-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                      <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                  </span>
+                  <span class="dot-menu-label" id="dot-logout-label">Keluar</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </aside>
+
+    <!-- ========================================================================
+       SETTINGS PANEL OVERLAY
+       ======================================================================== -->
+    <div class="settings-overlay" id="settings-overlay" onclick="closeSettingsPanel()"></div>
+    <div class="settings-panel" id="settings-panel" role="dialog" aria-label="Settings" aria-modal="true">
+      <!-- Panel Header (Dynamic with Back Button) -->
+      <div class="settings-header">
+        <div class="settings-header-left">
+          <button class="settings-back-btn" id="settings-back-btn" onclick="backToSettingsRoot()" style="display:none;" title="Kembali ke Menu Utama">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            <span id="settings-back-label">Kembali</span>
+          </button>
+          <div class="settings-title-wrap" id="settings-title-wrap">
+            <svg id="settings-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span id="settings-title">Pengaturan</span>
+          </div>
+        </div>
+        <button class="settings-close-btn" onclick="closeSettingsPanel()" title="Tutup">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Viewport & Sliding Track -->
+      <div class="settings-nav-viewport">
+        <div class="settings-slider-track is-root" id="settings-slider-track">
+
+          <!-- ════ LEVEL 1: ROOT MENU LIST ════ -->
+          <div class="settings-view-pane settings-root-pane" id="settings-root-pane">
+            <div class="settings-menu-list">
+
+              <!-- Menu 1: Tampilan -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-appearance', 'Tampilan', 'Appearance')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-appearance">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-appearance">Tampilan</div>
+                    <div class="menu-btn-sub" id="menu-sub-appearance">Tema antarmuka &amp; bahasa</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-appearance">Terang • ID</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 2: Input & Chat -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-input', 'Input & Chat', 'Input & Chat')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-input">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
+                      <line x1="6" y1="8" x2="6.01" y2="8"/><line x1="10" y1="8" x2="10.01" y2="8"/>
+                      <line x1="14" y1="8" x2="14.01" y2="8"/><line x1="18" y1="8" x2="18.01" y2="8"/>
+                      <line x1="7" y1="16" x2="17" y2="16"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-input">Input &amp; Chat</div>
+                    <div class="menu-btn-sub" id="menu-sub-input">Kirim Enter, draf, ukuran font</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-input">Enter • M</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 3: Notifikasi & Suara -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-notif', 'Notifikasi & Suara', 'Notifications & Audio')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-notif">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-notif">Notifikasi &amp; Suara</div>
+                    <div class="menu-btn-sub" id="menu-sub-notif">Chime respons &amp; durasi toast</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-notif">3.5s</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 4: Model & Klinis -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-clinical', 'Model & Klinis', 'Model & Clinical')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-clinical">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-clinical">Model &amp; Klinis</div>
+                    <div class="menu-btn-sub" id="menu-sub-clinical">Epochs default, presisi risiko</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-clinical">50 Epochs</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 5: Voice Consultation -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-voice', 'Voice Consultation', 'Voice Consultation')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-voice">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                      <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-voice">Voice Consultation</div>
+                    <div class="menu-btn-sub" id="menu-sub-voice">Jeda mic &amp; auto-play ucapan</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-voice">2.5s • Auto</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 6: Aksesibilitas -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-a11y', 'Aksesibilitas', 'Accessibility')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-a11y">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-a11y">Aksesibilitas</div>
+                    <div class="menu-btn-sub" id="menu-sub-a11y">Animasi &amp; kerapatan tampilan</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-a11y">Normal</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 7: Profil -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-profile', 'Profil', 'Profile')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-profile">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-profile">Profil</div>
+                    <div class="menu-btn-sub" id="menu-sub-profile">Akun &amp; role dokter/peneliti</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-profile">Hanzz</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 8: Model & Chat -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-chat', 'Model & Chat', 'Model & Chat')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-chat">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-chat">Model &amp; Chat</div>
+                    <div class="menu-btn-sub" id="menu-sub-chat">Model aktif &amp; riwayat pesan</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-chat">XGBoost</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 9: Data & Penyimpanan -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-storage', 'Data & Penyimpanan', 'Data & Storage')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-storage">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-storage">Data &amp; Penyimpanan</div>
+                    <div class="menu-btn-sub" id="menu-sub-storage">Memori, ekspor JSON, reset</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-storage">Memori</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Menu 10: Tentang -->
+              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-about', 'Tentang', 'About')">
+                <div class="menu-btn-left">
+                  <div class="menu-btn-icon icon-about">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                  </div>
+                  <div class="menu-btn-text">
+                    <div class="menu-btn-title" id="menu-title-about">Tentang</div>
+                    <div class="menu-btn-sub" id="menu-sub-about">Neura AI v2.5.1</div>
+                  </div>
+                </div>
+                <div class="menu-btn-right">
+                  <span class="menu-btn-badge" id="menu-badge-about">v2.5.1</span>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- ════ LEVEL 2: SUBPANEL VIEWS ════ -->
+          <div class="settings-view-pane settings-subpanel-pane" id="settings-subpanel-pane">
+
+            <!-- Subpanel 1: Tampilan -->
+            <div class="settings-subpanel" id="subpanel-appearance">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-appearance">Tampilan</div>
+
+                <!-- Theme Toggle -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-theme-label">Tema</div>
+                    <div class="settings-row-desc" id="stg-theme-desc">Mode tampilan antarmuka</div>
+                  </div>
+                  <div class="settings-theme-switcher" id="settings-theme-switcher">
+                    <button class="theme-chip theme-chip--light" id="stg-light-btn" onclick="applySettingsTheme('light')" title="Warm Linen">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                      <span id="stg-light-label">Terang</span>
+                    </button>
+                    <button class="theme-chip theme-chip--dark" id="stg-dark-btn" onclick="applySettingsTheme('dark')" title="Obsidian Dark">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                      <span id="stg-dark-label">Gelap</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Language Toggle -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-lang-label">Bahasa</div>
+                    <div class="settings-row-desc" id="stg-lang-desc">Bahasa antarmuka aplikasi</div>
+                  </div>
+                  <div class="settings-lang-switcher">
+                    <button class="lang-chip" id="stg-id-btn" onclick="applySettingsLang('id')">🇮🇩 ID</button>
+                    <button class="lang-chip" id="stg-en-btn" onclick="applySettingsLang('en')">🇺🇸 EN</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 2: Input & Chat -->
+            <div class="settings-subpanel" id="subpanel-input">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-input">Input &amp; Chat</div>
+
+                <!-- Send on Enter -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-enter-label">Kirim dengan Enter</div>
+                    <div class="settings-row-desc" id="stg-enter-desc">Enter untuk kirim, Shift+Enter untuk baris baru</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-enter" onchange="applyToggleSetting('neura_send_on_enter', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Auto-save Draft -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-draft-label">Simpan Draf Otomatis</div>
+                    <div class="settings-row-desc" id="stg-draft-desc">Simpan teks belum terkirim saat refresh</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-draft" onchange="applyToggleSetting('neura_draft_enabled', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Font Size -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-font-label">Ukuran Teks Chat</div>
+                    <div class="settings-row-desc" id="stg-font-desc">Kenyamanan membaca pesan konsultasi</div>
+                  </div>
+                  <div class="settings-segmented-group" id="stg-font-group">
+                    <button type="button" class="segmented-chip" id="stg-font-sm" onclick="applyFontSize('small')">S</button>
+                    <button type="button" class="segmented-chip active" id="stg-font-md" onclick="applyFontSize('medium')">M</button>
+                    <button type="button" class="segmented-chip" id="stg-font-lg" onclick="applyFontSize('large')">L</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 3: Notifikasi & Suara -->
+            <div class="settings-subpanel" id="subpanel-notif">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-notif">Notifikasi &amp; Suara</div>
+
+                <!-- Sound Effects -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-sound-label">Efek Suara Selesai</div>
+                    <div class="settings-row-desc" id="stg-sound-desc">Bunyi lembut saat AI selesai merespons</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-sound" onchange="applyToggleSetting('neura_sound_enabled', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Toast Duration -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-toast-label">Durasi Notifikasi</div>
+                    <div class="settings-row-desc" id="stg-toast-desc">Waktu tampil pop-up notifikasi</div>
+                  </div>
+                  <select class="settings-select" id="stg-toast-select" onchange="applyToastDuration(this.value)">
+                    <option value="2000">2 detik (Cepat)</option>
+                    <option value="3500">3.5 detik (Normal)</option>
+                    <option value="5000">5 detik (Lama)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 4: Model & Klinis -->
+            <div class="settings-subpanel" id="subpanel-clinical">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-clinical">Model &amp; Klinis</div>
+
+                <!-- Default Epochs -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-epochs-label">Default Epochs /train</div>
+                    <div class="settings-row-desc" id="stg-epochs-desc">Jumlah boosting rounds bawaan</div>
+                  </div>
+                  <select class="settings-select" id="stg-epochs-select" onchange="applyDefaultEpochs(this.value)">
+                    <option value="10">10 Epochs</option>
+                    <option value="25">25 Epochs</option>
+                    <option value="50">50 Epochs</option>
+                    <option value="100">100 Epochs</option>
+                  </select>
+                </div>
+
+                <!-- Detailed Probability -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-prob-label">Presisi Probabilitas</div>
+                    <div class="settings-row-desc" id="stg-prob-desc">Tampilkan desimal detail (misal 95.35%)</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-prob" onchange="applyToggleSetting('neura_detailed_prob', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 5: Voice Consultation -->
+            <div class="settings-subpanel" id="subpanel-voice">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-voice">Voice Consultation</div>
+
+                <!-- Silence Delay -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-voice-delay-label">Jeda Hening Otomatis</div>
+                    <div class="settings-row-desc" id="stg-voice-delay-desc">Waktu hening sebelum suara dikirim</div>
+                  </div>
+                  <select class="settings-select" id="stg-voice-delay-select" onchange="applyVoiceDelay(this.value)">
+                    <option value="1500">1.5 detik (Cepat)</option>
+                    <option value="2500">2.5 detik (Standar)</option>
+                    <option value="3500">3.5 detik (Santai)</option>
+                  </select>
+                </div>
+
+                <!-- Auto Play Speech -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-voice-play-label">Putar Suara Otomatis</div>
+                    <div class="settings-row-desc" id="stg-voice-play-desc">Bicarakan respons AI saat konsultasi suara</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-voiceplay" onchange="applyToggleSetting('neura_voice_autoplay', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 6: Aksesibilitas -->
+            <div class="settings-subpanel" id="subpanel-a11y">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-a11y">Aksesibilitas</div>
+
+                <!-- Reduce Motion -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-motion-label">Kurangi Efek Animasi</div>
+                    <div class="settings-row-desc" id="stg-motion-desc">Meminimalkan transisi dan denyut visual</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-motion" onchange="applyToggleSetting('neura_reduce_motion', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Compact Mode -->
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-compact-label">Tampilan Ringkas</div>
+                    <div class="settings-row-desc" id="stg-compact-desc">Penyajian bubble chat yang lebih padat</div>
+                  </div>
+                  <label class="settings-switch">
+                    <input type="checkbox" id="stg-toggle-compact" onchange="applyToggleSetting('neura_compact_mode', this.checked)">
+                    <span class="settings-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 7: Profil -->
+            <div class="settings-subpanel" id="subpanel-profile">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-profile">Profil</div>
+
+                <div class="settings-profile-card">
+                  <div class="settings-avatar" id="stg-avatar">H</div>
+                  <div class="settings-profile-info">
+                    <div class="settings-profile-name" id="stg-profile-name">Hanzz</div>
+                    <div class="settings-profile-email" id="stg-profile-email">—</div>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-role-label">Role</div>
+                    <div class="settings-row-desc" id="stg-role-desc">Jabatan yang ditampilkan di sidebar</div>
+                  </div>
+                  <select class="settings-select" id="stg-role-select" onchange="applySettingsRole(this.value)">
+                    <option value="Dokter / Peneliti">Dokter / Peneliti</option>
+                    <option value="Mahasiswa">Mahasiswa</option>
+                    <option value="Peneliti">Peneliti</option>
+                    <option value="Klinisi">Klinisi</option>
+                    <option value="Developer">Developer</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 8: Model & Chat -->
+            <div class="settings-subpanel" id="subpanel-chat">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-chat">Model &amp; Chat</div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-model-label">Model AI Aktif</div>
+                    <div class="settings-row-desc" id="stg-model-val">—</div>
+                  </div>
+                  <button class="settings-btn-ghost" onclick="openModelModal(); closeSettingsPanel()">
+                    <span id="stg-change-model">Ganti</span>
+                  </button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-history-label">Riwayat Chat</div>
+                    <div class="settings-row-desc" id="stg-history-desc">Hapus semua percakapan tersimpan</div>
+                  </div>
+                  <button class="settings-btn-danger" id="stg-clear-btn" onclick="confirmClearHistory()">
+                    <span id="stg-clear-label">Hapus</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 9: Data & Penyimpanan -->
+            <div class="settings-subpanel" id="subpanel-storage">
+              <div class="settings-section">
+                <div class="settings-section-title" id="stg-sec-storage">Data &amp; Penyimpanan</div>
+
+                <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+                  <div class="storage-meta-row">
+                    <span id="stg-storage-label" style="font-size:12.5px;font-weight:600;color:var(--text-primary)">Memori Browser</span>
+                    <span id="stg-storage-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">0 KB / 5 MB</span>
+                  </div>
+                  <div class="storage-bar-base">
+                    <div class="storage-bar-fill" id="stg-storage-fill" style="width: 2%"></div>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-export-label">Ekspor Riwayat Chat</div>
+                    <div class="settings-row-desc" id="stg-export-desc">Unduh seluruh riwayat percakapan (JSON)</div>
+                  </div>
+                  <button class="settings-btn-ghost" onclick="exportChatHistory()">
+                    <span id="stg-export-btn-label">Ekspor</span>
+                  </button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label" id="stg-reset-label">Reset Semua Pengaturan</div>
+                    <div class="settings-row-desc" id="stg-reset-desc">Kembalikan ke konfigurasi awal</div>
+                  </div>
+                  <button class="settings-btn-danger" onclick="confirmResetAllSettings()">
+                    <span id="stg-reset-btn-label">Reset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subpanel 10: Tentang -->
+            <div class="settings-subpanel" id="subpanel-about">
+              <div class="settings-section settings-section--about">
+                <div class="settings-section-title" id="stg-sec-about">Tentang</div>
+                <div class="settings-about-card">
+                  <img src="/assets/neura_logo.jpg" alt="Neura" class="settings-about-logo" onerror="this.style.display='none'">
+                  <div class="settings-about-info">
+                    <div class="settings-about-name">Neura AI</div>
+                    <div class="settings-about-version">v2.5.1 — AlzheimersXGBoost</div>
+                    <div class="settings-about-desc" id="stg-about-desc">Platform klinis AI untuk deteksi dini Alzheimer berbasis 32 biomarker multimodal.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
 
     <!-- ========================================================================
        MAIN VIEW CONTAINER
@@ -374,6 +999,16 @@
         </div>
 
         <div class="top-nav-right">
+          <!-- Button Translate / Language Selector (ID / EN) -->
+          <button class="top-nav-lang-btn" id="app-lang-toggle-btn" title="Ganti Bahasa / Switch Language" onclick="toggleAppLanguage()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span id="app-lang-label">ID</span>
+          </button>
+
           <button class="nav-icon-btn" title="Start new chat" onclick="startNewChat()">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
@@ -398,7 +1033,7 @@
             <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo"
               onerror="this.style.display='none'" />
             <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
-            <p class="hero-subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling
+            <p class="hero-subhead" data-i18n="hero_subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling
               today?</p>
 
             <!-- 4 Action Cards -->
@@ -410,9 +1045,9 @@
                     <path d="M12 20V4" />
                     <path d="M6 20v-6" />
                   </svg>
-                  <span>Train XGBoost Model</span>
+                  <span data-i18n="card_train_title">Train XGBoost Model</span>
                 </div>
-                <div class="hero-card-desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data
+                <div class="hero-card-desc" data-i18n="card_train_desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data
                   pasien)</div>
               </div>
 
@@ -422,9 +1057,9 @@
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6v6l4 2" />
                   </svg>
-                  <span>Run Alzheimer Diagnosis</span>
+                  <span data-i18n="card_predict_title">Run Alzheimer Diagnosis</span>
                 </div>
-                <div class="hero-card-desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory
+                <div class="hero-card-desc" data-i18n="card_predict_desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory
                   Complaints)</div>
               </div>
 
@@ -434,9 +1069,9 @@
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                   </svg>
-                  <span>Evaluate Medical Metrics</span>
+                  <span data-i18n="card_eval_title">Evaluate Medical Metrics</span>
                 </div>
-                <div class="hero-card-desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1%
+                <div class="hero-card-desc" data-i18n="card_eval_desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1%
                   ROC-AUC</div>
               </div>
 
@@ -448,9 +1083,9 @@
                     <line x1="6" y1="6" x2="6.01" y2="6" />
                     <line x1="6" y1="18" x2="6.01" y2="18" />
                   </svg>
-                  <span>Clinical Model Specs</span>
+                  <span data-i18n="card_status_title">Clinical Model Specs</span>
                 </div>
-                <div class="hero-card-desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance
+                <div class="hero-card-desc" data-i18n="card_status_desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance
                 </div>
               </div>
             </div>
@@ -663,7 +1298,7 @@
           </div>
         </div>
 
-        <div class="disclaimer-caption">
+        <div class="disclaimer-caption" data-i18n="disclaimer">
           Neura can make mistakes. Verify important medical predictions and clinical evaluations.
         </div>
       </div>
@@ -680,7 +1315,7 @@
         <div style="display:flex;align-items:center;gap:8px">
           <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="modal-neura-logo"
             onerror="this.style.display='none'" />
-          <span class="modal-title">Model Specifications</span>
+          <span class="modal-title" data-i18n="modal_title">Model Specifications</span>
         </div>
         <button class="modal-close-btn" onclick="closeModelModal()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -736,7 +1371,7 @@
 
       <div style="margin-top:20px;display:flex;justify-content:flex-end">
         <button class="cmd-pill" style="padding:6px 14px;background:var(--accent-terracotta);color:#fff;border:none;"
-          onclick="closeModelModal()">
+          onclick="closeModelModal()" data-i18n="modal_close">
           Close
         </button>
       </div>
@@ -748,7 +1383,7 @@
 
   <!-- External JavaScript -->
   <script src="/js/dynamic-island.js?v=59"></script>
-  <script src="/js/app.js?v=5.0"></script>
+  <script src="/js/app.js?v=5.5"></script>
   <script src="/js/voice-consultation.js?v=64"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 

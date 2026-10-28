@@ -58,6 +58,9 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.07);
   --shadow-floating: 0 20px 48px -8px rgba(0, 0, 0, 0.09);
+
+  --scrollbar-thumb: rgba(100, 95, 85, 0.24);
+  --scrollbar-thumb-hover: rgba(100, 95, 85, 0.45);
 }
 
 *,
@@ -68,13 +71,55 @@
   padding: 0;
 }
 
+/* ==========================================================================
+   MINIMALIST & MODERN GLOBAL SCROLLBAR SYSTEM
+   Applied universally across the landing page and all scrollable containers
+   ========================================================================== */
+
+/* Firefox Standard */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+/* WebKit / Chromium (Chrome, Edge, Safari, Opera, Brave) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--accent-primary, #D97757);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 html {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ==========================================================================
@@ -103,7 +148,7 @@ html.lenis body {
 
 body {
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   line-height: 1.5;
 }
@@ -223,8 +268,7 @@ a {
   --nav-parallax-y: 0px;
   --nav-parallax-scale: 1;
   --nav-inner-parallax: 0px;
-  position: sticky;
-  top: 0;
+  position: relative;
   width: 100%;
   background: rgba(250, 249, 245, 0.88);
   backdrop-filter: blur(24px) saturate(160%);
@@ -234,29 +278,46 @@ a {
   will-change: transform, background, box-shadow;
   transform: translate3d(0, 0, 0);
   transition:
-    transform 0.44s cubic-bezier(0.16, 1, 0.3, 1),
-    background 0.32s ease,
-    border-color 0.32s ease,
-    box-shadow 0.32s ease,
-    backdrop-filter 0.32s ease;
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    backdrop-filter 0.28s ease;
+}
+
+/* Fixed state when scrolled down the page */
+.site-header.is-fixed {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 950 !important;
 }
 
 .site-header.nav-scrolled {
-  background: rgba(250, 249, 245, 0.96);
+  background: rgba(250, 249, 245, 0.94);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   border-bottom-color: var(--color-border-strong);
-  box-shadow: 0 8px 24px -6px rgba(31, 30, 29, 0.06), 0 1px 2px rgba(31, 30, 29, 0.02);
+  box-shadow: 0 10px 30px -5px rgba(31, 30, 29, 0.08), 0 1px 3px rgba(31, 30, 29, 0.03);
 }
 
+[data-theme="dark"] .site-header.nav-scrolled {
+  background: rgba(25, 24, 21, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
+}
+
+/* Hide on scroll down */
 .site-header.nav-hidden {
-  transform: translate3d(0, calc(-100% + var(--nav-parallax-y, 0px)), 0);
-  pointer-events: none;
+  transform: translate3d(0, -100%, 0) !important;
+  pointer-events: none !important;
 }
 
+/* Show on scroll UP (Pemicu) */
 .site-header.nav-visible {
-  transform: translate3d(0, 0, 0);
-  pointer-events: auto;
+  transform: translate3d(0, 0, 0) !important;
+  pointer-events: auto !important;
 }
 
 .nav-container {
@@ -569,6 +630,17 @@ a {
 .nav-lang-btn span {
   font-weight: 600;
   line-height: 1;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.nav-lang-btn.lang-switched {
+  animation: langPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes langPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); border-color: var(--accent-primary); color: var(--accent-primary); }
+  100% { transform: scale(1); }
 }
 
 /* Mobile Toggle */
@@ -4207,11 +4279,22 @@ a {
 
 .footer-lang-tag {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-muted);
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: var(--radius-pill);
   background: rgba(0, 0, 0, 0.04);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.footer-lang-tag:hover {
+  background: rgba(217, 119, 87, 0.12);
+  color: var(--accent-primary);
+  border-color: rgba(217, 119, 87, 0.25);
+  transform: translateY(-1px);
 }
 
 /* ==========================================================================

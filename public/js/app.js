@@ -379,10 +379,12 @@ window.stopChatVoiceInput = stopChatVoiceInput;
 // Initialization & Dynamic Greeting
 // --------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+  setAppLanguage(getAppLanguage());
   setupGreeting();
   loadChatSessions();
   renderRecentChatsSidebar();
   initMLCommandsDropdown();
+  initAppSettingsModifiers();
 
   // Restore saved theme preference
   try {
@@ -440,6 +442,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize User Profile in Sidebar & Authentication Listeners
   initAuthListeners();
+
+  // Cross-tab sync: when welcome.js changes language in another tab, app reflects it
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'neura_lang' && e.newValue) {
+      const incoming = e.newValue.toLowerCase();
+      if (incoming !== getAppLanguage()) setAppLanguage(incoming);
+    }
+  });
 });
 
 // --------------------------------------------------------------------------
@@ -561,13 +571,939 @@ async function handleLogout() {
 window.handleLogout = handleLogout;
 window.syncUserProfileUI = syncUserProfileUI;
 
+// --------------------------------------------------------------------------
+// Bilingual Translate System (ID / EN)
+// --------------------------------------------------------------------------
+const APP_TRANSLATIONS = {
+  id: {
+    // Sidebar nav (keys match data-i18n in index.html)
+    nav_new_chat: 'Obrolan Baru',
+    nav_dashboard: 'Dasbor',
+    nav_recent_chats: 'Percakapan Terakhir',
+    nav_ml_commands: 'Perintah ML',
+    user_role: 'Dokter / Peneliti',
+    checking_model: 'Memeriksa model...',
+    // ML command items
+    cmd_status: 'Cek Status',
+    cmd_train: 'Latih 5 Epoch',
+    cmd_eval: 'Evaluasi Model',
+    cmd_predict: 'Jalankan Prediksi',
+    cmd_progress: 'Progress Live',
+    cmd_help: 'Daftar Perintah',
+    cmd_intro: 'Pengenalan Neura',
+    // Greeting
+    greet_morning: 'Selamat pagi',
+    greet_afternoon: 'Selamat siang',
+    greet_evening: 'Selamat sore',
+    greet_night: 'Selamat malam',
+    // Hero subhead
+    hero_subhead: 'Bagaimana Neura bisa membantu diagnosis Alzheimer dan pemodelan XGBoost Anda hari ini?',
+    // Hero cards
+    card_train_title: 'Latih Model XGBoost',
+    card_train_desc: 'Latih gradient boosted decision trees pada dataset Alzheimer\u2019s (2.149 data pasien)',
+    card_predict_title: 'Diagnosa Alzheimer',
+    card_predict_desc: 'Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory Complaints)',
+    card_eval_title: 'Evaluasi Metrik Medis',
+    card_eval_desc: 'Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall & 94.1% ROC-AUC',
+    card_specs_title: 'Spesifikasi Model Klinis',
+    card_specs_desc: 'Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance',
+    // Input placeholder
+    placeholder: 'Tanya sesuatu atau ketik / untuk perintah ML...',
+    // Disclaimer
+    disclaimer: 'Neura dapat membuat kesalahan. Selalu verifikasi keputusan klinis dengan profesional medis yang berkualifikasi.',
+    // Model modal
+    model_modal_title: 'Pilih Model AI',
+    model_cancel: 'Batal',
+  },
+  en: {
+    // Sidebar nav
+    nav_new_chat: 'New Chat',
+    nav_dashboard: 'Dashboard',
+    nav_recent_chats: 'Recent Chats',
+    nav_ml_commands: 'ML Commands',
+    user_role: 'Doctor / Researcher',
+    checking_model: 'Checking model...',
+    // ML command items
+    cmd_status: 'Check Status',
+    cmd_train: 'Train 5 Epochs',
+    cmd_eval: 'Evaluate Model',
+    cmd_predict: 'Run Prediction',
+    cmd_progress: 'Live Progress',
+    cmd_help: 'Command List',
+    cmd_intro: 'Neura Introduction',
+    // Greeting
+    greet_morning: 'Good morning',
+    greet_afternoon: 'Good afternoon',
+    greet_evening: 'Good evening',
+    greet_night: 'Good night',
+    // Hero subhead
+    hero_subhead: 'How can Neura assist you with Alzheimer\u2019s disease diagnosis and XGBoost modeling today?',
+    // Hero cards
+    card_train_title: 'Train XGBoost Model',
+    card_train_desc: 'Train gradient boosted decision trees on the Alzheimer\u2019s dataset (2,149 patient records)',
+    card_predict_title: 'Run Alzheimer Diagnosis',
+    card_predict_desc: 'Predict Alzheimer\u2019s risk from clinical biomarkers (MMSE, ADL, Memory Complaints)',
+    card_eval_title: 'Evaluate Medical Metrics',
+    card_eval_desc: 'Test performance: 95.4% Accuracy, 94.6% Precision, 92.1% Recall & 94.1% ROC-AUC',
+    card_specs_title: 'Clinical Model Specs',
+    card_specs_desc: 'View XGBoost specs, 32 clinical biomarkers, and feature importance weights',
+    // Input placeholder
+    placeholder: 'Ask something or type / for ML commands...',
+    // Disclaimer
+    disclaimer: 'Neura can make mistakes. Always verify clinical decisions with a qualified medical professional.',
+    // Model modal
+    model_modal_title: 'Select AI Model',
+    model_cancel: 'Cancel',
+  }
+};
+
+function getAppLanguage() {
+  try { return localStorage.getItem('neura_lang') === 'en' ? 'en' : 'id'; } catch(e) { return 'id'; }
+}
+
+function setAppLanguage(lang, notify = false) {
+  try { localStorage.setItem('neura_lang', lang); } catch(e) {}
+  const t = APP_TRANSLATIONS[lang] || APP_TRANSLATIONS.id;
+
+  // Update lang label buttons
+  const labelEl = document.getElementById('app-lang-label');
+  if (labelEl) labelEl.textContent = lang === 'en' ? 'EN' : 'ID';
+
+  // Translate all [data-i18n] elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+
+  // Textarea placeholder
+  const textarea = document.getElementById('chat-input-textarea');
+  if (textarea) textarea.placeholder = t.placeholder;
+
+  // Model modal title & cancel btn
+  const modalTitle = document.getElementById('model-modal-title');
+  if (modalTitle) modalTitle.textContent = t.model_modal_title;
+  const cancelBtn = document.getElementById('model-modal-cancel-btn');
+  if (cancelBtn) cancelBtn.textContent = t.model_cancel;
+
+  // Re-run greeting with new language
+  setupGreeting();
+
+  // Re-render hero if visible (new chat state)
+  const heroEl = document.getElementById('claude-hero');
+  if (heroEl) {
+    const container = document.getElementById('chat-content-container');
+    if (container) {
+      container.innerHTML = getHeroHtml();
+      setupGreeting();
+    }
+  }
+
+  if (notify) {
+    showToast(lang === 'en' ? 'Language: English' : 'Bahasa: Indonesia', 'info');
+  }
+  // Sync dot menu labels if open
+  syncDotMenuState();
+}
+
+function toggleAppLanguage() {
+  const current = getAppLanguage();
+  setAppLanguage(current === 'id' ? 'en' : 'id', true);
+}
+
+window.toggleAppLanguage = toggleAppLanguage;
+
+// --------------------------------------------------------------------------
+// 3-Dot User Context Menu
+// --------------------------------------------------------------------------
+function syncDotMenuState() {
+  const lang = getAppLanguage();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  // Sync language badge
+  const badge = document.getElementById('dot-lang-badge');
+  if (badge) badge.textContent = lang === 'en' ? 'EN' : 'ID';
+
+  // Sync lang label
+  const langLabel = document.getElementById('dot-lang-label');
+  if (langLabel) langLabel.textContent = lang === 'en' ? 'Switch to ID' : 'Ganti Bahasa';
+
+  // Sync theme label & icon
+  const themeLabel = document.getElementById('dot-theme-label');
+  if (themeLabel) themeLabel.textContent = isDark
+    ? (lang === 'en' ? 'Light Mode' : 'Mode Terang')
+    : (lang === 'en' ? 'Dark Mode'  : 'Mode Gelap');
+
+  // Swap theme icon: sun (light) <-> moon (dark)
+  const themeIcon = document.getElementById('dot-theme-icon');
+  if (themeIcon) {
+    themeIcon.innerHTML = isDark
+      ? `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>` // moon
+      : `<circle cx="12" cy="12" r="5"/>
+         <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+         <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+         <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+         <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`; // sun
+  }
+}
+
+function toggleUserDotMenu(e) {
+  e.stopPropagation();
+  const popup = document.getElementById('user-dot-popup');
+  const trigger = document.getElementById('user-dot-trigger');
+  if (!popup) return;
+
+  const isOpen = popup.classList.contains('open');
+  if (isOpen) {
+    closeUserDotMenu();
+  } else {
+    syncDotMenuState();
+    popup.classList.add('open');
+    trigger.classList.add('active');
+    trigger.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function closeUserDotMenu() {
+  const popup = document.getElementById('user-dot-popup');
+  const trigger = document.getElementById('user-dot-trigger');
+  if (popup) popup.classList.remove('open');
+  if (trigger) {
+    trigger.classList.remove('active');
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+}
+
+// Close when clicking outside
+document.addEventListener('click', function (e) {
+  const menu = document.getElementById('user-dot-menu');
+  if (menu && !menu.contains(e.target)) closeUserDotMenu();
+});
+
+// Close dot menu or settings panel on Escape key (with drill-down back support)
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    closeUserDotMenu();
+    if (typeof currentSettingsSubpanel !== 'undefined' && currentSettingsSubpanel) {
+      backToSettingsRoot();
+    } else {
+      closeSettingsPanel();
+    }
+  }
+});
+
+
+window.toggleUserDotMenu = toggleUserDotMenu;
+window.closeUserDotMenu = closeUserDotMenu;
+
+// --------------------------------------------------------------------------
+// Settings Panel & App Preferences Manager
+// --------------------------------------------------------------------------
+
+function initAppSettingsModifiers() {
+  try {
+    // 1. Font Size
+    const fontSize = localStorage.getItem('neura_font_size') || 'medium';
+    document.body.classList.remove('font-size-small', 'font-size-large');
+    if (fontSize === 'small') document.body.classList.add('font-size-small');
+    if (fontSize === 'large') document.body.classList.add('font-size-large');
+
+    // 2. Reduce Motion
+    const reduceMotion = localStorage.getItem('neura_reduce_motion') === 'true';
+    document.body.classList.toggle('reduce-motion', reduceMotion);
+
+    // 3. Compact Mode
+    const compactMode = localStorage.getItem('neura_compact_mode') === 'true';
+    document.body.classList.toggle('compact-mode', compactMode);
+  } catch(e) {}
+}
+
+function playSuccessChime() {
+  try {
+    const isEnabled = localStorage.getItem('neura_sound_enabled') === 'true';
+    if (!isEnabled) return;
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    // Pleasant 2-tone harmonic chime (C6 -> G6)
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1046.50, now); // C6
+    osc.frequency.exponentialRampToValueAtTime(1567.98, now + 0.12); // G6
+
+    gainNode.gain.setValueAtTime(0.06, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.42);
+  } catch(e) {}
+}
+
+let currentSettingsSubpanel = null;
+let currentSettingsSubpanelTitle = null;
+
+function openSettingsSubpanel(subpanelId, titleId, titleEn) {
+  currentSettingsSubpanel = subpanelId;
+  currentSettingsSubpanelTitle = { id: titleId, en: titleEn || titleId };
+  const track = document.getElementById('settings-slider-track');
+  const backBtn = document.getElementById('settings-back-btn');
+  const titleEl = document.getElementById('settings-title');
+  const pane = document.getElementById('settings-subpanel-pane');
+
+  // Deactivate all subpanels and activate target
+  document.querySelectorAll('.settings-subpanel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(subpanelId);
+  if (target) target.classList.add('active');
+
+  // Slide track to subpanel view
+  if (track) {
+    track.classList.remove('is-root');
+    track.classList.add('is-subpanel');
+  }
+
+  // Show back button
+  if (backBtn) backBtn.style.display = 'inline-flex';
+
+  // Set title
+  if (titleEl) {
+    const lang = getAppLanguage();
+    titleEl.textContent = lang === 'en' ? currentSettingsSubpanelTitle.en : currentSettingsSubpanelTitle.id;
+  }
+
+  // Scroll subpanel pane to top
+  if (pane) pane.scrollTop = 0;
+}
+
+function backToSettingsRoot() {
+  currentSettingsSubpanel = null;
+  currentSettingsSubpanelTitle = null;
+  const track = document.getElementById('settings-slider-track');
+  const backBtn = document.getElementById('settings-back-btn');
+  const titleEl = document.getElementById('settings-title');
+
+  // Slide track back to root
+  if (track) {
+    track.classList.remove('is-subpanel');
+    track.classList.add('is-root');
+  }
+
+  // Hide back button
+  if (backBtn) backBtn.style.display = 'none';
+
+  // Reset title
+  if (titleEl) {
+    const lang = getAppLanguage();
+    titleEl.textContent = lang === 'en' ? 'Settings' : 'Pengaturan';
+  }
+
+  updateSettingsNavBadges();
+}
+
+function updateSettingsNavBadges() {
+  try {
+    const lang = getAppLanguage();
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+
+    // 1. Appearance
+    const badgeApp = document.getElementById('menu-badge-appearance');
+    if (badgeApp) {
+      const themeLabel = theme === 'dark' ? (lang === 'en' ? 'Dark' : 'Gelap') : (lang === 'en' ? 'Light' : 'Terang');
+      badgeApp.textContent = `${themeLabel} • ${lang.toUpperCase()}`;
+    }
+
+    // 2. Input & Chat
+    const badgeInput = document.getElementById('menu-badge-input');
+    if (badgeInput) {
+      const enter = localStorage.getItem('neura_send_on_enter') !== 'false';
+      const fSize = localStorage.getItem('neura_font_size') || 'medium';
+      const fChar = fSize === 'small' ? 'S' : (fSize === 'large' ? 'L' : 'M');
+      badgeInput.textContent = `${enter ? 'Enter' : 'Click'} • ${fChar}`;
+    }
+
+    // 3. Notifikasi & Suara
+    const badgeNotif = document.getElementById('menu-badge-notif');
+    if (badgeNotif) {
+      const sound = localStorage.getItem('neura_sound_enabled') === 'true';
+      const dur = ((parseInt(localStorage.getItem('neura_toast_duration') || '3500')) / 1000).toFixed(1) + 's';
+      badgeNotif.textContent = sound ? `${dur} • ♪` : dur;
+    }
+
+    // 4. Model & Klinis
+    const badgeClin = document.getElementById('menu-badge-clinical');
+    if (badgeClin) {
+      const ep = localStorage.getItem('neura_default_epochs') || '50';
+      badgeClin.textContent = `${ep} Ep`;
+    }
+
+    // 5. Voice Consultation
+    const badgeVoice = document.getElementById('menu-badge-voice');
+    if (badgeVoice) {
+      const vDelay = ((parseInt(localStorage.getItem('neura_voice_delay') || '2500')) / 1000).toFixed(1) + 's';
+      const autoPlay = localStorage.getItem('neura_voice_autoplay') !== 'false';
+      badgeVoice.textContent = `${vDelay} • ${autoPlay ? 'Auto' : 'Off'}`;
+    }
+
+    // 6. Aksesibilitas
+    const badgeA11y = document.getElementById('menu-badge-a11y');
+    if (badgeA11y) {
+      const mot = localStorage.getItem('neura_reduce_motion') === 'true';
+      const cmp = localStorage.getItem('neura_compact_mode') === 'true';
+      if (mot && cmp) badgeA11y.textContent = lang === 'en' ? 'Calm+Dense' : 'Tenang+Padat';
+      else if (mot)   badgeA11y.textContent = lang === 'en' ? 'No-Motion' : 'Tenang';
+      else if (cmp)   badgeA11y.textContent = lang === 'en' ? 'Compact' : 'Ringkas';
+      else            badgeA11y.textContent = lang === 'en' ? 'Normal' : 'Normal';
+    }
+
+    // 7. Profil
+    const badgeProf = document.getElementById('menu-badge-profile');
+    if (badgeProf) {
+      const role = localStorage.getItem('neura_user_role') || 'Neurologist';
+      badgeProf.textContent = role;
+    }
+
+    // 8. Model & Chat
+    const badgeChat = document.getElementById('menu-badge-chat');
+    if (badgeChat) {
+      badgeChat.textContent = 'XGBoost';
+    }
+
+    // 9. Data & Penyimpanan
+    const badgeStore = document.getElementById('menu-badge-storage');
+    if (badgeStore) {
+      let totalBytes = 0;
+      for (let k in localStorage) {
+        if (localStorage.hasOwnProperty(k)) {
+          totalBytes += (String(localStorage[k]).length + k.length) * 2;
+        }
+      }
+      const kb = (totalBytes / 1024).toFixed(0);
+      badgeStore.textContent = `${kb} KB`;
+    }
+
+    // 10. Tentang
+    const badgeAbout = document.getElementById('menu-badge-about');
+    if (badgeAbout) {
+      badgeAbout.textContent = 'v2.5.1';
+    }
+  } catch(e) {}
+}
+
+function openSettingsPanel() {
+  const panel   = document.getElementById('settings-panel');
+  const overlay = document.getElementById('settings-overlay');
+  if (!panel) return;
+  backToSettingsRoot();
+  syncSettingsPanel();
+  panel.classList.add('open');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSettingsPanel() {
+  const panel   = document.getElementById('settings-panel');
+  const overlay = document.getElementById('settings-overlay');
+  if (!panel) return;
+  panel.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    if (!panel.classList.contains('open')) {
+      backToSettingsRoot();
+    }
+  }, 300);
+}
+
+function syncSettingsPanel() {
+  const lang  = getAppLanguage();
+  const theme = document.documentElement.getAttribute('data-theme') || 'light';
+
+  // ── Theme chips active state
+  document.getElementById('stg-light-btn')?.classList.toggle('active', theme === 'light');
+  document.getElementById('stg-dark-btn')?.classList.toggle('active', theme === 'dark');
+
+  // ── Lang chips active state
+  document.getElementById('stg-id-btn')?.classList.toggle('active', lang === 'id');
+  document.getElementById('stg-en-btn')?.classList.toggle('active', lang === 'en');
+
+  // ── Input & Chat settings
+  const enterCb = document.getElementById('stg-toggle-enter');
+  if (enterCb) enterCb.checked = localStorage.getItem('neura_send_on_enter') !== 'false';
+
+  const draftCb = document.getElementById('stg-toggle-draft');
+  if (draftCb) draftCb.checked = localStorage.getItem('neura_draft_enabled') !== 'false';
+
+  const curFontSize = localStorage.getItem('neura_font_size') || 'medium';
+  document.getElementById('stg-font-sm')?.classList.toggle('active', curFontSize === 'small');
+  document.getElementById('stg-font-md')?.classList.toggle('active', curFontSize === 'medium');
+  document.getElementById('stg-font-lg')?.classList.toggle('active', curFontSize === 'large');
+
+  // ── Notifications & Sound
+  const soundCb = document.getElementById('stg-toggle-sound');
+  if (soundCb) soundCb.checked = localStorage.getItem('neura_sound_enabled') === 'true';
+
+  const toastSel = document.getElementById('stg-toast-select');
+  if (toastSel) toastSel.value = localStorage.getItem('neura_toast_duration') || '3500';
+
+  // ── Model & Clinical
+  const epochsSel = document.getElementById('stg-epochs-select');
+  if (epochsSel) epochsSel.value = localStorage.getItem('neura_default_epochs') || '50';
+
+  const probCb = document.getElementById('stg-toggle-prob');
+  if (probCb) probCb.checked = localStorage.getItem('neura_detailed_prob') !== 'false';
+
+  // ── Voice Consultation
+  const voiceDelaySel = document.getElementById('stg-voice-delay-select');
+  if (voiceDelaySel) voiceDelaySel.value = localStorage.getItem('neura_voice_delay') || '2500';
+
+  const voicePlayCb = document.getElementById('stg-toggle-voiceplay');
+  if (voicePlayCb) voicePlayCb.checked = localStorage.getItem('neura_voice_autoplay') !== 'false';
+
+  // ── Accessibility
+  const motionCb = document.getElementById('stg-toggle-motion');
+  if (motionCb) motionCb.checked = localStorage.getItem('neura_reduce_motion') === 'true';
+
+  const compactCb = document.getElementById('stg-toggle-compact');
+  if (compactCb) compactCb.checked = localStorage.getItem('neura_compact_mode') === 'true';
+
+  // ── Storage usage display
+  updateStorageUsage();
+
+  // ── Profile info from sidebar / auth storage
+  try {
+    const raw  = localStorage.getItem('neura_auth_user');
+    const user = raw ? JSON.parse(raw) : null;
+
+    const nameEl  = document.getElementById('stg-profile-name');
+    const emailEl = document.getElementById('stg-profile-email');
+    const avatarEl = document.getElementById('stg-avatar');
+
+    if (user) {
+      const name = user.name || user.displayName || 'Pengguna';
+      if (nameEl)  nameEl.textContent  = name;
+      if (emailEl) emailEl.textContent = user.email || '—';
+      if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
+    } else {
+      const sbName = document.getElementById('sidebar-user-name')?.textContent || 'Pengguna';
+      if (nameEl)  nameEl.textContent  = sbName;
+      if (emailEl) emailEl.textContent = document.getElementById('sidebar-user-email')?.textContent || '—';
+      if (avatarEl) avatarEl.textContent = sbName.charAt(0).toUpperCase();
+    }
+  } catch(e) {}
+
+  // ── Role select
+  try {
+    const savedRole = localStorage.getItem('neura_user_role');
+    const roleSelect = document.getElementById('stg-role-select');
+    if (roleSelect && savedRole) roleSelect.value = savedRole;
+  } catch(e) {}
+
+  // ── Active model info
+  const modelValEl = document.getElementById('stg-model-val');
+  if (modelValEl) {
+    const sbStatus = document.getElementById('sb-status-text')?.textContent;
+    modelValEl.textContent = sbStatus && sbStatus !== 'Checking model...' && sbStatus !== 'Memeriksa model...'
+      ? sbStatus : 'AlzheimersXGBoost v2.5';
+  }
+
+  // ── Translate all settings labels (ID / EN)
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+
+  if (lang === 'en') {
+    // English
+    if (currentSettingsSubpanel && currentSettingsSubpanelTitle) {
+      set('settings-title', currentSettingsSubpanelTitle.en);
+    } else {
+      set('settings-title', 'Settings');
+    }
+    set('settings-back-label',   'Back');
+
+    // Root Menu Titles & Subtitles
+    set('menu-title-appearance', 'Appearance');
+    set('menu-sub-appearance',   'Interface theme & language');
+    set('menu-title-input',      'Input & Chat');
+    set('menu-sub-input',        'Send on Enter, drafts, font size');
+    set('menu-title-notif',      'Notifications & Audio');
+    set('menu-sub-notif',        'Response chime & toast duration');
+    set('menu-title-clinical',   'Model & Clinical');
+    set('menu-sub-clinical',     'Default epochs, risk precision');
+    set('menu-title-voice',      'Voice Consultation');
+    set('menu-sub-voice',        'Mic silence pause & auto-play');
+    set('menu-title-a11y',       'Accessibility');
+    set('menu-sub-a11y',         'Reduced motion & compact view');
+    set('menu-title-profile',    'Profile');
+    set('menu-sub-profile',      'Account & clinician role');
+    set('menu-title-chat',       'Model & Chat');
+    set('menu-sub-chat',         'Active model & message history');
+    set('menu-title-storage',    'Data & Storage');
+    set('menu-sub-storage',      'Memory quota, JSON export, reset');
+    set('menu-title-about',      'About');
+    set('menu-sub-about',        'Neura AI v2.5.1');
+
+    set('stg-sec-appearance',    'Appearance');
+    set('stg-theme-label',       'Theme');
+    set('stg-theme-desc',        'Interface display mode');
+    set('stg-light-label',       'Light');
+    set('stg-dark-label',        'Dark');
+    set('stg-lang-label',        'Language');
+    set('stg-lang-desc',         'Application interface language');
+
+    set('stg-sec-input',         'Input & Chat');
+    set('stg-enter-label',       'Send on Enter');
+    set('stg-enter-desc',        'Enter to send, Shift+Enter for new line');
+    set('stg-draft-label',       'Auto-save Draft');
+    set('stg-draft-desc',        'Preserve unsent input on reload');
+    set('stg-font-label',        'Chat Font Size');
+    set('stg-font-desc',         'Reading comfort for consultation messages');
+
+    set('stg-sec-notif',         'Notifications & Audio');
+    set('stg-sound-label',       'Completion Chime');
+    set('stg-sound-desc',        'Soft sound when AI completes response');
+    set('stg-toast-label',       'Toast Duration');
+    set('stg-toast-desc',        'Display time for toast popups');
+
+    set('stg-sec-clinical',      'Model & Clinical');
+    set('stg-epochs-label',      'Default Epochs /train');
+    set('stg-epochs-desc',       'Default boosting rounds for training');
+    set('stg-prob-label',        'Detailed Probability');
+    set('stg-prob-desc',         'Display precise decimals (e.g. 95.35%)');
+
+    set('stg-sec-voice',         'Voice Consultation');
+    set('stg-voice-delay-label', 'Silence Delay');
+    set('stg-voice-delay-desc',  'Pause duration before automatic send');
+    set('stg-voice-play-label',  'Auto-speak Response');
+    set('stg-voice-play-desc',   'Vocalize AI response in voice room');
+
+    set('stg-sec-a11y',          'Accessibility');
+    set('stg-motion-label',      'Reduce Motion');
+    set('stg-motion-desc',       'Minimize transitions and visual pulses');
+    set('stg-compact-label',     'Compact View');
+    set('stg-compact-desc',      'Tighter chat bubbles for long history');
+
+    set('stg-sec-profile',       'Profile');
+    set('stg-role-label',        'Role');
+    set('stg-role-desc',         'Title shown in sidebar');
+
+    set('stg-sec-chat',          'Model & Chat');
+    set('stg-model-label',       'Active AI Model');
+    set('stg-change-model',      'Change');
+    set('stg-history-label',     'Chat History');
+    set('stg-history-desc',      'Delete all saved conversations');
+    set('stg-clear-label',       'Delete');
+
+    set('stg-sec-storage',       'Data & Storage');
+    set('stg-storage-label',     'Browser Storage');
+    set('stg-export-label',      'Export Chat History');
+    set('stg-export-desc',       'Download complete conversation history (JSON)');
+    set('stg-export-btn-label',  'Export');
+    set('stg-reset-label',       'Reset All Settings');
+    set('stg-reset-desc',        'Restore all preferences to defaults');
+    set('stg-reset-btn-label',   'Reset');
+
+    set('stg-sec-about',         'About');
+    set('stg-about-desc',        'Clinical AI platform for early Alzheimer\'s detection based on 32 multimodal biomarkers.');
+    set('dot-settings-label',    'Settings');
+  } else {
+    // Indonesian
+    if (currentSettingsSubpanel && currentSettingsSubpanelTitle) {
+      set('settings-title', currentSettingsSubpanelTitle.id);
+    } else {
+      set('settings-title', 'Pengaturan');
+    }
+    set('settings-back-label',   'Kembali');
+
+    // Root Menu Titles & Subtitles
+    set('menu-title-appearance', 'Tampilan');
+    set('menu-sub-appearance',   'Tema antarmuka & bahasa');
+    set('menu-title-input',      'Input & Chat');
+    set('menu-sub-input',        'Kirim Enter, draf, ukuran font');
+    set('menu-title-notif',      'Notifikasi & Suara');
+    set('menu-sub-notif',        'Chime respons & durasi toast');
+    set('menu-title-clinical',   'Model & Klinis');
+    set('menu-sub-clinical',     'Epochs default, presisi risiko');
+    set('menu-title-voice',      'Voice Consultation');
+    set('menu-sub-voice',        'Jeda mic & auto-play ucapan');
+    set('menu-title-a11y',       'Aksesibilitas');
+    set('menu-sub-a11y',         'Animasi & kerapatan tampilan');
+    set('menu-title-profile',    'Profil');
+    set('menu-sub-profile',      'Akun & role dokter/peneliti');
+    set('menu-title-chat',       'Model & Chat');
+    set('menu-sub-chat',         'Model aktif & riwayat pesan');
+    set('menu-title-storage',    'Data & Penyimpanan');
+    set('menu-sub-storage',      'Memori, ekspor JSON, reset');
+    set('menu-title-about',      'Tentang');
+    set('menu-sub-about',        'Neura AI v2.5.1');
+
+    set('stg-sec-appearance',    'Tampilan');
+    set('stg-theme-label',       'Tema');
+    set('stg-theme-desc',        'Mode tampilan antarmuka');
+    set('stg-light-label',       'Terang');
+    set('stg-dark-label',        'Gelap');
+    set('stg-lang-label',        'Bahasa');
+    set('stg-lang-desc',         'Bahasa antarmuka aplikasi');
+
+    set('stg-sec-input',         'Input & Chat');
+    set('stg-enter-label',       'Kirim dengan Enter');
+    set('stg-enter-desc',        'Enter untuk kirim, Shift+Enter untuk baris baru');
+    set('stg-draft-label',       'Simpan Draf Otomatis');
+    set('stg-draft-desc',        'Simpan teks belum terkirim saat refresh');
+    set('stg-font-label',        'Ukuran Teks Chat');
+    set('stg-font-desc',         'Kenyamanan membaca pesan konsultasi');
+
+    set('stg-sec-notif',         'Notifikasi & Suara');
+    set('stg-sound-label',       'Efek Suara Selesai');
+    set('stg-sound-desc',        'Bunyi lembut saat AI selesai merespons');
+    set('stg-toast-label',       'Durasi Notifikasi');
+    set('stg-toast-desc',        'Waktu tampil pop-up notifikasi');
+
+    set('stg-sec-clinical',      'Model & Klinis');
+    set('stg-epochs-label',      'Default Epochs /train');
+    set('stg-epochs-desc',       'Jumlah boosting rounds bawaan');
+    set('stg-prob-label',        'Presisi Probabilitas');
+    set('stg-prob-desc',         'Tampilkan desimal detail (misal 95.35%)');
+
+    set('stg-sec-voice',         'Voice Consultation');
+    set('stg-voice-delay-label', 'Jeda Hening Otomatis');
+    set('stg-voice-delay-desc',  'Waktu hening sebelum suara dikirim');
+    set('stg-voice-play-label',  'Putar Suara Otomatis');
+    set('stg-voice-play-desc',   'Bicarakan respons AI saat konsultasi suara');
+
+    set('stg-sec-a11y',          'Aksesibilitas');
+    set('stg-motion-label',      'Kurangi Efek Animasi');
+    set('stg-motion-desc',       'Meminimalkan transisi dan denyut visual');
+    set('stg-compact-label',     'Tampilan Ringkas');
+    set('stg-compact-desc',      'Penyajian bubble chat yang lebih padat');
+
+    set('stg-sec-profile',       'Profil');
+    set('stg-role-label',        'Role');
+    set('stg-role-desc',         'Jabatan yang ditampilkan di sidebar');
+
+    set('stg-sec-chat',          'Model & Chat');
+    set('stg-model-label',       'Model AI Aktif');
+    set('stg-change-model',      'Ganti');
+    set('stg-history-label',     'Riwayat Chat');
+    set('stg-history-desc',      'Hapus semua percakapan tersimpan');
+    set('stg-clear-label',       'Hapus');
+
+    set('stg-sec-storage',       'Data & Penyimpanan');
+    set('stg-storage-label',     'Memori Browser');
+    set('stg-export-label',      'Ekspor Riwayat Chat');
+    set('stg-export-desc',       'Unduh seluruh riwayat percakapan (JSON)');
+    set('stg-export-btn-label',  'Ekspor');
+    set('stg-reset-label',       'Reset Semua Pengaturan');
+    set('stg-reset-desc',        'Kembalikan ke konfigurasi awal');
+    set('stg-reset-btn-label',   'Reset');
+
+    set('stg-sec-about',         'Tentang');
+    set('stg-about-desc',        'Platform klinis AI untuk deteksi dini Alzheimer berbasis 32 biomarker multimodal.');
+    set('dot-settings-label',    'Pengaturan');
+  }
+
+  // Keep root menu status badges synced
+  updateSettingsNavBadges();
+}
+
+function applySettingsTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('neura_theme_v1', theme); } catch(e) {}
+  syncSettingsPanel();
+  syncDotMenuState();
+}
+
+function applySettingsLang(lang) {
+  setAppLanguage(lang, false);
+  syncSettingsPanel();
+}
+
+function applySettingsRole(role) {
+  try { localStorage.setItem('neura_user_role', role); } catch(e) {}
+  const roleEl = document.getElementById('sidebar-user-role');
+  if (roleEl) roleEl.textContent = role;
+  updateSettingsNavBadges();
+  showToast(getAppLanguage() === 'en' ? `Role updated: ${role}` : `Role diperbarui: ${role}`, 'info');
+}
+
+function applyToggleSetting(key, checked) {
+  try {
+    localStorage.setItem(key, checked ? 'true' : 'false');
+  } catch(e) {}
+
+  if (key === 'neura_reduce_motion') {
+    document.body.classList.toggle('reduce-motion', checked);
+  } else if (key === 'neura_compact_mode') {
+    document.body.classList.toggle('compact-mode', checked);
+  }
+
+  updateSettingsNavBadges();
+  const lang = getAppLanguage();
+  showToast(lang === 'en' ? 'Setting updated' : 'Pengaturan diperbarui', 'info');
+}
+
+function applyFontSize(size) {
+  try {
+    localStorage.setItem('neura_font_size', size);
+  } catch(e) {}
+
+  document.body.classList.remove('font-size-small', 'font-size-large');
+  if (size === 'small') document.body.classList.add('font-size-small');
+  if (size === 'large') document.body.classList.add('font-size-large');
+
+  document.getElementById('stg-font-sm')?.classList.toggle('active', size === 'small');
+  document.getElementById('stg-font-md')?.classList.toggle('active', size === 'medium');
+  document.getElementById('stg-font-lg')?.classList.toggle('active', size === 'large');
+
+  updateSettingsNavBadges();
+  const lang = getAppLanguage();
+  showToast(lang === 'en' ? `Font size: ${size}` : `Ukuran teks: ${size}`, 'info');
+}
+
+function applyToastDuration(val) {
+  try {
+    localStorage.setItem('neura_toast_duration', val);
+  } catch(e) {}
+  updateSettingsNavBadges();
+  const lang = getAppLanguage();
+  showToast(lang === 'en' ? 'Toast duration updated' : 'Durasi notifikasi diperbarui', 'info');
+}
+
+function applyDefaultEpochs(val) {
+  try {
+    localStorage.setItem('neura_default_epochs', val);
+  } catch(e) {}
+  updateSettingsNavBadges();
+  const lang = getAppLanguage();
+  showToast(lang === 'en' ? `Default epochs: ${val}` : `Default epochs: ${val}`, 'info');
+}
+
+function applyVoiceDelay(val) {
+  try {
+    localStorage.setItem('neura_voice_delay', val);
+  } catch(e) {}
+  updateSettingsNavBadges();
+  const lang = getAppLanguage();
+  showToast(lang === 'en' ? 'Voice delay updated' : 'Jeda hening diperbarui', 'info');
+}
+
+function updateStorageUsage() {
+  try {
+    let totalBytes = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalBytes += (String(localStorage[key]).length + key.length) * 2;
+      }
+    }
+    const kb = (totalBytes / 1024).toFixed(1);
+    const mbQuota = 5;
+    const percent = Math.min(100, Math.max(2, (totalBytes / (mbQuota * 1024 * 1024)) * 100));
+
+    const valEl = document.getElementById('stg-storage-val');
+    const fillEl = document.getElementById('stg-storage-fill');
+    if (valEl) valEl.textContent = `${kb} KB / ${mbQuota} MB`;
+    if (fillEl) fillEl.style.width = `${percent.toFixed(1)}%`;
+  } catch(e) {}
+}
+
+function exportChatHistory() {
+  try {
+    loadChatSessions();
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      platform: 'Neura Clinical AI',
+      version: '2.5.1',
+      totalSessions: chatSessions.length,
+      sessions: chatSessions
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `neura_chat_export_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+
+    const lang = getAppLanguage();
+    showToast(lang === 'en' ? 'Chat history exported successfully' : 'Riwayat chat berhasil diekspor', 'success');
+  } catch(e) {
+    showToast('Gagal mengekspor riwayat', 'error');
+  }
+}
+
+function confirmResetAllSettings() {
+  const lang = getAppLanguage();
+  const msg = lang === 'en'
+    ? 'Reset all Neura settings to factory defaults?'
+    : 'Reset semua pengaturan Neura ke nilai bawaan?';
+  if (!confirm(msg)) return;
+
+  try {
+    localStorage.removeItem('neura_send_on_enter');
+    localStorage.removeItem('neura_draft_enabled');
+    localStorage.removeItem('neura_font_size');
+    localStorage.removeItem('neura_sound_enabled');
+    localStorage.removeItem('neura_toast_duration');
+    localStorage.removeItem('neura_default_epochs');
+    localStorage.removeItem('neura_detailed_prob');
+    localStorage.removeItem('neura_voice_delay');
+    localStorage.removeItem('neura_voice_autoplay');
+    localStorage.removeItem('neura_reduce_motion');
+    localStorage.removeItem('neura_compact_mode');
+  } catch(e) {}
+
+  initAppSettingsModifiers();
+  syncSettingsPanel();
+  showToast(lang === 'en' ? 'Settings reset to defaults' : 'Pengaturan dikembalikan ke awal', 'success');
+}
+
+function confirmClearHistory() {
+  const lang = getAppLanguage();
+  const msg  = lang === 'en'
+    ? 'Are you sure? All chat history will be permanently deleted.'
+    : 'Yakin? Semua riwayat chat akan dihapus permanen.';
+  if (!confirm(msg)) return;
+  try {
+    localStorage.removeItem(CHAT_STORAGE_KEY);
+    localStorage.removeItem(LAST_SESSION_STORAGE_KEY);
+    localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
+  } catch(e) {}
+  chatSessions = [];
+  startNewChat(false);
+  renderRecentChatsSidebar();
+  updateStorageUsage();
+  updateSettingsNavBadges();
+  closeSettingsPanel();
+  showToast(lang === 'en' ? 'Chat history cleared' : 'Riwayat chat dihapus', 'info');
+}
+
+window.openSettingsPanel        = openSettingsPanel;
+window.closeSettingsPanel       = closeSettingsPanel;
+window.openSettingsSubpanel     = openSettingsSubpanel;
+window.backToSettingsRoot       = backToSettingsRoot;
+window.updateSettingsNavBadges  = updateSettingsNavBadges;
+window.applySettingsTheme       = applySettingsTheme;
+window.applySettingsLang        = applySettingsLang;
+window.applySettingsRole        = applySettingsRole;
+window.confirmClearHistory      = confirmClearHistory;
+window.applyToggleSetting       = applyToggleSetting;
+window.applyFontSize            = applyFontSize;
+window.applyToastDuration       = applyToastDuration;
+window.applyDefaultEpochs       = applyDefaultEpochs;
+window.applyVoiceDelay          = applyVoiceDelay;
+window.exportChatHistory        = exportChatHistory;
+window.confirmResetAllSettings  = confirmResetAllSettings;
+
 function setupGreeting() {
   const hour = new Date().getHours();
-  let text = 'Good evening';
-  if (hour >= 5 && hour < 12) text = 'Good morning';
-  else if (hour >= 12 && hour < 17) text = 'Good afternoon';
-  else if (hour >= 17 && hour < 22) text = 'Good evening';
-  else text = 'Good night';
+  const lang = getAppLanguage();
+  const t = APP_TRANSLATIONS[lang] || APP_TRANSLATIONS.id;
+  let text = t.greet_night;
+  if (hour >= 5 && hour < 12) text = t.greet_morning;
+  else if (hour >= 12 && hour < 17) text = t.greet_afternoon;
+  else if (hour >= 17 && hour < 22) text = t.greet_evening;
 
   const greetingEl = document.getElementById('hero-greeting-text');
   if (greetingEl) greetingEl.textContent = text;
@@ -832,13 +1768,14 @@ function renderSessionMessages(session) {
 }
 
 function getHeroHtml() {
+  const lang = getAppLanguage();
+  const t = APP_TRANSLATIONS[lang] || APP_TRANSLATIONS.id;
   return `
     <div class="claude-hero" id="claude-hero">
       <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo"
         onerror="this.style.display='none'" />
-      <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
-      <p class="hero-subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling
-        today?</p>
+      <h1 class="hero-greeting" id="hero-greeting-text">${t.greet_evening}</h1>
+      <p class="hero-subhead">${t.hero_subhead}</p>
 
       <!-- 4 Action Cards -->
       <div class="hero-cards-grid">
@@ -849,10 +1786,9 @@ function getHeroHtml() {
               <path d="M12 20V4" />
               <path d="M6 20v-6" />
             </svg>
-            <span>Train XGBoost Model</span>
+            <span>${t.card_train_title}</span>
           </div>
-          <div class="hero-card-desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data
-            pasien)</div>
+          <div class="hero-card-desc">${t.card_train_desc}</div>
         </div>
 
         <div class="hero-card" onclick="submitCommand('/predict')">
@@ -861,10 +1797,9 @@ function getHeroHtml() {
               <circle cx="12" cy="12" r="10" />
               <path d="M12 6v6l4 2" />
             </svg>
-            <span>Run Alzheimer Diagnosis</span>
+            <span>${t.card_predict_title}</span>
           </div>
-          <div class="hero-card-desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory
-            Complaints)</div>
+          <div class="hero-card-desc">${t.card_predict_desc}</div>
         </div>
 
         <div class="hero-card" onclick="submitCommand('/eval')">
@@ -873,10 +1808,9 @@ function getHeroHtml() {
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
-            <span>Evaluate Medical Metrics</span>
+            <span>${t.card_eval_title}</span>
           </div>
-          <div class="hero-card-desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1%
-            ROC-AUC</div>
+          <div class="hero-card-desc">${t.card_eval_desc}</div>
         </div>
 
         <div class="hero-card" onclick="submitCommand('/status')">
@@ -887,10 +1821,9 @@ function getHeroHtml() {
               <line x1="6" y1="6" x2="6.01" y2="6" />
               <line x1="6" y1="18" x2="6.01" y2="18" />
             </svg>
-            <span>Clinical Model Specs</span>
+            <span>${t.card_specs_title}</span>
           </div>
-          <div class="hero-card-desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance
-          </div>
+          <div class="hero-card-desc">${t.card_specs_desc}</div>
         </div>
       </div>
     </div>
@@ -935,6 +1868,8 @@ function toggleTheme() {
   html.setAttribute('data-theme', next);
   try { localStorage.setItem('neura_theme_v1', next); } catch(e) {}
   showToast(`Switched to ${next === 'dark' ? 'Obsidian Dark' : 'Warm Linen'} mode`, 'info');
+  // Sync dot menu theme label
+  syncDotMenuState();
 }
 
 // --------------------------------------------------------------------------
@@ -958,13 +1893,16 @@ function handleTextareaInput(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 180) + 'px';
   updateSendBtnState();
-  try {
-    if (el.value.trim().length > 0) {
-      localStorage.setItem(DRAFT_INPUT_STORAGE_KEY, el.value);
-    } else {
-      localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
-    }
-  } catch(e) {}
+  const draftEnabled = localStorage.getItem('neura_draft_enabled') !== 'false';
+  if (draftEnabled) {
+    try {
+      if (el.value.trim().length > 0) {
+        localStorage.setItem(DRAFT_INPUT_STORAGE_KEY, el.value);
+      } else {
+        localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
+      }
+    } catch(e) {}
+  }
 }
 
 function handleTextareaKey(e) {
@@ -976,12 +1914,23 @@ function handleTextareaKey(e) {
     }
     closeQuickMenu();
   }
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    if (isChatVoiceListening) {
-      stopChatVoiceInput(true);
-    } else {
-      sendUserMessage();
+
+  const sendOnEnter = localStorage.getItem('neura_send_on_enter') !== 'false';
+  if (e.key === 'Enter') {
+    if (sendOnEnter && !e.shiftKey) {
+      e.preventDefault();
+      if (isChatVoiceListening) {
+        stopChatVoiceInput(true);
+      } else {
+        sendUserMessage();
+      }
+    } else if (!sendOnEnter && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      if (isChatVoiceListening) {
+        stopChatVoiceInput(true);
+      } else {
+        sendUserMessage();
+      }
     }
   }
 }
@@ -1150,6 +2099,7 @@ async function sendUserMessage(textOverride = null) {
     appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(err.message)}</p>`, { stream: false });
   } finally {
     setGeneratingState(false);
+    playSuccessChime();
     if (currentIslandState !== 'training') {
       setDynamicIslandState('ready', {
         sub: 'Response complete \u2022 Neura MLP',
@@ -1208,7 +2158,8 @@ async function processMLInput(rawText, typingId, startTime) {
 
   } else if (lower.startsWith('/train') || lower.includes('/train')) {
     const parts = text.split(/\s+/);
-    const epochs = parseInt(parts[1]) || 50;
+    const defaultEpochs = parseInt(localStorage.getItem('neura_default_epochs')) || 50;
+    const epochs = parseInt(parts[1]) || defaultEpochs;
     setDynamicIslandState('training', {
       sub: `Training XGBoost \u2022 ${epochs} Boosting Rounds`,
       main: 'Training...'
@@ -2939,7 +3890,9 @@ function renderPredictionOutput(data) {
   const diagnosis = isPos ? "Alzheimer's Disease Detected" : "Non-Alzheimer's (Negative)";
   const riskClass = isPos ? "val-err" : "val-good";
   const riskLevel = data.risk_level || (isPos ? "High Risk (Positive)" : "Low Risk (Negative)");
-  const prob = data.probability !== undefined ? data.probability : 50.0;
+  const detailedProb = localStorage.getItem('neura_detailed_prob') !== 'false';
+  const rawProb = parseFloat(data.probability !== undefined ? data.probability : 50.0);
+  const prob = detailedProb ? (isNaN(rawProb) ? '50.00' : rawProb.toFixed(2)) : (isNaN(rawProb) ? '50' : Math.round(rawProb));
   const markers = data.key_markers || {};
   const patientId = data.patient_id || '#4751';
 
@@ -3551,11 +4504,12 @@ function showToast(message, type = 'info') {
 
   toast.innerHTML = `${iconSvg}<span>${escapeHtml(message)}</span>`;
   box.appendChild(toast);
+  const duration = parseInt(localStorage.getItem('neura_toast_duration')) || 3500;
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transition = 'opacity 0.25s ease';
     setTimeout(() => toast.remove(), 250);
-  }, 3000);
+  }, duration);
 }
 
 // --------------------------------------------------------------------------

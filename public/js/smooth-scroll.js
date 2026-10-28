@@ -89,56 +89,48 @@
     });
 
     // -----------------------------------------------------------------------
-    // Smooth Parallax & Kinetic Scroll-Reactive Header Navigation
+    // Smooth Scroll-Reactive Header Navigation (Pemicu: Scroll ke Atas)
     // -----------------------------------------------------------------------
     let lastScrollY = window.scrollY || 0;
     let isHeaderHidden = false;
+    let upScrollDistance = 0;
+    let downScrollDistance = 0;
+    const HEADER_FIXED_THRESHOLD = 50;
+    const HEADER_HIDE_THRESHOLD = 90;
 
     function updateHeaderParallax(currentScrollY, velocity = 0) {
       const headers = document.querySelectorAll('.site-header, .top-nav');
       if (!headers.length) return;
 
-      // 1. Kinetic velocity dampening for smooth organic parallax travel
-      // Velocity is positive scrolling DOWN, negative scrolling UP
-      const clampedVelocity = Math.max(-16, Math.min(16, velocity || 0));
-      const parallaxY = -(clampedVelocity * 0.38);
-      const innerParallax = clampedVelocity * 0.22;
-      const navScale = Math.max(0.984, 1 - Math.min(0.016, Math.abs(clampedVelocity) * 0.0012));
+      const delta = currentScrollY - lastScrollY;
 
-      headers.forEach(h => {
-        h.style.setProperty('--nav-parallax-y', `${parallaxY.toFixed(2)}px`);
-        h.style.setProperty('--nav-parallax-scale', `${navScale.toFixed(4)}`);
-        h.style.setProperty('--nav-inner-parallax', `${innerParallax.toFixed(2)}px`);
-
-        // Parallax elevation state (glassmorphism & compression)
-        if (currentScrollY > 20) {
-          h.classList.add('nav-scrolled');
-        } else {
-          h.classList.remove('nav-scrolled');
-        }
-      });
-
-      // 2. Near top: always reveal relaxed header
-      if (currentScrollY <= 20) {
-        if (isHeaderHidden) {
-          headers.forEach(h => {
-            h.classList.remove('nav-hidden');
-            h.classList.add('nav-visible');
-          });
-          document.body.classList.remove('nav-hidden');
-          isHeaderHidden = false;
-        }
+      // 1. Dekat puncak halaman (<= 45px): kembali ke posisi alami
+      if (currentScrollY <= 45) {
+        headers.forEach(h => {
+          h.classList.remove('is-fixed', 'nav-hidden', 'nav-scrolled');
+          h.classList.add('nav-visible');
+        });
+        isHeaderHidden = false;
+        upScrollDistance = 0;
+        downScrollDistance = 0;
         lastScrollY = currentScrollY;
         return;
       }
 
-      // 3. Directional detection with smooth hysteresis
-      const delta = currentScrollY - lastScrollY;
+      // 2. Melewati ambang: aktifkan mode fixed & visual glassmorphic elevation
+      if (currentScrollY > HEADER_FIXED_THRESHOLD) {
+        headers.forEach(h => {
+          h.classList.add('is-fixed', 'nav-scrolled');
+        });
+      }
 
-      // Filter micro-jitters (react cleanly to intentional scrolls)
-      if (Math.abs(delta) > 5 || Math.abs(clampedVelocity) > 1.0) {
-        if ((delta > 0 || clampedVelocity > 0.8) && currentScrollY > 60) {
-          // Scrolling DOWN -> Glide header out with upward parallax momentum
+      // 3. Deteksi Arah Scroll (Scroll Down vs Scroll UP sebagai pemicu)
+      if (delta > 1.5 || velocity > 0.4) {
+        // Sedang scroll ke BAWAH -> Sembunyikan main nav
+        downScrollDistance += Math.abs(delta);
+        upScrollDistance = 0;
+
+        if (downScrollDistance > 8 && currentScrollY > HEADER_HIDE_THRESHOLD) {
           if (!isHeaderHidden) {
             headers.forEach(h => {
               h.classList.add('nav-hidden');
@@ -147,8 +139,13 @@
             document.body.classList.add('nav-hidden');
             isHeaderHidden = true;
           }
-        } else if (delta < 0 || clampedVelocity < -0.6) {
-          // Scrolling UP -> Reveal header with floating parallax spring entry
+        }
+      } else if (delta < -1.5 || velocity < -0.3) {
+        // Sedang scroll ke ATAS (PEMICU UTAMA) -> TAMPILKAN MAIN NAV!
+        upScrollDistance += Math.abs(delta);
+        downScrollDistance = 0;
+
+        if (upScrollDistance > 6 || currentScrollY <= HEADER_HIDE_THRESHOLD) {
           if (isHeaderHidden) {
             headers.forEach(h => {
               h.classList.remove('nav-hidden');
@@ -158,8 +155,9 @@
             isHeaderHidden = false;
           }
         }
-        lastScrollY = currentScrollY;
       }
+
+      lastScrollY = currentScrollY;
     }
 
     // Parallax dynamics for the fixed Dynamic Island

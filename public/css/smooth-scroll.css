@@ -1,7 +1,44 @@
 /* ==========================================================================
-   GLOBAL SMOOTH SCROLL (Lenis Inertial Momentum Engine)
+   GLOBAL SMOOTH SCROLL & MODERN MINIMALIST SCROLLBAR ENGINE
    Works across all pages: welcome.html, index.html, modals, and workspaces
    ========================================================================== */
+
+/* Firefox Standard */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, rgba(120, 115, 105, 0.25)) transparent;
+}
+
+/* WebKit / Chromium (Chrome, Edge, Safari, Opera, Brave) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb, rgba(120, 115, 105, 0.25));
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover, rgba(120, 115, 105, 0.45));
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--accent-terracotta, var(--accent-primary, #D97757));
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 html.lenis:not(:has(.claude-layout)),
 html.lenis:not(:has(.claude-layout)) body {
@@ -45,17 +82,26 @@ body:not(:has(.claude-layout)) .top-nav {
   --nav-parallax-scale: 1;
   --nav-inner-parallax: 0px;
   will-change: transform;
-  transition: transform 0.44s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.site-header.is-fixed,
+body:not(:has(.claude-layout)) .top-nav.is-fixed {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 950 !important;
 }
 
 .site-header.nav-hidden,
 body:not(:has(.claude-layout)) .top-nav.nav-hidden {
-  transform: translate3d(0, calc(-100% + var(--nav-parallax-y, 0px)), 0) !important;
-  pointer-events: none;
+  transform: translate3d(0, -100%, 0) !important;
+  pointer-events: none !important;
 }
 
 .site-header.nav-visible,
 body:not(:has(.claude-layout)) .top-nav.nav-visible {
   transform: translate3d(0, 0, 0) !important;
-  pointer-events: auto;
+  pointer-events: auto !important;
 }

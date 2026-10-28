@@ -142,83 +142,292 @@
   }
 
   // -------------------------------------------------------------------------
-  // 4. Bilingual Toggle (Indonesian / English)
+  // -------------------------------------------------------------------------
+  // 4. Bilingual Toggle (Indonesian / English Subtitle / Language Engine)
   // -------------------------------------------------------------------------
   const langBtn = document.getElementById('lang-toggle-btn');
+  // Normalize: support both 'ID'/'EN' (legacy) and 'id'/'en' (current app.js format)
   let currentLang = 'ID';
+  try {
+    const saved = localStorage.getItem('neura_lang');
+    if (saved && saved.toLowerCase() === 'en') currentLang = 'EN';
+    else currentLang = 'ID';
+  } catch (e) {
+    currentLang = 'ID';
+  }
 
   const translations = {
     ID: {
-      nav_products: 'Platform',
-      nav_usecases: 'Kasus Klinis',
-      nav_pricing: 'Biomarker',
-      nav_enterprise: 'Rumah Sakit',
-      nav_resources: 'Riset',
-      btn_download: 'Download',
+      // Announcement
+      announcement_pill: '✦ RISET KLINIS',
+      announcement_text: 'Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi 94.4% (ROC-AUC 0.933)',
+      announcement_link: 'Pelajari lebih lanjut &rarr;',
+
+      // Main Navigation
+      nav_about: 'Tentang',
+      nav_pipeline: 'Alur Analisis',
+      nav_security: 'Keamanan',
+      nav_specification: 'Spesifikasi',
+      nav_workspace: 'Workspace',
+      nav_login: 'Masuk',
       btn_consult: 'Mulai Diagnosis',
-      hero_headline: 'Deteksi Dini Risiko Alzheimer dengan AI Berbasis 32 Biomarker Klinis',
-      hero_sub_btn: 'Buka Neura Workspace ➔',
-      intro_btn: 'Simulasi Diagnostik ▶',
+
+      // Mobile Drawer
+      mobile_about: 'Tentang Platform',
+      mobile_pipeline: 'Alur Analisis',
+      mobile_security: 'Keamanan Data',
+      mobile_specification: 'Spesifikasi Model',
+      mobile_workspace: 'Buka Workspace',
+      mobile_login: 'Masuk / Registrasi &rarr;',
+      mobile_cta: 'Mulai Diagnosis Klinis &rarr;',
+
+      // Hero Section
+      hero_headline: 'Mendeteksi Alzheimer<br>Lebih Awal,<br>Lebih Tepat.',
+      hero_lead: 'Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal, dengan akurasi 94.4% yang telah divalidasi pada 430 rekam medis.',
+      hero_cta_btn: 'Mulai Diagnosis Klinis',
+      hero_sub_btn: 'Buka Workspace Pasien &rarr;',
+      hero_stats: '94.4% AKURASI &bull; ROC-AUC 0.933 &bull; 32 BIOMARKER KLINIS &bull; &lt;1.2s INFERENSI',
+
+      // Statement (About)
       statement_eyebrow: 'TENTANG PLATFORM',
+      statement_heading: 'Neura<br><span class="statement-heading-italic">Cognitive AI</span>',
       statement_p1: 'Neura adalah sistem kecerdasan buatan klinis mutakhir yang dirancang untuk mendeteksi indikasi awal <strong>Alzheimer, Mild Cognitive Impairment (MCI)</strong>, dan gangguan neurodegeneratif lain sejak stadium paling awal.',
       statement_p2: 'Didukung oleh arsitektur machine learning <strong>XGBoost</strong> berkecepatan tinggi yang telah dilatih menggunakan parameter biomarker klinis komprehensif, Neura mampu memetakan gejala memori, fungsi eksekutif, dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>95.8%</strong>.',
       statement_p3: 'Tidak seperti pemeriksaan konvensional yang mahal dan lambat, Neura memberikan analisis terstruktur dalam kurang dari 1.2 detik, langsung dari browser Anda.',
-      app_title: 'Neura Clinical App',
-      app_desc: 'Pusat komando klinis untuk mengevaluasi pasien, memonitor 32 biomarker neuro-kognitif, dan mengalkulasi probabilitas risiko penyakit Alzheimer secara instan melalui antarmuka interaktif.',
-      ide_title: 'Neura Diagnostic Studio',
-      ide_desc: 'Lingkungan diagnostik interaktif untuk tenaga medis. Dilengkapi kalkulator 32 biomarker, kurva presisi ROC-AUC 93.3%, serta ringkasan riwayat kognitif terstruktur.',
+
+      // Product 1: Pipeline
+      pipeline_title: 'Neura Reasoning Pipeline',
+      pipeline_desc: 'Sistem penalaran kognitif transparan dari ekstraksi data hingga hasil klinis. Membaca 32 biomarker, menganalisa korelasi risiko, mengolah parameter mentah, menyusun narasi diagnostik, serta menerbitkan output secara presisi.',
+      pipeline_step1_sub: '32 biomarker klinis &amp; riwayat kognitif MMSE dimuat',
+      pipeline_step2_sub: 'Korelasi multivariat &amp; evaluasi signifikansi klinis',
+      pipeline_step3_sub: 'Inferensi ansambel pohon keputusan XGBoost',
+      pipeline_step4_sub: 'Normalisasi vektor risiko &amp; pemetaan ambang batas',
+      pipeline_step5_sub: 'Sintesis penjelasan medis &amp; rasionalisasi diagnostik',
+      pipeline_step6_sub: 'Laporan diagnosis, skor risiko 94.4%, &amp; rekomendasi klinis diterbitkan',
+
+      // Product 2: Security
+      security_title: 'Neura Data Security',
+      security_desc: 'Perlindungan data medis berstandar klinis dengan enkripsi end-to-end AES-256. Menjamin kerahasiaan rekam medis pasien, anonimisasi biomarker otomatis, serta kepatuhan penuh terhadap regulasi privasi kesehatan HIPAA &amp; GDPR.',
+      sec_heading: 'Zero-Knowledge Clinical Vault',
+      sec_caption: 'Rekam medis terenkripsi langsung di browser lokal sebelum evaluasi biomarker',
+      sec_feat1_title: 'HIPAA Safe Harbor De-Identification',
+      sec_feat1_desc: '18 identifier pasien (nama, NIK, kontak) dihilangkan otomatis sebelum evaluasi',
+      sec_feat2_title: 'Local Browser Memory Sandbox',
+      sec_feat2_desc: 'Inferensi machine learning berjalan lokal di RAM tanpa jejak data di server',
+      sec_feat3_title: 'Cryptographic SHA-256 Checksum',
+      sec_feat3_desc: 'Validasi integritas dataset 32 biomarker secara tamper-proof',
+
+      // Product 3: Python SDK
       sdk_title: 'Neura Clinical Python SDK',
       sdk_desc: 'Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR) rumah sakit dengan mudah melalui API Python yang ringkas dan aman.',
-      cli_title: 'Neura Clinical CLI',
-      cli_desc: 'Antarmuka terminal berkecepatan tinggi untuk evaluasi massal ribuan data pasien, validasi matriks konfusi, dan pengujian model XGBoost langsung dari keyboard.',
-      blog_headline: 'Riset Klinis & Publikasi Terkini',
+
+      // Product 4: CLI
+      cli_title: 'Neura Specification',
+      cli_desc: 'Spesifikasi teknis dan benchmark klinis arsitektur Neura. Divalidasi dengan 32 biomarker neuro-kognitif, akurasi klasifikasi 94.42%, skor ROC-AUC 0.9329, serta latensi inferensi instan pada kohort rekam medis pasien.',
+
+      // Blog
+      blog_headline: 'Riset Klinis &amp; Publikasi Terkini',
       blog_see_all: 'Lihat Semua Riset',
-      bottom_headline: 'Mulai Deteksi Dini dengan Neura AI',
-      bottom_sub: 'Buka aplikasi web interaktif kami atau integrasikan SDK klinis langsung ke sistem rekam medis Anda.'
+      blog_card1_title: 'Validasi Akurasi 94.4% Model XGBoost pada Deteksi Dini Alzheimer',
+      blog_card2_title: 'Peran 32 Biomarker Kritis dalam Deteksi Risiko Demensia',
+      blog_card3_title: 'Mendeteksi Mild Cognitive Impairment Sebelum Gejala Klinis Akut',
+      blog_card4_title: 'AI Sebagai Rekan Analisis Bagi Dokter Spesialis Saraf',
+      blog_card5_title: 'Uji Validasi Multimodal pada 430 Rekam Medis Pasien',
+      blog_read_link: 'Baca riset',
+
+      // Updates / Newsletter
+      sync_title: 'Riset &amp; Publikasi Klinis Neura',
+      sync_sub: 'Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur AlzheimersXGBoost, serta telaah kasus kognitif langsung ke inbox Anda.',
+      sync_pill_all: 'Semua Riset',
+      sync_email_ph: 'Masukkan email institusi atau klinis Anda...',
+      sync_btn: 'Langganan Riset',
+      sync_consent: 'Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti langganan kapan saja.',
+
+      // Bottom CTA
+      bottom_headline: 'Mulai Deteksi Dini<br />dengan Neura AI<span class="blinking-google-cursor"></span>',
+      bottom_btn_white: 'Buka Neura Workspace',
+      bottom_btn_dark: 'Unduh Aplikasi Klinis',
+
+      // Footer
+      footer_desc: 'Infrastruktur kecerdasan buatan klinis untuk deteksi dini risiko Alzheimer dan neurodegenerasi berbasis 32 biomarker multimodal.',
+      footer_copy: '&copy; 2026 Neura Health AI. Hak Cipta Dilindungi.',
+      footer_tag: 'Model Machine Learning Tervalidasi Klinis',
+      footer_privacy: 'Kebijakan Privasi',
+      footer_terms: 'Syarat Layanan',
+      footer_sec: 'Keamanan Data'
     },
     EN: {
-      nav_products: 'Platform',
-      nav_usecases: 'Clinical Use Cases',
-      nav_pricing: 'Biomarkers',
-      nav_enterprise: 'Hospitals',
-      nav_resources: 'Research',
-      btn_download: 'Download',
+      // Announcement
+      announcement_pill: '✦ CLINICAL RESEARCH',
+      announcement_text: 'AlzheimersXGBoost model validated across 32 clinical biomarkers &bull; 94.4% Accuracy (ROC-AUC 0.933)',
+      announcement_link: 'Learn more &rarr;',
+
+      // Main Navigation
+      nav_about: 'About',
+      nav_pipeline: 'Pipeline',
+      nav_security: 'Security',
+      nav_specification: 'Specifications',
+      nav_workspace: 'Workspace',
+      nav_login: 'Log in',
       btn_consult: 'Start Diagnosis',
-      hero_headline: "Early Alzheimer's Detection Powered by 32 Clinical Biomarkers & AI",
-      hero_sub_btn: 'Open Neura Workspace ➔',
-      intro_btn: 'Diagnostic Demo ▶',
+
+      // Mobile Drawer
+      mobile_about: 'About Platform',
+      mobile_pipeline: 'Analysis Pipeline',
+      mobile_security: 'Data Security',
+      mobile_specification: 'Model Specifications',
+      mobile_workspace: 'Open Workspace',
+      mobile_login: 'Log in / Register &rarr;',
+      mobile_cta: 'Start Clinical Diagnosis &rarr;',
+
+      // Hero Section
+      hero_headline: "Detecting Alzheimer's<br>Earlier,<br>More Accurately.",
+      hero_lead: "Clinical artificial intelligence platform for early evaluation of Alzheimer's risk powered by 32 multimodal biomarkers, achieving 94.4% accuracy validated across 430 clinical records.",
+      hero_cta_btn: 'Start Clinical Diagnosis',
+      hero_sub_btn: 'Open Patient Workspace &rarr;',
+      hero_stats: '94.4% ACCURACY &bull; ROC-AUC 0.933 &bull; 32 CLINICAL BIOMARKERS &bull; &lt;1.2s INFERENCE',
+
+      // Statement (About)
       statement_eyebrow: 'ABOUT PLATFORM',
-      statement_p1: "Neura is a cutting-edge clinical artificial intelligence system designed to detect early indicators of <strong>Alzheimer's, Mild Cognitive Impairment (MCI)</strong>, and other neurodegenerative conditions from their earliest stages.",
+      statement_heading: 'Neura<br><span class="statement-heading-italic">Cognitive AI</span>',
+      statement_p1: "Neura is a cutting-edge clinical artificial intelligence system engineered to detect early indicators of <strong>Alzheimer's, Mild Cognitive Impairment (MCI)</strong>, and neurodegenerative disorders from their earliest stages.",
       statement_p2: 'Powered by high-throughput <strong>XGBoost</strong> machine learning architecture trained on comprehensive clinical biomarkers, Neura accurately maps memory impairment, executive function, and neurological risk factors with up to <strong>95.8%</strong> accuracy.',
-      statement_p3: 'Unlike expensive, time-consuming conventional screenings, Neura delivers structured diagnostic evaluations in under 1.2 seconds, directly from your browser.',
-      app_title: 'Neura Clinical App',
-      app_desc: "Your clinical mission control to evaluate patient records, track 32 neuro-cognitive biomarkers, and assess Alzheimer's risk probability in real time via an interactive UI.",
-      ide_title: 'Neura Diagnostic Studio',
-      ide_desc: 'An end-to-end clinical diagnostic studio for doctors and researchers. Equipped with a 32-biomarker calculator, ROC-AUC 93.3% precision curves, and structured cognitive decline timelines.',
+      statement_p3: 'Unlike expensive, slow conventional screenings, Neura delivers structured diagnostic evaluations in under 1.2 seconds, directly from your browser.',
+
+      // Product 1: Pipeline
+      pipeline_title: 'Neura Reasoning Pipeline',
+      pipeline_desc: 'Transparent cognitive reasoning workflow from raw data ingestion to clinical conclusions. Ingests 32 biomarkers, assesses risk correlations, processes raw clinical parameters, builds diagnostic narratives, and delivers high-precision insights.',
+      pipeline_step1_sub: '32 clinical biomarkers &amp; MMSE cognitive history loaded',
+      pipeline_step2_sub: 'Multivariate correlation &amp; clinical significance evaluation',
+      pipeline_step3_sub: 'XGBoost decision tree ensemble inference',
+      pipeline_step4_sub: 'Risk vector normalization &amp; threshold mapping',
+      pipeline_step5_sub: 'Medical explanation synthesis &amp; diagnostic rationalization',
+      pipeline_step6_sub: 'Diagnostic report, 94.4% risk score &amp; clinical recommendations published',
+
+      // Product 2: Security
+      security_title: 'Neura Data Security',
+      security_desc: 'Clinical-grade medical data protection with end-to-end AES-256 encryption. Guarantees patient record privacy, automated biomarker anonymization, and full compliance with HIPAA &amp; GDPR healthcare regulations.',
+      sec_heading: 'Zero-Knowledge Clinical Vault',
+      sec_caption: 'Patient records encrypted locally in browser memory before biomarker evaluation',
+      sec_feat1_title: 'HIPAA Safe Harbor De-Identification',
+      sec_feat1_desc: '18 patient identifiers (names, IDs, contacts) automatically stripped prior to inference',
+      sec_feat2_title: 'Local Browser Memory Sandbox',
+      sec_feat2_desc: 'Machine learning inference executes client-side in RAM with zero server data retention',
+      sec_feat3_title: 'Cryptographic SHA-256 Checksum',
+      sec_feat3_desc: 'Tamper-proof dataset integrity validation across all 32 clinical biomarkers',
+
+      // Product 3: Python SDK
       sdk_title: 'Neura Clinical Python SDK',
-      sdk_desc: "Integrate our XGBoost Alzheimer's detection pipeline seamlessly into hospital Electronic Health Record (EHR/EMR) systems with minimal Python code.",
-      cli_title: 'Neura Clinical CLI',
-      cli_desc: 'The high-throughput terminal engine for bulk patient evaluation, confusion matrix validation, and clinical model testing directly from your keyboard.',
-      blog_headline: 'Latest Clinical Research & Publications',
-      blog_see_all: 'View all research',
-      bottom_headline: "Experience Early Detection with Neura AI",
-      bottom_sub: "Launch our web workspace or deploy the clinical SDK directly into your neurological healthcare pipeline."
+      sdk_desc: "Integrate our XGBoost Alzheimer's detection pipeline seamlessly into hospital Electronic Health Record (EHR/EMR) systems with minimal, secure Python code.",
+
+      // Product 4: CLI
+      cli_title: 'Neura Specifications',
+      cli_desc: 'Technical specifications and clinical benchmarks of the Neura architecture. Validated with 32 neuro-cognitive biomarkers, 94.42% classification accuracy, 0.9329 ROC-AUC score, and instant inference latency across patient cohorts.',
+
+      // Blog
+      blog_headline: 'Clinical Research &amp; Latest Publications',
+      blog_see_all: 'View All Research',
+      blog_card1_title: "Validating 94.4% XGBoost Model Accuracy for Early Alzheimer's Detection",
+      blog_card2_title: 'The Role of 32 Critical Biomarkers in Dementia Risk Assessment',
+      blog_card3_title: 'Detecting Mild Cognitive Impairment Before Acute Clinical Manifestation',
+      blog_card4_title: 'AI as a Clinical Decision Support Partner for Neurologists',
+      blog_card5_title: 'Multimodal Validation Cohort Across 430 Patient Clinical Records',
+      blog_read_link: 'Read study',
+
+      // Updates / Newsletter
+      sync_title: 'Neura Clinical Research &amp; Dispatches',
+      sync_sub: 'Receive periodic updates on 32 biomarker evaluations, AlzheimersXGBoost architecture releases, and cognitive case reviews directly in your inbox.',
+      sync_pill_all: 'All Research',
+      sync_email_ph: 'Enter your institutional or clinical email...',
+      sync_btn: 'Subscribe to Research',
+      sync_consent: 'I agree to the <a href="/app">Privacy Policy</a> and medical data safeguards of Neura. Unsubscribe at any time.',
+
+      // Bottom CTA
+      bottom_headline: 'Experience Early Detection<br />with Neura AI<span class="blinking-google-cursor"></span>',
+      bottom_btn_white: 'Open Neura Workspace',
+      bottom_btn_dark: 'Download Clinical Suite',
+
+      // Footer
+      footer_desc: "Clinical AI infrastructure for early-stage Alzheimer's and neurodegenerative risk detection based on 32 multimodal biomarkers.",
+      footer_copy: '&copy; 2026 Neura Health AI. All Rights Reserved.',
+      footer_tag: 'Clinically Validated Machine Learning Architecture',
+      footer_privacy: 'Privacy Policy',
+      footer_terms: 'Terms of Service',
+      footer_sec: 'Data Security'
     }
   };
 
+  function setLanguage(lang) {
+    currentLang = lang === 'EN' ? 'EN' : 'ID';
+    try {
+      // Always write lowercase to stay in sync with app.js
+      localStorage.setItem('neura_lang', currentLang === 'EN' ? 'en' : 'id');
+    } catch (e) {
+      // LocalStorage access failsafe
+    }
+
+    // Update Language Toggle Button in Nav
+    if (langBtn) {
+      langBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>${currentLang}</span>`;
+      langBtn.setAttribute('title', currentLang === 'ID' ? 'Ganti Bahasa (Switch to English)' : 'Switch Language (Ganti ke Bahasa Indonesia)');
+      langBtn.classList.add('lang-switched');
+      setTimeout(() => langBtn.classList.remove('lang-switched'), 350);
+    }
+
+    // Update Footer language tag
+    document.querySelectorAll('.footer-lang-tag').forEach(tag => {
+      tag.textContent = currentLang;
+    });
+
+    // Translate all elements with data-i18n
+    const dict = translations[currentLang] || translations.ID;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) {
+        el.innerHTML = dict[key];
+      }
+    });
+
+    // Translate input placeholders
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const key = el.getAttribute('data-i18n-ph');
+      if (dict[key] !== undefined) {
+        el.setAttribute('placeholder', dict[key]);
+      }
+    });
+
+    // Update document language attribute
+    document.documentElement.lang = currentLang.toLowerCase();
+  }
+
+  // Initialize saved or default language
+  setLanguage(currentLang);
+
   if (langBtn) {
     langBtn.addEventListener('click', function () {
-      currentLang = currentLang === 'ID' ? 'EN' : 'ID';
-      langBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>${currentLang}</span>`;
-
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (translations[currentLang] && translations[currentLang][key]) {
-          el.innerHTML = translations[currentLang][key];
-        }
-      });
+      const nextLang = currentLang === 'ID' ? 'EN' : 'ID';
+      setLanguage(nextLang);
     });
   }
+
+  // Also hook up footer language tag
+  document.querySelectorAll('.footer-lang-tag').forEach(tag => {
+    tag.style.cursor = 'pointer';
+    tag.setAttribute('title', 'Ganti Bahasa / Switch Language');
+    tag.addEventListener('click', function () {
+      const nextLang = currentLang === 'ID' ? 'EN' : 'ID';
+      setLanguage(nextLang);
+    });
+  });
+
+  // Cross-tab sync: when app.js changes the language in another tab,
+  // welcome.js reflects it instantly via the storage event
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'neura_lang' && e.newValue) {
+      const incoming = e.newValue.toLowerCase() === 'en' ? 'EN' : 'ID';
+      if (incoming !== currentLang) setLanguage(incoming);
+    }
+  });
 
   // -------------------------------------------------------------------------
   // 5. Play Intro Interaction
