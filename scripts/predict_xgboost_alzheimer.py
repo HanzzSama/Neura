@@ -43,14 +43,26 @@ class AlzheimersPredictor:
         self.model = xgb.XGBClassifier()
         self.model.load_model(str(self.model_path))
 
-        # Load feature metadata
-        if self.metrics_path.exists():
+        # Load feature metadata (from trained model attributes or metrics file)
+        if hasattr(self.model, "feature_names_in_") and self.model.feature_names_in_ is not None:
+            self.feature_names = [str(col) for col in self.model.feature_names_in_]
+        elif self.metrics_path.exists():
             with open(self.metrics_path, "r", encoding="utf-8") as f:
                 self.metadata = json.load(f)
             self.feature_names = self.metadata.get("features", [])
         else:
             self.metadata = {}
             self.feature_names = []
+
+        if not self.feature_names:
+            self.feature_names = [
+                "Age", "Gender", "Ethnicity", "EducationLevel", "BMI",
+                "Smoking", "AlcoholConsumption", "PhysicalActivity", "DietQuality", "SleepQuality",
+                "FamilyHistoryAlzheimers", "CardiovascularDisease", "Diabetes", "Depression", "HeadInjury", "Hypertension",
+                "SystolicBP", "DiastolicBP", "CholesterolTotal", "CholesterolLDL", "CholesterolHDL", "CholesterolTriglycerides",
+                "MMSE", "FunctionalAssessment", "MemoryComplaints", "BehavioralProblems", "ADL",
+                "Confusion", "Disorientation", "PersonalityChanges", "DifficultyCompletingTasks", "Forgetfulness"
+            ]
 
     def predict_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
         """Run predictions on a pandas DataFrame."""

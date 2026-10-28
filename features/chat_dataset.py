@@ -700,6 +700,68 @@ CHAT_DATASET = {
                     )
                 }
             ]
+        },
+        {
+            "id": "model_002",
+            "topik": "Dataset Alzheimer dan 32 Biomarker Klinis",
+            "kata_kunci": [
+                "dataset alzheimer", "dataset apa yang digunakan", "sumber dataset", "32 biomarker",
+                "data latih", "data prediksi", "alzheimers_disease_data.csv", "variabel dataset"
+            ],
+            "tags": ["dataset", "biomarker", "32_fitur", "alzheimer_data"],
+            "suggestions": [
+                "Jalankan prediksi /predict",
+                "Isi data diri pasien /profile",
+                "Evaluasi performa /eval"
+            ],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Jelaskan mengenai Dataset Alzheimer yang digunakan oleh Neura AI."
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Neura AI dilatih menggunakan **Dataset Klinis Alzheimer Multimodal** (`alzheimers_disease_data.csv`) yang mencakup **2.149 pasien terverifikasi** dengan **32 biomarker klinis** komprehensif:\n\n"
+                        "1. **Demografi**: Usia (Age), Jenis Kelamin (Gender), Etnis, Tingkat Pendidikan.\n"
+                        "2. **Fungsi Kognitif & Mental**: MMSE (Mini-Mental State Exam 0–30), ADL (Aktivitas Harian 0–10), Functional Assessment, Memory Complaints, Behavioral Problems, Confusion, Disorientation, Forgetfulness.\n"
+                        "3. **Laboratorium & Tanda Vital**: Tekanan Darah Sistolik/Diastolik, Kolesterol Total, LDL, HDL, Trigliserida, Indeks Massa Tubuh (BMI).\n"
+                        "4. **Gaya Hidup & Riwayat**: Pola Makan (Diet Quality), Kualitas Tidur, Aktivitas Fisik, Merokok, Alkohol, Riwayat Keluarga Alzheimer, Kardiovaskular, Diabetes, Depresi, Cedera Kepala, Hipertensi.\n\n"
+                        "Anda dapat mengetik `/profile` untuk mengisi data diri klinis Anda, atau `/predict` untuk menjalankan inferensi prediktif nyata berbasis model XGBoost."
+                    )
+                }
+            ]
+        },
+        {
+            "id": "model_003",
+            "topik": "Data Diri dan Skrining Klinis Pasien",
+            "kata_kunci": [
+                "data diri", "profil pasien", "biodata", "isi data diri", "formulir data diri",
+                "/profile", "profil saya", "skrining data diri", "ubah data diri"
+            ],
+            "tags": ["data_diri", "profil", "skrining", "intake_form"],
+            "suggestions": [
+                "/profile",
+                "/predict",
+                "Perbedaan pikun biasa vs Alzheimer",
+                "/status"
+            ],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara memasukkan data diri dan melakukan skrining klinis?"
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Untuk melakukan skrining risiko kognitif Alzheimer yang **sepenuhnya personal dan berbasis data klinis nyata Anda** (tanpa data tiruan/dummy):\n\n"
+                        "1. Ketik perintah `/profile` untuk membuka formulir interaktif 16 langkah.\n"
+                        "2. Masukkan parameter demografi, gaya hidup, biomarker kesehatan (tekanan darah, kolesterol), serta skor kognitif (MMSE & kemandirian ADL).\n"
+                        "3. Setelah data diri tersimpan di browser Anda, jalankan perintah `/predict`.\n\n"
+                        "Model XGBoost Neura akan langsung menghitung estimasi probabilitas risiko dan menyajikan diagnosis komprehensif khusus untuk profil Anda."
+                    )
+                }
+            ]
         }
     ]
 }

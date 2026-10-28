@@ -585,6 +585,7 @@ const APP_TRANSLATIONS = {
     checking_model: 'Memeriksa model...',
     // ML command items
     cmd_status: 'Cek Status',
+    cmd_profile: 'Data Diri Pasien',
     cmd_train: 'Latih 5 Epoch',
     cmd_eval: 'Evaluasi Model',
     cmd_predict: 'Jalankan Prediksi',
@@ -625,6 +626,7 @@ const APP_TRANSLATIONS = {
     checking_model: 'Checking model...',
     // ML command items
     cmd_status: 'Check Status',
+    cmd_profile: 'Patient Profile',
     cmd_train: 'Train 5 Epochs',
     cmd_eval: 'Evaluate Model',
     cmd_predict: 'Run Prediction',
@@ -2165,30 +2167,30 @@ async function processMLInput(rawText, typingId, startTime) {
       main: 'Training...'
     });
     const data = await fetchJSON('/api/train', 'POST', { epochs });
-    await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
 
     if (data.error) {
       appendAssistantMessage(`<p style="color:var(--accent-red)">Training Error: ${escapeHtml(data.error)}</p>`, { stream: false });
     } else {
+      const runId = 'train_' + Date.now();
       appendAssistantMessage(`
         <h4>XGBoost Training Initialized</h4>
         <p>Executing gradient boosting training for <strong>${epochs} boosting rounds</strong> on <code>AlzheimersXGBoost</code> (datasets/alzheimers_disease_data.csv).</p>
-        <div class="terracotta-progress-wrap" id="live-progress-container">
+        <div class="terracotta-progress-wrap" id="${runId}_container">
           <div class="progress-meta-row">
-            <span id="optimization-status-text">Optimization Progress</span>
-            <span id="epoch-progress-counter">Round 0 / ${epochs}</span>
+            <span id="${runId}_status">Optimization Progress</span>
+            <span id="${runId}_counter">Round 0 / ${epochs}</span>
           </div>
           <div class="progress-bar-base">
-            <div class="progress-bar-fill" id="live-progress-fill" style="width: 0%"></div>
+            <div class="progress-bar-fill active" id="${runId}_fill" style="width: 0%"></div>
           </div>
-          <div class="progress-meta-sub" id="live-metrics-text" style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-muted);margin-top:7px;font-family:'JetBrains Mono',monospace">
+          <div class="progress-meta-sub" id="${runId}_meta" style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-muted);margin-top:7px;font-family:'JetBrains Mono',monospace">
             <span>Estimating tree gradients...</span>
             <span>0%</span>
           </div>
         </div>
       `, { stream: false });
-      startProgressPolling(epochs);
+      startProgressPolling(epochs, runId);
     }
 
   } else if (lower === '/eval' || lower.endsWith('/eval')) {
@@ -2205,12 +2207,40 @@ async function processMLInput(rawText, typingId, startTime) {
       renderEvaluationOutput(data);
     }
 
-  } else if (lower === '/predict' || lower.endsWith('/predict')) {
+  } else if (lower.startsWith('/predict') || lower.includes('/predict')) {
+    const isDatasetMode = lower.includes('dataset') || lower.includes('sample') || lower.includes('benchmark');
+    const profile = getUserProfile();
+
+    if (!isDatasetMode && (!profile || !profile.name)) {
+      // User has not filled their Data Diri yet
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      const formId = 'profile_form_' + Date.now();
+      appendAssistantMessage(`
+        <h4>Skrining Prediksi Risiko Alzheimer (XGBoost 32 Biomarker)</h4>
+        <p>Agar hasil prediksi klinis <strong>benar-benar akurat sesuai kondisi biologis Anda</strong> (bukan data tiruan/dummy), silakan lengkapi formulir <strong>Data Diri &amp; 32 Biomarker Klinis</strong> di bawah ini:</p>
+        ${renderProfileSlideCard(formId)}
+        <div style="margin-top:14px;padding:12px 16px;background:var(--bg-tertiary);border:1px solid var(--border-subtle);border-radius:10px;font-size:12.5px;color:var(--text-secondary);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <span>Ingin mencoba simulasi pada sampel pasien acak dari <strong>Dataset Alzheimer (2.149 Data)</strong>?</span>
+          <button type="button" class="claude-btn secondary" style="padding:5px 12px;font-size:12px;white-space:nowrap" onclick="submitCommand('/predict dataset')">Uji Dataset (2.149 Data)</button>
+        </div>
+      `, {
+        stream: false,
+        suggestions: ['/predict dataset', 'Konsultasi', '/status', '/help']
+      });
+      return;
+    }
+
+    const patientName = profile && profile.name ? profile.name : 'Dataset Sample';
     setDynamicIslandState('predicting', {
-      sub: 'Analyzing 32 clinical biomarkers \u2022 Alzheimer Inference',
+      sub: isDatasetMode
+        ? 'Analyzing dataset benchmark sample \u2022 32 Biomarkers'
+        : `Analyzing ${patientName}'s 32 biomarkers \u2022 Alzheimer Inference`,
       main: 'Diagnosing'
     });
-    const data = await fetchJSON('/api/predict', 'POST', {});
+
+    const payload = isDatasetMode ? { mode: 'dataset' } : { input: profile, source: 'user_profile' };
+    const data = await fetchJSON('/api/predict', 'POST', payload);
     await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
     if (data.error) {
@@ -3789,17 +3819,19 @@ function generateConversationalReply(text) {
 function renderHelpOutput() {
   appendAssistantMessage(`
     <h4>Available Commands</h4>
-    <p>Here are the interactive commands you can use to interact with the Alzheimer XGBoost engine:</p>
+    <p>Berikut adalah perintah interaktif untuk berinteraksi dengan engine deteksi Alzheimer XGBoost dan konsultasi klinis:</p>
     <table class="claude-table">
-      <tr><td><code>/status</code></td><td>Check Alzheimer XGBoost model readiness, 32 biomarkers, and accuracy metrics</td></tr>
-      <tr><td><code>/train [N]</code></td><td>Train the XGBoost model for N boosting rounds on datasets/alzheimers_disease_data.csv (e.g. <code>/train 50</code>)</td></tr>
-      <tr><td><code>/eval</code></td><td>Evaluate model performance (95.4% Accuracy, Precision, Recall, F1, ROC-AUC)</td></tr>
-      <tr><td><code>/predict</code></td><td>Run clinical Alzheimer diagnosis inference on a patient and inspect risk probabilities</td></tr>
-      <tr><td><code>/progress</code></td><td>Inspect real-time boosting iteration logs and logloss metrics</td></tr>
+      <tr><td><code>/status</code></td><td>Periksa kesiapan model XGBoost, 32 biomarker, dan metrik akurasi</td></tr>
+      <tr><td><code>/profile</code></td><td>Lengkapi atau perbarui formulir Data Diri &amp; 32 Biomarker Klinis pasien</td></tr>
+      <tr><td><code>/predict</code></td><td>Jalankan inferensi klinis Alzheimer (menggunakan Data Diri Anda atau dataset)</td></tr>
+      <tr><td><code>/predict dataset</code></td><td>Simulasikan inferensi pada data pasien acak dari Dataset Alzheimer (2.149 data)</td></tr>
+      <tr><td><code>/train [N]</code></td><td>Latih model XGBoost untuk N boosting rounds pada datasets/alzheimers_disease_data.csv</td></tr>
+      <tr><td><code>/eval</code></td><td>Evaluasi metrik medis model (95.4% Akurasi, Precision, Recall, F1, ROC-AUC)</td></tr>
+      <tr><td><code>/progress</code></td><td>Pantau log telemetri optimasi boosting iteratif secara realtime</td></tr>
       <tr><td><code>/intro</code></td><td>Tampilkan sapaan dan pengenalan Neura AI serta fitur konsultasi</td></tr>
       <tr><td><code>/voice</code></td><td>Buka Voice Room untuk konsultasi suara interaktif real-time</td></tr>
       <tr><td><code>/konsul</code></td><td>Mulai sesi konsultasi daya ingat atau formulir data diri pasien</td></tr>
-      <tr><td><code>/help</code></td><td>Display this interactive command guide</td></tr>
+      <tr><td><code>/help</code></td><td>Tampilkan panduan perintah lengkap ini</td></tr>
     </table>
   `);
 }
@@ -3894,10 +3926,36 @@ function renderPredictionOutput(data) {
   const rawProb = parseFloat(data.probability !== undefined ? data.probability : 50.0);
   const prob = detailedProb ? (isNaN(rawProb) ? '50.00' : rawProb.toFixed(2)) : (isNaN(rawProb) ? '50' : Math.round(rawProb));
   const markers = data.key_markers || {};
-  const patientId = data.patient_id || '#4751';
+  const isUserProfile = data.source === 'user_profile';
+  const patientDisplayName = data.patient_name || (isUserProfile ? 'Data Diri Pasien' : `Pasien #${data.patient_id}`);
+
+  const badgeHtml = isUserProfile
+    ? `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(50,205,100,0.12);color:var(--accent-green);border:1px solid rgba(50,205,100,0.28)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Data Diri Pasien Terverifikasi
+      </span>`
+    : `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.28)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Simulasi Dataset Alzheimer (2.149 Data)
+      </span>`;
+
+  const titleText = isUserProfile
+    ? `Skrining Klinis: ${escapeHtml(patientDisplayName)}`
+    : `Simulasi Pasien Dataset (${escapeHtml(String(patientDisplayName))})`;
+
+  const bmiText = markers.BMI ? `BMI: ${markers.BMI}` : '';
+  const bpText = (markers.SystolicBP && markers.DiastolicBP) ? `TD: ${markers.SystolicBP}/${markers.DiastolicBP} mmHg` : '';
+  const vitalsText = [bmiText, bpText].filter(Boolean).join(' &bull; ');
+
+  const suggestions = isUserProfile
+    ? ['Ubah data diri', 'Bagaimana cara mencegah Alzheimer?', 'Simulasikan pasien dataset /predict dataset', 'Konsultasi gaya hidup']
+    : ['Jalankan prediksi pada Data Diri saya', '/predict dataset', '/eval', 'Konsultasi'];
 
   appendAssistantMessage(`
-    <h4>Patient Clinical Diagnosis (${escapeHtml(String(patientId))})</h4>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+      <h4 style="margin:0">${titleText}</h4>
+      ${badgeHtml}
+    </div>
     <div class="claude-card">
       <div class="claude-stats-grid">
         <div class="stat-pill">
@@ -3935,12 +3993,20 @@ function renderPredictionOutput(data) {
           </div>
           <div class="biomarker-cell">
             <span class="biomarker-lbl">Demographics</span>
-            <strong class="biomarker-val">${markers.Age ?? 73} y.o. &bull; ${markers.Gender ?? 'Male'}</strong>
+            <strong class="biomarker-val">${markers.Age ?? 73} thn &bull; ${markers.Gender ?? 'Male'}</strong>
           </div>
+          ${vitalsText ? `
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Vitals &amp; Fisik</span>
+            <strong class="biomarker-val">${vitalsText}</strong>
+          </div>` : ''}
         </div>
       </div>
     </div>
-  `);
+  `, {
+    stream: false,
+    suggestions: suggestions
+  });
 }
 
 function renderProgressOutput(data) {
@@ -3978,67 +4044,100 @@ function renderProgressOutput(data) {
 // --------------------------------------------------------------------------
 // Training Polling Mechanism
 // --------------------------------------------------------------------------
-function startProgressPolling(totalEpochs) {
-  if (trainingPollInterval) clearInterval(trainingPollInterval);
+function startProgressPolling(totalEpochs, runId) {
+  if (trainingPollInterval) {
+    clearInterval(trainingPollInterval);
+    trainingPollInterval = null;
+  }
 
-  let lastCompleted = 0;
+  let renderedRound = 0;
+  let serverProgress = [];
+  let isServerDone = false;
+  let finalReport = null;
+
+  function applyRoundUI(roundNum, epData) {
+    const fill = document.getElementById(`${runId}_fill`);
+    const counter = document.getElementById(`${runId}_counter`);
+    const meta = document.getElementById(`${runId}_meta`);
+    const statusTitle = document.getElementById(`${runId}_status`);
+
+    const pct = Math.min(Math.round((roundNum / totalEpochs) * 100), 100);
+
+    if (fill) fill.style.width = pct + '%';
+    if (counter) counter.textContent = `Round ${roundNum} / ${totalEpochs}`;
+
+    if (epData && meta) {
+      meta.innerHTML = `
+        <span>Loss: <strong style="color:var(--accent-terracotta)">${epData.loss.toFixed(4)}</strong> &bull; Val Acc: <strong style="color:var(--accent-green)">${(epData.val_accuracy * 100).toFixed(1)}%</strong></span>
+        <span style="color:var(--text-secondary);font-weight:600">${pct}%</span>
+      `;
+    } else if (roundNum === 0 && meta) {
+      meta.innerHTML = `
+        <span>Splitting 2,149 patient records &bull; Initializing boosting rounds...</span>
+        <span style="color:var(--text-secondary)">0%</span>
+      `;
+    }
+
+    setDynamicIslandState('training', {
+      sub: epData ? `Round ${roundNum}/${totalEpochs} \u2022 Loss: ${epData.loss.toFixed(3)} \u2022 ${(epData.val_accuracy * 100).toFixed(0)}%` : `Round ${roundNum}/${totalEpochs} \u2022 Optimizing trees...`,
+      main: `Training (${pct}%)`
+    });
+  }
 
   trainingPollInterval = setInterval(async () => {
     try {
-      const data = await fetchJSON('/api/train/progress');
-      const progress = data.progress || [];
-      const completed = progress.length;
-      lastCompleted = Math.max(lastCompleted, completed);
-      const pct = Math.min(Math.round((lastCompleted / totalEpochs) * 100), 100);
-
-      const fill = document.getElementById('live-progress-fill');
-      const counter = document.getElementById('epoch-progress-counter');
-      const liveMeta = document.getElementById('live-metrics-text');
-      const statusTitle = document.getElementById('optimization-status-text');
-
-      if (fill) fill.style.width = pct + '%';
-      if (counter) counter.textContent = `Round ${lastCompleted} / ${totalEpochs}`;
-
-      const lastEp = progress[lastCompleted - 1];
-      if (lastEp && liveMeta) {
-        liveMeta.innerHTML = `
-          <span>Loss: <strong style="color:var(--accent-terracotta)">${lastEp.loss.toFixed(4)}</strong> &bull; Val Acc: <strong style="color:var(--accent-green)">${(lastEp.val_accuracy * 100).toFixed(1)}%</strong></span>
-          <span style="color:var(--text-secondary);font-weight:600">${pct}%</span>
-        `;
-      } else if (lastCompleted === 0 && liveMeta) {
-        liveMeta.innerHTML = `
-          <span>Splitting 2,149 patient records &bull; Initializing boosting rounds...</span>
-          <span style="color:var(--text-secondary)">0%</span>
-        `;
+      const data = await fetchJSON(`/api/train/progress?_t=${Date.now()}`);
+      if (data && Array.isArray(data.progress)) {
+        serverProgress = data.progress;
+      }
+      if (data && !data.running) {
+        isServerDone = true;
+        if (data.report) finalReport = data.report;
       }
 
-      setDynamicIslandState('training', {
-        sub: lastEp ? `Round ${lastCompleted}/${totalEpochs} \u2022 Loss: ${lastEp.loss.toFixed(3)} \u2022 ${(lastEp.val_accuracy * 100).toFixed(0)}%` : `Round ${lastCompleted}/${totalEpochs} \u2022 Optimizing trees...`,
-        main: `Training (${pct}%)`
-      });
+      // Stepwise catch-up: advance rendered round smoothly towards serverProgress.length
+      if (renderedRound < serverProgress.length) {
+        const step = Math.max(1, Math.min(2, Math.ceil((serverProgress.length - renderedRound) / 2)));
+        renderedRound = Math.min(renderedRound + step, serverProgress.length);
+        const epData = serverProgress[renderedRound - 1];
+        applyRoundUI(renderedRound, epData);
+      }
 
-      // When training finishes and all rounds are rendered
-      if (!data.running && lastCompleted >= progress.length) {
+      // When training finishes and frontend has rendered all rounds up to totalEpochs / serverProgress
+      if (isServerDone && (renderedRound >= totalEpochs || (serverProgress.length > 0 && renderedRound >= serverProgress.length))) {
         clearInterval(trainingPollInterval);
         trainingPollInterval = null;
 
-        if (fill) fill.style.width = '100%';
+        const fill = document.getElementById(`${runId}_fill`);
+        const counter = document.getElementById(`${runId}_counter`);
+        const meta = document.getElementById(`${runId}_meta`);
+        const statusTitle = document.getElementById(`${runId}_status`);
+
+        if (fill) {
+          fill.classList.remove('active');
+          fill.style.width = '100%';
+          fill.style.backgroundColor = 'var(--accent-green)';
+        }
         if (counter) counter.textContent = `Round ${totalEpochs} / ${totalEpochs}`;
-        if (statusTitle) statusTitle.textContent = 'Optimization Converged';
-        if (liveMeta) {
-          liveMeta.innerHTML = `<span style="color:var(--accent-green);font-weight:500">&check; All ${totalEpochs} boosting rounds converged</span><span style="color:var(--accent-green);font-weight:600">100%</span>`;
+        if (statusTitle) {
+          statusTitle.textContent = 'Optimization Converged';
+          statusTitle.style.color = 'var(--accent-green)';
+          statusTitle.style.fontWeight = '600';
+        }
+        if (meta) {
+          meta.innerHTML = `<span style="color:var(--accent-green);font-weight:600">&check; All ${totalEpochs} boosting rounds converged</span><span style="color:var(--accent-green);font-weight:700">100%</span>`;
         }
 
         fetchModelStatus(false);
         showToast('Model training completed successfully', 'success');
 
         setDynamicIslandState('ready', {
-          sub: data.report ? `Training Complete \u2022 Accuracy: ${(data.report.accuracy * 100).toFixed(1)}%` : 'Training Complete',
+          sub: finalReport ? `Training Complete \u2022 Accuracy: ${(finalReport.accuracy * 100).toFixed(1)}%` : 'Training Complete',
           main: 'Trained',
           keepTimer: true
         });
 
-        if (data.report) {
+        if (finalReport) {
           setTimeout(() => {
             appendAssistantMessage(`
               <h4>Training Session Completed</h4>
@@ -4050,15 +4149,15 @@ function startProgressPolling(totalEpochs) {
                   </div>
                   <div class="stat-pill">
                     <div class="stat-label">Test Accuracy</div>
-                    <div class="stat-val val-good">${(data.report.accuracy * 100).toFixed(1)}%</div>
+                    <div class="stat-val val-good">${(finalReport.accuracy * 100).toFixed(1)}%</div>
                   </div>
                   <div class="stat-pill">
                     <div class="stat-label">F1-Score</div>
-                    <div class="stat-val val-good">${(data.report.f1_score * 100).toFixed(1)}%</div>
+                    <div class="stat-val val-good">${(finalReport.f1_score * 100).toFixed(1)}%</div>
                   </div>
                   <div class="stat-pill">
                     <div class="stat-label">ROC-AUC</div>
-                    <div class="stat-val val-good">${(data.report.roc_auc * 100).toFixed(1)}%</div>
+                    <div class="stat-val val-good">${(finalReport.roc_auc * 100).toFixed(1)}%</div>
                   </div>
                 </div>
                 <p class="checkpoint-path-note">Checkpoint saved to <code>public/checkpoints/xgboost_alzheimers.json</code></p>
@@ -4070,7 +4169,7 @@ function startProgressPolling(totalEpochs) {
     } catch(err) {
       // Silent error during poll
     }
-  }, 120);
+  }, 100);
 }
 
 // --------------------------------------------------------------------------

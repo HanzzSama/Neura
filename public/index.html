@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=5.2" />
+  <link rel="stylesheet" href="/css/style.css?v=5.4" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=62" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
 
@@ -282,6 +282,14 @@
               <span data-i18n="cmd_status">Check Status</span>
               <span class="ml-tag">/status</span>
             </button>
+            <button class="ml-command-item" onclick="submitCommand('/profile')">
+              <span data-i18n="cmd_profile">Patient Profile</span>
+              <span class="ml-tag">/profile</span>
+            </button>
+            <button class="ml-command-item" onclick="submitCommand('/predict')">
+              <span data-i18n="cmd_predict">Run Prediction</span>
+              <span class="ml-tag">/predict</span>
+            </button>
             <button class="ml-command-item" onclick="submitCommand('/train 5')">
               <span data-i18n="cmd_train">Train 5 Epochs</span>
               <span class="ml-tag">/train 5</span>
@@ -289,10 +297,6 @@
             <button class="ml-command-item" onclick="submitCommand('/eval')">
               <span data-i18n="cmd_eval">Evaluate Model</span>
               <span class="ml-tag">/eval</span>
-            </button>
-            <button class="ml-command-item" onclick="submitCommand('/predict')">
-              <span data-i18n="cmd_predict">Run Prediction</span>
-              <span class="ml-tag">/predict</span>
             </button>
             <button class="ml-command-item" onclick="submitCommand('/progress')">
               <span data-i18n="cmd_progress">Live Progress</span>
@@ -302,7 +306,7 @@
               <span data-i18n="cmd_help">Command List</span>
               <span class="ml-tag">/help</span>
             </button>
-            <button class="ml-command-item" onclick="submitCommand('Pengenalan Neura AI')">
+            <button class="ml-command-item" onclick="submitCommand('/intro')">
               <span data-i18n="cmd_intro">Pengenalan Neura</span>
               <span class="ml-tag">/intro</span>
             </button>
@@ -1217,6 +1221,14 @@
                     <span>Check Status</span>
                     <span class="qm-tag">/status</span>
                   </button>
+                  <button type="button" class="qm-item" onclick="submitCommand('/profile');closeQuickMenu()">
+                    <span>Data Diri Pasien</span>
+                    <span class="qm-tag">/profile</span>
+                  </button>
+                  <button type="button" class="qm-item" onclick="submitCommand('/predict');closeQuickMenu()">
+                    <span>Run Prediction</span>
+                    <span class="qm-tag">/predict</span>
+                  </button>
                   <button type="button" class="qm-item" onclick="submitCommand('/train 5');closeQuickMenu()">
                     <span>Train 5 Epochs</span>
                     <span class="qm-tag">/train 5</span>
@@ -1224,10 +1236,6 @@
                   <button type="button" class="qm-item" onclick="submitCommand('/eval');closeQuickMenu()">
                     <span>Evaluate Model</span>
                     <span class="qm-tag">/eval</span>
-                  </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/predict');closeQuickMenu()">
-                    <span>Run Prediction</span>
-                    <span class="qm-tag">/predict</span>
                   </button>
                   <button type="button" class="qm-item" onclick="submitCommand('/progress');closeQuickMenu()">
                     <span>Live Progress</span>
@@ -1241,11 +1249,11 @@
                     <span>Voice Room</span>
                     <span class="qm-tag">/voice</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('Konsultasi');closeQuickMenu()">
+                  <button type="button" class="qm-item" onclick="submitCommand('/konsul');closeQuickMenu()">
                     <span>Konsultasi Klinis</span>
                     <span class="qm-tag">/konsul</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('Pengenalan Neura AI');closeQuickMenu()">
+                  <button type="button" class="qm-item" onclick="submitCommand('/intro');closeQuickMenu()">
                     <span>Pengenalan Neura</span>
                     <span class="qm-tag">/intro</span>
                   </button>
@@ -1383,7 +1391,7 @@
 
   <!-- External JavaScript -->
   <script src="/js/dynamic-island.js?v=59"></script>
-  <script src="/js/app.js?v=5.5"></script>
+  <script src="/js/app.js?v=5.7"></script>
   <script src="/js/voice-consultation.js?v=64"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 
