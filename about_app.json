@@ -1,0 +1,97 @@
+{
+  "_comment": "=== NEURA APP METADATA — Single Source of Truth ===",
+  "_comment2": "Edit file ini untuk mengubah versi, nama, deskripsi, dsb di semua halaman.",
+
+  "app": {
+    "name": "Neura AI",
+    "name_short": "Neura",
+    "version": "1.95.0",
+    "version_label": "v1.95",
+    "build_date": "2026-10-28",
+    "stage": "Beta",
+    "codename": "Iris",
+    "tagline": "Platform klinis AI untuk deteksi dini Alzheimer",
+    "description": "Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal dengan akurasi 94.4%.",
+    "description_long": "Platform AI klinis mutakhir untuk deteksi dini risiko penyakit Alzheimer berbasis 32 biomarker dan machine learning berakurasi tinggi.",
+    "logo_path": "/assets/neura_logo.jpg",
+    "url": "http://localhost:5000"
+  },
+
+  "model": {
+    "name": "AlzheimersXGBoost",
+    "version": "3.x",
+    "algorithm": "XGBoost Gradient Boosting",
+    "features": 32,
+    "accuracy": "94.4%",
+    "f1_score": "92.0%",
+    "roc_auc": "93.3%",
+    "dataset": "alzheimers_disease_data.csv",
+    "dataset_size": 2149,
+    "target": "Alzheimer's Disease Detection (Binary)"
+  },
+
+  "author": {
+    "name": "HanzzSama",
+    "email": "",
+    "github": "https://github.com/HanzzSama/Neura",
+    "organization": "Neura Health AI"
+  },
+
+  "legal": {
+    "copyright_year": "2026",
+    "copyright_holder": "Neura Health AI",
+    "license": "MIT",
+    "rights": "Hak Cipta Dilindungi."
+  },
+
+  "tech_stack": {
+    "backend": "Flask + Python",
+    "ml_framework": "XGBoost + scikit-learn",
+    "frontend": "Vanilla JS + CSS",
+    "auth": "Firebase Authentication",
+    "db": "Cloud Firestore",
+    "realtime": "LiveKit WebRTC"
+  },
+
+  "changelog": [
+    {
+      "version": "1.95.0",
+      "date": "2026-10-28",
+      "notes": [
+        "Live training progress bar dengan animasi per-round",
+        "Collapsible training epoch card (Selengkapnya/Ciutkan)",
+        "Isolasi runId per sesi training untuk multi-run support",
+        "Backend ML pre-warming untuk eliminasi cold-start latency",
+        "Shimmer animation progress bar saat training aktif"
+      ]
+    },
+    {
+      "version": "1.94.0",
+      "date": "2026-10-27",
+      "notes": [
+        "Integrasi prediksi berdasarkan data diri profil user",
+        "32-biomarker mapping ke fitur model XGBoost",
+        "Toast notification z-index fix (di atas semua overlay)",
+        "Prompt NLP diperbaiki sesuai dataset Alzheimer"
+      ]
+    },
+    {
+      "version": "1.93.0",
+      "date": "2026-10-26",
+      "notes": [
+        "Settings panel grouped subpanel navigation",
+        "Minimalis global scrollbar styling",
+        "Dynamic Island improvements"
+      ]
+    }
+  ],
+
+  "links": {
+    "app": "/app",
+    "welcome": "/",
+    "github": "https://github.com/HanzzSama/Neura",
+    "privacy": "/app",
+    "terms": "/app",
+    "security": "/app"
+  }
+}

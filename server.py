@@ -160,6 +160,36 @@ def api_firebase_config():
     })
 
 
+# -----------------------------------------------------------------------
+# API — About App (single source of truth from about_app.json)
+# -----------------------------------------------------------------------
+_about_cache = None
+
+@app.route("/api/about", methods=["GET"])
+def api_about():
+    """
+    Returns the full app metadata from about_app.json.
+    Cached in memory after first read — restart server to reload.
+    """
+    global _about_cache
+    if _about_cache is not None:
+        return jsonify(_about_cache)
+
+    about_path = Path("about_app.json")
+    if not about_path.exists():
+        return jsonify({"error": "about_app.json not found"}), 404
+
+    try:
+        with open(about_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Strip comment fields before sending to client
+        _about_cache = {k: v for k, v in data.items() if not k.startswith("_comment")}
+        return jsonify(_about_cache)
+    except Exception as e:
+        logger.error(f"[about] Failed to read about_app.json: {e}")
+        return jsonify({"error": "Failed to read about_app.json"}), 500
+
+
 @app.route("/api/send-verification-email", methods=["POST"])
 def api_send_verification_email():
     """

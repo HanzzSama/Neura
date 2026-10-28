@@ -645,11 +645,11 @@
                   </div>
                   <div class="menu-btn-text">
                     <div class="menu-btn-title" id="menu-title-about">Tentang</div>
-                    <div class="menu-btn-sub" id="menu-sub-about">Neura AI v2.5.1</div>
+                <div class="menu-btn-sub" id="menu-sub-about" data-about="app.tagline">Neura AI v2.5.1</div>
                   </div>
                 </div>
                 <div class="menu-btn-right">
-                  <span class="menu-btn-badge" id="menu-badge-about">v2.5.1</span>
+                  <span class="menu-btn-badge" id="menu-badge-about" data-about="app.version_label">v2.5.1</span>
                   <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 18 15 12 9 6"/>
                   </svg>
@@ -968,13 +968,105 @@
             <div class="settings-subpanel" id="subpanel-about">
               <div class="settings-section settings-section--about">
                 <div class="settings-section-title" id="stg-sec-about">Tentang</div>
+
+                <!-- Hero App Card -->
                 <div class="settings-about-card">
-                  <img src="/assets/neura_logo.jpg" alt="Neura" class="settings-about-logo" onerror="this.style.display='none'">
-                  <div class="settings-about-info">
-                    <div class="settings-about-name">Neura AI</div>
-                    <div class="settings-about-version">v2.5.1 — AlzheimersXGBoost</div>
-                    <div class="settings-about-desc" id="stg-about-desc">Platform klinis AI untuk deteksi dini Alzheimer berbasis 32 biomarker multimodal.</div>
+                  <div class="settings-about-logo-wrap">
+                    <img src="/assets/neura_logo.jpg" alt="Neura" class="settings-about-logo" onerror="this.parentElement.style.display='none'">
                   </div>
+                  <div class="settings-about-info">
+                    <div class="settings-about-header">
+                      <span class="settings-about-name" data-about="app.name">Neura AI</span>
+                      <span class="settings-about-stage-chip" data-about="app.stage">Beta</span>
+                    </div>
+                    <div class="settings-about-version">
+                      <span class="settings-about-badge" data-about="app.version_label">v1.95.0</span>
+                      <span class="settings-about-divider">&bull;</span>
+                      <span class="settings-about-model-tag" data-about="model.name">AlzheimersXGBoost</span>
+                    </div>
+                    <div class="settings-about-desc" id="stg-about-desc" data-about="app.description">Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal dengan akurasi 94.4%.</div>
+                  </div>
+                </div>
+
+                <!-- Meta Info Grid (2-column balanced grid to avoid awkward line wrapping) -->
+                <div class="settings-about-meta-grid">
+                  <div class="settings-about-meta-item">
+                    <div class="settings-about-meta-label">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      Versi
+                    </div>
+                    <div class="settings-about-meta-val" data-about="app.version">1.95.0</div>
+                  </div>
+                  <div class="settings-about-meta-item">
+                    <div class="settings-about-meta-label">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      Build
+                    </div>
+                    <div class="settings-about-meta-val" data-about="app.build_date">2026-10-28</div>
+                  </div>
+                  <div class="settings-about-meta-item">
+                    <div class="settings-about-meta-label">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                      Model AI
+                    </div>
+                    <div class="settings-about-meta-val" data-about="model.name" title="AlzheimersXGBoost">AlzheimersXGBoost</div>
+                  </div>
+                  <div class="settings-about-meta-item settings-about-meta-item--highlight">
+                    <div class="settings-about-meta-label">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      Akurasi
+                    </div>
+                    <div class="settings-about-meta-val settings-about-meta-val--acc" data-about="model.accuracy">94.4%</div>
+                  </div>
+                  <div class="settings-about-meta-item">
+                    <div class="settings-about-meta-label">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      Dataset
+                    </div>
+                    <div class="settings-about-meta-val" data-about="model.dataset_size">2,149</div>
+                  </div>
+                  <div class="settings-about-meta-item">
+                    <div class="settings-about-meta-label">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      Status
+                    </div>
+                    <div class="settings-about-meta-val"><span class="settings-status-indicator"></span><span data-about="app.stage">Beta</span></div>
+                  </div>
+                </div>
+
+                <!-- Changelog preview -->
+                <div class="settings-about-changelog" id="settings-changelog-list">
+                  <div class="settings-about-changelog-title">
+                    <div class="settings-about-changelog-title-left">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                      <span>Changelog</span>
+                    </div>
+                    <span class="settings-about-changelog-pill">Pembaruan</span>
+                  </div>
+                  <div class="settings-about-changelog-body" id="settings-changelog-body"></div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="settings-about-copy">
+                  &copy; <span data-about="legal.copyright_year">2026</span>
+                  <span data-about="legal.copyright_holder">Neura Health AI</span>.
+                  <span data-about="legal.rights">Hak Cipta Dilindungi.</span>
+                </div>
+
+                <!-- Quick Action Links -->
+                <div class="settings-about-links">
+                  <a href="#" data-about-href="links.github" class="settings-about-link-chip" onclick="window.NeuraAbout&&NeuraAbout.getValue('links.github').then(u=>{if(u)window.open(u,'_blank')}); return false;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                  </a>
+                  <a href="/app" data-about-href="links.privacy" class="settings-about-link-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span>Kebijakan Privasi</span>
+                  </a>
+                  <a href="/app" data-about-href="links.terms" class="settings-about-link-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>Syarat Layanan</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -1390,6 +1482,7 @@
   <div class="toast-box" id="toast-box"></div>
 
   <!-- External JavaScript -->
+  <script src="/js/about_app.js?v=1"></script>
   <script src="/js/dynamic-island.js?v=59"></script>
   <script src="/js/app.js?v=5.8"></script>
   <script src="/js/voice-consultation.js?v=64"></script>

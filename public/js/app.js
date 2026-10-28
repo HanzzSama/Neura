@@ -880,6 +880,33 @@ function openSettingsSubpanel(subpanelId, titleId, titleEn) {
 
   // Scroll subpanel pane to top
   if (pane) pane.scrollTop = 0;
+
+  // Render About panel data when subpanel-about is opened
+  if (subpanelId === 'subpanel-about' && window.NeuraAbout) {
+    window.NeuraAbout.get().then(function(data) {
+      if (!data) return;
+      // Re-populate data-about elements inside this subpanel
+      if (target) window.NeuraAbout.populate(target);
+      // Render changelog
+      const changelogBody = document.getElementById('settings-changelog-body');
+      if (changelogBody && Array.isArray(data.changelog) && data.changelog.length > 0) {
+        changelogBody.innerHTML = data.changelog.map(function(entry) {
+          var notes = Array.isArray(entry.notes)
+            ? entry.notes.map(function(n) {
+                return '<div class="settings-about-changelog-note">' + n + '</div>';
+              }).join('')
+            : '';
+          return '<div class="settings-about-changelog-entry">'
+            + '<div class="settings-about-changelog-ver">'
+            +   '<span class="settings-about-changelog-ver-badge">v' + entry.version + '</span>'
+            +   '<span class="settings-about-changelog-date">' + entry.date + '</span>'
+            + '</div>'
+            + notes
+            + '</div>';
+        }).join('');
+      }
+    });
+  }
 }
 
 function backToSettingsRoot() {
