@@ -28,6 +28,14 @@
   var verifyPane, verifyEmailDisplay, btnCheckVerified, btnResendVerification, btnCancelVerify, verifyStatusBannerText;
   var welcomePane, welcomeGreetingTitle, welcomeCountdown, btnGoToDashboard;
 
+  // Admin 2FA Elements & State
+  var adminVerifyPane, adminCustomEmailDisplay, adminRealEmailDisplay, adminOtpBoxesWrap, adminOtpDigits;
+  var adminFullOtp, adminOtpTimer, adminVerifyStatusBanner, adminVerifyStatusText;
+  var btnSubmitAdminOtp, btnResendAdminOtp, btnCancelAdminVerify;
+  var currentAdminEmail = '';
+  var currentAdminData = null;
+  var adminOtpTimerInterval = null;
+
   // Step Tracking State
   var activeVerificationUser = null;
   var activeVerificationName = '';
@@ -85,6 +93,20 @@
     welcomeGreetingTitle = document.getElementById('welcome-greeting-title');
     welcomeCountdown = document.getElementById('welcome-countdown');
     btnGoToDashboard = document.getElementById('btn-go-to-dashboard');
+
+    // Admin 2FA Elements
+    adminVerifyPane = document.getElementById('auth-admin-verify-pane');
+    adminCustomEmailDisplay = document.getElementById('admin-custom-email-display');
+    adminRealEmailDisplay = document.getElementById('admin-real-email-display');
+    adminOtpBoxesWrap = document.getElementById('admin-otp-boxes-wrap');
+    adminOtpDigits = document.querySelectorAll('.admin-otp-digit');
+    adminFullOtp = document.getElementById('admin-full-otp');
+    adminOtpTimer = document.getElementById('admin-otp-timer');
+    adminVerifyStatusBanner = document.getElementById('admin-verify-status-banner');
+    adminVerifyStatusText = document.getElementById('admin-verify-status-text');
+    btnSubmitAdminOtp = document.getElementById('btn-submit-admin-otp');
+    btnResendAdminOtp = document.getElementById('btn-resend-admin-otp');
+    btnCancelAdminVerify = document.getElementById('btn-cancel-admin-verify');
   }
 
   // Open the Auth Drawer with slide-in from right animation
@@ -105,11 +127,15 @@
 
     if (mode) switchTab(mode);
 
-    // Auto focus first field after entrance animation
+    // Auto focus first field after entrance animation & check email value
     setTimeout(function () {
+      var emailField = document.getElementById('login-email');
+      if (emailField && emailField.value) {
+        checkAdminEmailDynamically(emailField.value);
+      }
       var targetInput = (mode === 'register')
         ? document.getElementById('register-name')
-        : document.getElementById('login-email');
+        : emailField;
       if (targetInput) targetInput.focus();
     }, 320);
   }
@@ -119,6 +145,7 @@
     isAuthOpen = false;
     stopVerifyPolling();
     stopWelcomeCountdown();
+    stopAdminOtpTimer();
 
     if (authCard) {
       authCard.classList.remove('is-open');
@@ -149,6 +176,7 @@
     hideAlert();
     stopVerifyPolling();
     stopWelcomeCountdown();
+    stopAdminOtpTimer();
     isInOnboardingStep = false; // Reset guard saat kembali ke tab normal
 
     if (authCard) authCard.classList.remove('in-step-mode');
@@ -205,9 +233,11 @@
     stopVerifyPolling();
     hideAlert();
 
-    var displayName = customName || (user ? user.displayName : '') || 'Dokter';
+    var displayName = customName || (user ? user.displayName : '') || 'User';
+    var savedRole = localStorage.getItem('neura_user_role') || 'User';
+    var rolePrefix = savedRole === 'Nakes' ? 'dr. ' : (savedRole === 'Admin' ? 'Admin ' : '');
     if (welcomeGreetingTitle) {
-      welcomeGreetingTitle.textContent = 'Selamat Datang, dr. ' + displayName + '!';
+      welcomeGreetingTitle.textContent = 'Selamat Datang, ' + rolePrefix + displayName + '!';
     }
 
     if (authCard) authCard.classList.add('in-step-mode');
@@ -234,6 +264,440 @@
         window.location.href = '/app';
       }
     }, 1000);
+  }
+
+  var KNOWN_ADMIN_EMAILS = [
+    'hanzz@neura.dr.id',
+    'jkmaiden@neura.dr.id',
+    'muhammadhasan.cg@gmail.com',
+    'muhammadhasan.cg@neura.dr.id',
+    'maman@neura.dr.id',
+    'mychel09@neura.dr.id',
+    'jester19@neura.dr.id',
+    'tsaritsaanastasya@neura.dr.id'
+  ];
+  var KNOWN_ADMIN_DOMAINS = ['neura.dr.id'];
+  var adminCheckDebounceTimer = null;
+  var adminCheckSeq = 0;
+  var isAdminDetected = false;
+
+  // Preload daftar email admin dari backend untuk deteksi instan (0ms) tanpa latency
+  function loadAdminEmailsList() {
+    fetch('/api/admin/emails')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && Array.isArray(data.admin_emails)) {
+          KNOWN_ADMIN_EMAILS = data.admin_emails;
+        }
+        if (data && Array.isArray(data.admin_domains)) {
+          KNOWN_ADMIN_DOMAINS = data.admin_domains;
+        }
+        var cur = document.getElementById('login-email');
+        if (cur && cur.value) checkAdminEmailDynamically(cur.value);
+      })
+      .catch(function () {});
+  }
+
+  function isEmailAdmin(email) {
+    if (!email) return false;
+    var clean = email.trim().toLowerCase();
+    if (KNOWN_ADMIN_EMAILS.indexOf(clean) !== -1) return true;
+    for (var i = 0; i < KNOWN_ADMIN_DOMAINS.length; i++) {
+      var dom = '@' + KNOWN_ADMIN_DOMAINS[i];
+      if (clean.endsWith(dom)) return true;
+    }
+    return false;
+  }
+
+  function checkAdminEmailDynamically(email) {
+    // WAJIB: Batalkan timer sebelumnya di baris pertama agar request lama tidak menimpa saat mengetik cepat!
+    clearTimeout(adminCheckDebounceTimer);
+    var clean = (email || '').trim().toLowerCase();
+
+    if (!clean) {
+      setAdminModeUI(false);
+      return;
+    }
+
+    // 1. Cek Sinkron Instan (0ms): Langsung deteksi di browser tanpa jeda network!
+    if (isEmailAdmin(clean)) {
+      setAdminModeUI(true, clean);
+      return;
+    }
+
+    // 2. Debounced asynchronous check ke backend untuk email baru/dinamis
+    var currentSeq = ++adminCheckSeq;
+    if (clean.includes('@') && clean.includes('.')) {
+      adminCheckDebounceTimer = setTimeout(function () {
+        fetch('/api/admin/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: clean })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          // Guard: Hanya proses jika ini adalah request terbaru (mencegah race condition ketik cepat)
+          if (currentSeq !== adminCheckSeq) return;
+
+          if (data && data.is_admin) {
+            if (KNOWN_ADMIN_EMAILS.indexOf(clean) === -1) {
+              KNOWN_ADMIN_EMAILS.push(clean);
+            }
+            setAdminModeUI(true, clean, data.name);
+          } else {
+            setAdminModeUI(false);
+          }
+        })
+        .catch(function () {
+          if (currentSeq === adminCheckSeq) {
+            setAdminModeUI(false);
+          }
+        });
+      }, 150);
+    } else {
+      setAdminModeUI(false);
+    }
+  }
+
+  function setAdminModeUI(active, email, name) {
+    isAdminDetected = active;
+    var passPill = document.getElementById('login-password-pill');
+    var passInput = document.getElementById('login-password');
+    var notice = document.getElementById('admin-detected-notice');
+    var submitBtn = document.getElementById('login-submit-btn');
+    var descText = document.getElementById('comp1-desc-text');
+
+    if (active) {
+      if (passPill) passPill.classList.add('is-admin-mode');
+      if (passInput) {
+        passInput.disabled = true;
+        passInput.removeAttribute('required');
+        passInput.value = '';
+        passInput.placeholder = '🔒 2FA Aktif — Kata sandi tidak diperlukan';
+      }
+      if (notice) notice.style.display = 'flex';
+      if (submitBtn) {
+        var label = submitBtn.querySelector('.comp1-submit-label');
+        if (label) label.textContent = 'Verifikasi 2FA';
+        submitBtn.title = 'Lanjut ke Verifikasi Admin 2FA';
+      }
+      if (descText) {
+        descText.textContent = 'Akun Administrator terdeteksi. Autentikasi dua faktor (OTP) akan dikirimkan ke email terhubung Anda.';
+      }
+    } else {
+      if (passPill) passPill.classList.remove('is-admin-mode');
+      if (passInput) {
+        passInput.disabled = false;
+        passInput.setAttribute('required', '');
+        passInput.placeholder = 'password';
+      }
+      if (notice) notice.style.display = 'none';
+      if (submitBtn) {
+        var label = submitBtn.querySelector('.comp1-submit-label');
+        if (label) label.textContent = 'Log in';
+        submitBtn.title = 'Masuk ke Workspace';
+      }
+      if (descText) {
+        descText.textContent = 'Tidak semua keputusan klinis mudah, evaluasi 32 biomarker Neura hadir membantu ketepatan diagnosis presisi.';
+      }
+    }
+  }
+
+  // ─── ADMIN 2FA OTP FUNCTIONS ──────────────────────────────────────────
+  function stopAdminOtpTimer() {
+    if (adminOtpTimerInterval) {
+      clearInterval(adminOtpTimerInterval);
+      adminOtpTimerInterval = null;
+    }
+  }
+
+  function startAdminOtpTimer(durationSeconds) {
+    stopAdminOtpTimer();
+    var timeLeft = durationSeconds || 300;
+    function updateDisplay() {
+      var m = Math.floor(timeLeft / 60);
+      var s = timeLeft % 60;
+      var str = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+      if (adminOtpTimer) adminOtpTimer.textContent = '(' + str + ')';
+    }
+    updateDisplay();
+    adminOtpTimerInterval = setInterval(function () {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        stopAdminOtpTimer();
+        if (adminOtpTimer) adminOtpTimer.textContent = '(Kedaluwarsa)';
+        showAlert('Kode OTP telah kedaluwarsa. Silakan klik "Kirim ulang".', true);
+      } else {
+        updateDisplay();
+      }
+    }, 1000);
+  }
+
+  function showAdminVerifySlide(customEmail, name, maskedEmails, devOtp) {
+    isInOnboardingStep = true;
+    currentAdminEmail = customEmail;
+    hideAlert();
+
+    if (authCard) authCard.classList.add('in-step-mode');
+    if (sliderTrack) sliderTrack.className = 'auth-slider-track show-admin-verify';
+
+    if (adminCustomEmailDisplay) adminCustomEmailDisplay.textContent = customEmail;
+    if (adminRealEmailDisplay) {
+      var displayDest = Array.isArray(maskedEmails) ? maskedEmails.join(', ') : (maskedEmails || 'email terhubung');
+      adminRealEmailDisplay.textContent = displayDest;
+    }
+
+    // Reset OTP boxes container & status banner
+    var boxesWrap = document.getElementById('admin-otp-boxes-wrap');
+    if (boxesWrap) boxesWrap.className = 'admin-otp-boxes-wrap';
+
+    var statusBanner = document.getElementById('admin-verify-status-banner');
+    if (statusBanner) statusBanner.style.display = 'none';
+
+    if (btnSubmitAdminOtp) {
+      setButtonLoading(btnSubmitAdminOtp, false);
+      btnSubmitAdminOtp.classList.remove('is-verified-success');
+      var btnLabel = btnSubmitAdminOtp.querySelector('.auth-btn-text');
+      if (btnLabel) btnLabel.textContent = 'Verifikasi & Masuk sebagai Admin';
+    }
+
+    // Reset OTP input digits
+    if (adminOtpDigits) {
+      adminOtpDigits.forEach(function (input) {
+        input.value = '';
+        input.disabled = false;
+        input.classList.remove('is-filled', 'is-error');
+      });
+      setTimeout(function () {
+        if (adminOtpDigits[0]) adminOtpDigits[0].focus();
+      }, 350);
+    }
+    if (adminFullOtp) adminFullOtp.value = '';
+
+    startAdminOtpTimer(300);
+
+    // Jika dev_otp disediakan (misal SMTP dev/offline), beri tahu admin di UI
+    if (devOtp) {
+      showAlert(
+        '<strong>Mode Verifikasi Admin</strong><br>' +
+        'Kode OTP terkirim ke email Anda. (Dev OTP: <strong style="font-size:15px;letter-spacing:1px;color:#dc2626;">' + devOtp + '</strong>)',
+        false,
+        true
+      );
+    }
+  }
+
+  function initAdminOtpDigitInputs() {
+    if (!adminOtpDigits || !adminOtpDigits.length) return;
+
+    adminOtpDigits.forEach(function (input, index) {
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !input.value && index > 0) {
+          adminOtpDigits[index - 1].focus();
+        }
+      });
+
+      input.addEventListener('input', function () {
+        var val = input.value.replace(/[^0-9]/g, '');
+        input.value = val ? val[0] : '';
+        input.classList.remove('is-error');
+
+        if (input.value) {
+          input.classList.add('is-filled');
+        } else {
+          input.classList.remove('is-filled');
+        }
+
+        if (input.value && index < adminOtpDigits.length - 1) {
+          adminOtpDigits[index + 1].focus();
+        }
+
+        var full = '';
+        adminOtpDigits.forEach(function (d) { full += d.value; });
+        if (adminFullOtp) adminFullOtp.value = full;
+
+        // Auto login saat 6 digit terisi lengkap tanpa perlu klik tombol!
+        if (full.length === 6) {
+          handleAdminOtpVerification();
+        }
+      });
+
+      input.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var pasteData = (e.clipboardData || window.clipboardData).getData('text') || '';
+        var cleanDigits = pasteData.replace(/[^0-9]/g, '').slice(0, 6);
+        if (cleanDigits) {
+          for (var i = 0; i < adminOtpDigits.length; i++) {
+            adminOtpDigits[i].value = cleanDigits[i] || '';
+            adminOtpDigits[i].classList.remove('is-error');
+            if (cleanDigits[i]) {
+              adminOtpDigits[i].classList.add('is-filled');
+            } else {
+              adminOtpDigits[i].classList.remove('is-filled');
+            }
+          }
+          if (adminFullOtp) adminFullOtp.value = cleanDigits;
+          if (cleanDigits.length === 6) {
+            handleAdminOtpVerification();
+          } else {
+            var nextEmpty = Math.min(cleanDigits.length, adminOtpDigits.length - 1);
+            adminOtpDigits[nextEmpty].focus();
+          }
+        }
+      });
+    });
+  }
+
+  function handleAdminOtpVerification() {
+    var otp = '';
+    if (adminOtpDigits) {
+      adminOtpDigits.forEach(function (d) { otp += d.value; });
+    }
+    if (!otp || otp.length < 6) {
+      showAlert('Silakan masukkan 6 digit kode OTP verifikasi admin.', true);
+      return;
+    }
+
+    hideAlert();
+
+    var boxesWrap = document.getElementById('admin-otp-boxes-wrap');
+    var statusBanner = document.getElementById('admin-verify-status-banner');
+    var statusText = document.getElementById('admin-verify-status-text');
+
+    // 1. Mulai Animasi Verifikasi (Wave / Pulse pada kotak digit)
+    if (boxesWrap) {
+      boxesWrap.classList.remove('is-error', 'is-success');
+      boxesWrap.classList.add('is-verifying');
+    }
+    if (adminOtpDigits) {
+      adminOtpDigits.forEach(function (d) { d.disabled = true; });
+    }
+    if (statusBanner) {
+      statusBanner.className = 'verify-status-banner admin-status-banner is-verifying';
+      if (statusText) statusText.textContent = 'Memverifikasi kode OTP 2FA...';
+    }
+    setButtonLoading(btnSubmitAdminOtp, true);
+
+    fetch('/api/admin/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: currentAdminEmail,
+        otp: otp
+      })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data && data.success) {
+        // 2. Animasi Sukses: Kotak-kotak berubah hijau berkilau
+        if (boxesWrap) {
+          boxesWrap.classList.remove('is-verifying', 'is-error');
+          boxesWrap.classList.add('is-success');
+        }
+        if (statusBanner) {
+          statusBanner.className = 'verify-status-banner admin-status-banner is-success';
+          if (statusText) statusText.innerHTML = '&#10003;&nbsp; Kode OTP Valid! Mengalihkan ke Workspace...';
+        }
+        if (btnSubmitAdminOtp) {
+          setButtonLoading(btnSubmitAdminOtp, false);
+          btnSubmitAdminOtp.classList.add('is-verified-success');
+          var btnText = btnSubmitAdminOtp.querySelector('.auth-btn-text');
+          if (btnText) btnText.innerHTML = '&#10003; Terverifikasi!';
+        }
+
+        // 3. Auto login dengan delay animasi verify (1.2 detik)
+        setTimeout(function () {
+          stopAdminOtpTimer();
+          localStorage.setItem('neura_user_role', 'Admin');
+          localStorage.setItem('neura_admin_authenticated', 'true');
+          sessionStorage.setItem('neura_admin_session', 'true');
+          if (data && data.token) {
+            localStorage.setItem('neura_admin_token', data.token);
+            sessionStorage.setItem('neura_admin_token', data.token);
+          }
+
+          var adminName = (data.admin && data.admin.name) || (currentAdminData && currentAdminData.name) || 'Administrator';
+          var adminUser = {
+            uid: 'admin_' + Date.now(),
+            email: currentAdminEmail,
+            displayName: adminName,
+            role: 'Admin',
+            emailVerified: true
+          };
+          syncUserProfileToStorage(adminUser, adminName);
+
+          showWelcomeSlide(adminUser, adminName);
+        }, 1200);
+
+      } else {
+        // Error / OTP Salah
+        setButtonLoading(btnSubmitAdminOtp, false);
+        if (boxesWrap) {
+          boxesWrap.classList.remove('is-verifying');
+          boxesWrap.classList.add('is-error');
+        }
+        if (statusBanner) {
+          statusBanner.style.display = 'none';
+        }
+        showAlert(data.error || 'Verifikasi OTP gagal. Silakan periksa kembali kode Anda.', true);
+
+        setTimeout(function () {
+          if (boxesWrap) boxesWrap.classList.remove('is-error');
+          if (adminOtpDigits) {
+            adminOtpDigits.forEach(function (d) {
+              d.disabled = false;
+              d.value = '';
+              d.classList.remove('is-filled');
+            });
+            if (adminOtpDigits[0]) adminOtpDigits[0].focus();
+          }
+          if (adminFullOtp) adminFullOtp.value = '';
+        }, 500);
+      }
+    })
+    .catch(function (err) {
+      setButtonLoading(btnSubmitAdminOtp, false);
+      if (boxesWrap) boxesWrap.classList.remove('is-verifying');
+      if (adminOtpDigits) {
+        adminOtpDigits.forEach(function (d) { d.disabled = false; });
+      }
+      showAlert('Gagal menghubungi server: ' + err.message, true);
+    });
+  }
+
+  function handleAdminOtpResend() {
+    if (!currentAdminEmail) return;
+    setButtonLoading(btnResendAdminOtp, true);
+    fetch('/api/admin/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentAdminEmail })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      setButtonLoading(btnResendAdminOtp, false);
+      if (data && data.success) {
+        startAdminOtpTimer(300);
+        if (adminOtpDigits) {
+          adminOtpDigits.forEach(function (d) {
+            d.value = '';
+            d.classList.remove('is-error');
+          });
+          if (adminOtpDigits[0]) adminOtpDigits[0].focus();
+        }
+        var msg = 'Kode OTP baru telah dikirimkan ke email terhubung.';
+        if (data.dev_otp) {
+          msg += '<br>Dev OTP: <strong style="font-size:15px;color:#dc2626;">' + data.dev_otp + '</strong>';
+        }
+        showAlert(msg, false, Boolean(data.dev_otp));
+      } else {
+        showAlert(data.error || 'Gagal mengirim ulang OTP.', true);
+      }
+    })
+    .catch(function (err) {
+      setButtonLoading(btnResendAdminOtp, false);
+      showAlert('Gagal mengirim ulang OTP: ' + err.message, true);
+    });
   }
 
   function startVerifyPolling() {
@@ -374,9 +838,17 @@
   function showLoggedState(user) {
     if (!loggedView) return;
 
-    var displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Pengguna Klinis');
+    var displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
     var email = user.email || '';
-    var formattedName = displayName.startsWith('dr.') ? displayName : ('dr. ' + displayName.charAt(0).toUpperCase() + displayName.slice(1));
+    var savedRole = localStorage.getItem('neura_user_role') || 'User';
+    var formattedName = displayName;
+    if (savedRole === 'Nakes') {
+      formattedName = displayName.startsWith('dr.') ? displayName : ('dr. ' + displayName.charAt(0).toUpperCase() + displayName.slice(1));
+    } else if (savedRole === 'Admin') {
+      formattedName = displayName.startsWith('Admin') ? displayName : ('Admin ' + displayName.charAt(0).toUpperCase() + displayName.slice(1));
+    } else {
+      formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+    }
 
     if (loggedName) loggedName.textContent = formattedName;
     if (loggedEmail) loggedEmail.textContent = email;
@@ -733,51 +1205,149 @@
       });
     }
 
-    // 9. Email / Password Login
+    // 9. Email / Password Login (dengan Dukungan Email Custom Admin + 2FA)
     if (loginForm) {
+      // Pasang listener input realtime untuk deteksi instan email admin (semua event keyboard & clipboard)
+      var loginEmailInput = document.getElementById('login-email');
+      if (loginEmailInput) {
+        ['input', 'keyup', 'keydown', 'change', 'paste', 'cut', 'blur'].forEach(function (evt) {
+          loginEmailInput.addEventListener(evt, function () {
+            // Evaluasi instan langsung saat tombol ditekan
+            checkAdminEmailDynamically(loginEmailInput.value);
+          });
+        });
+      }
+
       loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
         hideAlert();
 
         var emailInput = document.getElementById('login-email');
         var passwordInput = document.getElementById('login-password');
-        var email = emailInput ? emailInput.value.trim() : '';
+        var email = emailInput ? emailInput.value.trim().toLowerCase() : '';
         var password = passwordInput ? passwordInput.value : '';
 
-        if (!email || !password) {
-          showAlert('Silakan isi email dan kata sandi Anda.', true);
+        if (!email) {
+          showAlert('Silakan isi email Anda.', true);
           return;
         }
 
-        var fb = window.NeuraFirebase;
-        var auth = fb ? fb.getAuth() : null;
-        var db = fb ? fb.getDb() : null;
+        var isLocalAdmin = Boolean(isAdminDetected || isEmailAdmin(email));
 
-        if (!auth || !fb.isConfigured()) {
-          handleDemoAuth(email, '', 'password');
+        // Jika BUKAN admin, maka password wajib diisi
+        if (!isLocalAdmin && !password) {
+          showAlert('Silakan isi kata sandi Anda.', true);
           return;
         }
 
         setButtonLoading(loginSubmitBtn, true);
-        auth.signInWithEmailAndPassword(email, password)
-          .then(function (result) {
-            setButtonLoading(loginSubmitBtn, false);
-            var user = result.user;
 
-            // Verifikasi Email Wajib untuk Keamanan Rekam Medis
-            if (!user.emailVerified) {
-              // Arahkan ke Slide Verifikasi
-              showVerifySlide(user, '', user.email);
-              return;
-            }
-
-            // Jika sudah terverifikasi, arahkan ke Slide Welcome
-            showWelcomeSlide(user, user.displayName);
+        // Jika terdeteksi admin secara lokal -> langsung kirim OTP tanpa buang waktu!
+        if (isLocalAdmin) {
+          fetch('/api/admin/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
           })
-          .catch(function (error) {
+          .then(function (res) { return res.json(); })
+          .then(function (otpResult) {
             setButtonLoading(loginSubmitBtn, false);
-            showAlert(translateFirebaseError(error), true);
+            if (otpResult && otpResult.success) {
+              currentAdminData = { name: 'Haidar Andrianno', custom_email: email };
+              showAdminVerifySlide(email, 'Haidar Andrianno', otpResult.masked_emails, otpResult.dev_otp);
+            } else {
+              showAlert(otpResult.error || 'Gagal mengirimkan kode OTP admin.', true);
+            }
+          })
+          .catch(function (err) {
+            setButtonLoading(loginSubmitBtn, false);
+            showAlert('Gagal mengirim kode OTP admin: ' + err.message, true);
           });
+          return;
+        }
+
+        // Cek ke server untuk admin lain yang belum ada di local list
+        fetch('/api/admin/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (checkResult) {
+          if (checkResult && checkResult.is_admin) {
+            fetch('/api/admin/send-otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: email })
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (otpResult) {
+              setButtonLoading(loginSubmitBtn, false);
+              if (otpResult && otpResult.success) {
+                currentAdminData = checkResult;
+                showAdminVerifySlide(email, checkResult.name, otpResult.masked_emails, otpResult.dev_otp);
+              } else {
+                showAlert(otpResult.error || 'Gagal mengirimkan kode OTP admin.', true);
+              }
+            })
+            .catch(function (err) {
+              setButtonLoading(loginSubmitBtn, false);
+              showAlert('Gagal mengirim kode OTP admin: ' + err.message, true);
+            });
+            return;
+          }
+
+          // Bukan admin -> Lanjutkan login normal pengguna/nakes via Firebase
+          var fb = window.NeuraFirebase;
+          var auth = fb ? fb.getAuth() : null;
+
+          if (!auth || !fb.isConfigured()) {
+            setButtonLoading(loginSubmitBtn, false);
+            handleDemoAuth(email, '', 'password');
+            return;
+          }
+
+          auth.signInWithEmailAndPassword(email, password)
+            .then(function (result) {
+              setButtonLoading(loginSubmitBtn, false);
+              var user = result.user;
+
+              if (!user.emailVerified) {
+                showVerifySlide(user, '', user.email);
+                return;
+              }
+              showWelcomeSlide(user, user.displayName);
+            })
+            .catch(function (error) {
+              setButtonLoading(loginSubmitBtn, false);
+              showAlert(translateFirebaseError(error), true);
+            });
+        })
+        .catch(function () {
+          var fb = window.NeuraFirebase;
+          var auth = fb ? fb.getAuth() : null;
+
+          if (!auth || !fb.isConfigured()) {
+            setButtonLoading(loginSubmitBtn, false);
+            handleDemoAuth(email, '', 'password');
+            return;
+          }
+
+          auth.signInWithEmailAndPassword(email, password)
+            .then(function (result) {
+              setButtonLoading(loginSubmitBtn, false);
+              var user = result.user;
+              if (!user.emailVerified) {
+                showVerifySlide(user, '', user.email);
+                return;
+              }
+              showWelcomeSlide(user, user.displayName);
+            })
+            .catch(function (error) {
+              setButtonLoading(loginSubmitBtn, false);
+              showAlert(translateFirebaseError(error), true);
+            });
+        });
       });
     }
 
@@ -920,6 +1490,28 @@
       });
     }
 
+    // Listener Card Verifikasi Admin (2FA OTP)
+    initAdminOtpDigitInputs();
+
+    if (btnSubmitAdminOtp) {
+      btnSubmitAdminOtp.addEventListener('click', function () {
+        handleAdminOtpVerification();
+      });
+    }
+
+    if (btnResendAdminOtp) {
+      btnResendAdminOtp.addEventListener('click', function () {
+        handleAdminOtpResend();
+      });
+    }
+
+    if (btnCancelAdminVerify) {
+      btnCancelAdminVerify.addEventListener('click', function () {
+        stopAdminOtpTimer();
+        switchTab('login');
+      });
+    }
+
     // 11. Logout (Ganti Akun / Keluar)
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function () {
@@ -936,6 +1528,9 @@
 
         localStorage.removeItem('neura_auth_user');
         localStorage.removeItem('neura_user_profile');
+        localStorage.removeItem('neura_user_role');
+        localStorage.removeItem('neura_admin_authenticated');
+        localStorage.removeItem('neura_admin_token');
         localStorage.removeItem('neura_active_session_id_v2');
         try { sessionStorage.clear(); } catch (e) {}
 
@@ -980,6 +1575,20 @@
               syncUserProfileToStorage(user);
               showLoggedState(user);
             } else {
+              // Cek apakah ada sesi admin yang sah sebelum me-reset UI ke unlogged
+              try {
+                var isAdmin = localStorage.getItem('neura_admin_authenticated') === 'true' ||
+                              sessionStorage.getItem('neura_admin_session') === 'true';
+                var cachedAdmin = localStorage.getItem('neura_auth_user');
+                if (isAdmin && cachedAdmin) {
+                  var parsedAdmin = JSON.parse(cachedAdmin);
+                  if (parsedAdmin && (parsedAdmin.role === 'Admin' || (parsedAdmin.email && parsedAdmin.email.toLowerCase().endsWith('@neura.dr.id')))) {
+                    showLoggedState(parsedAdmin);
+                    return;
+                  }
+                }
+              } catch (e) {}
+
               // Jika sedang di slide verify/welcome, jangan reset UI
               if (!isInOnboardingStep) {
                 showUnloggedState();
@@ -1036,6 +1645,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initElements();
     initComp3Date();
+    loadAdminEmailsList();
     bindEvents();
     monitorAuthState();
 
@@ -1122,6 +1732,20 @@
         }, 500);
 
       } else if (paramAuthRequired === 'true') {
+        // Cek dulu apakah sesi admin aktif: jika ya langsung redirect ke /app
+        try {
+          var isAdmin = localStorage.getItem('neura_admin_authenticated') === 'true' ||
+                        sessionStorage.getItem('neura_admin_session') === 'true';
+          var rawUser = localStorage.getItem('neura_auth_user');
+          if (isAdmin && rawUser) {
+            var parsed = JSON.parse(rawUser);
+            if (parsed && (parsed.role === 'Admin' || (parsed.email && parsed.email.toLowerCase().endsWith('@neura.dr.id')))) {
+              window.location.replace('/app');
+              return;
+            }
+          }
+        } catch (e) {}
+
         // Sebelum buka drawer, cek apakah user sudah login & verified
         // Jika ya → langsung redirect ke /app
         if (window.NeuraFirebase) {

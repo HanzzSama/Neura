@@ -311,7 +311,7 @@
 
 .auth-slider-track {
   display: flex;
-  width: 400%;
+  width: 500%;
   transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
@@ -321,21 +321,25 @@
 }
 
 .auth-slider-track.show-register {
-  transform: translateX(-25%);
+  transform: translateX(-20%);
 }
 
 .auth-slider-track.show-verify {
-  transform: translateX(-50%);
+  transform: translateX(-40%);
+}
+
+.auth-slider-track.show-admin-verify {
+  transform: translateX(-60%);
 }
 
 .auth-slider-track.show-welcome {
-  transform: translateX(-75%);
+  transform: translateX(-80%);
 }
 
 .auth-pane {
-  width: 25%;
-  max-width: 25%;
-  flex: 0 0 25%;
+  width: 20%;
+  max-width: 20%;
+  flex: 0 0 20%;
   box-sizing: border-box;
   padding: 2px 2px;
   min-width: 0;
@@ -1111,6 +1115,19 @@
   color: #16a34a;
 }
 
+.step-icon-admin-2fa {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.step-ring-admin {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px dashed rgba(220, 38, 38, 0.45);
+  animation: authSpin 14s linear infinite;
+}
+
 .step-icon-svg {
   width: 24px;
   height: 24px;
@@ -1136,6 +1153,12 @@
   border-color: rgba(34, 197, 94, 0.2);
 }
 
+.step-badge-pill.pill-admin-security {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
 .step-pulse-dot {
   width: 5px;
   height: 5px;
@@ -1148,6 +1171,405 @@
   background: #16a34a;
   box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
 }
+
+.step-pulse-dot.dot-admin {
+  background: #dc2626;
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.7);
+}
+
+/* Admin Detected Dynamic Feedback */
+.admin-detected-notice {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: var(--radius-pill, 9999px);
+  padding: 5px 12px;
+  margin: -2px 0 3px;
+  animation: authAlertIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-theme="dark"] .admin-detected-notice {
+  background: rgba(220, 38, 38, 0.16);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.admin-notice-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #dc2626;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.8);
+  animation: authPulse 1.6s ease-in-out infinite;
+}
+
+/* Password Pill in Admin Mode (Disabled & Bypassed for 2FA) */
+.comp-input-pill.is-admin-mode {
+  background: rgba(220, 38, 38, 0.04) !important;
+  border: 1px dashed rgba(220, 38, 38, 0.38) !important;
+  cursor: not-allowed;
+  opacity: 0.92;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] .comp-input-pill.is-admin-mode {
+  background: rgba(220, 38, 38, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+.comp-input-pill.is-admin-mode .comp-pill-input {
+  color: #dc2626 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  cursor: not-allowed;
+}
+
+.comp-input-pill.is-admin-mode .comp-input-badge {
+  color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.12) !important;
+}
+
+.comp-input-pill.is-admin-mode .comp-input-action-btn,
+.comp-input-pill.is-admin-mode .comp-eye-btn {
+  display: none !important;
+}
+
+/* Admin 2FA OTP Specific Elements */
+.admin-card-handle {
+  width: 38px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.16);
+  margin: 2px auto 16px;
+  transition: background 0.2s ease;
+}
+
+[data-theme="dark"] .admin-card-handle {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.admin-verify-heading {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-text, #1F1E1D);
+  margin: 0 0 6px;
+  line-height: 1.25;
+}
+
+[data-theme="dark"] .admin-verify-heading {
+  color: #FFFFFF;
+}
+
+.admin-verify-sub {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted, #63615A);
+  margin: 0 0 20px;
+  max-width: 330px;
+}
+
+[data-theme="dark"] .admin-verify-sub {
+  color: #A3A099;
+}
+
+.admin-dest-highlight {
+  color: var(--color-text, #1F1E1D);
+  font-weight: 600;
+  word-break: break-all;
+}
+
+[data-theme="dark"] .admin-dest-highlight {
+  color: #F4F2EB;
+}
+
+.admin-auto-verify-note {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--color-text-subtle, #9B9890);
+}
+
+[data-theme="dark"] .admin-auto-verify-note {
+  color: #78756E;
+}
+
+/* Kotak-Kotak Digit 2FA (Sleek Squircle Cards Matching Reference Design) */
+.admin-otp-boxes-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-otp-digit {
+  width: 44px;
+  height: 54px;
+  border-radius: 14px;
+  border: 1.5px solid #EAE6DC;
+  background: #F8F6F1;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  color: #1F1E1D;
+  font-family: var(--font-sans, 'Inter', -apple-system, sans-serif);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .admin-otp-digit {
+  background: #18181B;
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Focused / Active Digit Box - Signature Terracotta Red Accent from Reference Image */
+.admin-otp-digit:focus {
+  border-color: #D97757 !important;
+  box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.22) !important;
+  background: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .admin-otp-digit:focus {
+  border-color: #E05A47 !important;
+  box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.3) !important;
+  background: #21201D;
+  transform: translateY(-1px);
+}
+
+.admin-otp-digit.is-filled {
+  border-color: rgba(217, 119, 87, 0.55);
+  background: #FAF8F5;
+  color: #1F1E1D;
+}
+
+[data-theme="dark"] .admin-otp-digit.is-filled {
+  background: #22201D;
+  border-color: rgba(224, 90, 71, 0.6);
+  color: #FFFFFF;
+}
+
+/* Animasi Verifikasi (Auto-Check Pulse) */
+.admin-otp-boxes-wrap.is-verifying .admin-otp-digit {
+  pointer-events: none;
+  border-color: #D97757 !important;
+  color: #D97757;
+  background: rgba(217, 119, 87, 0.08) !important;
+  animation: otpPulse 0.8s ease-in-out infinite alternate;
+}
+
+[data-theme="dark"] .admin-otp-boxes-wrap.is-verifying .admin-otp-digit {
+  border-color: #E05A47 !important;
+  color: #E05A47;
+  background: rgba(224, 90, 71, 0.12) !important;
+}
+
+@keyframes otpPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(217, 119, 87, 0); }
+  100% { transform: scale(1.03); box-shadow: 0 0 10px rgba(217, 119, 87, 0.35); }
+}
+
+/* Animasi Sukses Verifikasi */
+.admin-otp-boxes-wrap.is-success .admin-otp-digit {
+  border-color: #22C55E !important;
+  background: rgba(34, 197, 94, 0.12) !important;
+  color: #16A34A !important;
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.35) !important;
+}
+
+[data-theme="dark"] .admin-otp-boxes-wrap.is-success .admin-otp-digit {
+  border-color: #4ADE80 !important;
+  background: rgba(74, 222, 128, 0.15) !important;
+  color: #4ADE80 !important;
+  box-shadow: 0 0 14px rgba(74, 222, 128, 0.4) !important;
+}
+
+/* Animasi Error Shake */
+.admin-otp-boxes-wrap.is-error {
+  animation: otpShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.admin-otp-boxes-wrap.is-error .admin-otp-digit {
+  border-color: #EF4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #EF4444 !important;
+}
+
+@keyframes otpShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Status Banner saat verifikasi */
+.admin-status-banner.is-verifying {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(217, 119, 87, 0.1);
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  border-radius: var(--radius-pill, 9999px);
+  padding: 6px 14px;
+  color: #D97757;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 auto 16px;
+}
+
+.admin-status-banner.is-success {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  border-radius: var(--radius-pill, 9999px);
+  padding: 6px 14px;
+  color: #16A34A;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 auto 16px;
+  animation: authAlertIn 0.3s ease both;
+}
+
+[data-theme="dark"] .admin-status-banner.is-success {
+  color: #4ADE80;
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+/* Footer Action Links Matching Screenshot */
+.admin-verify-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2px;
+  width: 100%;
+}
+
+.admin-resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted, #63615A);
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+[data-theme="dark"] .admin-resend-row {
+  color: #A3A099;
+}
+
+.admin-link-action {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, #1F1E1D);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-family: inherit;
+  transition: color 0.16s ease;
+}
+
+[data-theme="dark"] .admin-link-action {
+  color: #FFFFFF;
+}
+
+.admin-link-action:hover {
+  color: var(--accent-primary, #D97757);
+}
+
+.admin-timer-countdown {
+  font-size: 12px;
+  font-family: var(--font-code, 'JetBrains Mono', monospace);
+  color: var(--color-text-subtle, #9B9890);
+  font-weight: 500;
+  padding-left: 2px;
+}
+
+[data-theme="dark"] .admin-timer-countdown {
+  color: #78756E;
+}
+
+.admin-back-action {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text-muted, #63615A);
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: all 0.16s ease;
+}
+
+[data-theme="dark"] .admin-back-action {
+  color: #A3A099;
+}
+
+.admin-back-action:hover {
+  color: var(--color-text, #1F1E1D);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .admin-back-action:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 360px) {
+  .admin-otp-digit {
+    width: 38px;
+    height: 48px;
+    font-size: 20px;
+    border-radius: 11px;
+  }
+  .admin-otp-boxes-wrap {
+    gap: 5px;
+  }
+}
+
+.btn-admin-verify {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35) !important;
+}
+
+.btn-admin-verify.is-verified-success {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  border-color: #15803d !important;
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.4) !important;
+}
+
+.btn-admin-verify:hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.45) !important;
+  transform: translateY(-1px);
+}
+
 
 .step-title {
   font-size: 18px;

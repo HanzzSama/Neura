@@ -329,7 +329,7 @@
             <div class="user-avatar-circle" id="sidebar-user-avatar">H</div>
             <div class="user-text-meta">
               <div class="user-meta-name" id="sidebar-user-name">Hanzz</div>
-              <div class="user-meta-role" id="sidebar-user-role" data-i18n="user_role">Dokter / Peneliti</div>
+              <div class="user-meta-role" id="sidebar-user-role" data-i18n="user_role" data-role="user">User</div>
             </div>
           </div>
           <div class="user-profile-actions">
@@ -581,7 +581,7 @@
                   </div>
                   <div class="menu-btn-text">
                     <div class="menu-btn-title" id="menu-title-profile">Profil</div>
-                    <div class="menu-btn-sub" id="menu-sub-profile">Akun &amp; role dokter/peneliti</div>
+                    <div class="menu-btn-sub" id="menu-sub-profile">Akun &amp; peran (User, Admin, Nakes)</div>
                   </div>
                 </div>
                 <div class="menu-btn-right">
@@ -884,17 +884,15 @@
                   </div>
                 </div>
 
-                <div class="settings-row">
+                <div class="settings-row" id="stg-role-row" style="display:none;">
                   <div class="settings-row-info">
-                    <div class="settings-row-label" id="stg-role-label">Role</div>
-                    <div class="settings-row-desc" id="stg-role-desc">Jabatan yang ditampilkan di sidebar</div>
+                    <div class="settings-row-label" id="stg-role-label">Peran Stakeholder</div>
+                    <div class="settings-row-desc" id="stg-role-desc">Pilih peran stakeholder Anda dalam sistem</div>
                   </div>
                   <select class="settings-select" id="stg-role-select" onchange="applySettingsRole(this.value)">
-                    <option value="Dokter / Peneliti">Dokter / Peneliti</option>
-                    <option value="Mahasiswa">Mahasiswa</option>
-                    <option value="Peneliti">Peneliti</option>
-                    <option value="Klinisi">Klinisi</option>
-                    <option value="Developer">Developer</option>
+                    <option value="User">User (Pengguna Umum)</option>
+                    <option value="Nakes">Nakes (Tenaga Kesehatan)</option>
+                    <option value="Admin">Admin (Administrator)</option>
                   </select>
                 </div>
               </div>

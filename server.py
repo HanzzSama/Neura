@@ -164,26 +164,30 @@ def api_firebase_config():
 # API — About App (single source of truth from about_app.json)
 # -----------------------------------------------------------------------
 _about_cache = None
+_about_cache_mtime = 0
 
 @app.route("/api/about", methods=["GET"])
 def api_about():
     """
     Returns the full app metadata from about_app.json.
-    Cached in memory after first read — restart server to reload.
+    Auto-reloads whenever about_app.json is modified on disk.
     """
-    global _about_cache
-    if _about_cache is not None:
-        return jsonify(_about_cache)
+    global _about_cache, _about_cache_mtime
 
     about_path = Path("about_app.json")
     if not about_path.exists():
         return jsonify({"error": "about_app.json not found"}), 404
 
     try:
+        current_mtime = about_path.stat().st_mtime
+        if _about_cache is not None and current_mtime == _about_cache_mtime:
+            return jsonify(_about_cache)
+
         with open(about_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         # Strip comment fields before sending to client
         _about_cache = {k: v for k, v in data.items() if not k.startswith("_comment")}
+        _about_cache_mtime = current_mtime
         return jsonify(_about_cache)
     except Exception as e:
         logger.error(f"[about] Failed to read about_app.json: {e}")
@@ -240,6 +244,216 @@ def api_send_verification_email():
     result = send_verification_email(email, display_name, verify_link)
     status_code = 200 if result["success"] else 500
     return jsonify(result), status_code
+
+
+# -----------------------------------------------------------------------
+# API — Admin Custom Email & 2FA OTP Authentication
+# -----------------------------------------------------------------------
+_admin_otp_store = {}  # { email: { "otp": str, "expires_at": float, "attempts": int } }
+_admin_sessions = {}   # { token: { "email": str, "name": str, "role": str, "created_at": float } }
+
+@app.route("/api/admin/emails", methods=["GET"])
+def api_admin_emails():
+    """Daftar email custom admin terdaftar untuk deteksi instan (0ms) di browser."""
+    from core.admin_config import get_all_admin_custom_emails
+    return jsonify({
+        "admin_emails": get_all_admin_custom_emails(),
+        "admin_domains": ["neura.dr.id"]
+    })
+
+
+@app.route("/api/admin/check-email", methods=["POST"])
+def api_admin_check_email():
+    """
+    Periksa apakah email yang dimasukkan adalah email custom admin (contoh: hanzz@neura.dr.id).
+    """
+    from core.admin_config import get_admin_by_custom_email, mask_email
+
+    body = request.get_json(silent=True) or {}
+    email = (body.get("email") or "").strip().lower()
+
+    admin = get_admin_by_custom_email(email)
+    if not admin:
+        return jsonify({"is_admin": False})
+
+    real_emails = admin.get("real_emails", [])
+    masked = [mask_email(e) for e in real_emails]
+
+    return jsonify({
+        "is_admin": True,
+        "custom_email": email,
+        "name": admin.get("name", "Administrator"),
+        "role": admin.get("role", "Admin"),
+        "masked_emails": masked,
+        "real_emails_count": len(real_emails)
+    })
+
+
+@app.route("/api/admin/send-otp", methods=["POST"])
+def api_admin_send_otp():
+    """
+    Generate kode OTP 6-digit dan kirim ke seluruh alamat email asli yang ada dalam array.
+    """
+    import time
+    import random
+    from core.admin_config import get_admin_by_custom_email, mask_email
+    from core.email_sender import send_admin_otp_email, is_smtp_configured
+
+    body = request.get_json(silent=True) or {}
+    email = (body.get("email") or "").strip().lower()
+
+    admin = get_admin_by_custom_email(email)
+    if not admin:
+        return jsonify({"success": False, "error": "Email bukan merupakan akun admin terdaftar."}), 404
+
+    real_emails = admin.get("real_emails", [])
+    if not real_emails:
+        return jsonify({"success": False, "error": "Tidak ada email asli terhubung untuk admin ini."}), 400
+
+    # Generate 6-digit OTP
+    otp_code = f"{random.randint(100000, 999999):06d}"
+    expires_at = time.time() + 300  # 5 menit
+
+    _admin_otp_store[email] = {
+        "otp": otp_code,
+        "expires_at": expires_at,
+        "attempts": 0
+    }
+
+    # Kirim email ke semua email dalam array real_emails
+    send_result = send_admin_otp_email(
+        to_emails=real_emails,
+        admin_name=admin.get("name", "Administrator"),
+        otp_code=otp_code,
+        custom_email=email
+    )
+
+    logger.info(f"[Admin OTP] Generated OTP {otp_code} for admin {email} (dest: {real_emails})")
+
+    masked_list = [mask_email(e) for e in real_emails]
+    smtp_ok = bool(send_result.get("success", False))
+
+    response_data = {
+        "success": True,
+        "message": f"Kode OTP telah dikirimkan ke email terhubung.",
+        "custom_email": email,
+        "masked_emails": masked_list,
+        "smtp_sent": smtp_ok,
+        "expires_in_seconds": 300
+    }
+
+    # Jika SMTP belum disiapkan di .env atau gagal di local dev, sertakan dev_otp agar pengujian tidak terblokir
+    if not smtp_ok or not is_smtp_configured():
+        response_data["dev_otp"] = otp_code
+        response_data["dev_note"] = "SMTP belum dikonfigurasi di .env; kode OTP disimulasikan untuk kemudahan pengujian lokal."
+
+    return jsonify(response_data)
+
+
+@app.route("/api/admin/verify-otp", methods=["POST"])
+def api_admin_verify_otp():
+    """
+    Verifikasi kode OTP yang dimasukkan oleh admin di card Verify Admin.
+    """
+    import time
+    from core.admin_config import get_admin_by_custom_email
+
+    body = request.get_json(silent=True) or {}
+    email = (body.get("email") or "").strip().lower()
+    input_otp = str(body.get("otp") or "").strip()
+
+    admin = get_admin_by_custom_email(email)
+    if not admin:
+        return jsonify({"success": False, "error": "Email bukan akun admin terdaftar."}), 404
+
+    record = _admin_otp_store.get(email)
+    if not record:
+        return jsonify({"success": False, "error": "Kode OTP belum diminta atau sudah kedaluwarsa. Silakan minta kode baru."}), 400
+
+    now = time.time()
+    if now > record["expires_at"]:
+        _admin_otp_store.pop(email, None)
+        return jsonify({"success": False, "error": "Kode OTP telah kedaluwarsa (lebih dari 5 menit). Silakan minta kode baru."}), 400
+
+    if record["attempts"] >= 5:
+        _admin_otp_store.pop(email, None)
+        return jsonify({"success": False, "error": "Batas percobaan OTP terlampaui. Silakan minta kode baru."}), 429
+
+    if input_otp != record["otp"]:
+        record["attempts"] += 1
+        sisa = max(0, 5 - record["attempts"])
+        return jsonify({
+            "success": False,
+            "error": f"Kode OTP salah. Sisa kesempatan: {sisa} kali."
+        }), 400
+
+    # Berhasil! Hapus OTP agar tidak bisa digunakan ulang (sekali pakai)
+    _admin_otp_store.pop(email, None)
+
+    # Buat session token aman untuk admin
+    admin_token = str(uuid.uuid4())
+    _admin_sessions[admin_token] = {
+        "email": email,
+        "name": admin.get("name", "Administrator"),
+        "role": "Admin",
+        "created_at": time.time()
+    }
+
+    return jsonify({
+        "success": True,
+        "message": "Autentikasi Dua Faktor Admin berhasil!",
+        "token": admin_token,
+        "admin": {
+            "custom_email": email,
+            "name": admin.get("name", "Administrator"),
+            "role": "Admin",
+            "real_emails": admin.get("real_emails", [])
+        }
+    })
+
+
+@app.route("/api/admin/verify-session", methods=["POST", "GET"])
+def api_admin_verify_session():
+    """Validasi token sesi admin yang disimpan di browser."""
+    import time
+
+    token = ""
+    if request.method == "POST":
+        body = request.get_json(silent=True) or {}
+        token = str(body.get("token") or "").strip()
+    if not token:
+        token = (
+            request.args.get("token")
+            or request.headers.get("X-Admin-Token")
+            or ""
+        ).strip()
+
+    if token and token in _admin_sessions:
+        session = _admin_sessions[token]
+        # Berlaku 24 jam (86400 detik)
+        if (time.time() - session["created_at"]) < 86400:
+            return jsonify({
+                "valid": True,
+                "admin": {
+                    "email": session["email"],
+                    "name": session["name"],
+                    "role": session["role"]
+                }
+            })
+        else:
+            _admin_sessions.pop(token, None)
+
+    return jsonify({"valid": False, "error": "Sesi admin tidak valid atau telah kedaluwarsa."}), 401
+
+
+@app.route("/api/admin/logout", methods=["POST"])
+def api_admin_logout():
+    """Hapus sesi admin di server."""
+    body = request.get_json(silent=True) or {}
+    token = str(body.get("token") or "").strip()
+    if token and token in _admin_sessions:
+        _admin_sessions.pop(token, None)
+    return jsonify({"success": True})
 
 
 # -----------------------------------------------------------------------

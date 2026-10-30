@@ -89,14 +89,15 @@
     });
 
     // -----------------------------------------------------------------------
-    // Smooth Scroll-Reactive Header Navigation (Pemicu: Scroll ke Atas)
+    // Smooth Scroll-Reactive Header Navigation (Fluid Sticky Parallax)
     // -----------------------------------------------------------------------
     let lastScrollY = window.scrollY || 0;
     let isHeaderHidden = false;
     let upScrollDistance = 0;
     let downScrollDistance = 0;
-    const HEADER_FIXED_THRESHOLD = 50;
-    const HEADER_HIDE_THRESHOLD = 90;
+    const SCROLLED_THRESHOLD_ON = 24;  // Elevation activates past 24px
+    const SCROLLED_THRESHOLD_OFF = 8;  // Elevation deactivates when back near top
+    const HEADER_HIDE_MIN_Y = 180;     // Don't auto-hide header in top hero area
 
     function updateHeaderParallax(currentScrollY, velocity = 0) {
       const headers = document.querySelectorAll('.site-header, .top-nav');
@@ -104,33 +105,44 @@
 
       const delta = currentScrollY - lastScrollY;
 
-      // 1. Dekat puncak halaman (<= 45px): kembali ke posisi alami
-      if (currentScrollY <= 45) {
+      // 1. Elevation & Scrolled glassmorphism with hysteresis (prevents flickering)
+      if (currentScrollY > SCROLLED_THRESHOLD_ON) {
         headers.forEach(h => {
-          h.classList.remove('is-fixed', 'nav-hidden', 'nav-scrolled');
-          h.classList.add('nav-visible');
+          if (!h.classList.contains('nav-scrolled')) {
+            h.classList.add('nav-scrolled', 'is-fixed');
+          }
         });
-        isHeaderHidden = false;
+      } else if (currentScrollY <= SCROLLED_THRESHOLD_OFF) {
+        headers.forEach(h => {
+          if (h.classList.contains('nav-scrolled')) {
+            h.classList.remove('nav-scrolled', 'is-fixed');
+          }
+        });
+      }
+
+      // 2. Near top of page: always keep header visible
+      if (currentScrollY <= HEADER_HIDE_MIN_Y) {
+        if (isHeaderHidden) {
+          headers.forEach(h => {
+            h.classList.remove('nav-hidden');
+            h.classList.add('nav-visible');
+          });
+          document.body.classList.remove('nav-hidden');
+          isHeaderHidden = false;
+        }
         upScrollDistance = 0;
         downScrollDistance = 0;
         lastScrollY = currentScrollY;
         return;
       }
 
-      // 2. Melewati ambang: aktifkan mode fixed & visual glassmorphic elevation
-      if (currentScrollY > HEADER_FIXED_THRESHOLD) {
-        headers.forEach(h => {
-          h.classList.add('is-fixed', 'nav-scrolled');
-        });
-      }
-
-      // 3. Deteksi Arah Scroll (Scroll Down vs Scroll UP sebagai pemicu)
-      if (delta > 1.5 || velocity > 0.4) {
-        // Sedang scroll ke BAWAH -> Sembunyikan main nav
+      // 3. Directional intent detection (past hero area)
+      if (delta > 2.0 || velocity > 0.5) {
+        // Scrolling DOWN -> Hide header with smooth distance accumulation
         downScrollDistance += Math.abs(delta);
         upScrollDistance = 0;
 
-        if (downScrollDistance > 8 && currentScrollY > HEADER_HIDE_THRESHOLD) {
+        if (downScrollDistance > 24) {
           if (!isHeaderHidden) {
             headers.forEach(h => {
               h.classList.add('nav-hidden');
@@ -140,12 +152,12 @@
             isHeaderHidden = true;
           }
         }
-      } else if (delta < -1.5 || velocity < -0.3) {
-        // Sedang scroll ke ATAS (PEMICU UTAMA) -> TAMPILKAN MAIN NAV!
+      } else if (delta < -2.0 || velocity < -0.4) {
+        // Scrolling UP -> Reveal header immediately with light touch
         upScrollDistance += Math.abs(delta);
         downScrollDistance = 0;
 
-        if (upScrollDistance > 6 || currentScrollY <= HEADER_HIDE_THRESHOLD) {
+        if (upScrollDistance > 12) {
           if (isHeaderHidden) {
             headers.forEach(h => {
               h.classList.remove('nav-hidden');

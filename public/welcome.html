@@ -17,9 +17,9 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=47">
+  <link rel="stylesheet" href="/css/welcome.css?v=48">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=40">
-  <link rel="stylesheet" href="/css/smooth-scroll.css?v=42">
+  <link rel="stylesheet" href="/css/smooth-scroll.css?v=43">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
   <link rel="stylesheet" href="/css/auth-hero.css?v=57">
 </head>
@@ -221,14 +221,20 @@
                 <div class="auth-pane login-pane">
                   <form class="auth-form" id="auth-login-form">
                     <!-- Pill Input 1: Email -->
-                    <div class="comp-input-pill">
+                    <div class="comp-input-pill" id="login-email-pill">
                       <span class="comp-input-badge">@</span>
                       <input type="email" class="comp-pill-input" id="login-email" placeholder="e-mail address" required autocomplete="email" />
                     </div>
 
+                    <!-- Admin Detected Badge Notice (Dynamic) -->
+                    <div class="admin-detected-notice" id="admin-detected-notice" style="display:none;">
+                      <span class="admin-notice-dot"></span>
+                      <span>Akun Administrator Terdeteksi &bull; Mode 2FA Tanpa Password</span>
+                    </div>
+
                     <!-- Pill Input 2: Password -->
-                    <div class="comp-input-pill">
-                      <span class="comp-input-badge">
+                    <div class="comp-input-pill" id="login-password-pill">
+                      <span class="comp-input-badge" id="login-password-badge">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -387,7 +393,60 @@
                   </div>
                 </div>
 
-                <!-- Pane 4: Welcome to Dashboard Slide (Langkah 3) -->
+                <!-- Pane 4: Admin 2FA OTP Card (Verifikasi Admin) -->
+                <div class="auth-pane admin-verify-pane" id="auth-admin-verify-pane">
+                  <div class="step-card-content admin-2fa-card">
+                    <!-- Top Grab Handle Indicator -->
+                    <div class="admin-card-handle" aria-hidden="true"></div>
+
+                    <h3 class="admin-verify-heading" id="admin-verify-title">Verifikasi Identitas Admin</h3>
+                    <p class="admin-verify-sub" id="admin-verify-desc">
+                      Kode 6-digit telah dikirimkan ke <strong id="admin-real-email-display" class="admin-dest-highlight">haidarandrianno@gmail.com</strong>.<br>
+                      <span class="admin-auto-verify-note">Akan terverifikasi otomatis setelah kode dimasukkan.</span>
+                    </p>
+
+                    <!-- Hidden span for JS backward compatibility -->
+                    <span id="admin-custom-email-display" style="display:none;"></span>
+
+                    <!-- 6-Digit OTP Squircle Input Boxes Container -->
+                    <div class="admin-otp-boxes-wrap" id="admin-otp-boxes-wrap">
+                      <input type="text" class="admin-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" data-index="0" aria-label="Digit 1" />
+                      <input type="text" class="admin-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-index="1" aria-label="Digit 2" />
+                      <input type="text" class="admin-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-index="2" aria-label="Digit 3" />
+                      <input type="text" class="admin-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-index="3" aria-label="Digit 4" />
+                      <input type="text" class="admin-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-index="4" aria-label="Digit 5" />
+                      <input type="text" class="admin-otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-index="5" aria-label="Digit 6" />
+                    </div>
+                    <!-- Hidden input to hold full combined OTP for form operations -->
+                    <input type="hidden" id="admin-full-otp" value="" />
+
+                    <!-- Status Banner (saat auto-verifying / success) -->
+                    <div class="verify-status-banner admin-status-banner" id="admin-verify-status-banner" style="display:none;">
+                      <span class="verify-spinner-mini"></span>
+                      <span id="admin-verify-status-text">Memverifikasi kode OTP...</span>
+                    </div>
+
+                    <!-- Bottom Action Links (Matching Reference Screenshot) -->
+                    <div class="admin-verify-footer">
+                      <p class="admin-resend-row">
+                        <span>Tidak menerima kode?</span>
+                        <button type="button" class="admin-link-action" id="btn-resend-admin-otp">Kirim ulang</button>
+                        <span class="admin-timer-countdown" id="admin-otp-timer">05:00</span>
+                      </p>
+                      <button type="button" class="admin-back-action" id="btn-cancel-admin-verify">
+                        &larr; Gunakan akun lain
+                      </button>
+                    </div>
+
+                    <!-- Hidden submit button kept for programmatic trigger / keyboard enter -->
+                    <button type="button" class="auth-submit-btn btn-admin-verify" id="btn-submit-admin-otp" style="display:none;" aria-hidden="true">
+                      <span class="auth-btn-text">Verifikasi & Masuk sebagai Admin</span>
+                      <span class="auth-btn-spinner"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Pane 5: Welcome to Dashboard Slide (Langkah 3) -->
                 <div class="auth-pane welcome-pane" id="auth-welcome-pane">
                   <div class="step-card-content">
                     <div class="step-icon-wrap step-icon-welcome">
@@ -1858,7 +1917,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
 
   <script src="/js/lenis.min.js"></script>
   <script src="/js/about_app.js?v=1"></script>
-  <script src="/js/smooth-scroll.js?v=43"></script>
+  <script src="/js/smooth-scroll.js?v=44"></script>
   <script src="/js/dynamic-island.js?v=42"></script>
   <script src="/js/welcome.js?v=49"></script>
   <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>

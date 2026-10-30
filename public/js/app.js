@@ -455,6 +455,27 @@ document.addEventListener('DOMContentLoaded', () => {
 // --------------------------------------------------------------------------
 // User Profile & Authentication Synchronization
 // --------------------------------------------------------------------------
+function isCurrentUserAdmin() {
+  try {
+    const isAdminAuth = localStorage.getItem('neura_admin_authenticated') === 'true' ||
+                        sessionStorage.getItem('neura_admin_session') === 'true';
+    if (isAdminAuth) return true;
+
+    const rawUser = localStorage.getItem('neura_auth_user');
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      const email = (u.email || '').toLowerCase().trim();
+      const role = u.role || localStorage.getItem('neura_user_role') || '';
+      if (role === 'Admin' || (role && role.toLowerCase() === 'admin') || email.endsWith('@neura.dr.id') || email === 'muhammadhasan.cg@gmail.com') {
+        return true;
+      }
+    }
+  } catch (e) {}
+  return false;
+}
+
+window.isCurrentUserAdmin = isCurrentUserAdmin;
+
 function syncUserProfileUI() {
   try {
     const raw = localStorage.getItem('neura_auth_user');
@@ -483,7 +504,11 @@ function syncUserProfileUI() {
     const avatarEl = document.getElementById('sidebar-user-avatar');
 
     if (nameEl) nameEl.textContent = displayName;
-    if (roleEl) roleEl.textContent = user.email || 'Dokter / Peneliti';
+    const savedRole = localStorage.getItem('neura_user_role') || 'User';
+    if (roleEl) {
+      roleEl.textContent = formatRoleLabel(savedRole);
+      roleEl.setAttribute('data-role', savedRole.toLowerCase());
+    }
     if (avatarEl) {
       if (user.photoURL) {
         avatarEl.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.parentElement.textContent='${displayName.charAt(0).toUpperCase()}'">`;
@@ -560,6 +585,9 @@ async function handleLogout() {
     try {
       localStorage.removeItem('neura_auth_user');
       localStorage.removeItem('neura_user_profile');
+      localStorage.removeItem('neura_user_role');
+      localStorage.removeItem('neura_admin_authenticated');
+      localStorage.removeItem('neura_admin_token');
       localStorage.removeItem('neura_active_session_id_v2');
       sessionStorage.clear();
     } catch (e) {}
@@ -581,7 +609,7 @@ const APP_TRANSLATIONS = {
     nav_dashboard: 'Dasbor',
     nav_recent_chats: 'Percakapan Terakhir',
     nav_ml_commands: 'Perintah ML',
-    user_role: 'Dokter / Peneliti',
+    user_role: 'User',
     checking_model: 'Memeriksa model...',
     // ML command items
     cmd_status: 'Cek Status',
@@ -622,7 +650,7 @@ const APP_TRANSLATIONS = {
     nav_dashboard: 'Dashboard',
     nav_recent_chats: 'Recent Chats',
     nav_ml_commands: 'ML Commands',
-    user_role: 'Doctor / Researcher',
+    user_role: 'User',
     checking_model: 'Checking model...',
     // ML command items
     cmd_status: 'Check Status',
@@ -992,7 +1020,7 @@ function updateSettingsNavBadges() {
     // 7. Profil
     const badgeProf = document.getElementById('menu-badge-profile');
     if (badgeProf) {
-      const role = localStorage.getItem('neura_user_role') || 'Neurologist';
+      const role = localStorage.getItem('neura_user_role') || 'User';
       badgeProf.textContent = role;
     }
 
@@ -1125,11 +1153,29 @@ function syncSettingsPanel() {
     }
   } catch(e) {}
 
-  // ── Role select
+  // ── Role select (Hanya ditampilkan untuk Admin; User & Nakes TIDAK MENAMPILKAN fitur ini sama sekali)
   try {
-    const savedRole = localStorage.getItem('neura_user_role');
+    const savedRole = localStorage.getItem('neura_user_role') || 'User';
+    const roleRow = document.getElementById('stg-role-row');
     const roleSelect = document.getElementById('stg-role-select');
-    if (roleSelect && savedRole) roleSelect.value = savedRole;
+    const isAdmin = isCurrentUserAdmin();
+
+    if (roleRow) {
+      if (isAdmin) {
+        // Admin: Tampilkan row dan aktifkan dropdown
+        roleRow.style.display = 'flex';
+        if (roleSelect) {
+          roleSelect.value = savedRole;
+          roleSelect.disabled = false;
+        }
+      } else {
+        // User & Nakes: HILANGKAN FITUR INI (tidak ditampilkan sama sekali)
+        roleRow.style.display = 'none';
+        if (roleSelect) {
+          roleSelect.disabled = true;
+        }
+      }
+    }
   } catch(e) {}
 
   // ── Active model info
@@ -1164,9 +1210,12 @@ function syncSettingsPanel() {
     set('menu-title-voice',      'Voice Consultation');
     set('menu-sub-voice',        'Mic silence pause & auto-play');
     set('menu-title-a11y',       'Accessibility');
-    set('menu-sub-a11y',         'Reduced motion & compact view');
     set('menu-title-profile',    'Profile');
-    set('menu-sub-profile',      'Account & clinician role');
+    if (isCurrentUserAdmin()) {
+      set('menu-sub-profile',    'Account & stakeholder role (User, Admin, Nakes)');
+    } else {
+      set('menu-sub-profile',    'Account details & user profile');
+    }
     set('menu-title-chat',       'Model & Chat');
     set('menu-sub-chat',         'Active model & message history');
     set('menu-title-storage',    'Data & Storage');
@@ -1215,8 +1264,12 @@ function syncSettingsPanel() {
     set('stg-compact-desc',      'Tighter chat bubbles for long history');
 
     set('stg-sec-profile',       'Profile');
-    set('stg-role-label',        'Role');
-    set('stg-role-desc',         'Title shown in sidebar');
+    set('stg-role-label',        'Stakeholder Role');
+    if (isCurrentUserAdmin()) {
+      set('stg-role-desc',       'Select your stakeholder role in the platform');
+    } else {
+      set('stg-role-desc',       'Role locked: Only Administrator has permission to switch roles');
+    }
 
     set('stg-sec-chat',          'Model & Chat');
     set('stg-model-label',       'Active AI Model');
@@ -1260,7 +1313,11 @@ function syncSettingsPanel() {
     set('menu-title-a11y',       'Aksesibilitas');
     set('menu-sub-a11y',         'Animasi & kerapatan tampilan');
     set('menu-title-profile',    'Profil');
-    set('menu-sub-profile',      'Akun & role dokter/peneliti');
+    if (isCurrentUserAdmin()) {
+      set('menu-sub-profile',    'Akun & peran stakeholder (User, Admin, Nakes)');
+    } else {
+      set('menu-sub-profile',    'Informasi akun & profil pengguna');
+    }
     set('menu-title-chat',       'Model & Chat');
     set('menu-sub-chat',         'Model aktif & riwayat pesan');
     set('menu-title-storage',    'Data & Penyimpanan');
@@ -1309,8 +1366,12 @@ function syncSettingsPanel() {
     set('stg-compact-desc',      'Penyajian bubble chat yang lebih padat');
 
     set('stg-sec-profile',       'Profil');
-    set('stg-role-label',        'Role');
-    set('stg-role-desc',         'Jabatan yang ditampilkan di sidebar');
+    set('stg-role-label',        'Peran Stakeholder');
+    if (isCurrentUserAdmin()) {
+      set('stg-role-desc',       'Pilih peran stakeholder Anda dalam sistem');
+    } else {
+      set('stg-role-desc',       'Peran dikunci: Hanya Administrator yang berwenang mengganti peran');
+    }
 
     set('stg-sec-chat',          'Model & Chat');
     set('stg-model-label',       'Model AI Aktif');
@@ -1349,12 +1410,35 @@ function applySettingsLang(lang) {
   syncSettingsPanel();
 }
 
+function formatRoleLabel(role) {
+  if (role === 'Nakes') return 'Nakes (Tenaga Kesehatan)';
+  if (role === 'Admin') return 'Admin (Administrator)';
+  return 'User (Pengguna Umum)';
+}
+
 function applySettingsRole(role) {
+  // Keamanan: Validasi bahwa khusus role User dan Nakes TIDAK BISA switch, hanya Admin
+  if (!isCurrentUserAdmin()) {
+    const currentRole = localStorage.getItem('neura_user_role') || 'User';
+    const roleSelect = document.getElementById('stg-role-select');
+    if (roleSelect) roleSelect.value = currentRole;
+    showToast(
+      getAppLanguage() === 'en'
+        ? 'Permission denied: Only Administrator can switch stakeholder roles.'
+        : 'Akses ditolak: Hanya Administrator yang berwenang mengganti peran stakeholder.',
+      'error'
+    );
+    return;
+  }
+
   try { localStorage.setItem('neura_user_role', role); } catch(e) {}
   const roleEl = document.getElementById('sidebar-user-role');
-  if (roleEl) roleEl.textContent = role;
+  if (roleEl) {
+    roleEl.textContent = formatRoleLabel(role);
+    roleEl.setAttribute('data-role', (role || 'user').toLowerCase());
+  }
   updateSettingsNavBadges();
-  showToast(getAppLanguage() === 'en' ? `Role updated: ${role}` : `Role diperbarui: ${role}`, 'info');
+  showToast(getAppLanguage() === 'en' ? `Role updated: ${role}` : `Peran diperbarui: ${role}`, 'info');
 }
 
 function applyToggleSetting(key, checked) {

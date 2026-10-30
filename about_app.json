@@ -18,7 +18,7 @@
   },
 
   "model": {
-    "name": "AlzheimersXGBoost",
+    "name": "XGBoost",
     "version": "3.x",
     "algorithm": "XGBoost Gradient Boosting",
     "features": 32,
@@ -43,6 +43,27 @@
     "license": "MIT",
     "rights": "Hak Cipta Dilindungi."
   },
+
+  "stakeholders": [
+    {
+      "id": "user",
+      "name": "User",
+      "label": "Pengguna Umum",
+      "description": "Pengguna mandiri atau pasien untuk asesmen risiko awal Alzheimer dan edukasi kognitif."
+    },
+    {
+      "id": "admin",
+      "name": "Admin",
+      "label": "Administrator",
+      "description": "Pengelola sistem, pemeliharaan dataset, retraining model XGBoost, dan konfigurasi platform."
+    },
+    {
+      "id": "nakes",
+      "name": "Nakes",
+      "label": "Tenaga Kesehatan",
+      "description": "Dokter, perawat, dan praktisi medis untuk evaluasi klinis mendalam berbasis 32 biomarker multimodal."
+    }
+  ],
 
   "tech_stack": {
     "backend": "Flask + Python",
