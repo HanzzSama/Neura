@@ -13,14 +13,17 @@ let _nakesActiveView = 'table';
 
 function syncAdminNavVisibility() {
   try {
-    const adminNakesNav = document.getElementById('sidebar-nakes-admin-link');
-    if (adminNakesNav) {
-      if (typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin()) {
-        adminNakesNav.style.display = 'flex';
-      } else {
-        adminNakesNav.style.display = 'none';
-      }
-    }
+    const isAdmin = typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin();
+    const adminNavIds = [
+      'sidebar-nakes-admin-link',
+      'sidebar-database-link',
+      'sidebar-stats-link',
+      'sidebar-files-link'
+    ];
+    adminNavIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = isAdmin ? 'flex' : 'none';
+    });
   } catch (e) { }
 }
 window.syncAdminNavVisibility = syncAdminNavVisibility;

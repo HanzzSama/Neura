@@ -7,21 +7,35 @@
 
 // Recent Chats & Sessions Management
 // --------------------------------------------------------------------------
+function _getChatStorageKey() {
+  return typeof window.getChatStorageKey === 'function' ? window.getChatStorageKey() : (window.CHAT_STORAGE_KEY || 'neura_recent_chats_v2');
+}
+
+function _getLastSessionKey() {
+  return typeof window.getLastSessionStorageKey === 'function' ? window.getLastSessionStorageKey() : (window.LAST_SESSION_STORAGE_KEY || 'neura_active_session_id_v2');
+}
+
 function loadChatSessions() {
   try {
-    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    const key = _getChatStorageKey();
+    const raw = localStorage.getItem(key);
     if (raw) {
       chatSessions = JSON.parse(raw);
+    } else {
+      chatSessions = [];
     }
   } catch (e) {
     chatSessions = [];
   }
   if (!Array.isArray(chatSessions)) chatSessions = [];
+  window.chatSessions = chatSessions;
 }
 
 function saveChatSessions() {
   try {
-    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatSessions));
+    const key = _getChatStorageKey();
+    localStorage.setItem(key, JSON.stringify(chatSessions));
+    window.chatSessions = chatSessions;
   } catch (e) { }
 }
 
@@ -79,7 +93,7 @@ function switchChatSession(sessionId) {
   if (!session) return;
   activeSessionId = sessionId;
   try {
-    localStorage.setItem(LAST_SESSION_STORAGE_KEY, sessionId);
+    localStorage.setItem(_getLastSessionKey(), sessionId);
   } catch (e) { }
   renderRecentChatsSidebar();
   renderSessionMessages(session);
@@ -95,7 +109,7 @@ function deleteChatSession(e, sessionId) {
     } else {
       activeSessionId = null;
       try {
-        localStorage.setItem(LAST_SESSION_STORAGE_KEY, 'new');
+        localStorage.setItem(_getLastSessionKey(), 'new');
       } catch (err) { }
       startNewChat();
     }
@@ -331,12 +345,12 @@ function getHeroHtml() {
   }
 
   const cardsHtml = cards.map(c => `
-    <div class="hero-card" onclick="submitCommand('${c.cmd}')">
-      <div class="hero-card-header">
+    <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('${c.cmd}')">
+      <div class="hero-card-header cl-title-low" style="margin:0 0 6px 0;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${c.icon}</svg>
         <span>${c.title}</span>
       </div>
-      <div class="hero-card-desc">${c.desc}</div>
+      <div class="hero-card-desc cl-desc-sm">${c.desc}</div>
     </div>
   `).join('');
 
@@ -344,8 +358,8 @@ function getHeroHtml() {
     <div class="claude-hero" id="claude-hero">
       <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo"
         onerror="this.style.display='none'" />
-      <h1 class="hero-greeting" id="hero-greeting-text">${t.greet_evening}</h1>
-      <p class="hero-subhead">${subhead}</p>
+      <h1 class="hero-greeting cl-title-display" id="hero-greeting-text">${t.greet_evening}</h1>
+      <p class="hero-subhead cl-desc-lead">${subhead}</p>
 
       <!-- 4 Action Cards -->
       <div class="hero-cards-grid">
@@ -362,7 +376,7 @@ function getHeroHtml() {
 function startNewChat(showNotification = true) {
   activeSessionId = null;
   try {
-    localStorage.setItem(LAST_SESSION_STORAGE_KEY, 'new');
+    localStorage.setItem(_getLastSessionKey(), 'new');
     localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
   } catch (e) { }
   renderRecentChatsSidebar();
@@ -475,7 +489,7 @@ function renderSuggestionChip(text) {
   const iconSvg = isCmd
     ? `<svg class="chip-solid-icon chip-icon-cmd" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`
     : `<svg class="chip-solid-icon chip-icon-msg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
-  const chipClass = isCmd ? 'suggestion-chip is-cmd' : 'suggestion-chip';
+  const chipClass = isCmd ? 'suggestion-chip cl-chip cl-badge--neutral is-cmd' : 'suggestion-chip cl-chip cl-badge--neutral';
   const cleanText = escapeHtml(text);
   return `<button type="button" class="${chipClass}" data-cmd="${cleanText}" onclick="handleChipClick(this)">${iconSvg}<span>${cleanText}</span></button>`;
 }
@@ -561,7 +575,7 @@ async function sendUserMessage(textOverride = null) {
     activeSessionId = newSession.id;
     saveChatSessions();
     try {
-      localStorage.setItem(LAST_SESSION_STORAGE_KEY, newSession.id);
+      localStorage.setItem(_getLastSessionKey(), newSession.id);
     } catch (e) { }
     renderRecentChatsSidebar();
   }
@@ -619,7 +633,62 @@ async function processMLInput(rawText, typingId, startTime) {
   const text = rawText.trim();
   const lower = text.toLowerCase();
 
-  if (lower === '/help' || lower.endsWith('/help')) {
+  if (lower === 'salin kode nakes' || lower === 'salin kode' || lower === '/salin' || lower === '/copy') {
+    await waitLoad(startTime, 300);
+    removeTypingIndicator(typingId);
+    let code = null;
+    try {
+      const saved = localStorage.getItem('neura_last_consultation');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        code = parsed.nakes_code || parsed.doc_id;
+      }
+    } catch (e) { }
+
+    if (code) {
+      if (typeof copyNakesCode === 'function') {
+        copyNakesCode(code);
+      }
+      appendAssistantMessage(`
+        <h4>Salin Kode Konsultasi Rujukan Nakes</h4>
+        <div class="claude-card">
+          <p>✓ Kode Konsultasi Nakes Anda: <strong style="font-family:'JetBrains Mono',monospace;color:var(--accent-terracotta);font-size:15px;letter-spacing:0.05em">${escapeHtml(code)}</strong> berhasil disalin ke clipboard.</p>
+          <p style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">
+            Serahkan atau sebutkan kode ini kepada Dokter atau Tenaga Kesehatan di fasilitas kesehatan rujukan. Dokter dapat menggunakan perintah <code>/periksa ${escapeHtml(code)}</code> untuk membuka dossier rekam medis lengkap.
+          </p>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button type="button" class="claude-btn primary" onclick="copyNakesCode('${escapeHtml(code)}', this)">
+              Salin Lagi
+            </button>
+            <button type="button" class="claude-btn secondary" onclick="openNakesDetailModal('${escapeHtml(code)}')">
+              Lihat Detail Nakes
+            </button>
+            <button type="button" class="claude-btn secondary" onclick="printConsultationDoc()">
+              Cetak Dokumen
+            </button>
+          </div>
+        </div>
+      `, {
+        stream: false,
+        suggestions: ['/dokumen', '/predict', '/eval', '/help']
+      });
+    } else {
+      appendAssistantMessage(`
+        <h4>Kode Konsultasi Nakes Belum Diterbitkan</h4>
+        <div class="claude-card">
+          <p style="color:var(--accent-amber)">Belum ada kode konsultasi rujukan nakes yang tersimpan di sesi Anda.</p>
+          <p style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">
+            Silakan buat dokumen rekam medis terlebih dahulu dengan perintah <code>/dokumen</code> untuk menerbitkan kode konsultasi resmi yang dapat divalidasi oleh dokter.
+          </p>
+        </div>
+      `, {
+        stream: false,
+        suggestions: ['/dokumen', '/predict', '/help']
+      });
+    }
+    return;
+
+  } else if (lower === '/help' || lower.endsWith('/help')) {
     await waitLoad(startTime, 400);
     removeTypingIndicator(typingId);
     renderHelpOutput();
@@ -834,8 +903,11 @@ async function processMLInput(rawText, typingId, startTime) {
       removeTypingIndicator(typingId);
       const formId = 'profile_form_' + Date.now();
       appendAssistantMessage(`
-        <h4>Data Diri Diperlukan Sebelum Diagnosis</h4>
-        <p>Untuk menjalankan diagnosis klinis Alzheimer, saya memerlukan <strong>Data Diri &amp; 32 Biomarker Klinis</strong> Anda (usia, tekanan darah, skor kognitif MMSE, ADL, dll). Mohon lengkapi data diri Anda terlebih dahulu melalui formulir di bawah ini:</p>
+        <h4 class="neura-title-mid">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-terracotta)"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>Data Diri Pasien Diperlukan Sebelum Diagnosis AI</span>
+        </h4>
+        <p class="neura-desc">Diagnosis klinis Alzheimer XGBoost memerlukan data riil <strong>32 Biomarker Pasien</strong> (usia, tekanan darah, skor kognitif MMSE, ADL, dll). Anda wajib melengkapi <strong>Data Diri Pasien</strong> terlebih dahulu di bawah ini sebelum menjalankan diagnosis:</p>
         ${renderProfileSlideCard(formId)}
       `, {
         stream: false,
@@ -922,8 +994,11 @@ async function processMLInput(rawText, typingId, startTime) {
       removeTypingIndicator(typingId);
       const formId = 'profile_form_' + Date.now();
       appendAssistantMessage(`
-        <h4>Data Diri Diperlukan Sebelum Cetak Dokumen</h4>
-        <p>Untuk menerbitkan <strong>Dokumen Hasil Konsultasi Medis</strong> dan <strong>Kode Rujukan Nakes</strong>, saya memerlukan <strong>Data Diri &amp; 32 Biomarker Klinis</strong> Anda terlebih dahulu agar rekam medis yang diterbitkan sesuai identitas dan kondisi klinis riil Anda:</p>
+        <h4 class="neura-title-mid">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-terracotta)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Data Diri Pasien Diperlukan Sebelum Cetak Dokumen</span>
+        </h4>
+        <p class="neura-desc">Untuk menerbitkan <strong>Dokumen Hasil Konsultasi Medis</strong> dan <strong>Kode Rujukan Nakes</strong>, saya memerlukan <strong>Data Diri &amp; 32 Biomarker Pasien</strong> Anda terlebih dahulu agar rekam medis yang diterbitkan sesuai identitas dan kondisi klinis riil Anda:</p>
         ${renderProfileSlideCard(formId)}
       `, {
         stream: false,
@@ -1217,12 +1292,14 @@ function generateConversationalReply(text) {
   if (t.includes('konsultasi') || t.includes('skrining') || t.includes('periksa') || t.includes('lupa') || t.includes('pikun')) {
     return {
       html: `
-        <p>Terima kasih sudah berkonsultasi dengan <strong>Neura</strong>.</p>
-        <p>Untuk membantu skrining awal daya ingat Anda atau anggota keluarga, ceritakan keluhan Anda atau jawab pertanyaan panduan ini:</p>
-        <p>1. <strong>Berapa usia</strong> pasien yang dikonsultasikan?</p>
-        <p>2. <strong>Keluhan apa yang sering dialami?</strong> (Misal: sering lupa nama kerabat dekat, salah meletakkan barang, mengulang pertanyaan yang sama).</p>
-        <p>3. <strong>Apakah mulai mempengaruhi kemandirian harian?</strong> (Misal: kesulitan mengelola uang, minum obat, atau bepergian sendiri).</p>
-        <p>Anda juga dapat mengetik <code>/predict</code> untuk melihat simulasi analisis 32 biomarker klinis kami.</p>
+        <p class="neura-desc-lead">Terima kasih sudah berkonsultasi dengan <strong>Neura</strong>.</p>
+        <p class="neura-desc">Untuk membantu skrining awal daya ingat Anda atau anggota keluarga, ceritakan keluhan Anda atau jawab pertanyaan panduan ini:</p>
+        <ol class="neura-list-num">
+          <li><strong>Berapa usia</strong> pasien yang dikonsultasikan?</li>
+          <li><strong>Keluhan apa yang sering dialami?</strong> (Misal: sering lupa nama kerabat dekat, salah meletakkan barang, mengulang pertanyaan yang sama).</li>
+          <li><strong>Apakah mulai mempengaruhi kemandirian harian?</strong> (Misal: kesulitan mengelola uang, minum obat, atau bepergian sendiri).</li>
+        </ol>
+        <p class="neura-desc">Anda juga dapat mengetik <code>/predict</code> untuk melihat simulasi analisis 32 biomarker klinis kami.</p>
       `,
       suggestions: [
         'Apa saja 10 tanda awal Alzheimer?',
@@ -1411,9 +1488,9 @@ function renderHelpOutput() {
   `;
 
   appendAssistantMessage(`
-    <h4>${lang === 'en' ? 'Available Commands' : 'Daftar Perintah'} &bull; <span style="font-size:12.5px;font-weight:600;color:var(--accent-terracotta)">${roleLabel}</span></h4>
-    <p>${lang === 'en' ? 'Interactive commands customized for your role:' : 'Berikut adalah perintah interaktif yang tersedia dan disesuaikan untuk peran Anda:'}</p>
-    <table class="cmd-list">
+    <h4 class="neura-title-mid">${lang === 'en' ? 'Available Commands' : 'Daftar Perintah'} &bull; <span style="font-size:12.5px;font-weight:600;color:var(--accent-terracotta)">${roleLabel}</span></h4>
+    <p class="neura-desc">${lang === 'en' ? 'Interactive commands customized for your role:' : 'Berikut adalah perintah interaktif yang tersedia dan disesuaikan untuk peran Anda:'}</p>
+    <table class="neura-data-table cmd-list">
       <thead>
         <tr>
           <th>${lang === 'en' ? 'Command' : 'Perintah'}</th>
@@ -1435,25 +1512,25 @@ function renderStatusOutput(data) {
   const statusClass = isTraining ? 'val-warn' : isReady ? 'val-good' : 'val-err';
 
   appendAssistantMessage(`
-    <h4>System & Model Status</h4>
-    <div class="claude-card">
-      <div class="claude-stats-grid">
-        <div class="stat-pill">
-          <div class="stat-label">Model Status</div>
-          <div class="stat-val ${statusClass}">${statusText}</div>
+    <h4 class="neura-title-mid">System &amp; Model Status</h4>
+    <div class="neura-card">
+      <div class="neura-stat-grid claude-stats-grid">
+        <div class="neura-stat-pill stat-pill">
+          <div class="neura-stat-label stat-label">Model Status</div>
+          <div class="neura-stat-val stat-val ${statusClass}">${statusText}</div>
         </div>
-        <div class="stat-pill">
-          <div class="stat-label">Model Architecture</div>
-          <div class="stat-val" style="font-size:13.5px">${escapeHtml(data.model_name || 'AlzheimersXGBoost')}</div>
+        <div class="neura-stat-pill stat-pill">
+          <div class="neura-stat-label stat-label">Model Architecture</div>
+          <div class="neura-stat-val stat-val" style="font-size:13.5px">${escapeHtml(data.model_name || 'AlzheimersXGBoost')}</div>
         </div>
-        <div class="stat-pill">
-          <div class="stat-label">Environment</div>
-          <div class="stat-val" style="font-size:13.5px">${escapeHtml(data.environment || 'development')}</div>
+        <div class="neura-stat-pill stat-pill">
+          <div class="neura-stat-label stat-label">Environment</div>
+          <div class="neura-stat-val stat-val" style="font-size:13.5px">${escapeHtml(data.environment || 'development')}</div>
         </div>
       </div>
-      ${data.checkpoint ? `<p class="checkpoint-path-note">Checkpoint: <code>${escapeHtml(data.checkpoint)}</code></p>` : ''}
+      ${data.checkpoint ? `<p class="checkpoint-path-note neura-desc-sm">Checkpoint: <code>${escapeHtml(data.checkpoint)}</code></p>` : ''}
     </div>
-    ${!isReady ? `<p style="color:var(--accent-red);font-size:13px">Note: No trained checkpoint detected. Run <code>/train 5</code> to train the model first.</p>` : ''}
+    ${!isReady ? `<div class="neura-note neura-note--warning"><div class="neura-note-body"><div class="neura-note-title">Perhatian Checkpoint</div><div class="neura-note-desc">Tidak ada checkpoint model terdeteksi. Jalankan <code>/train 5</code> untuk melatih model terlebih dahulu.</div></div></div>` : ''}
   `);
 }
 
@@ -1480,28 +1557,28 @@ function renderEvaluationOutput(data) {
   `).join('');
 
   appendAssistantMessage(`
-    <h4>Clinical Evaluation Results (XGBoost)</h4>
-    <p>Model evaluated against holdout test distribution (430 patients):</p>
-    <div class="claude-card">
-      <div class="claude-stats-grid">
-        <div class="stat-pill">
-          <div class="stat-label">Model Accuracy</div>
-          <div class="stat-val val-good">${(acc * 100).toFixed(1)}%</div>
+    <h4 class="neura-title-mid">Clinical Evaluation Results (XGBoost)</h4>
+    <p class="neura-desc">Model evaluated against holdout test distribution (430 patients):</p>
+    <div class="neura-card">
+      <div class="neura-stat-grid claude-stats-grid">
+        <div class="neura-stat-pill stat-pill">
+          <div class="neura-stat-label stat-label">Model Accuracy</div>
+          <div class="neura-stat-val stat-val val-good">${(acc * 100).toFixed(1)}%</div>
         </div>
-        <div class="stat-pill">
-          <div class="stat-label">ROC-AUC</div>
-          <div class="stat-val val-good">${(auc * 100).toFixed(1)}%</div>
+        <div class="neura-stat-pill stat-pill">
+          <div class="neura-stat-label stat-label">ROC-AUC</div>
+          <div class="neura-stat-val stat-val val-good">${(auc * 100).toFixed(1)}%</div>
         </div>
-        <div class="stat-pill">
-          <div class="stat-label">Sensitivity / Recall</div>
-          <div class="stat-val val-good">${(rec * 100).toFixed(1)}%</div>
+        <div class="neura-stat-pill stat-pill">
+          <div class="neura-stat-label stat-label">Sensitivity / Recall</div>
+          <div class="neura-stat-val stat-val val-good">${(rec * 100).toFixed(1)}%</div>
         </div>
       </div>
-      <table class="claude-table" style="margin-top:14px">
+      <table class="claude-table neura-data-table" style="margin-top:14px">
         <thead><tr><th>Metric Name</th><th>Score</th><th>Clinical Description</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-      <p style="font-size:11px;color:var(--text-muted);margin-top:10px">Confusion Matrix: 270 True Negatives, 140 True Positives, only 8 False Positives &amp; 12 False Negatives.</p>
+      <p class="neura-desc-sm" style="margin-top:10px">Confusion Matrix: 270 True Negatives, 140 True Positives, only 8 False Positives &amp; 12 False Negatives.</p>
     </div>
   `);
 }

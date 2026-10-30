@@ -134,14 +134,13 @@ function renderRoleMLCommands(roleOverride = null) {
     sidebarList.innerHTML = html;
   }
 
-  // 2. Update Header with Role Pill Badge
+  // 2. Update Header Title (without role pill badge)
   const headerBtn = document.getElementById('ml-commands-toggle-btn');
   if (headerBtn) {
     const titleSpan = headerBtn.querySelector('.nav-group-title');
     if (titleSpan) {
-      const roleBadge = currentRole === 'Admin' ? 'Admin' : currentRole === 'Nakes' ? 'Nakes' : 'Pasien';
       const mainText = lang === 'en' ? 'ML Commands' : 'Perintah ML';
-      titleSpan.innerHTML = `${mainText} <span class="ml-role-pill ml-role-pill-${currentRole.toLowerCase()}">${roleBadge}</span>`;
+      titleSpan.textContent = mainText;
     }
   }
 

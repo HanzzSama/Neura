@@ -51,9 +51,15 @@ async function loginNakes(email, password) {
 }
 
 function logoutNakes() {
-  localStorage.removeItem('neura_nakes_session');
-  if (localStorage.getItem('neura_user_role') === 'Nakes') {
-    localStorage.removeItem('neura_user_role');
+  if (typeof window.clearAllUserSessionData === 'function') {
+    window.clearAllUserSessionData();
+  } else {
+    localStorage.removeItem('neura_nakes_session');
+    if (localStorage.getItem('neura_user_role') === 'Nakes') {
+      localStorage.removeItem('neura_user_role');
+    }
+    localStorage.removeItem('neura_last_consultation');
+    localStorage.removeItem('neura_active_patient_doc');
   }
   if (typeof clearActivePatientDoc === 'function') clearActivePatientDoc();
   if (typeof syncUserProfileUI === 'function') syncUserProfileUI();

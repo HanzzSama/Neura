@@ -94,6 +94,20 @@ function syncUserProfileUI() {
         avatarEl.textContent = displayName.charAt(0).toUpperCase();
       }
     }
+
+    const isAdmin = typeof isCurrentUserAdmin === 'function' ? isCurrentUserAdmin() : (savedRole === 'Admin');
+    const dotProfileLabel = document.getElementById('dot-edit-profile-label');
+    if (dotProfileLabel) {
+      dotProfileLabel.textContent = isAdmin ? 'Edit Profil Admin' : 'Edit Profil & Password';
+    }
+    const changePwdBtn = document.getElementById('stg-change-pwd-btn');
+    if (changePwdBtn) {
+      changePwdBtn.style.display = isAdmin ? 'none' : 'inline-flex';
+    }
+    const tabSecBtn = document.getElementById('tab-btn-edit-security');
+    if (tabSecBtn) {
+      tabSecBtn.style.display = isAdmin ? 'none' : 'inline-flex';
+    }
   } catch (err) {
     console.warn('[Neura UI] syncUserProfileUI failed:', err);
   } finally {
@@ -169,15 +183,24 @@ async function handleLogout() {
   } catch (err) {
     console.warn('[Neura Auth] Sign out error:', err);
   } finally {
-    try {
-      localStorage.removeItem('neura_auth_user');
-      localStorage.removeItem('neura_user_profile');
-      localStorage.removeItem('neura_user_role');
-      localStorage.removeItem('neura_admin_authenticated');
-      localStorage.removeItem('neura_admin_token');
-      localStorage.removeItem('neura_active_session_id_v2');
-      sessionStorage.clear();
-    } catch (e) { }
+    if (typeof window.clearAllUserSessionData === 'function') {
+      window.clearAllUserSessionData();
+    } else {
+      try {
+        localStorage.removeItem('neura_auth_user');
+        localStorage.removeItem('neura_user_profile');
+        localStorage.removeItem('neura_user_role');
+        localStorage.removeItem('neura_nakes_session');
+        localStorage.removeItem('neura_admin_authenticated');
+        localStorage.removeItem('neura_admin_token');
+        localStorage.removeItem('neura_active_session_id_v2');
+        localStorage.removeItem('neura_recent_chats_v2');
+        localStorage.removeItem('neura_last_consultation');
+        localStorage.removeItem('neura_active_patient_doc');
+        localStorage.removeItem('neura_draft_chat_input_v2');
+        sessionStorage.clear();
+      } catch (e) { }
+    }
 
     window.location.replace('/welcome?logged_out=true');
   }

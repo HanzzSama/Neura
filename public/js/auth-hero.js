@@ -1358,6 +1358,16 @@
                   photoURL: '',
                   role: 'Nakes'
                 };
+                // Bersihkan cache dokumen & riwayat user lama agar tidak tersangkut ke nakes
+                try {
+                  localStorage.removeItem('neura_last_consultation');
+                  localStorage.removeItem('neura_active_patient_doc');
+                  localStorage.removeItem('neura_last_nakes_verified_code');
+                  localStorage.removeItem('neura_recent_chats_v2');
+                  localStorage.removeItem('neura_active_session_id_v2');
+                  localStorage.removeItem('neura_draft_chat_input_v2');
+                } catch (e) { }
+
                 // Simpan sesi nakes ke localStorage
                 localStorage.setItem('neura_user_role', 'Nakes');
                 localStorage.setItem('neura_nakes_session', JSON.stringify(nu));
@@ -1583,12 +1593,25 @@
           }
         } catch (e) {}
 
-        localStorage.removeItem('neura_auth_user');
-        localStorage.removeItem('neura_user_profile');
-        localStorage.removeItem('neura_user_role');
-        localStorage.removeItem('neura_admin_authenticated');
-        localStorage.removeItem('neura_admin_token');
-        localStorage.removeItem('neura_active_session_id_v2');
+        // Bersihkan seluruh data sesi, riwayat, dan dokumen
+        if (typeof window.clearAllUserSessionData === 'function') {
+          window.clearAllUserSessionData();
+        } else {
+          try {
+            localStorage.removeItem('neura_auth_user');
+            localStorage.removeItem('neura_user_profile');
+            localStorage.removeItem('neura_user_role');
+            localStorage.removeItem('neura_nakes_session');
+            localStorage.removeItem('neura_admin_authenticated');
+            localStorage.removeItem('neura_admin_token');
+            localStorage.removeItem('neura_active_session_id_v2');
+            localStorage.removeItem('neura_recent_chats_v2');
+            localStorage.removeItem('neura_last_consultation');
+            localStorage.removeItem('neura_active_patient_doc');
+            localStorage.removeItem('neura_last_nakes_verified_code');
+            localStorage.removeItem('neura_draft_chat_input_v2');
+          } catch (e) { }
+        }
         try { sessionStorage.clear(); } catch (e) {}
 
         showUnloggedState();

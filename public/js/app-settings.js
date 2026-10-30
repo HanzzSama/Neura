@@ -354,6 +354,12 @@ function syncSettingsPanel() {
         }
       }
     }
+
+    // Admin tidak memiliki menu ganti password
+    const changePwdBtn = document.getElementById('stg-change-pwd-btn');
+    if (changePwdBtn) {
+      changePwdBtn.style.display = isAdmin ? 'none' : 'inline-flex';
+    }
   } catch (e) { }
 
   // ── Active model info
@@ -849,6 +855,21 @@ function openEditProfileModal(initialTab = 'info') {
   if (pwdForm) pwdForm.reset();
   handlePasswordStrengthInput('');
 
+  // Untuk Admin: sembunyikan menu/tab Keamanan & Kata Sandi
+  const isAdmin = typeof isCurrentUserAdmin === 'function' ? isCurrentUserAdmin() : (currentRole === 'Admin');
+  const tabSecBtn = document.getElementById('tab-btn-edit-security');
+  const panelSec = document.getElementById('panel-edit-profile-security');
+  const modalTitle = modal.querySelector('.modal-title');
+  if (isAdmin) {
+    if (tabSecBtn) tabSecBtn.style.display = 'none';
+    if (panelSec) panelSec.style.display = 'none';
+    if (modalTitle) modalTitle.textContent = 'Edit Profil Administrator';
+    initialTab = 'info';
+  } else {
+    if (tabSecBtn) tabSecBtn.style.display = 'inline-flex';
+    if (modalTitle) modalTitle.textContent = 'Edit Profil & Kata Sandi';
+  }
+
   // Tampilkan modal dan buka tab yang diminta
   modal.classList.add('open');
   switchEditProfileTab(initialTab);
@@ -869,12 +890,18 @@ function closeEditProfileModalOnBackdrop(e) {
 window.closeEditProfileModalOnBackdrop = closeEditProfileModalOnBackdrop;
 
 function switchEditProfileTab(tabName) {
+  const currentRole = localStorage.getItem('neura_user_role') || 'User';
+  const isAdmin = typeof isCurrentUserAdmin === 'function' ? isCurrentUserAdmin() : (currentRole === 'Admin');
+  if (isAdmin && tabName === 'security') {
+    tabName = 'info';
+  }
+
   const panelInfo = document.getElementById('panel-edit-profile-info');
   const panelSec = document.getElementById('panel-edit-profile-security');
   const tabBtnInfo = document.getElementById('tab-btn-edit-info');
   const tabBtnSec = document.getElementById('tab-btn-edit-security');
 
-  if (tabName === 'security') {
+  if (tabName === 'security' && !isAdmin) {
     if (panelInfo) panelInfo.style.display = 'none';
     if (panelSec) panelSec.style.display = 'block';
     if (tabBtnInfo) tabBtnInfo.classList.remove('active');

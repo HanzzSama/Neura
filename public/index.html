@@ -28,7 +28,8 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=5.9" />
+  <link rel="stylesheet" href="/css/style.css?v=6.1" />
+  <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=62" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
 
@@ -268,6 +269,43 @@
               <span data-i18n="nav_nakes_admin">Data Nakes</span>
             </div>
             <span class="sidebar-nav-tag nakes-admin-tag">Admin</span>
+          </div>
+
+          <!-- Menu Database (Admin Only) -->
+          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--database" id="sidebar-database-link" style="display: none;" onclick="openDatabaseModal()" title="Database & Firestore Viewer">
+            <div class="sidebar-nav-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              </svg>
+              <span>Database</span>
+            </div>
+            <span class="sidebar-nav-tag sidebar-nav-tag--db">DB</span>
+          </div>
+
+          <!-- Menu Statistik (Admin Only) -->
+          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--stats" id="sidebar-stats-link" style="display: none;" onclick="openStatisticsModal()" title="Statistik & Analytics">
+            <div class="sidebar-nav-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+              <span>Statistik</span>
+            </div>
+            <span class="sidebar-nav-tag sidebar-nav-tag--stats">Stats</span>
+          </div>
+
+          <!-- Menu Struktur Folder (Admin Only) -->
+          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--files" id="sidebar-files-link" style="display: none;" onclick="openFileExplorerModal()" title="Struktur Folder Project">
+            <div class="sidebar-nav-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Struktur Folder</span>
+            </div>
+            <span class="sidebar-nav-tag sidebar-nav-tag--files">Files</span>
           </div>
         </div>
       </div>
@@ -919,7 +957,7 @@
                       </svg>
                       <span>Edit Profil</span>
                     </button>
-                    <button class="settings-btn-ghost" onclick="openEditProfileModal('security'); closeSettingsPanel()" title="Ganti Kata Sandi">
+                    <button class="settings-btn-ghost" id="stg-change-pwd-btn" onclick="openEditProfileModal('security'); closeSettingsPanel()" title="Ganti Kata Sandi">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -1138,9 +1176,9 @@
         </div>
 
         <div class="top-nav-right">
-          <!-- Button Translate / Language Selector (ID / EN) -->
+          <!-- Button Translate / Language Selector (Capsule / Pill) -->
           <button class="top-nav-lang-btn" id="app-lang-toggle-btn" title="Ganti Bahasa / Switch Language" onclick="toggleAppLanguage()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="2" y1="12" x2="22" y2="12"/>
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -1171,14 +1209,13 @@
           <div class="claude-hero" id="claude-hero">
             <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo"
               onerror="this.style.display='none'" />
-            <h1 class="hero-greeting" id="hero-greeting-text">Good evening</h1>
-            <p class="hero-subhead" data-i18n="hero_subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling
-              today?</p>
+            <h1 class="hero-greeting cl-title-display" id="hero-greeting-text">Good evening</h1>
+            <p class="hero-subhead cl-desc-lead" data-i18n="hero_subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling today?</p>
 
             <!-- 4 Action Cards -->
             <div class="hero-cards-grid">
-              <div class="hero-card" onclick="submitCommand('/train 50')">
-                <div class="hero-card-header">
+              <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/train 50')">
+                <div class="hero-card-header cl-title-low" style="margin:0 0 6px 0;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 20V10" />
                     <path d="M12 20V4" />
@@ -1186,36 +1223,33 @@
                   </svg>
                   <span data-i18n="card_train_title">Train XGBoost Model</span>
                 </div>
-                <div class="hero-card-desc" data-i18n="card_train_desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data
-                  pasien)</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_train_desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data pasien)</div>
               </div>
 
-              <div class="hero-card" onclick="submitCommand('/predict')">
-                <div class="hero-card-header">
+              <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/predict')">
+                <div class="hero-card-header cl-title-low" style="margin:0 0 6px 0;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6v6l4 2" />
                   </svg>
                   <span data-i18n="card_predict_title">Run Alzheimer Diagnosis</span>
                 </div>
-                <div class="hero-card-desc" data-i18n="card_predict_desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory
-                  Complaints)</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_predict_desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory Complaints)</div>
               </div>
 
-              <div class="hero-card" onclick="submitCommand('/eval')">
-                <div class="hero-card-header">
+              <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/eval')">
+                <div class="hero-card-header cl-title-low" style="margin:0 0 6px 0;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                   </svg>
                   <span data-i18n="card_eval_title">Evaluate Medical Metrics</span>
                 </div>
-                <div class="hero-card-desc" data-i18n="card_eval_desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1%
-                  ROC-AUC</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_eval_desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1% ROC-AUC</div>
               </div>
 
-              <div class="hero-card" onclick="submitCommand('/status')">
-                <div class="hero-card-header">
+              <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/status')">
+                <div class="hero-card-header cl-title-low" style="margin:0 0 6px 0;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
                     <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
@@ -1224,8 +1258,7 @@
                   </svg>
                   <span data-i18n="card_status_title">Clinical Model Specs</span>
                 </div>
-                <div class="hero-card-desc" data-i18n="card_status_desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance
-                </div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_status_desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance</div>
               </div>
             </div>
           </div>
@@ -1327,6 +1360,198 @@
 
       </div><!-- /#voice-chat-view -->
 
+      <!-- ========================================================================
+         ADMIN ROOM: DATABASE VIEWER
+         ======================================================================== -->
+      <div id="admin-room-database" class="admin-room" style="display:none;" aria-hidden="true">
+        <div class="admin-room-header">
+          <div class="admin-room-header-left">
+            <div class="admin-room-icon admin-room-icon--db">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </div>
+            <div>
+              <h2 class="admin-room-title">Database Viewer</h2>
+              <p class="admin-room-subtitle">Firestore Collections &amp; Documents</p>
+            </div>
+          </div>
+          <div class="admin-room-header-actions">
+            <button class="admin-room-action-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()" title="Refresh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh
+            </button>
+            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="admin-room-body db-room-body">
+          <!-- Collections Sidebar -->
+          <div class="db-sidebar">
+            <div class="db-sidebar-header">
+              <span>Collections</span>
+              <button class="db-refresh-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()" title="Refresh">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              </button>
+            </div>
+            <div class="db-collection-list" id="db-collection-list"></div>
+          </div>
+          <!-- Documents Table -->
+          <div class="db-main">
+            <div class="db-main-toolbar">
+              <span class="db-breadcrumb" id="db-breadcrumb">Pilih collection</span>
+              <div class="db-toolbar-actions">
+                <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..." oninput="filterDbDocuments && filterDbDocuments(this.value)">
+                <span class="db-doc-count" id="db-doc-count"></span>
+              </div>
+            </div>
+            <div class="db-table-wrap" id="db-table-wrap">
+              <div class="db-empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                <p>Pilih collection untuk melihat dokumen</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================
+         ADMIN ROOM: STATISTIK & ANALYTICS
+         ======================================================================== -->
+      <div id="admin-room-stats" class="admin-room" style="display:none;" aria-hidden="true">
+        <div class="admin-room-header">
+          <div class="admin-room-header-left">
+            <div class="admin-room-icon admin-room-icon--stats">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <div>
+              <h2 class="admin-room-title">Statistik &amp; Analytics</h2>
+              <p class="admin-room-subtitle">Ringkasan data pengguna &amp; sistem Neura</p>
+            </div>
+          </div>
+          <div class="admin-room-header-actions">
+            <button class="admin-room-action-btn" onclick="loadStatisticsRoom && loadStatisticsRoom()" title="Refresh Data">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh
+            </button>
+            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="admin-room-body stats-room-body">
+          <div class="stats-kpi-row" id="stats-kpi-row">
+            <div class="stats-kpi-card">
+              <div class="stats-kpi-icon stats-kpi-icon--users"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-users">—</span><span class="stats-kpi-label">Total Pengguna</span></div>
+            </div>
+            <div class="stats-kpi-card">
+              <div class="stats-kpi-icon stats-kpi-icon--nakes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-nakes">—</span><span class="stats-kpi-label">Total Nakes</span></div>
+            </div>
+            <div class="stats-kpi-card">
+              <div class="stats-kpi-icon stats-kpi-icon--consult"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-consult">—</span><span class="stats-kpi-label">Konsultasi</span></div>
+            </div>
+            <div class="stats-kpi-card">
+              <div class="stats-kpi-icon stats-kpi-icon--predict"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-predict">—</span><span class="stats-kpi-label">Prediksi ML</span></div>
+            </div>
+          </div>
+          <div class="stats-content-grid">
+            <div class="stats-chart-card">
+              <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Pengguna</span><span class="stats-chart-period">6 bulan terakhir</span></div>
+              <div class="stats-bar-chart" id="stats-bar-chart"><div class="stats-chart-loading"><div class="db-spinner"></div><span>Memuat...</span></div></div>
+            </div>
+            <div class="stats-chart-card">
+              <div class="stats-chart-header"><span class="stats-chart-title">Distribusi Role</span><span class="stats-chart-period">Semua pengguna</span></div>
+              <div class="stats-donut-wrap">
+                <svg class="stats-donut-svg" id="stats-donut-svg" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border-subtle)" stroke-width="16"/>
+                  <circle id="donut-users-arc" cx="60" cy="60" r="48" fill="none" stroke="#6366f1" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4"/>
+                  <circle id="donut-nakes-arc" cx="60" cy="60" r="48" fill="none" stroke="#10b981" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4"/>
+                </svg>
+                <div class="stats-donut-legend" id="stats-donut-legend">
+                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#6366f1"></span>Pasien</div>
+                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#10b981"></span>Nakes</div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-table-card">
+              <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Terbaru</span><button class="stats-view-all-btn" onclick="switchAdminRoom('database'); setTimeout(()=>loadDbCollection&&loadDbCollection('users'),300)">Lihat Semua →</button></div>
+              <div class="stats-recent-table" id="stats-recent-table"><div class="stats-chart-loading"><div class="db-spinner"></div><span>Memuat...</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================
+         ADMIN ROOM: FILE EXPLORER — STRUKTUR FOLDER
+         ======================================================================== -->
+      <div id="admin-room-explorer" class="admin-room admin-room--explorer" style="display:none;" aria-hidden="true">
+        <!-- Title Bar (Windows 11) -->
+        <div class="explorer-titlebar">
+          <div class="explorer-titlebar-left">
+            <div class="explorer-nav-btns">
+              <button class="explorer-nav-btn" id="explorer-back-btn" onclick="explorerGoBack && explorerGoBack()" title="Back" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="explorer-nav-btn" id="explorer-fwd-btn" onclick="explorerGoForward && explorerGoForward()" title="Forward" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+              <button class="explorer-nav-btn" onclick="explorerGoUp && explorerGoUp()" title="Up">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+              </button>
+            </div>
+            <div class="explorer-address-bar">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span class="explorer-address-text" id="explorer-address">Neura Project</span>
+            </div>
+          </div>
+          <div class="explorer-titlebar-right">
+            <div class="explorer-search-wrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="explorer-search" id="explorer-search" placeholder="Cari di folder ini..." oninput="explorerSearch && explorerSearch(this.value)">
+            </div>
+            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <!-- Toolbar -->
+        <div class="explorer-toolbar">
+          <button class="explorer-toolbar-btn" onclick="explorerViewMode && explorerViewMode('grid')" id="explorer-btn-grid">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Grid</span>
+          </button>
+          <button class="explorer-toolbar-btn active" onclick="explorerViewMode && explorerViewMode('list')" id="explorer-btn-list">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>List</span>
+          </button>
+          <div class="explorer-toolbar-sep"></div>
+          <button class="explorer-toolbar-btn" onclick="explorerExpandAll && explorerExpandAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg><span>Expand All</span>
+          </button>
+          <button class="explorer-toolbar-btn" onclick="explorerCollapseAll && explorerCollapseAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg><span>Collapse</span>
+          </button>
+          <div class="explorer-toolbar-sep"></div>
+          <span class="explorer-item-count" id="explorer-item-count">0 items</span>
+        </div>
+        <!-- Body -->
+        <div class="explorer-body">
+          <div class="explorer-tree-pane" id="explorer-tree-pane">
+            <div class="explorer-tree-section-label">QUICK ACCESS</div>
+            <div id="explorer-quick-access"></div>
+            <div class="explorer-tree-section-label" style="margin-top:12px;">PROJECT</div>
+            <div id="explorer-tree-root"></div>
+          </div>
+          <div class="explorer-content-pane" id="explorer-content-pane"></div>
+        </div>
+        <!-- Status Bar -->
+        <div class="explorer-statusbar">
+          <span id="explorer-status-left">Ready</span>
+          <span id="explorer-status-right"></span>
+        </div>
+      </div>
+
 
       <!-- ========================================================================
          FLOATING BOTTOM INPUT (Claude Signature Aesthetic)
@@ -1351,50 +1576,50 @@
                 </button>
 
                 <!-- Quick-command popup -->
-                <div class="quick-menu" id="quick-menu" style="display:none;">
-                  <button type="button" class="qm-item" onclick="submitCommand('/status');closeQuickMenu()">
+                <div class="quick-menu cl-dropdown-menu" id="quick-menu" style="display:none;">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/status');closeQuickMenu()">
                     <span>Check Status</span>
-                    <span class="qm-tag">/status</span>
+                    <span class="qm-tag cl-code">/status</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/profile');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/profile');closeQuickMenu()">
                     <span>Data Diri Pasien</span>
-                    <span class="qm-tag">/profile</span>
+                    <span class="qm-tag cl-code">/profile</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/predict');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/predict');closeQuickMenu()">
                     <span>Run Prediction</span>
-                    <span class="qm-tag">/predict</span>
+                    <span class="qm-tag cl-code">/predict</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/train 5');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/train 5');closeQuickMenu()">
                     <span>Train 5 Epochs</span>
-                    <span class="qm-tag">/train 5</span>
+                    <span class="qm-tag cl-code">/train 5</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/eval');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/eval');closeQuickMenu()">
                     <span>Evaluate Model</span>
-                    <span class="qm-tag">/eval</span>
+                    <span class="qm-tag cl-code">/eval</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/progress');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/progress');closeQuickMenu()">
                     <span>Live Progress</span>
-                    <span class="qm-tag">/progress</span>
+                    <span class="qm-tag cl-code">/progress</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/help');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/help');closeQuickMenu()">
                     <span>Command List</span>
-                    <span class="qm-tag">/help</span>
+                    <span class="qm-tag cl-code">/help</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="if(window.openVoiceChat)window.openVoiceChat();closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="if(window.openVoiceChat)window.openVoiceChat();closeQuickMenu()">
                     <span>Voice Room</span>
-                    <span class="qm-tag">/voice</span>
+                    <span class="qm-tag cl-code">/voice</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/konsul');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/konsul');closeQuickMenu()">
                     <span>Konsultasi Klinis</span>
-                    <span class="qm-tag">/konsul</span>
+                    <span class="qm-tag cl-code">/konsul</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/dokumen');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/dokumen');closeQuickMenu()">
                     <span>Dokumen &amp; Kode Nakes</span>
-                    <span class="qm-tag">/dokumen</span>
+                    <span class="qm-tag cl-code">/dokumen</span>
                   </button>
-                  <button type="button" class="qm-item" onclick="submitCommand('/intro');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/intro');closeQuickMenu()">
                     <span>Pengenalan Neura</span>
-                    <span class="qm-tag">/intro</span>
+                    <span class="qm-tag cl-code">/intro</span>
                   </button>
                 </div>
               </div>
@@ -2036,10 +2261,262 @@
     </div>
   </div>
 
+
+  <!-- ============================================================ -->
+  <!-- Modal: Database Viewer (Admin Only)                           -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay admin-modal-overlay" id="database-modal" onclick="closeDatabaseModalOnBackdrop(event)">
+    <div class="admin-panel-modal database-modal-panel">
+      <div class="admin-panel-header">
+        <div class="admin-panel-header-left">
+          <div class="admin-panel-icon admin-panel-icon--db">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="admin-panel-title">Database Viewer</h2>
+            <p class="admin-panel-subtitle">Firestore Collections & Documents</p>
+          </div>
+        </div>
+        <button class="admin-panel-close-btn" onclick="closeDatabaseModal()" title="Tutup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="admin-panel-body db-panel-body">
+        <!-- Sidebar: Collections -->
+        <div class="db-sidebar">
+          <div class="db-sidebar-header">
+            <span>Collections</span>
+            <button class="db-refresh-btn" onclick="refreshDatabaseCollections()" title="Refresh">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+          </div>
+          <div class="db-collection-list" id="db-collection-list">
+            <div class="db-loading-state">
+              <div class="db-spinner"></div>
+              <span>Loading collections...</span>
+            </div>
+          </div>
+        </div>
+        <!-- Main: Documents Table -->
+        <div class="db-main">
+          <div class="db-main-toolbar">
+            <span class="db-breadcrumb" id="db-breadcrumb">Select a collection</span>
+            <div class="db-toolbar-actions">
+              <input type="text" class="db-search-input" id="db-search-input" placeholder="Search documents..." oninput="filterDbDocuments(this.value)">
+              <span class="db-doc-count" id="db-doc-count"></span>
+            </div>
+          </div>
+          <div class="db-table-wrap" id="db-table-wrap">
+            <div class="db-empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <p>Pilih collection untuk melihat dokumen</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Modal: Statistik & Analytics (Admin Only)                     -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay admin-modal-overlay" id="statistics-modal" onclick="closeStatisticsModalOnBackdrop(event)">
+    <div class="admin-panel-modal stats-modal-panel">
+      <div class="admin-panel-header">
+        <div class="admin-panel-header-left">
+          <div class="admin-panel-icon admin-panel-icon--stats">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="admin-panel-title">Statistik & Analytics</h2>
+            <p class="admin-panel-subtitle">Ringkasan data pengguna & sistem Neura</p>
+          </div>
+        </div>
+        <button class="admin-panel-close-btn" onclick="closeStatisticsModal()" title="Tutup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="admin-panel-body stats-panel-body">
+        <!-- KPI Cards Row -->
+        <div class="stats-kpi-row" id="stats-kpi-row">
+          <div class="stats-kpi-card">
+            <div class="stats-kpi-icon stats-kpi-icon--users">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stats-kpi-data">
+              <span class="stats-kpi-value" id="stat-total-users">—</span>
+              <span class="stats-kpi-label">Total Pengguna</span>
+            </div>
+          </div>
+          <div class="stats-kpi-card">
+            <div class="stats-kpi-icon stats-kpi-icon--nakes">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="stats-kpi-data">
+              <span class="stats-kpi-value" id="stat-total-nakes">—</span>
+              <span class="stats-kpi-label">Total Nakes</span>
+            </div>
+          </div>
+          <div class="stats-kpi-card">
+            <div class="stats-kpi-icon stats-kpi-icon--consult">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="stats-kpi-data">
+              <span class="stats-kpi-value" id="stat-total-consult">—</span>
+              <span class="stats-kpi-label">Konsultasi</span>
+            </div>
+          </div>
+          <div class="stats-kpi-card">
+            <div class="stats-kpi-icon stats-kpi-icon--predict">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stats-kpi-data">
+              <span class="stats-kpi-value" id="stat-total-predict">—</span>
+              <span class="stats-kpi-label">Prediksi ML</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts + Recent Activity -->
+        <div class="stats-content-grid">
+          <!-- Bar Chart: Registrasi per bulan -->
+          <div class="stats-chart-card">
+            <div class="stats-chart-header">
+              <span class="stats-chart-title">Registrasi Pengguna</span>
+              <span class="stats-chart-period">6 bulan terakhir</span>
+            </div>
+            <div class="stats-bar-chart" id="stats-bar-chart">
+              <div class="stats-chart-loading">
+                <div class="db-spinner"></div>
+                <span>Memuat data...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donut: Distribusi Role -->
+          <div class="stats-chart-card">
+            <div class="stats-chart-header">
+              <span class="stats-chart-title">Distribusi Role</span>
+              <span class="stats-chart-period">Semua pengguna</span>
+            </div>
+            <div class="stats-donut-wrap">
+              <svg class="stats-donut-svg" id="stats-donut-svg" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border-subtle)" stroke-width="16"/>
+                <circle id="donut-users-arc" cx="60" cy="60" r="48" fill="none" stroke="#6366f1" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4" stroke-linecap="butt"/>
+                <circle id="donut-nakes-arc" cx="60" cy="60" r="48" fill="none" stroke="#10b981" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4" stroke-linecap="butt"/>
+              </svg>
+              <div class="stats-donut-legend" id="stats-donut-legend">
+                <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#6366f1"></span>Pasien</div>
+                <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#10b981"></span>Nakes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Registrations Table -->
+          <div class="stats-table-card">
+            <div class="stats-chart-header">
+              <span class="stats-chart-title">Registrasi Terbaru</span>
+              <button class="stats-view-all-btn" onclick="switchToDbCollection('users')">Lihat Semua →</button>
+            </div>
+            <div class="stats-recent-table" id="stats-recent-table">
+              <div class="stats-chart-loading"><div class="db-spinner"></div><span>Memuat...</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Modal: File Explorer — Struktur Folder Project (Admin Only)   -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay admin-modal-overlay" id="file-explorer-modal" onclick="closeFileExplorerModalOnBackdrop(event)">
+    <div class="admin-panel-modal explorer-modal-panel">
+      <!-- Title Bar (Windows 11 style) -->
+      <div class="explorer-titlebar">
+        <div class="explorer-titlebar-left">
+          <div class="explorer-nav-btns">
+            <button class="explorer-nav-btn" id="explorer-back-btn" onclick="explorerGoBack()" title="Back" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="explorer-nav-btn" id="explorer-fwd-btn" onclick="explorerGoForward()" title="Forward" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="explorer-nav-btn" onclick="explorerGoUp()" title="Up">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            </button>
+          </div>
+          <div class="explorer-address-bar">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span class="explorer-address-text" id="explorer-address">Neura Project</span>
+          </div>
+        </div>
+        <div class="explorer-titlebar-right">
+          <div class="explorer-search-wrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="explorer-search" id="explorer-search" placeholder="Cari di folder ini..." oninput="explorerSearch(this.value)">
+          </div>
+          <button class="admin-panel-close-btn" onclick="closeFileExplorerModal()" title="Tutup">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Toolbar (Ribbon-lite) -->
+      <div class="explorer-toolbar">
+        <button class="explorer-toolbar-btn" onclick="explorerViewMode('grid')" id="explorer-btn-grid" title="Grid view">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Grid</span>
+        </button>
+        <button class="explorer-toolbar-btn active" onclick="explorerViewMode('list')" id="explorer-btn-list" title="List view">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span>List</span>
+        </button>
+        <div class="explorer-toolbar-sep"></div>
+        <button class="explorer-toolbar-btn" onclick="explorerExpandAll()" title="Expand all">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          <span>Expand All</span>
+        </button>
+        <button class="explorer-toolbar-btn" onclick="explorerCollapseAll()" title="Collapse all">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+          <span>Collapse</span>
+        </button>
+        <div class="explorer-toolbar-sep"></div>
+        <span class="explorer-item-count" id="explorer-item-count">0 items</span>
+      </div>
+
+      <!-- Main Explorer Body -->
+      <div class="explorer-body">
+        <!-- Left: Tree Navigation -->
+        <div class="explorer-tree-pane" id="explorer-tree-pane">
+          <div class="explorer-tree-section-label">QUICK ACCESS</div>
+          <div id="explorer-quick-access"></div>
+          <div class="explorer-tree-section-label" style="margin-top:12px;">PROJECT</div>
+          <div id="explorer-tree-root"></div>
+        </div>
+        <!-- Right: Files/Folders Content -->
+        <div class="explorer-content-pane" id="explorer-content-pane">
+          <!-- Content rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="explorer-statusbar">
+        <span id="explorer-status-left">Ready</span>
+        <span id="explorer-status-right"></span>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div class="toast-box" id="toast-box"></div>
 
   <!-- External JavaScript -->
+  <script src="/js/qrcode.min.js"></script>
   <script src="/js/about_app.js?v=1"></script>
   <script src="/js/dynamic-island.js?v=59"></script>
   <!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
@@ -2074,6 +2551,7 @@
   <script src="/js/app-admin-ml.js?v=7.0"></script>
   <script src="/js/app-admin-history.js?v=7.0"></script>
   <script src="/js/app-admin.js?v=7.0"></script>
+  <script src="/js/app-admin-panels.js?v=1.0"></script>
 
   <script src="/js/voice-consultation.js?v=64"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
