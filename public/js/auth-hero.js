@@ -1308,31 +1308,77 @@
             return;
           }
 
-          // Bukan admin -> Lanjutkan login normal pengguna/nakes via Firebase
-          var fb = window.NeuraFirebase;
-          var auth = fb ? fb.getAuth() : null;
+          // Bukan admin -> Cek dulu apakah email nakes (@neura.ns.id atau email asli)
+          // Intercept login nakes sebelum Firebase Auth
+          var isNakesEmail = email.endsWith('@neura.ns.id');
 
-          if (!auth || !fb.isConfigured()) {
-            setButtonLoading(loginSubmitBtn, false);
-            handleDemoAuth(email, '', 'password');
+          // Fungsi untuk login via Firebase setelah nakes check gagal / tidak applicable
+          function doFirebaseLogin() {
+            var fb = window.NeuraFirebase;
+            var auth = fb ? fb.getAuth() : null;
+
+            if (!auth || !fb.isConfigured()) {
+              setButtonLoading(loginSubmitBtn, false);
+              handleDemoAuth(email, '', 'password');
+              return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+              .then(function (result) {
+                setButtonLoading(loginSubmitBtn, false);
+                var user = result.user;
+                if (!user.emailVerified) {
+                  showVerifySlide(user, '', user.email);
+                  return;
+                }
+                showWelcomeSlide(user, user.displayName);
+              })
+              .catch(function (error) {
+                setButtonLoading(loginSubmitBtn, false);
+                showAlert(translateFirebaseError(error), true);
+              });
+          }
+
+          // Jika email adalah @neura.ns.id, coba login nakes dulu
+          if (isNakesEmail) {
+            fetch('/api/nakes/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: email, password: password })
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (nakesResult) {
+              if (nakesResult && nakesResult.success && nakesResult.user) {
+                setButtonLoading(loginSubmitBtn, false);
+                var nu = nakesResult.user;
+                var nakesUser = {
+                  uid: nu.uid || ('nks_' + Date.now()),
+                  displayName: nu.name || nu.displayName || email.split('@')[0],
+                  email: nu.email || email,
+                  photoURL: '',
+                  role: 'Nakes'
+                };
+                // Simpan sesi nakes ke localStorage
+                localStorage.setItem('neura_user_role', 'Nakes');
+                localStorage.setItem('neura_nakes_session', JSON.stringify(nu));
+                syncUserProfileToStorage(nakesUser, nakesUser.displayName);
+                showLoggedState(nakesUser);
+                showAlert('Selamat datang, ' + nakesUser.displayName + '! Mengalihkan ke Workspace...', false);
+                setTimeout(function () { window.location.href = '/app'; }, 1200);
+              } else {
+                setButtonLoading(loginSubmitBtn, false);
+                showAlert(nakesResult.error || 'Email atau kata sandi Nakes tidak cocok.', true);
+              }
+            })
+            .catch(function () {
+              // Fallback ke Firebase jika server tidak tersedia
+              doFirebaseLogin();
+            });
             return;
           }
 
-          auth.signInWithEmailAndPassword(email, password)
-            .then(function (result) {
-              setButtonLoading(loginSubmitBtn, false);
-              var user = result.user;
-
-              if (!user.emailVerified) {
-                showVerifySlide(user, '', user.email);
-                return;
-              }
-              showWelcomeSlide(user, user.displayName);
-            })
-            .catch(function (error) {
-              setButtonLoading(loginSubmitBtn, false);
-              showAlert(translateFirebaseError(error), true);
-            });
+          // Email biasa (bukan nakes) -> Firebase
+          doFirebaseLogin();
         })
         .catch(function () {
           var fb = window.NeuraFirebase;

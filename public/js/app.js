@@ -384,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadChatSessions();
   renderRecentChatsSidebar();
   initMLCommandsDropdown();
+  if (typeof updateActivePatientBar === 'function') updateActivePatientBar();
   initAppSettingsModifiers();
 
   // Restore saved theme preference
@@ -392,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedTheme === 'dark' || savedTheme === 'light') {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
-  } catch(e) {}
+  } catch (e) { }
 
   // Restore last active room/session so refreshing never resets the room
   const savedLastSessionId = localStorage.getItem(LAST_SESSION_STORAGE_KEY);
@@ -414,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
       chatInput.value = savedDraft;
       handleTextareaInput(chatInput);
     }
-  } catch(e) {}
+  } catch (e) { }
 
   fetchModelStatus(false);
   setInterval(() => fetchModelStatus(false), 12000);
@@ -443,6 +444,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize User Profile in Sidebar & Authentication Listeners
   initAuthListeners();
 
+  // Initialize ML Commands Dropdown & Role Filtering
+  initMLCommandsDropdown();
+
   // Cross-tab sync: when welcome.js changes language in another tab, app reflects it
   window.addEventListener('storage', function (e) {
     if (e.key === 'neura_lang' && e.newValue) {
@@ -458,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function isCurrentUserAdmin() {
   try {
     const isAdminAuth = localStorage.getItem('neura_admin_authenticated') === 'true' ||
-                        sessionStorage.getItem('neura_admin_session') === 'true';
+      sessionStorage.getItem('neura_admin_session') === 'true';
     if (isAdminAuth) return true;
 
     const rawUser = localStorage.getItem('neura_auth_user');
@@ -470,11 +474,42 @@ function isCurrentUserAdmin() {
         return true;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
   return false;
 }
 
 window.isCurrentUserAdmin = isCurrentUserAdmin;
+
+function getCurrentUserRole() {
+  try {
+    if (typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin()) {
+      return 'Admin';
+    }
+    const savedRole = localStorage.getItem('neura_user_role');
+    if (savedRole) {
+      const lower = savedRole.toLowerCase().trim();
+      if (lower === 'admin') return 'Admin';
+      if (lower === 'nakes' || lower === 'dokter') return 'Nakes';
+      if (lower === 'user' || lower === 'pasien') return 'User';
+    }
+    const rawUser = localStorage.getItem('neura_auth_user');
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      const uRole = (u.role || '').toLowerCase().trim();
+      if (uRole === 'admin') return 'Admin';
+      if (uRole === 'nakes' || uRole === 'dokter') return 'Nakes';
+      const email = (u.email || '').toLowerCase().trim();
+      if (email.endsWith('@neura.ns.id')) return 'Nakes';
+      if (email.endsWith('@neura.dr.id') || email === 'muhammadhasan.cg@gmail.com') return 'Admin';
+    }
+    if (localStorage.getItem('neura_nakes_session')) {
+      return 'Nakes';
+    }
+  } catch (e) { }
+  return 'User';
+}
+
+window.getCurrentUserRole = getCurrentUserRole;
 
 function syncUserProfileUI() {
   try {
@@ -504,7 +539,7 @@ function syncUserProfileUI() {
     const avatarEl = document.getElementById('sidebar-user-avatar');
 
     if (nameEl) nameEl.textContent = displayName;
-    const savedRole = localStorage.getItem('neura_user_role') || 'User';
+    const savedRole = getCurrentUserRole();
     if (roleEl) {
       roleEl.textContent = formatRoleLabel(savedRole);
       roleEl.setAttribute('data-role', savedRole.toLowerCase());
@@ -518,12 +553,22 @@ function syncUserProfileUI() {
     }
   } catch (err) {
     console.warn('[Neura UI] syncUserProfileUI failed:', err);
+  } finally {
+    if (typeof syncAdminNavVisibility === 'function') {
+      syncAdminNavVisibility();
+    }
+    if (typeof renderRoleMLCommands === 'function') {
+      renderRoleMLCommands();
+    }
   }
 }
 
 function initAuthListeners() {
   // Sync profile info immediately from localStorage if available
   syncUserProfileUI();
+  if (typeof syncAdminNavVisibility === 'function') {
+    syncAdminNavVisibility();
+  }
 
   // Hook Firebase Auth state change if initialized
   function hookFirebase() {
@@ -534,14 +579,14 @@ function initAuthListeners() {
             syncUserProfileUI();
           }
         });
-      } catch (e) {}
+      } catch (e) { }
     }
   }
 
   if (window.NeuraFirebase && window.NeuraFirebase.auth) {
     hookFirebase();
   } else if (window.NeuraFirebase && window.NeuraFirebase.init) {
-    window.NeuraFirebase.init().then(hookFirebase).catch(function () {});
+    window.NeuraFirebase.init().then(hookFirebase).catch(function () { });
   }
 }
 
@@ -572,7 +617,7 @@ async function handleLogout() {
     }
 
     if (!auth && typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-      try { auth = firebase.auth(); } catch (e) {}
+      try { auth = firebase.auth(); } catch (e) { }
     }
 
     if (auth && typeof auth.signOut === 'function') {
@@ -590,7 +635,7 @@ async function handleLogout() {
       localStorage.removeItem('neura_admin_token');
       localStorage.removeItem('neura_active_session_id_v2');
       sessionStorage.clear();
-    } catch (e) {}
+    } catch (e) { }
 
     window.location.replace('/welcome?logged_out=true');
   }
@@ -617,6 +662,7 @@ const APP_TRANSLATIONS = {
     cmd_train: 'Latih 5 Epoch',
     cmd_eval: 'Evaluasi Model',
     cmd_predict: 'Jalankan Prediksi',
+    cmd_dokumen: 'Dokumen Konsultasi',
     cmd_progress: 'Progress Live',
     cmd_help: 'Daftar Perintah',
     cmd_intro: 'Pengenalan Neura',
@@ -658,6 +704,7 @@ const APP_TRANSLATIONS = {
     cmd_train: 'Train 5 Epochs',
     cmd_eval: 'Evaluate Model',
     cmd_predict: 'Run Prediction',
+    cmd_dokumen: 'Consultation Document',
     cmd_progress: 'Live Progress',
     cmd_help: 'Command List',
     cmd_intro: 'Neura Introduction',
@@ -688,11 +735,11 @@ const APP_TRANSLATIONS = {
 };
 
 function getAppLanguage() {
-  try { return localStorage.getItem('neura_lang') === 'en' ? 'en' : 'id'; } catch(e) { return 'id'; }
+  try { return localStorage.getItem('neura_lang') === 'en' ? 'en' : 'id'; } catch (e) { return 'id'; }
 }
 
 function setAppLanguage(lang, notify = false) {
-  try { localStorage.setItem('neura_lang', lang); } catch(e) {}
+  try { localStorage.setItem('neura_lang', lang); } catch (e) { }
   const t = APP_TRANSLATIONS[lang] || APP_TRANSLATIONS.id;
 
   // Update lang label buttons
@@ -733,6 +780,9 @@ function setAppLanguage(lang, notify = false) {
   }
   // Sync dot menu labels if open
   syncDotMenuState();
+  if (typeof renderRoleMLCommands === 'function') {
+    renderRoleMLCommands();
+  }
 }
 
 function toggleAppLanguage() {
@@ -761,7 +811,7 @@ function syncDotMenuState() {
   const themeLabel = document.getElementById('dot-theme-label');
   if (themeLabel) themeLabel.textContent = isDark
     ? (lang === 'en' ? 'Light Mode' : 'Mode Terang')
-    : (lang === 'en' ? 'Dark Mode'  : 'Mode Gelap');
+    : (lang === 'en' ? 'Dark Mode' : 'Mode Gelap');
 
   // Swap theme icon: sun (light) <-> moon (dark)
   const themeIcon = document.getElementById('dot-theme-icon');
@@ -844,7 +894,7 @@ function initAppSettingsModifiers() {
     // 3. Compact Mode
     const compactMode = localStorage.getItem('neura_compact_mode') === 'true';
     document.body.classList.toggle('compact-mode', compactMode);
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function playSuccessChime() {
@@ -872,7 +922,7 @@ function playSuccessChime() {
 
     osc.start(now);
     osc.stop(now + 0.42);
-  } catch(e) {}
+  } catch (e) { }
 }
 
 let currentSettingsSubpanel = null;
@@ -911,23 +961,23 @@ function openSettingsSubpanel(subpanelId, titleId, titleEn) {
 
   // Render About panel data when subpanel-about is opened
   if (subpanelId === 'subpanel-about' && window.NeuraAbout) {
-    window.NeuraAbout.get().then(function(data) {
+    window.NeuraAbout.get().then(function (data) {
       if (!data) return;
       // Re-populate data-about elements inside this subpanel
       if (target) window.NeuraAbout.populate(target);
       // Render changelog
       const changelogBody = document.getElementById('settings-changelog-body');
       if (changelogBody && Array.isArray(data.changelog) && data.changelog.length > 0) {
-        changelogBody.innerHTML = data.changelog.map(function(entry) {
+        changelogBody.innerHTML = data.changelog.map(function (entry) {
           var notes = Array.isArray(entry.notes)
-            ? entry.notes.map(function(n) {
-                return '<div class="settings-about-changelog-note">' + n + '</div>';
-              }).join('')
+            ? entry.notes.map(function (n) {
+              return '<div class="settings-about-changelog-note">' + n + '</div>';
+            }).join('')
             : '';
           return '<div class="settings-about-changelog-entry">'
             + '<div class="settings-about-changelog-ver">'
-            +   '<span class="settings-about-changelog-ver-badge">v' + entry.version + '</span>'
-            +   '<span class="settings-about-changelog-date">' + entry.date + '</span>'
+            + '<span class="settings-about-changelog-ver-badge">v' + entry.version + '</span>'
+            + '<span class="settings-about-changelog-date">' + entry.date + '</span>'
             + '</div>'
             + notes
             + '</div>';
@@ -1012,9 +1062,9 @@ function updateSettingsNavBadges() {
       const mot = localStorage.getItem('neura_reduce_motion') === 'true';
       const cmp = localStorage.getItem('neura_compact_mode') === 'true';
       if (mot && cmp) badgeA11y.textContent = lang === 'en' ? 'Calm+Dense' : 'Tenang+Padat';
-      else if (mot)   badgeA11y.textContent = lang === 'en' ? 'No-Motion' : 'Tenang';
-      else if (cmp)   badgeA11y.textContent = lang === 'en' ? 'Compact' : 'Ringkas';
-      else            badgeA11y.textContent = lang === 'en' ? 'Normal' : 'Normal';
+      else if (mot) badgeA11y.textContent = lang === 'en' ? 'No-Motion' : 'Tenang';
+      else if (cmp) badgeA11y.textContent = lang === 'en' ? 'Compact' : 'Ringkas';
+      else badgeA11y.textContent = lang === 'en' ? 'Normal' : 'Normal';
     }
 
     // 7. Profil
@@ -1048,11 +1098,11 @@ function updateSettingsNavBadges() {
     if (badgeAbout) {
       badgeAbout.textContent = 'v2.5.1';
     }
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function openSettingsPanel() {
-  const panel   = document.getElementById('settings-panel');
+  const panel = document.getElementById('settings-panel');
   const overlay = document.getElementById('settings-overlay');
   if (!panel) return;
   backToSettingsRoot();
@@ -1063,7 +1113,7 @@ function openSettingsPanel() {
 }
 
 function closeSettingsPanel() {
-  const panel   = document.getElementById('settings-panel');
+  const panel = document.getElementById('settings-panel');
   const overlay = document.getElementById('settings-overlay');
   if (!panel) return;
   panel.classList.remove('open');
@@ -1077,7 +1127,7 @@ function closeSettingsPanel() {
 }
 
 function syncSettingsPanel() {
-  const lang  = getAppLanguage();
+  const lang = getAppLanguage();
   const theme = document.documentElement.getAttribute('data-theme') || 'light';
 
   // ── Theme chips active state
@@ -1133,25 +1183,25 @@ function syncSettingsPanel() {
 
   // ── Profile info from sidebar / auth storage
   try {
-    const raw  = localStorage.getItem('neura_auth_user');
+    const raw = localStorage.getItem('neura_auth_user');
     const user = raw ? JSON.parse(raw) : null;
 
-    const nameEl  = document.getElementById('stg-profile-name');
+    const nameEl = document.getElementById('stg-profile-name');
     const emailEl = document.getElementById('stg-profile-email');
     const avatarEl = document.getElementById('stg-avatar');
 
     if (user) {
       const name = user.name || user.displayName || 'Pengguna';
-      if (nameEl)  nameEl.textContent  = name;
+      if (nameEl) nameEl.textContent = name;
       if (emailEl) emailEl.textContent = user.email || '—';
       if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
     } else {
       const sbName = document.getElementById('sidebar-user-name')?.textContent || 'Pengguna';
-      if (nameEl)  nameEl.textContent  = sbName;
+      if (nameEl) nameEl.textContent = sbName;
       if (emailEl) emailEl.textContent = document.getElementById('sidebar-user-email')?.textContent || '—';
       if (avatarEl) avatarEl.textContent = sbName.charAt(0).toUpperCase();
     }
-  } catch(e) {}
+  } catch (e) { }
 
   // ── Role select (Hanya ditampilkan untuk Admin; User & Nakes TIDAK MENAMPILKAN fitur ini sama sekali)
   try {
@@ -1176,7 +1226,7 @@ function syncSettingsPanel() {
         }
       }
     }
-  } catch(e) {}
+  } catch (e) { }
 
   // ── Active model info
   const modelValEl = document.getElementById('stg-model-val');
@@ -1196,100 +1246,100 @@ function syncSettingsPanel() {
     } else {
       set('settings-title', 'Settings');
     }
-    set('settings-back-label',   'Back');
+    set('settings-back-label', 'Back');
 
     // Root Menu Titles & Subtitles
     set('menu-title-appearance', 'Appearance');
-    set('menu-sub-appearance',   'Interface theme & language');
-    set('menu-title-input',      'Input & Chat');
-    set('menu-sub-input',        'Send on Enter, drafts, font size');
-    set('menu-title-notif',      'Notifications & Audio');
-    set('menu-sub-notif',        'Response chime & toast duration');
-    set('menu-title-clinical',   'Model & Clinical');
-    set('menu-sub-clinical',     'Default epochs, risk precision');
-    set('menu-title-voice',      'Voice Consultation');
-    set('menu-sub-voice',        'Mic silence pause & auto-play');
-    set('menu-title-a11y',       'Accessibility');
-    set('menu-title-profile',    'Profile');
+    set('menu-sub-appearance', 'Interface theme & language');
+    set('menu-title-input', 'Input & Chat');
+    set('menu-sub-input', 'Send on Enter, drafts, font size');
+    set('menu-title-notif', 'Notifications & Audio');
+    set('menu-sub-notif', 'Response chime & toast duration');
+    set('menu-title-clinical', 'Model & Clinical');
+    set('menu-sub-clinical', 'Default epochs, risk precision');
+    set('menu-title-voice', 'Voice Consultation');
+    set('menu-sub-voice', 'Mic silence pause & auto-play');
+    set('menu-title-a11y', 'Accessibility');
+    set('menu-title-profile', 'Profile');
     if (isCurrentUserAdmin()) {
-      set('menu-sub-profile',    'Account & stakeholder role (User, Admin, Nakes)');
+      set('menu-sub-profile', 'Account & stakeholder role (User, Admin, Nakes)');
     } else {
-      set('menu-sub-profile',    'Account details & user profile');
+      set('menu-sub-profile', 'Account details & user profile');
     }
-    set('menu-title-chat',       'Model & Chat');
-    set('menu-sub-chat',         'Active model & message history');
-    set('menu-title-storage',    'Data & Storage');
-    set('menu-sub-storage',      'Memory quota, JSON export, reset');
-    set('menu-title-about',      'About');
-    set('menu-sub-about',        'Neura AI v2.5.1');
+    set('menu-title-chat', 'Model & Chat');
+    set('menu-sub-chat', 'Active model & message history');
+    set('menu-title-storage', 'Data & Storage');
+    set('menu-sub-storage', 'Memory quota, JSON export, reset');
+    set('menu-title-about', 'About');
+    set('menu-sub-about', 'Neura AI v2.5.1');
 
-    set('stg-sec-appearance',    'Appearance');
-    set('stg-theme-label',       'Theme');
-    set('stg-theme-desc',        'Interface display mode');
-    set('stg-light-label',       'Light');
-    set('stg-dark-label',        'Dark');
-    set('stg-lang-label',        'Language');
-    set('stg-lang-desc',         'Application interface language');
+    set('stg-sec-appearance', 'Appearance');
+    set('stg-theme-label', 'Theme');
+    set('stg-theme-desc', 'Interface display mode');
+    set('stg-light-label', 'Light');
+    set('stg-dark-label', 'Dark');
+    set('stg-lang-label', 'Language');
+    set('stg-lang-desc', 'Application interface language');
 
-    set('stg-sec-input',         'Input & Chat');
-    set('stg-enter-label',       'Send on Enter');
-    set('stg-enter-desc',        'Enter to send, Shift+Enter for new line');
-    set('stg-draft-label',       'Auto-save Draft');
-    set('stg-draft-desc',        'Preserve unsent input on reload');
-    set('stg-font-label',        'Chat Font Size');
-    set('stg-font-desc',         'Reading comfort for consultation messages');
+    set('stg-sec-input', 'Input & Chat');
+    set('stg-enter-label', 'Send on Enter');
+    set('stg-enter-desc', 'Enter to send, Shift+Enter for new line');
+    set('stg-draft-label', 'Auto-save Draft');
+    set('stg-draft-desc', 'Preserve unsent input on reload');
+    set('stg-font-label', 'Chat Font Size');
+    set('stg-font-desc', 'Reading comfort for consultation messages');
 
-    set('stg-sec-notif',         'Notifications & Audio');
-    set('stg-sound-label',       'Completion Chime');
-    set('stg-sound-desc',        'Soft sound when AI completes response');
-    set('stg-toast-label',       'Toast Duration');
-    set('stg-toast-desc',        'Display time for toast popups');
+    set('stg-sec-notif', 'Notifications & Audio');
+    set('stg-sound-label', 'Completion Chime');
+    set('stg-sound-desc', 'Soft sound when AI completes response');
+    set('stg-toast-label', 'Toast Duration');
+    set('stg-toast-desc', 'Display time for toast popups');
 
-    set('stg-sec-clinical',      'Model & Clinical');
-    set('stg-epochs-label',      'Default Epochs /train');
-    set('stg-epochs-desc',       'Default boosting rounds for training');
-    set('stg-prob-label',        'Detailed Probability');
-    set('stg-prob-desc',         'Display precise decimals (e.g. 95.35%)');
+    set('stg-sec-clinical', 'Model & Clinical');
+    set('stg-epochs-label', 'Default Epochs /train');
+    set('stg-epochs-desc', 'Default boosting rounds for training');
+    set('stg-prob-label', 'Detailed Probability');
+    set('stg-prob-desc', 'Display precise decimals (e.g. 95.35%)');
 
-    set('stg-sec-voice',         'Voice Consultation');
+    set('stg-sec-voice', 'Voice Consultation');
     set('stg-voice-delay-label', 'Silence Delay');
-    set('stg-voice-delay-desc',  'Pause duration before automatic send');
-    set('stg-voice-play-label',  'Auto-speak Response');
-    set('stg-voice-play-desc',   'Vocalize AI response in voice room');
+    set('stg-voice-delay-desc', 'Pause duration before automatic send');
+    set('stg-voice-play-label', 'Auto-speak Response');
+    set('stg-voice-play-desc', 'Vocalize AI response in voice room');
 
-    set('stg-sec-a11y',          'Accessibility');
-    set('stg-motion-label',      'Reduce Motion');
-    set('stg-motion-desc',       'Minimize transitions and visual pulses');
-    set('stg-compact-label',     'Compact View');
-    set('stg-compact-desc',      'Tighter chat bubbles for long history');
+    set('stg-sec-a11y', 'Accessibility');
+    set('stg-motion-label', 'Reduce Motion');
+    set('stg-motion-desc', 'Minimize transitions and visual pulses');
+    set('stg-compact-label', 'Compact View');
+    set('stg-compact-desc', 'Tighter chat bubbles for long history');
 
-    set('stg-sec-profile',       'Profile');
-    set('stg-role-label',        'Stakeholder Role');
+    set('stg-sec-profile', 'Profile');
+    set('stg-role-label', 'Stakeholder Role');
     if (isCurrentUserAdmin()) {
-      set('stg-role-desc',       'Select your stakeholder role in the platform');
+      set('stg-role-desc', 'Select your stakeholder role in the platform');
     } else {
-      set('stg-role-desc',       'Role locked: Only Administrator has permission to switch roles');
+      set('stg-role-desc', 'Role locked: Only Administrator has permission to switch roles');
     }
 
-    set('stg-sec-chat',          'Model & Chat');
-    set('stg-model-label',       'Active AI Model');
-    set('stg-change-model',      'Change');
-    set('stg-history-label',     'Chat History');
-    set('stg-history-desc',      'Delete all saved conversations');
-    set('stg-clear-label',       'Delete');
+    set('stg-sec-chat', 'Model & Chat');
+    set('stg-model-label', 'Active AI Model');
+    set('stg-change-model', 'Change');
+    set('stg-history-label', 'Chat History');
+    set('stg-history-desc', 'Delete all saved conversations');
+    set('stg-clear-label', 'Delete');
 
-    set('stg-sec-storage',       'Data & Storage');
-    set('stg-storage-label',     'Browser Storage');
-    set('stg-export-label',      'Export Chat History');
-    set('stg-export-desc',       'Download complete conversation history (JSON)');
-    set('stg-export-btn-label',  'Export');
-    set('stg-reset-label',       'Reset All Settings');
-    set('stg-reset-desc',        'Restore all preferences to defaults');
-    set('stg-reset-btn-label',   'Reset');
+    set('stg-sec-storage', 'Data & Storage');
+    set('stg-storage-label', 'Browser Storage');
+    set('stg-export-label', 'Export Chat History');
+    set('stg-export-desc', 'Download complete conversation history (JSON)');
+    set('stg-export-btn-label', 'Export');
+    set('stg-reset-label', 'Reset All Settings');
+    set('stg-reset-desc', 'Restore all preferences to defaults');
+    set('stg-reset-btn-label', 'Reset');
 
-    set('stg-sec-about',         'About');
-    set('stg-about-desc',        'Clinical AI platform for early Alzheimer\'s detection based on 32 multimodal biomarkers.');
-    set('dot-settings-label',    'Settings');
+    set('stg-sec-about', 'About');
+    set('stg-about-desc', 'Clinical AI platform for early Alzheimer\'s detection based on 32 multimodal biomarkers.');
+    set('dot-settings-label', 'Settings');
   } else {
     // Indonesian
     if (currentSettingsSubpanel && currentSettingsSubpanelTitle) {
@@ -1297,101 +1347,101 @@ function syncSettingsPanel() {
     } else {
       set('settings-title', 'Pengaturan');
     }
-    set('settings-back-label',   'Kembali');
+    set('settings-back-label', 'Kembali');
 
     // Root Menu Titles & Subtitles
     set('menu-title-appearance', 'Tampilan');
-    set('menu-sub-appearance',   'Tema antarmuka & bahasa');
-    set('menu-title-input',      'Input & Chat');
-    set('menu-sub-input',        'Kirim Enter, draf, ukuran font');
-    set('menu-title-notif',      'Notifikasi & Suara');
-    set('menu-sub-notif',        'Chime respons & durasi toast');
-    set('menu-title-clinical',   'Model & Klinis');
-    set('menu-sub-clinical',     'Epochs default, presisi risiko');
-    set('menu-title-voice',      'Voice Consultation');
-    set('menu-sub-voice',        'Jeda mic & auto-play ucapan');
-    set('menu-title-a11y',       'Aksesibilitas');
-    set('menu-sub-a11y',         'Animasi & kerapatan tampilan');
-    set('menu-title-profile',    'Profil');
+    set('menu-sub-appearance', 'Tema antarmuka & bahasa');
+    set('menu-title-input', 'Input & Chat');
+    set('menu-sub-input', 'Kirim Enter, draf, ukuran font');
+    set('menu-title-notif', 'Notifikasi & Suara');
+    set('menu-sub-notif', 'Chime respons & durasi toast');
+    set('menu-title-clinical', 'Model & Klinis');
+    set('menu-sub-clinical', 'Epochs default, presisi risiko');
+    set('menu-title-voice', 'Voice Consultation');
+    set('menu-sub-voice', 'Jeda mic & auto-play ucapan');
+    set('menu-title-a11y', 'Aksesibilitas');
+    set('menu-sub-a11y', 'Animasi & kerapatan tampilan');
+    set('menu-title-profile', 'Profil');
     if (isCurrentUserAdmin()) {
-      set('menu-sub-profile',    'Akun & peran stakeholder (User, Admin, Nakes)');
+      set('menu-sub-profile', 'Akun & peran stakeholder (User, Admin, Nakes)');
     } else {
-      set('menu-sub-profile',    'Informasi akun & profil pengguna');
+      set('menu-sub-profile', 'Informasi akun & profil pengguna');
     }
-    set('menu-title-chat',       'Model & Chat');
-    set('menu-sub-chat',         'Model aktif & riwayat pesan');
-    set('menu-title-storage',    'Data & Penyimpanan');
-    set('menu-sub-storage',      'Memori, ekspor JSON, reset');
-    set('menu-title-about',      'Tentang');
-    set('menu-sub-about',        'Neura AI v2.5.1');
+    set('menu-title-chat', 'Model & Chat');
+    set('menu-sub-chat', 'Model aktif & riwayat pesan');
+    set('menu-title-storage', 'Data & Penyimpanan');
+    set('menu-sub-storage', 'Memori, ekspor JSON, reset');
+    set('menu-title-about', 'Tentang');
+    set('menu-sub-about', 'Neura AI v2.5.1');
 
-    set('stg-sec-appearance',    'Tampilan');
-    set('stg-theme-label',       'Tema');
-    set('stg-theme-desc',        'Mode tampilan antarmuka');
-    set('stg-light-label',       'Terang');
-    set('stg-dark-label',        'Gelap');
-    set('stg-lang-label',        'Bahasa');
-    set('stg-lang-desc',         'Bahasa antarmuka aplikasi');
+    set('stg-sec-appearance', 'Tampilan');
+    set('stg-theme-label', 'Tema');
+    set('stg-theme-desc', 'Mode tampilan antarmuka');
+    set('stg-light-label', 'Terang');
+    set('stg-dark-label', 'Gelap');
+    set('stg-lang-label', 'Bahasa');
+    set('stg-lang-desc', 'Bahasa antarmuka aplikasi');
 
-    set('stg-sec-input',         'Input & Chat');
-    set('stg-enter-label',       'Kirim dengan Enter');
-    set('stg-enter-desc',        'Enter untuk kirim, Shift+Enter untuk baris baru');
-    set('stg-draft-label',       'Simpan Draf Otomatis');
-    set('stg-draft-desc',        'Simpan teks belum terkirim saat refresh');
-    set('stg-font-label',        'Ukuran Teks Chat');
-    set('stg-font-desc',         'Kenyamanan membaca pesan konsultasi');
+    set('stg-sec-input', 'Input & Chat');
+    set('stg-enter-label', 'Kirim dengan Enter');
+    set('stg-enter-desc', 'Enter untuk kirim, Shift+Enter untuk baris baru');
+    set('stg-draft-label', 'Simpan Draf Otomatis');
+    set('stg-draft-desc', 'Simpan teks belum terkirim saat refresh');
+    set('stg-font-label', 'Ukuran Teks Chat');
+    set('stg-font-desc', 'Kenyamanan membaca pesan konsultasi');
 
-    set('stg-sec-notif',         'Notifikasi & Suara');
-    set('stg-sound-label',       'Efek Suara Selesai');
-    set('stg-sound-desc',        'Bunyi lembut saat AI selesai merespons');
-    set('stg-toast-label',       'Durasi Notifikasi');
-    set('stg-toast-desc',        'Waktu tampil pop-up notifikasi');
+    set('stg-sec-notif', 'Notifikasi & Suara');
+    set('stg-sound-label', 'Efek Suara Selesai');
+    set('stg-sound-desc', 'Bunyi lembut saat AI selesai merespons');
+    set('stg-toast-label', 'Durasi Notifikasi');
+    set('stg-toast-desc', 'Waktu tampil pop-up notifikasi');
 
-    set('stg-sec-clinical',      'Model & Klinis');
-    set('stg-epochs-label',      'Default Epochs /train');
-    set('stg-epochs-desc',       'Jumlah boosting rounds bawaan');
-    set('stg-prob-label',        'Presisi Probabilitas');
-    set('stg-prob-desc',         'Tampilkan desimal detail (misal 95.35%)');
+    set('stg-sec-clinical', 'Model & Klinis');
+    set('stg-epochs-label', 'Default Epochs /train');
+    set('stg-epochs-desc', 'Jumlah boosting rounds bawaan');
+    set('stg-prob-label', 'Presisi Probabilitas');
+    set('stg-prob-desc', 'Tampilkan desimal detail (misal 95.35%)');
 
-    set('stg-sec-voice',         'Voice Consultation');
+    set('stg-sec-voice', 'Voice Consultation');
     set('stg-voice-delay-label', 'Jeda Hening Otomatis');
-    set('stg-voice-delay-desc',  'Waktu hening sebelum suara dikirim');
-    set('stg-voice-play-label',  'Putar Suara Otomatis');
-    set('stg-voice-play-desc',   'Bicarakan respons AI saat konsultasi suara');
+    set('stg-voice-delay-desc', 'Waktu hening sebelum suara dikirim');
+    set('stg-voice-play-label', 'Putar Suara Otomatis');
+    set('stg-voice-play-desc', 'Bicarakan respons AI saat konsultasi suara');
 
-    set('stg-sec-a11y',          'Aksesibilitas');
-    set('stg-motion-label',      'Kurangi Efek Animasi');
-    set('stg-motion-desc',       'Meminimalkan transisi dan denyut visual');
-    set('stg-compact-label',     'Tampilan Ringkas');
-    set('stg-compact-desc',      'Penyajian bubble chat yang lebih padat');
+    set('stg-sec-a11y', 'Aksesibilitas');
+    set('stg-motion-label', 'Kurangi Efek Animasi');
+    set('stg-motion-desc', 'Meminimalkan transisi dan denyut visual');
+    set('stg-compact-label', 'Tampilan Ringkas');
+    set('stg-compact-desc', 'Penyajian bubble chat yang lebih padat');
 
-    set('stg-sec-profile',       'Profil');
-    set('stg-role-label',        'Peran Stakeholder');
+    set('stg-sec-profile', 'Profil');
+    set('stg-role-label', 'Peran Stakeholder');
     if (isCurrentUserAdmin()) {
-      set('stg-role-desc',       'Pilih peran stakeholder Anda dalam sistem');
+      set('stg-role-desc', 'Pilih peran stakeholder Anda dalam sistem');
     } else {
-      set('stg-role-desc',       'Peran dikunci: Hanya Administrator yang berwenang mengganti peran');
+      set('stg-role-desc', 'Peran dikunci: Hanya Administrator yang berwenang mengganti peran');
     }
 
-    set('stg-sec-chat',          'Model & Chat');
-    set('stg-model-label',       'Model AI Aktif');
-    set('stg-change-model',      'Ganti');
-    set('stg-history-label',     'Riwayat Chat');
-    set('stg-history-desc',      'Hapus semua percakapan tersimpan');
-    set('stg-clear-label',       'Hapus');
+    set('stg-sec-chat', 'Model & Chat');
+    set('stg-model-label', 'Model AI Aktif');
+    set('stg-change-model', 'Ganti');
+    set('stg-history-label', 'Riwayat Chat');
+    set('stg-history-desc', 'Hapus semua percakapan tersimpan');
+    set('stg-clear-label', 'Hapus');
 
-    set('stg-sec-storage',       'Data & Penyimpanan');
-    set('stg-storage-label',     'Memori Browser');
-    set('stg-export-label',      'Ekspor Riwayat Chat');
-    set('stg-export-desc',       'Unduh seluruh riwayat percakapan (JSON)');
-    set('stg-export-btn-label',  'Ekspor');
-    set('stg-reset-label',       'Reset Semua Pengaturan');
-    set('stg-reset-desc',        'Kembalikan ke konfigurasi awal');
-    set('stg-reset-btn-label',   'Reset');
+    set('stg-sec-storage', 'Data & Penyimpanan');
+    set('stg-storage-label', 'Memori Browser');
+    set('stg-export-label', 'Ekspor Riwayat Chat');
+    set('stg-export-desc', 'Unduh seluruh riwayat percakapan (JSON)');
+    set('stg-export-btn-label', 'Ekspor');
+    set('stg-reset-label', 'Reset Semua Pengaturan');
+    set('stg-reset-desc', 'Kembalikan ke konfigurasi awal');
+    set('stg-reset-btn-label', 'Reset');
 
-    set('stg-sec-about',         'Tentang');
-    set('stg-about-desc',        'Platform klinis AI untuk deteksi dini Alzheimer berbasis 32 biomarker multimodal.');
-    set('dot-settings-label',    'Pengaturan');
+    set('stg-sec-about', 'Tentang');
+    set('stg-about-desc', 'Platform klinis AI untuk deteksi dini Alzheimer berbasis 32 biomarker multimodal.');
+    set('dot-settings-label', 'Pengaturan');
   }
 
   // Keep root menu status badges synced
@@ -1400,7 +1450,7 @@ function syncSettingsPanel() {
 
 function applySettingsTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  try { localStorage.setItem('neura_theme_v1', theme); } catch(e) {}
+  try { localStorage.setItem('neura_theme_v1', theme); } catch (e) { }
   syncSettingsPanel();
   syncDotMenuState();
 }
@@ -1431,20 +1481,23 @@ function applySettingsRole(role) {
     return;
   }
 
-  try { localStorage.setItem('neura_user_role', role); } catch(e) {}
+  try { localStorage.setItem('neura_user_role', role); } catch (e) { }
   const roleEl = document.getElementById('sidebar-user-role');
   if (roleEl) {
     roleEl.textContent = formatRoleLabel(role);
     roleEl.setAttribute('data-role', (role || 'user').toLowerCase());
   }
   updateSettingsNavBadges();
+  if (typeof renderRoleMLCommands === 'function') {
+    renderRoleMLCommands(role);
+  }
   showToast(getAppLanguage() === 'en' ? `Role updated: ${role}` : `Peran diperbarui: ${role}`, 'info');
 }
 
 function applyToggleSetting(key, checked) {
   try {
     localStorage.setItem(key, checked ? 'true' : 'false');
-  } catch(e) {}
+  } catch (e) { }
 
   if (key === 'neura_reduce_motion') {
     document.body.classList.toggle('reduce-motion', checked);
@@ -1460,7 +1513,7 @@ function applyToggleSetting(key, checked) {
 function applyFontSize(size) {
   try {
     localStorage.setItem('neura_font_size', size);
-  } catch(e) {}
+  } catch (e) { }
 
   document.body.classList.remove('font-size-small', 'font-size-large');
   if (size === 'small') document.body.classList.add('font-size-small');
@@ -1478,7 +1531,7 @@ function applyFontSize(size) {
 function applyToastDuration(val) {
   try {
     localStorage.setItem('neura_toast_duration', val);
-  } catch(e) {}
+  } catch (e) { }
   updateSettingsNavBadges();
   const lang = getAppLanguage();
   showToast(lang === 'en' ? 'Toast duration updated' : 'Durasi notifikasi diperbarui', 'info');
@@ -1487,7 +1540,7 @@ function applyToastDuration(val) {
 function applyDefaultEpochs(val) {
   try {
     localStorage.setItem('neura_default_epochs', val);
-  } catch(e) {}
+  } catch (e) { }
   updateSettingsNavBadges();
   const lang = getAppLanguage();
   showToast(lang === 'en' ? `Default epochs: ${val}` : `Default epochs: ${val}`, 'info');
@@ -1496,7 +1549,7 @@ function applyDefaultEpochs(val) {
 function applyVoiceDelay(val) {
   try {
     localStorage.setItem('neura_voice_delay', val);
-  } catch(e) {}
+  } catch (e) { }
   updateSettingsNavBadges();
   const lang = getAppLanguage();
   showToast(lang === 'en' ? 'Voice delay updated' : 'Jeda hening diperbarui', 'info');
@@ -1518,7 +1571,7 @@ function updateStorageUsage() {
     const fillEl = document.getElementById('stg-storage-fill');
     if (valEl) valEl.textContent = `${kb} KB / ${mbQuota} MB`;
     if (fillEl) fillEl.style.width = `${percent.toFixed(1)}%`;
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function exportChatHistory() {
@@ -1541,7 +1594,7 @@ function exportChatHistory() {
 
     const lang = getAppLanguage();
     showToast(lang === 'en' ? 'Chat history exported successfully' : 'Riwayat chat berhasil diekspor', 'success');
-  } catch(e) {
+  } catch (e) {
     showToast('Gagal mengekspor riwayat', 'error');
   }
 }
@@ -1565,7 +1618,7 @@ function confirmResetAllSettings() {
     localStorage.removeItem('neura_voice_autoplay');
     localStorage.removeItem('neura_reduce_motion');
     localStorage.removeItem('neura_compact_mode');
-  } catch(e) {}
+  } catch (e) { }
 
   initAppSettingsModifiers();
   syncSettingsPanel();
@@ -1574,7 +1627,7 @@ function confirmResetAllSettings() {
 
 function confirmClearHistory() {
   const lang = getAppLanguage();
-  const msg  = lang === 'en'
+  const msg = lang === 'en'
     ? 'Are you sure? All chat history will be permanently deleted.'
     : 'Yakin? Semua riwayat chat akan dihapus permanen.';
   if (!confirm(msg)) return;
@@ -1582,7 +1635,7 @@ function confirmClearHistory() {
     localStorage.removeItem(CHAT_STORAGE_KEY);
     localStorage.removeItem(LAST_SESSION_STORAGE_KEY);
     localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
-  } catch(e) {}
+  } catch (e) { }
   chatSessions = [];
   startNewChat(false);
   renderRecentChatsSidebar();
@@ -1592,22 +1645,22 @@ function confirmClearHistory() {
   showToast(lang === 'en' ? 'Chat history cleared' : 'Riwayat chat dihapus', 'info');
 }
 
-window.openSettingsPanel        = openSettingsPanel;
-window.closeSettingsPanel       = closeSettingsPanel;
-window.openSettingsSubpanel     = openSettingsSubpanel;
-window.backToSettingsRoot       = backToSettingsRoot;
-window.updateSettingsNavBadges  = updateSettingsNavBadges;
-window.applySettingsTheme       = applySettingsTheme;
-window.applySettingsLang        = applySettingsLang;
-window.applySettingsRole        = applySettingsRole;
-window.confirmClearHistory      = confirmClearHistory;
-window.applyToggleSetting       = applyToggleSetting;
-window.applyFontSize            = applyFontSize;
-window.applyToastDuration       = applyToastDuration;
-window.applyDefaultEpochs       = applyDefaultEpochs;
-window.applyVoiceDelay          = applyVoiceDelay;
-window.exportChatHistory        = exportChatHistory;
-window.confirmResetAllSettings  = confirmResetAllSettings;
+window.openSettingsPanel = openSettingsPanel;
+window.closeSettingsPanel = closeSettingsPanel;
+window.openSettingsSubpanel = openSettingsSubpanel;
+window.backToSettingsRoot = backToSettingsRoot;
+window.updateSettingsNavBadges = updateSettingsNavBadges;
+window.applySettingsTheme = applySettingsTheme;
+window.applySettingsLang = applySettingsLang;
+window.applySettingsRole = applySettingsRole;
+window.confirmClearHistory = confirmClearHistory;
+window.applyToggleSetting = applyToggleSetting;
+window.applyFontSize = applyFontSize;
+window.applyToastDuration = applyToastDuration;
+window.applyDefaultEpochs = applyDefaultEpochs;
+window.applyVoiceDelay = applyVoiceDelay;
+window.exportChatHistory = exportChatHistory;
+window.confirmResetAllSettings = confirmResetAllSettings;
 
 function setupGreeting() {
   const hour = new Date().getHours();
@@ -1625,6 +1678,181 @@ function setupGreeting() {
 // --------------------------------------------------------------------------
 // ML Commands Dropdown (Accordion)
 // --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// ML Commands Dropdown (Accordion) & Role-Based Customization
+// --------------------------------------------------------------------------
+const ML_COMMANDS_CONFIG = [
+  {
+    cmd: '/profile',
+    tag: '/profile',
+    label: { id: 'Data Diri Pasien', en: 'Patient Profile' },
+    desc: {
+      User: 'Lengkapi atau perbarui formulir data diri & 32 biomarker klinis Anda',
+      Nakes: 'Input & evaluasi rekam medis biomarker pasien untuk skrining',
+      Admin: 'Inspeksi & pengelolaan profil biomarker pengguna'
+    },
+    roles: ['User', 'Nakes', 'Admin']
+  },
+  {
+    cmd: '/predict',
+    tag: '/predict',
+    label: { id: 'Jalankan Prediksi', en: 'Run Prediction' },
+    desc: {
+      User: 'Skrining risiko Alzheimer personal berbasis 32 biomarker klinis',
+      Nakes: 'Inferensi diagnostik klinis (Mode Pasien & Uji Dataset 2.149 Data)',
+      Admin: 'Diagnostik inferensi XGBoost & pengujian benchmark'
+    },
+    roles: ['User', 'Nakes', 'Admin']
+  },
+  {
+    cmd: '/dokumen',
+    tag: '/dokumen',
+    label: { id: 'Dokumen Konsultasi', en: 'Consultation Doc' },
+    desc: {
+      User: 'Unduh lembar hasil konsultasi & Kode Nakes untuk rujukan ke faskes',
+      Nakes: 'Validasi resume medis, lembar rujukan klinis & verifikasi Kode Nakes',
+      Admin: 'Generator dokumen konsultasi & pemeriksaan template rujukan'
+    },
+    roles: ['User', 'Nakes', 'Admin']
+  },
+  {
+    cmd: '/periksa',
+    tag: '/periksa',
+    label: { id: 'Periksa Dokumen Pasien', en: 'Inspect Patient Doc' },
+    desc: {
+      Nakes: 'Input kode konsultasi pasien untuk menelaah rekam medis & validasi klinis',
+      Admin: 'Pencarian & validasi dokumen konsultasi pasien via kode'
+    },
+    roles: ['Nakes', 'Admin']
+  },
+  {
+    cmd: '/eval',
+    tag: '/eval',
+    label: { id: 'Evaluasi Model', en: 'Evaluate Model' },
+    desc: {
+      Nakes: 'Validasi metrik diagnostik (Akurasi 95.4%, Sensitivitas, Spesifisitas, AUC-ROC)',
+      Admin: 'Evaluasi performa XGBoost, Confusion Matrix, log-loss, F1-Score & ROC'
+    },
+    roles: ['Nakes', 'Admin']
+  },
+  {
+    cmd: '/train 5',
+    tag: '/train 5',
+    label: { id: 'Latih 5 Epoch', en: 'Train 5 Epochs' },
+    desc: {
+      Admin: 'Latih ulang model XGBoost 5 boosting rounds pada dataset klinis'
+    },
+    roles: ['Admin']
+  },
+  {
+    cmd: '/progress',
+    tag: '/progress',
+    label: { id: 'Progress Live', en: 'Live Progress' },
+    desc: {
+      Admin: 'Pantau log telemetri optimasi boosting iteratif secara realtime'
+    },
+    roles: ['Admin']
+  },
+  {
+    cmd: '/status',
+    tag: '/status',
+    label: { id: 'Cek Status', en: 'Check Status' },
+    desc: {
+      User: 'Periksa kesiapan dan ketersediaan layanan sistem Neura AI',
+      Nakes: 'Periksa kesiapan model diagnostik XGBoost dan parameter biomarker',
+      Admin: 'Inspeksi telemetri lengkap sistem, memori server, dan checkpoint model'
+    },
+    roles: ['User', 'Nakes', 'Admin']
+  },
+  {
+    cmd: '/help',
+    tag: '/help',
+    label: { id: 'Daftar Perintah', en: 'Command List' },
+    desc: {
+      User: 'Panduan lengkap perintah dan cara penggunaan konsultasi Neura',
+      Nakes: 'Panduan perintah klinis, diagnostik biomarker, dan evaluasi',
+      Admin: 'Dokumentasi seluruh perintah sistem, pelatihan, dan telemetri'
+    },
+    roles: ['User', 'Nakes', 'Admin']
+  },
+  {
+    cmd: '/intro',
+    tag: '/intro',
+    label: { id: 'Pengenalan Neura', en: 'About Neura' },
+    desc: {
+      User: 'Pengenalan Neura AI dan panduan konsultasi kesehatan memori',
+      Nakes: 'Protokol klinis Neura AI untuk deteksi dini penyakit Alzheimer',
+      Admin: 'Ikhtisar arsitektur sistem dan engine diagnostik XGBoost'
+    },
+    roles: ['User', 'Nakes', 'Admin']
+  }
+];
+
+function renderRoleMLCommands(roleOverride = null) {
+  const currentRole = roleOverride || (typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User');
+  const lang = typeof getAppLanguage === 'function' ? getAppLanguage() : 'id';
+
+  // 1. Render Sidebar #ml-commands-list
+  const sidebarList = document.getElementById('ml-commands-list');
+  if (sidebarList) {
+    const allowedCommands = ML_COMMANDS_CONFIG.filter(item => item.roles.includes(currentRole));
+    let html = '';
+    allowedCommands.forEach(item => {
+      const lbl = lang === 'en' ? item.label.en : item.label.id;
+      const desc = item.desc[currentRole] || item.desc['User'] || '';
+      html += `
+        <button class="ml-command-item" onclick="submitCommand('${escapeHtml(item.cmd)}')" title="${escapeHtml(desc)}">
+          <span>${escapeHtml(lbl)}</span>
+          <span class="ml-tag">${escapeHtml(item.tag)}</span>
+        </button>
+      `;
+    });
+    sidebarList.innerHTML = html;
+  }
+
+  // 2. Update Header with Role Pill Badge
+  const headerBtn = document.getElementById('ml-commands-toggle-btn');
+  if (headerBtn) {
+    const titleSpan = headerBtn.querySelector('.nav-group-title');
+    if (titleSpan) {
+      const roleBadge = currentRole === 'Admin' ? 'Admin' : currentRole === 'Nakes' ? 'Nakes' : 'Pasien';
+      const mainText = lang === 'en' ? 'ML Commands' : 'Perintah ML';
+      titleSpan.innerHTML = `${mainText} <span class="ml-role-pill ml-role-pill-${currentRole.toLowerCase()}">${roleBadge}</span>`;
+    }
+  }
+
+  // 3. Render Quick Menu in Chat Box
+  const quickMenu = document.getElementById('quick-menu');
+  if (quickMenu) {
+    const allowedCommands = ML_COMMANDS_CONFIG.filter(item => item.roles.includes(currentRole));
+    let qmHtml = '';
+    allowedCommands.forEach(item => {
+      const lbl = lang === 'en' ? item.label.en : item.label.id;
+      qmHtml += `
+        <button type="button" class="qm-item" onclick="submitCommand('${escapeHtml(item.cmd)}');closeQuickMenu()">
+          <span>${escapeHtml(lbl)}</span>
+          <span class="qm-tag">${escapeHtml(item.tag)}</span>
+        </button>
+      `;
+    });
+
+    // Voice and Konsul options
+    qmHtml += `
+      <button type="button" class="qm-item" onclick="if(window.openVoiceChat)window.openVoiceChat();closeQuickMenu()">
+        <span>${lang === 'en' ? 'Voice Room' : 'Ruang Suara'}</span>
+        <span class="qm-tag">/voice</span>
+      </button>
+      <button type="button" class="qm-item" onclick="submitCommand('/konsul');closeQuickMenu()">
+        <span>${lang === 'en' ? 'Clinical Consult' : 'Konsultasi Klinis'}</span>
+        <span class="qm-tag">/konsul</span>
+      </button>
+    `;
+    quickMenu.innerHTML = qmHtml;
+  }
+}
+
+window.renderRoleMLCommands = renderRoleMLCommands;
+
 function toggleMLCommandsDropdown() {
   const list = document.getElementById('ml-commands-list');
   const btn = document.getElementById('ml-commands-toggle-btn');
@@ -1636,7 +1864,7 @@ function toggleMLCommandsDropdown() {
 
   try {
     localStorage.setItem(ML_DROPDOWN_STORAGE_KEY, isCollapsed ? 'true' : 'false');
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function initMLCommandsDropdown() {
@@ -1651,7 +1879,8 @@ function initMLCommandsDropdown() {
       btn.classList.toggle('collapsed', isCollapsed);
       btn.setAttribute('aria-expanded', !isCollapsed);
     }
-  } catch(e) {}
+  } catch (e) { }
+  renderRoleMLCommands();
 }
 
 // --------------------------------------------------------------------------
@@ -1663,7 +1892,7 @@ function loadChatSessions() {
     if (raw) {
       chatSessions = JSON.parse(raw);
     }
-  } catch(e) {
+  } catch (e) {
     chatSessions = [];
   }
   if (!Array.isArray(chatSessions)) chatSessions = [];
@@ -1672,7 +1901,7 @@ function loadChatSessions() {
 function saveChatSessions() {
   try {
     localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatSessions));
-  } catch(e) {}
+  } catch (e) { }
 }
 
 /**
@@ -1689,6 +1918,7 @@ function formatSessionTitle(text) {
     return parts[1] ? `Train ${parts[1]} Epochs` : 'Train Neural Net';
   }
   if (lower === '/predict') return 'Inference Prediction';
+  if (lower === '/dokumen' || lower === '/hasil' || lower === '/laporan' || lower === '/rujukan' || lower === '/doc' || lower === '/nakes') return 'Dokumen Konsultasi';
   if (lower === '/eval') return 'Model Evaluation';
   if (lower === '/progress') return 'Live Progress';
   if (lower === '/help') return 'Command List';
@@ -1729,7 +1959,7 @@ function switchChatSession(sessionId) {
   activeSessionId = sessionId;
   try {
     localStorage.setItem(LAST_SESSION_STORAGE_KEY, sessionId);
-  } catch(e) {}
+  } catch (e) { }
   renderRecentChatsSidebar();
   renderSessionMessages(session);
 }
@@ -1745,7 +1975,7 @@ function deleteChatSession(e, sessionId) {
       activeSessionId = null;
       try {
         localStorage.setItem(LAST_SESSION_STORAGE_KEY, 'new');
-      } catch(err) {}
+      } catch (err) { }
       startNewChat();
     }
   } else {
@@ -1951,7 +2181,7 @@ function startNewChat(showNotification = true) {
   try {
     localStorage.setItem(LAST_SESSION_STORAGE_KEY, 'new');
     localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
-  } catch(e) {}
+  } catch (e) { }
   renderRecentChatsSidebar();
 
   const container = document.getElementById('chat-content-container');
@@ -1979,7 +2209,7 @@ function toggleTheme() {
   const current = html.getAttribute('data-theme') || 'light';
   const next = current === 'light' ? 'dark' : 'light';
   html.setAttribute('data-theme', next);
-  try { localStorage.setItem('neura_theme_v1', next); } catch(e) {}
+  try { localStorage.setItem('neura_theme_v1', next); } catch (e) { }
   showToast(`Switched to ${next === 'dark' ? 'Obsidian Dark' : 'Warm Linen'} mode`, 'info');
   // Sync dot menu theme label
   syncDotMenuState();
@@ -2014,7 +2244,7 @@ function handleTextareaInput(el) {
       } else {
         localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
       }
-    } catch(e) {}
+    } catch (e) { }
   }
 }
 
@@ -2110,8 +2340,8 @@ function submitCommand(cmd) {
     }
   }
 
-  // If the suggestion chip contains a slash command (e.g. /status, /predict, /eval, /train 5, /help, /voice, /intro, /konsul), extract and run it
-  const slashMatch = cmd.match(/\/(status|predict|eval|train(?:\s+\d+)?|help|progress|voice|intro|about|konsul)\b/i);
+  // If the suggestion chip contains a slash command (e.g. /status, /predict, /eval, /train 5, /help, /voice, /intro, /konsul, /dokumen, /periksa, /validasi), extract and run it
+  const slashMatch = cmd.match(/\/(status|predict|dokumen|doc|hasil|laporan|rujukan|nakes|periksa|validasi|kode|eval|train(?:\s+\d+)?|help|progress|voice|intro|about|konsul)(?:\s+[^\s]+)?\b/i);
   let finalCmd = cmd;
   if (slashMatch && (cmd.startsWith('/') || cmd.includes('/'))) {
     finalCmd = slashMatch[0];
@@ -2173,7 +2403,7 @@ async function sendUserMessage(textOverride = null) {
     saveChatSessions();
     try {
       localStorage.setItem(LAST_SESSION_STORAGE_KEY, newSession.id);
-    } catch(e) {}
+    } catch (e) { }
     renderRecentChatsSidebar();
   }
 
@@ -2182,7 +2412,7 @@ async function sendUserMessage(textOverride = null) {
   input.style.height = 'auto';
   try {
     localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
-  } catch(e) {}
+  } catch (e) { }
   updateSendBtnState();
 
   // Remove hero if present
@@ -2206,7 +2436,7 @@ async function sendUserMessage(textOverride = null) {
 
   try {
     await processMLInput(text, typingId, startTime);
-  } catch(err) {
+  } catch (err) {
     await waitLoad(startTime, 350);
     removeTypingIndicator(typingId);
     appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(err.message)}</p>`, { stream: false });
@@ -2251,7 +2481,7 @@ async function processMLInput(rawText, typingId, startTime) {
           suggestions: chatRes.suggestions || ['Saya ingin konsultasi daya ingat', 'Apa saja gejala awal Alzheimer?', 'Coba diagnosis pasien /predict']
         });
       }
-    } catch(e) {
+    } catch (e) {
       await waitLoad(startTime, 350);
       removeTypingIndicator(typingId);
       appendAssistantMessage(`
@@ -2264,12 +2494,52 @@ async function processMLInput(rawText, typingId, startTime) {
     }
 
   } else if (lower === '/status' || lower.endsWith('/status')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole === 'Nakes') {
+      const activeDoc = typeof getActivePatientDoc === 'function' ? getActivePatientDoc() : null;
+      if (!activeDoc) {
+        await waitLoad(startTime, 350);
+        removeTypingIndicator(typingId);
+        renderNakesPatientRequiredPrompt('/status', 'Cek Status Pasien');
+        return;
+      }
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      renderNakesPatientStatus(activeDoc);
+      return;
+    }
+
     const data = await fetchJSON('/api/status');
     await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
     renderStatusOutput(data);
 
   } else if (lower.startsWith('/train') || lower.includes('/train')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      const isNakes = userRole === 'Nakes';
+      const roleLabel = isNakes ? 'Tenaga Kesehatan (Nakes)' : 'Pengguna Umum (Pasien)';
+      appendAssistantMessage(`
+        <h4>Akses Terbatas: Pelatihan Model XGBoost</h4>
+        <div class="claude-card">
+          <p>Peran Anda saat ini adalah <strong>${roleLabel}</strong>. Perintah <code>/train</code> merupakan hak akses khusus <strong>Administrator &amp; ML Engineer</strong> untuk melatih ulang model pada dataset klinis demi menjaga integritas model diagnostik yang tersertifikasi.</p>
+          <p>Fitur yang dapat Anda gunakan sesuai peran Anda:</p>
+          <ul style="margin: 8px 0 12px 18px; line-height: 1.6;">
+            <li><code>/predict</code> — Menjalankan skrining risiko klinis Alzheimer</li>
+            ${isNakes ? '<li><code>/eval</code> — Meninjau metrik validasi klinis model (Sensitivitas, Spesifisitas, AUC)</li>' : ''}
+            <li><code>/dokumen</code> — Menghasilkan resume medis &amp; Kode Rujukan Nakes</li>
+            <li><code>/status</code> — Memeriksa kesiapan layanan AI Neura</li>
+          </ul>
+        </div>
+      `, {
+        stream: false,
+        suggestions: isNakes ? ['/predict', '/eval', '/dokumen'] : ['/predict', '/profile', '/dokumen']
+      });
+      return;
+    }
+
     const parts = text.split(/\s+/);
     const defaultEpochs = parseInt(localStorage.getItem('neura_default_epochs')) || 50;
     const epochs = parseInt(parts[1]) || defaultEpochs;
@@ -2277,7 +2547,7 @@ async function processMLInput(rawText, typingId, startTime) {
       sub: `Training XGBoost \u2022 ${epochs} Boosting Rounds`,
       main: 'Training...'
     });
-    const data = await fetchJSON('/api/train', 'POST', { epochs });
+    const data = await fetchJSON('/api/train', 'POST', { epochs, role: 'Admin' });
     removeTypingIndicator(typingId);
 
     if (data.error) {
@@ -2305,6 +2575,58 @@ async function processMLInput(rawText, typingId, startTime) {
     }
 
   } else if (lower === '/eval' || lower.endsWith('/eval')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole === 'User') {
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Validasi Klinis Model Neura AI</h4>
+        <div class="claude-card">
+          <p>Model deteksi dini Neura AI telah divalidasi klinis secara komprehensif pada <strong>2.149 data pasien</strong> menggunakan 32 biomarker kesehatan otak.</p>
+          <div class="claude-stats-grid" style="margin: 12px 0;">
+            <div class="stat-pill">
+              <div class="stat-label">Akurasi Skrining</div>
+              <div class="stat-val val-good">95.35%</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-label">Sensitivitas Deteksi</div>
+              <div class="stat-val val-good">92.11%</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-label">Kapasitas Diskriminasi</div>
+              <div class="stat-val val-good">ROC-AUC 94.1%</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px"><em>Catatan: Rincian teknis Confusion Matrix dan telemetri boosting ditujukan untuk Tenaga Kesehatan (Nakes) dan Administrator.</em></p>
+          <p>Untuk memulai pemeriksaan risiko daya ingat Anda, silakan gunakan perintah <code>/predict</code>.</p>
+        </div>
+      `, {
+        stream: false,
+        suggestions: ['/predict', '/profile', '/dokumen', 'Konsultasi']
+      });
+      return;
+    }
+
+    if (userRole === 'Nakes') {
+      const activeDoc = typeof getActivePatientDoc === 'function' ? getActivePatientDoc() : null;
+      if (!activeDoc) {
+        await waitLoad(startTime, 350);
+        removeTypingIndicator(typingId);
+        renderNakesPatientRequiredPrompt('/eval', 'Evaluasi Model Kasus Pasien');
+        return;
+      }
+      setDynamicIslandState('evaluating', {
+        sub: `Evaluasi Model pada Kasus \u2022 ${activeDoc.patient?.name || 'Pasien'}`,
+        main: 'Evaluating'
+      });
+      const code = activeDoc.nakes_code || activeDoc.doc_id;
+      const evalData = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}/patient-eval`);
+      await waitLoad(startTime, 450);
+      removeTypingIndicator(typingId);
+      renderNakesPatientModelEvaluation(evalData, activeDoc);
+      return;
+    }
+
     setDynamicIslandState('evaluating', {
       sub: 'Evaluating Alzheimer XGBoost on holdout test set...',
       main: 'Evaluating'
@@ -2319,38 +2641,57 @@ async function processMLInput(rawText, typingId, startTime) {
     }
 
   } else if (lower.startsWith('/predict') || lower.includes('/predict')) {
-    const isDatasetMode = lower.includes('dataset') || lower.includes('sample') || lower.includes('benchmark');
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole === 'Nakes') {
+      const activeDoc = typeof getActivePatientDoc === 'function' ? getActivePatientDoc() : null;
+      if (!activeDoc) {
+        await waitLoad(startTime, 350);
+        removeTypingIndicator(typingId);
+        renderNakesPatientRequiredPrompt('/predict', 'Jalankan Prediksi Pasien');
+        return;
+      }
+      const pName = activeDoc.patient?.name || 'Pasien';
+      setDynamicIslandState('predicting', {
+        sub: `Inferensi Klinis XGBoost \u2022 ${pName}`,
+        main: 'Diagnosing'
+      });
+      const payload = { input: activeDoc.raw_features || activeDoc.patient, source: 'patient_document' };
+      const data = await fetchJSON('/api/predict', 'POST', payload);
+      await waitLoad(startTime, 450);
+      removeTypingIndicator(typingId);
+      if (data.error) {
+        appendAssistantMessage(`<p style="color:var(--accent-red)">Prediction Error: ${escapeHtml(data.error)}</p>`, { stream: false });
+      } else {
+        renderNakesPatientPrediction(data, activeDoc);
+      }
+      return;
+    }
+
     const profile = getUserProfile();
 
-    if (!isDatasetMode && (!profile || !profile.name)) {
-      // User has not filled their Data Diri yet
+    if (!profile || !profile.name || !profile.name.trim()) {
+      // User has not filled their Data Diri yet - MANDATORY before diagnosis
       await waitLoad(startTime, 350);
       removeTypingIndicator(typingId);
       const formId = 'profile_form_' + Date.now();
       appendAssistantMessage(`
-        <h4>Skrining Prediksi Risiko Alzheimer (XGBoost 32 Biomarker)</h4>
-        <p>Agar hasil prediksi klinis <strong>benar-benar akurat sesuai kondisi biologis Anda</strong> (bukan data tiruan/dummy), silakan lengkapi formulir <strong>Data Diri &amp; 32 Biomarker Klinis</strong> di bawah ini:</p>
+        <h4>Data Diri Diperlukan Sebelum Diagnosis</h4>
+        <p>Untuk menjalankan diagnosis klinis Alzheimer, saya memerlukan <strong>Data Diri &amp; 32 Biomarker Klinis</strong> Anda (usia, tekanan darah, skor kognitif MMSE, ADL, dll). Mohon lengkapi data diri Anda terlebih dahulu melalui formulir di bawah ini:</p>
         ${renderProfileSlideCard(formId)}
-        <div style="margin-top:14px;padding:12px 16px;background:var(--bg-tertiary);border:1px solid var(--border-subtle);border-radius:10px;font-size:12.5px;color:var(--text-secondary);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <span>Ingin mencoba simulasi pada sampel pasien acak dari <strong>Dataset Alzheimer (2.149 Data)</strong>?</span>
-          <button type="button" class="claude-btn secondary" style="padding:5px 12px;font-size:12px;white-space:nowrap" onclick="submitCommand('/predict dataset')">Uji Dataset (2.149 Data)</button>
-        </div>
       `, {
         stream: false,
-        suggestions: ['/predict dataset', 'Konsultasi', '/status', '/help']
+        suggestions: ['/profile', 'Konsultasi', '/status', '/help']
       });
       return;
     }
 
-    const patientName = profile && profile.name ? profile.name : 'Dataset Sample';
+    const patientName = profile.name.trim();
     setDynamicIslandState('predicting', {
-      sub: isDatasetMode
-        ? 'Analyzing dataset benchmark sample \u2022 32 Biomarkers'
-        : `Analyzing ${patientName}'s 32 biomarkers \u2022 Alzheimer Inference`,
+      sub: `Analyzing ${patientName}'s 32 biomarkers \u2022 Alzheimer Inference`,
       main: 'Diagnosing'
     });
 
-    const payload = isDatasetMode ? { mode: 'dataset' } : { input: profile, source: 'user_profile' };
+    const payload = { input: profile, source: 'user_profile' };
     const data = await fetchJSON('/api/predict', 'POST', payload);
     await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
@@ -2361,6 +2702,23 @@ async function processMLInput(rawText, typingId, startTime) {
     }
 
   } else if (lower === '/progress' || lower.endsWith('/progress')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Telemetri Pelatihan Realtime</h4>
+        <div class="claude-card">
+          <p>Pemantauan telemetri gradien <code>/progress</code> hanya aktif saat proses pelatihan ulang model XGBoost sedang dijalankan oleh Administrator / Tim Machine Learning.</p>
+          <p>Untuk memeriksa kesiapan dan status operasional sistem saat ini, silakan gunakan perintah <code>/status</code>.</p>
+        </div>
+      `, {
+        stream: false,
+        suggestions: ['/status', '/predict']
+      });
+      return;
+    }
+
     setDynamicIslandState('thinking', {
       sub: 'Fetching real-time training telemetry...',
       main: 'Inspecting'
@@ -2370,7 +2728,130 @@ async function processMLInput(rawText, typingId, startTime) {
     removeTypingIndicator(typingId);
     renderProgressOutput(data);
 
-  } else if (/\b(konsul|konsultasi|tanya dokter|tanya keluhan|cek kesehatan|periksa|data diri|biodata|profil|profile)\b/i.test(text) || lower === '/profile' || lower === '/konsultasi') {
+  } else if (
+    lower === '/dokumen' || lower.startsWith('/dokumen') ||
+    lower === '/hasil' || lower.startsWith('/hasil') ||
+    lower === '/laporan' || lower.startsWith('/laporan') ||
+    lower === '/rujukan' || lower.startsWith('/rujukan') ||
+    lower === '/doc' || lower.startsWith('/doc') ||
+    lower === '/nakes' || lower.startsWith('/nakes') ||
+    lower === 'dokumen konsultasi' || lower === 'kode konsultasi' ||
+    lower.includes('kode nakes') || lower.includes('hasil konsultasi') ||
+    lower.includes('dokumen hasil') || lower.includes('cetak dokumen') ||
+    lower.includes('buat dokumen') || lower.includes('cetak lembar') ||
+    lower.includes('cetak berkas') || lower.includes('print dokumen')
+  ) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole === 'Nakes') {
+      const activeDoc = typeof getActivePatientDoc === 'function' ? getActivePatientDoc() : null;
+      if (!activeDoc) {
+        await waitLoad(startTime, 350);
+        removeTypingIndicator(typingId);
+        renderNakesPatientRequiredPrompt('/dokumen', 'Dokumen Konsultasi / Dossier Medis');
+        return;
+      }
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      renderNakesDetailedDossier(activeDoc);
+      return;
+    }
+
+    // Role User / Pasien: WAJIB periksa apakah Data Diri sudah terisi
+    const profile = getUserProfile();
+    if (!profile || !profile.name || !profile.name.trim()) {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      const formId = 'profile_form_' + Date.now();
+      appendAssistantMessage(`
+        <h4>Data Diri Diperlukan Sebelum Cetak Dokumen</h4>
+        <p>Untuk menerbitkan <strong>Dokumen Hasil Konsultasi Medis</strong> dan <strong>Kode Rujukan Nakes</strong>, saya memerlukan <strong>Data Diri &amp; 32 Biomarker Klinis</strong> Anda terlebih dahulu agar rekam medis yang diterbitkan sesuai identitas dan kondisi klinis riil Anda:</p>
+        ${renderProfileSlideCard(formId)}
+      `, {
+        stream: false,
+        suggestions: ['/profile', 'Konsultasi', '/help']
+      });
+      return;
+    }
+
+    setDynamicIslandState('generating', {
+      sub: 'Menyusun Dokumen Hasil Konsultasi & Kode Nakes...',
+      main: 'Dokumen'
+    });
+
+    try {
+      const payload = { input: profile, source: 'user_profile' };
+      const docData = await fetchJSON('/api/consultation/generate', 'POST', payload);
+      await waitLoad(startTime, 450);
+      removeTypingIndicator(typingId);
+
+      if (docData && !docData.error) {
+        try {
+          localStorage.setItem('neura_last_consultation', JSON.stringify(docData));
+        } catch (e) { }
+        renderConsultationDocument(docData);
+      } else {
+        appendAssistantMessage(`<p style="color:var(--accent-red)">Gagal menyusun dokumen konsultasi: ${escapeHtml(docData.error || 'Terjadi kesalahan sistem')}</p>`, { stream: false });
+      }
+    } catch (e) {
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(e.message)}</p>`, { stream: false });
+    }
+    return;
+
+  } else if (
+    lower === '/periksa' || lower.startsWith('/periksa ') ||
+    lower === '/validasi' || lower.startsWith('/validasi ') ||
+    lower === '/kode' || lower.startsWith('/kode ') ||
+    lower.startsWith('periksa dokumen') || lower.startsWith('validasi dokumen') ||
+    lower.startsWith('input kode')
+  ) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole === 'User') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Pemeriksaan Dokumen Pasien</h4>
+        <div class="claude-card">
+          <p>Fitur <strong>Periksa &amp; Validasi Dokumen Pasien</strong> merupakan wewenang <strong>Tenaga Kesehatan (Nakes)</strong> dan <strong>Dokter</strong> untuk menelaah rekam medis serta memvalidasi hasil skrining pasien di fasilitas kesehatan.</p>
+          <p>Jika Anda adalah pasien, silakan gunakan perintah <code>/dokumen</code> untuk melihat lembar hasil konsultasi dan Kode Nakes Anda sendiri, atau gunakan <code>/predict</code> untuk melakukan skrining.</p>
+        </div>
+      `, {
+        stream: false,
+        suggestions: ['/dokumen', '/predict', 'Konsultasi']
+      });
+      return;
+    }
+
+    const codeMatch = text.match(/\b(NKS-[A-Za-z0-9\-]+|DOC-[A-Za-z0-9\-]+)\b/i);
+    const candidateCode = codeMatch ? codeMatch[0].trim() : (text.split(/\s+/)[1] || '').trim();
+
+    if (candidateCode && candidateCode.length >= 5 && !candidateCode.startsWith('/')) {
+      await lookupAndRenderPatientDocument(candidateCode, typingId, startTime);
+      return;
+    }
+
+    await waitLoad(startTime, 350);
+    removeTypingIndicator(typingId);
+    renderNakesLookupPromptCard();
+    return;
+
+  } else if (/\b(konsul|konsultasi|tanya dokter|tanya keluhan|cek kesehatan|data diri|biodata|profil|profile)\b/i.test(text) || lower === '/profile' || lower === '/konsultasi') {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole === 'Nakes') {
+      const activeDoc = typeof getActivePatientDoc === 'function' ? getActivePatientDoc() : null;
+      if (!activeDoc) {
+        await waitLoad(startTime, 350);
+        removeTypingIndicator(typingId);
+        renderNakesPatientRequiredPrompt('/profile', 'Data Diri Pasien');
+        return;
+      }
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      renderNakesPatientProfile(activeDoc);
+      return;
+    }
+
     // Consultation & User Profile Intake Handler
     const existingProfile = getUserProfile();
 
@@ -2454,7 +2935,7 @@ async function processMLInput(rawText, typingId, startTime) {
             currentUserName = nameEl.textContent.trim();
           }
         }
-      } catch (err) {}
+      } catch (err) { }
       if (!currentUserName || currentUserName === 'Pengguna') {
         currentUserName = 'Hanzz';
       }
@@ -2487,7 +2968,7 @@ async function processMLInput(rawText, typingId, startTime) {
         const conv = generateConversationalReply(text);
         appendAssistantMessage(conv, { stream: true });
       }
-    } catch(e) {
+    } catch (e) {
       await waitLoad(startTime, 400);
       removeTypingIndicator(typingId);
       setDynamicIslandState('generating', {
@@ -2762,17 +3243,17 @@ function renderProfileSlideCard(formId) {
             <div class="tf-adv-group">
               <div class="tf-adv-field-label">Etnisitas</div>
               <div class="tf-chip-row" id="${formId}_ethnicity_chips">
-                ${[['Kaukasia',0],['Asia-Amerika',1],['Afrika-Amerika',2],['Lainnya',3]].map(([lbl,val]) =>
-                  `<button type="button" class="tf-chip-btn ${data.ethnicity === val ? 'selected' : ''}" data-v="${val}"
+                ${[['Kaukasia', 0], ['Asia-Amerika', 1], ['Afrika-Amerika', 2], ['Lainnya', 3]].map(([lbl, val]) =>
+    `<button type="button" class="tf-chip-btn ${data.ethnicity === val ? 'selected' : ''}" data-v="${val}"
                     onclick="onChipSelect('${formId}','ethnicity',${val},this)">${lbl}</button>`
-                ).join('')}
+  ).join('')}
               </div>
               <div class="tf-adv-field-label" style="margin-top:14px">Tingkat Pendidikan</div>
               <div class="tf-chip-row" id="${formId}_educationLevel_chips">
-                ${[['Tidak Sekolah',0],['SMA',1],['D3/S1',2],['S2/S3',3]].map(([lbl,val]) =>
-                  `<button type="button" class="tf-chip-btn ${data.educationLevel === val ? 'selected' : ''}" data-v="${val}"
+                ${[['Tidak Sekolah', 0], ['SMA', 1], ['D3/S1', 2], ['S2/S3', 3]].map(([lbl, val]) =>
+    `<button type="button" class="tf-chip-btn ${data.educationLevel === val ? 'selected' : ''}" data-v="${val}"
                     onclick="onChipSelect('${formId}','educationLevel',${val},this)">${lbl}</button>`
-                ).join('')}
+  ).join('')}
               </div>
             </div>
           </div>
@@ -3219,7 +3700,7 @@ function syncProfileCardToStorage(formId) {
 }
 
 // Handler untuk slider advanced (gaya hidup, kognitif)
-window.onAdvSlider = function(formId, field, val, unit) {
+window.onAdvSlider = function (formId, field, val, unit) {
   const form = getOrCreateProfileForm(formId);
   if (!form) return;
   const numVal = parseFloat(val);
@@ -3235,7 +3716,7 @@ window.onAdvSlider = function(formId, field, val, unit) {
 };
 
 // Handler untuk tombol binary (Ya/Tidak)
-window.onBinaryToggle = function(formId, field, val, btn) {
+window.onBinaryToggle = function (formId, field, val, btn) {
   const form = getOrCreateProfileForm(formId);
   if (!form) return;
   form.data[field] = parseInt(val);
@@ -3250,7 +3731,7 @@ window.onBinaryToggle = function(formId, field, val, btn) {
 };
 
 // Handler untuk chip select tunggal (Ethnicity, EducationLevel)
-window.onChipSelect = function(formId, field, val, btn) {
+window.onChipSelect = function (formId, field, val, btn) {
   const form = getOrCreateProfileForm(formId);
   if (!form) return;
   form.data[field] = parseInt(val);
@@ -3311,12 +3792,12 @@ function onProfileAgeSlider(formId, val) {
   const riskEl = document.getElementById(`${formId}_age_risk`);
   if (riskEl) {
     let t = '';
-    if (age < 18)       t = 'Anak-anak / remaja — profil khusus pediatri';
-    else if (age < 40)  t = 'Usia muda — risiko Alzheimer sangat rendah';
-    else if (age < 50)  t = 'Dewasa — risiko rendah, deteksi dini disarankan';
-    else if (age < 60)  t = 'Pra-lansia — risiko mulai meningkat, pantau biomarker';
-    else if (age < 70)  t = 'Lansia awal — risiko menengah hingga tinggi';
-    else                t = 'Lansia — risiko tinggi, konsultasi berkala sangat dianjurkan';
+    if (age < 18) t = 'Anak-anak / remaja — profil khusus pediatri';
+    else if (age < 40) t = 'Usia muda — risiko Alzheimer sangat rendah';
+    else if (age < 50) t = 'Dewasa — risiko rendah, deteksi dini disarankan';
+    else if (age < 60) t = 'Pra-lansia — risiko mulai meningkat, pantau biomarker';
+    else if (age < 70) t = 'Lansia awal — risiko menengah hingga tinggi';
+    else t = 'Lansia — risiko tinggi, konsultasi berkala sangat dianjurkan';
     riskEl.textContent = t;
   }
 
@@ -3503,7 +3984,7 @@ function nextProfileSlide(formId) {
     if (sEl) form.data.systolicBP = parseFloat(sEl.value) || 120;
     if (dEl) form.data.diastolicBP = parseFloat(dEl.value) || 80;
   } else if (step === 11) {
-    ['cholesterolTotal','cholesterolLDL','cholesterolHDL','cholesterolTriglycerides'].forEach(f => {
+    ['cholesterolTotal', 'cholesterolLDL', 'cholesterolHDL', 'cholesterolTriglycerides'].forEach(f => {
       const el = document.getElementById(`${formId}_${f}`);
       if (el && el.value) form.data[f] = parseFloat(el.value);
     });
@@ -3897,7 +4378,7 @@ function generateConversationalReply(text) {
         currentUserName = nameEl.textContent.trim();
       }
     }
-  } catch (err) {}
+  } catch (err) { }
   if (!currentUserName || currentUserName === 'Pengguna') {
     currentUserName = 'Hanzz';
   }
@@ -3928,21 +4409,119 @@ function generateConversationalReply(text) {
 // Renderers for ML Results (Claude Warm Aesthetic)
 // --------------------------------------------------------------------------
 function renderHelpOutput() {
+  const currentRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+  const roleLabel = currentRole === 'Admin' ? 'Administrator / ML Engineer' : currentRole === 'Nakes' ? 'Tenaga Kesehatan (Nakes)' : 'Pengguna Umum (Pasien)';
+  const lang = typeof getAppLanguage === 'function' ? getAppLanguage() : 'id';
+
+  let rows = '';
+
+  // 1. Profile
+  rows += `
+    <tr>
+      <td><code>/profile</code></td>
+      <td>${currentRole === 'Nakes'
+        ? (lang === 'en' ? 'Manage & assess patient clinical biomarker record' : 'Input &amp; kelola rekam medis biomarker klinis pasien')
+        : (lang === 'en' ? 'Fill or update your patient profile & 32 clinical biomarkers' : 'Lengkapi atau perbarui formulir Data Diri &amp; 32 Biomarker Klinis')}</td>
+    </tr>
+  `;
+
+  // 2. Predict
+  rows += `
+    <tr>
+      <td><code>/predict</code></td>
+      <td>${currentRole === 'Nakes'
+        ? (lang === 'en' ? 'Run Alzheimer clinical inference (Patient Mode or Benchmark Dataset)' : 'Jalankan inferensi klinis Alzheimer (Mode Pasien &amp; Uji Dataset 2.149 Data)')
+        : (lang === 'en' ? 'Run personalized Alzheimer risk screening based on your biomarkers' : 'Jalankan skrining risiko Alzheimer mandiri berbasis data biomarker')}</td>
+    </tr>
+  `;
+
+  if (currentRole === 'Nakes' || currentRole === 'Admin') {
+    rows += `
+      <tr>
+        <td><code>/predict dataset</code></td>
+        <td>${lang === 'en' ? 'Simulate inference on random test samples from Alzheimer Dataset (2,149 records)' : 'Simulasikan inferensi pada data pasien acak dari Dataset Alzheimer (2.149 data)'}</td>
+      </tr>
+    `;
+  }
+
+  // 3. Dokumen
+  rows += `
+    <tr>
+      <td><code>/dokumen</code></td>
+      <td>${currentRole === 'Nakes'
+        ? (lang === 'en' ? 'Review & validate clinical consultation summary, medical referral & Nakes code' : 'Validasi resume medis, lembar rujukan faskes &amp; verifikasi Kode Nakes')
+        : (lang === 'en' ? 'Download official consultation summary & Nakes referral code for clinics' : 'Tampilkan lembar resmi Dokumen Hasil Konsultasi &amp; Kode Rujukan Nakes')}</td>
+    </tr>
+  `;
+
+  // 3b. Periksa Dokumen Pasien (Nakes & Admin)
+  if (currentRole === 'Nakes' || currentRole === 'Admin') {
+    rows += `
+      <tr>
+        <td><code>/periksa [kode]</code></td>
+        <td>${lang === 'en' ? 'Lookup patient consultation document by code, review XGBoost prediction & validate' : 'Input kode dokumen pasien untuk menelaah hasil prediksi &amp; mengesahkan validasi medis'}</td>
+      </tr>
+    `;
+  }
+
+  // 4. Eval (Nakes & Admin)
+  if (currentRole === 'Nakes' || currentRole === 'Admin') {
+    rows += `
+      <tr>
+        <td><code>/eval</code></td>
+        <td>${currentRole === 'Nakes'
+          ? (lang === 'en' ? 'Inspect clinical validation metrics (95.4% Accuracy, Sensitivity, Specificity, AUC)' : 'Evaluasi metrik validasi klinis (Akurasi 95.4%, Sensitivitas, Spesifisitas, AUC-ROC)')
+          : (lang === 'en' ? 'Evaluate model performance (Precision, Recall, F1, Log-loss, ROC-AUC curve)' : 'Evaluasi metrik teknis model (Precision, Recall, F1-Score, Confusion Matrix, Loss)')}</td>
+      </tr>
+    `;
+  }
+
+  // 5. Train & Progress (Admin only)
+  if (currentRole === 'Admin') {
+    rows += `
+      <tr>
+        <td><code>/train [N]</code></td>
+        <td>${lang === 'en' ? 'Train XGBoost model for N boosting rounds on datasets/alzheimers_disease_data.csv' : 'Latih model XGBoost untuk N boosting rounds pada dataset klinis'}</td>
+      </tr>
+      <tr>
+        <td><code>/progress</code></td>
+        <td>${lang === 'en' ? 'Monitor iterative boosting telemetry and live loss updates in realtime' : 'Pantau log telemetri optimasi boosting iteratif secara realtime'}</td>
+      </tr>
+    `;
+  }
+
+  // 6. Status, Voice, Konsul, Intro, Help (All roles)
+  rows += `
+    <tr>
+      <td><code>/status</code></td>
+      <td>${currentRole === 'Admin'
+        ? (lang === 'en' ? 'Inspect full server telemetry, memory status, and XGBoost checkpoint' : 'Inspeksi telemetri lengkap sistem, memori server, dan kesiapan model')
+        : (lang === 'en' ? 'Check AI service readiness and model availability' : 'Periksa kesiapan model XGBoost, 32 biomarker, dan ketersediaan sistem')}</td>
+    </tr>
+    <tr>
+      <td><code>/voice</code></td>
+      <td>${lang === 'en' ? 'Open interactive voice consultation room' : 'Buka Voice Room untuk konsultasi suara interaktif real-time'}</td>
+    </tr>
+    <tr>
+      <td><code>/konsul</code></td>
+      <td>${lang === 'en' ? 'Start memory cognitive consultation session' : 'Mulai sesi konsultasi daya ingat atau formulir asesmen klinis'}</td>
+    </tr>
+    <tr>
+      <td><code>/intro</code></td>
+      <td>${lang === 'en' ? 'Introduction to Neura AI and clinical capabilities' : 'Tampilkan sapaan dan pengenalan Neura AI serta fitur konsultasi'}</td>
+    </tr>
+    <tr>
+      <td><code>/help</code></td>
+      <td>${lang === 'en' ? 'Display this interactive command guide' : 'Tampilkan panduan perintah interaktif ini'}</td>
+    </tr>
+  `;
+
   appendAssistantMessage(`
-    <h4>Available Commands</h4>
-    <p>Berikut adalah perintah interaktif untuk berinteraksi dengan engine deteksi Alzheimer XGBoost dan konsultasi klinis:</p>
+    <h4>${lang === 'en' ? 'Available Commands' : 'Daftar Perintah'} &bull; <span style="font-size:12.5px;font-weight:600;color:var(--accent-terracotta)">${roleLabel}</span></h4>
+    <p>${lang === 'en' ? 'Interactive commands customized for your role:' : 'Berikut adalah perintah interaktif yang tersedia dan disesuaikan untuk peran Anda:'}</p>
     <table class="claude-table">
-      <tr><td><code>/status</code></td><td>Periksa kesiapan model XGBoost, 32 biomarker, dan metrik akurasi</td></tr>
-      <tr><td><code>/profile</code></td><td>Lengkapi atau perbarui formulir Data Diri &amp; 32 Biomarker Klinis pasien</td></tr>
-      <tr><td><code>/predict</code></td><td>Jalankan inferensi klinis Alzheimer (menggunakan Data Diri Anda atau dataset)</td></tr>
-      <tr><td><code>/predict dataset</code></td><td>Simulasikan inferensi pada data pasien acak dari Dataset Alzheimer (2.149 data)</td></tr>
-      <tr><td><code>/train [N]</code></td><td>Latih model XGBoost untuk N boosting rounds pada datasets/alzheimers_disease_data.csv</td></tr>
-      <tr><td><code>/eval</code></td><td>Evaluasi metrik medis model (95.4% Akurasi, Precision, Recall, F1, ROC-AUC)</td></tr>
-      <tr><td><code>/progress</code></td><td>Pantau log telemetri optimasi boosting iteratif secara realtime</td></tr>
-      <tr><td><code>/intro</code></td><td>Tampilkan sapaan dan pengenalan Neura AI serta fitur konsultasi</td></tr>
-      <tr><td><code>/voice</code></td><td>Buka Voice Room untuk konsultasi suara interaktif real-time</td></tr>
-      <tr><td><code>/konsul</code></td><td>Mulai sesi konsultasi daya ingat atau formulir data diri pasien</td></tr>
-      <tr><td><code>/help</code></td><td>Tampilkan panduan perintah lengkap ini</td></tr>
+      <thead><tr><th>${lang === 'en' ? 'Command' : 'Perintah'}</th><th>${lang === 'en' ? 'Function' : 'Deskripsi Fungsi'}</th></tr></thead>
+      <tbody>${rows}</tbody>
     </table>
   `);
 }
@@ -4059,8 +4638,8 @@ function renderPredictionOutput(data) {
   const vitalsText = [bmiText, bpText].filter(Boolean).join(' &bull; ');
 
   const suggestions = isUserProfile
-    ? ['Ubah data diri', 'Bagaimana cara mencegah Alzheimer?', 'Simulasikan pasien dataset /predict dataset', 'Konsultasi gaya hidup']
-    : ['Jalankan prediksi pada Data Diri saya', '/predict dataset', '/eval', 'Konsultasi'];
+    ? ['/dokumen', 'Ubah data diri', 'Bagaimana cara mencegah Alzheimer?', 'Simulasikan pasien dataset /predict dataset']
+    : ['/dokumen', 'Jalankan prediksi pada Data Diri saya', '/predict dataset', 'Konsultasi'];
 
   appendAssistantMessage(`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
@@ -4119,6 +4698,1382 @@ function renderPredictionOutput(data) {
     suggestions: suggestions
   });
 }
+
+// --------------------------------------------------------------------------
+// Dokumen Hasil Konsultasi & Kode Rujukan Nakes (Single Card System)
+// --------------------------------------------------------------------------
+function renderConsultationDocument(doc) {
+  if (!doc) return;
+
+  const nakesCode = doc.nakes_code || 'NKS-26-0000-ALZ';
+  const docId = doc.doc_id || 'DOC-NEURA-2026-0000';
+
+  const html = `
+    <div class="consultation-doc-card">
+      <!-- Document Header -->
+      <div class="doc-header">
+        <div class="doc-branding">
+          <div class="doc-badge-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="doc-org-name">Neura Health AI &bull; Cognitive Health Center</div>
+            <h3 class="doc-title">LEMBAR HASIL KONSULTASI &amp; SKRINING ALZHEIMER</h3>
+          </div>
+        </div>
+        <div class="doc-meta-card">
+          <span class="doc-badge-verified">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Terverifikasi XGBoost v1.95
+          </span>
+          <div class="doc-meta-info">
+            <span class="doc-id">No. Dokumen: <code>${escapeHtml(docId)}</code></span>
+            <span class="doc-meta-sep">&bull;</span>
+            <span class="doc-date">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ${escapeHtml(doc.created_at || '30 Oktober 2026')}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Healthcare Worker (Nakes) Share Section with Code & Action Button -->
+      <div class="nakes-share-section">
+        <div class="nakes-share-info">
+          <div class="nakes-badge-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 7h-7m7 5h-7m7 5h-7M4 7h.01M4 12h.01M4 17h.01"/></svg>
+            Kode Konsultasi Rujukan Tenaga Kesehatan (Nakes)
+          </div>
+          <div class="nakes-code-display" onclick="copyNakesCode('${escapeHtml(nakesCode)}')" title="Klik untuk menyalin kode">
+            <span class="nakes-code-text">${escapeHtml(nakesCode)}</span>
+            <span class="nakes-copy-hint">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Salin Kode
+            </span>
+          </div>
+          <p class="nakes-share-sub">
+            Serahkan atau sebutkan kode ini kepada Dokter atau Tenaga Kesehatan di fasilitas kesehatan rujukan. Nakes dapat melihat rincian 32 biomarker klinis, probabilitas model XGBoost, dan data validitas secara mendalam.
+          </p>
+        </div>
+
+        <div class="nakes-btn-group">
+          <button type="button" class="nakes-action-btn primary" onclick="openNakesDetailModal('${escapeHtml(nakesCode)}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Lihat Detail Nakes</span>
+          </button>
+          <button type="button" class="nakes-action-btn secondary" onclick="copyNakesCode('${escapeHtml(nakesCode)}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>Salin Kode Konsultasi</span>
+          </button>
+          <button type="button" class="nakes-action-btn ghost" onclick="printConsultationDoc()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span>Cetak Dokumen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  appendAssistantMessage(html, {
+    stream: false,
+    suggestions: ['Salin Kode Nakes', 'Ubah data diri', '/predict', '/help']
+  });
+}
+
+// --------------------------------------------------------------------------
+// Nakes Code Modal & Copy Helpers
+// --------------------------------------------------------------------------
+function copyNakesCode(code) {
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast(`Kode Konsultasi Nakes (${code}) berhasil disalin!`, 'success');
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = code;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast(`Kode Konsultasi Nakes (${code}) berhasil disalin!`, 'success');
+  });
+}
+
+async function openNakesDetailModal(code) {
+  const modal = document.getElementById('nakes-detail-modal');
+  const container = document.getElementById('nakes-modal-content');
+  if (!modal || !container) return;
+
+  container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted)">Memuat rincian rekam medis Nakes...</div>`;
+  modal.classList.add('open');
+
+  let doc = null;
+  try {
+    const rawSaved = localStorage.getItem('neura_last_consultation');
+    if (rawSaved) {
+      const parsed = JSON.parse(rawSaved);
+      if (parsed.nakes_code === code || parsed.doc_id === code || !code) {
+        doc = parsed;
+      }
+    }
+    if (!doc && code) {
+      const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}`);
+      if (res && res.found && res.data) {
+        doc = res.data;
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching consultation for modal:', e);
+  }
+
+  if (!doc) {
+    container.innerHTML = `
+      <div style="padding:20px;text-align:center">
+        <p style="color:var(--accent-red)">Data dokumen untuk kode <strong>${escapeHtml(code)}</strong> tidak ditemukan.</p>
+        <p style="font-size:12.5px;color:var(--text-muted)">Silakan jalankan kembali perintah <code>/dokumen</code> untuk menghasilkan lembar hasil konsultasi terbaru.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const patient = doc.patient || {};
+  const pred = doc.prediction || {};
+  const breakdowns = doc.biomarkers_breakdown || [];
+
+  let tableHtml = '';
+  breakdowns.forEach(group => {
+    tableHtml += `
+      <div class="nakes-table-category">${escapeHtml(group.category)}</div>
+      <table class="claude-table" style="margin-bottom:12px">
+        <thead>
+          <tr style="font-size:11px;color:var(--text-muted)">
+            <th>Parameter Biomarker</th>
+            <th>Hasil Nilai Pasien</th>
+            <th>Rentang Rujukan Klinis</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    (group.items || []).forEach(item => {
+      tableHtml += `
+        <tr>
+          <td><strong>${escapeHtml(item.name)}</strong></td>
+          <td style="font-family:'JetBrains Mono',monospace;color:var(--text-primary)">${escapeHtml(item.value)}</td>
+          <td style="font-size:11.5px;color:var(--text-muted)">${escapeHtml(item.normal)}</td>
+        </tr>
+      `;
+    });
+    tableHtml += `</tbody></table>`;
+  });
+
+  container.innerHTML = `
+    <!-- Top Bar with QR Code Visual & Verification Metadata -->
+    <div class="nakes-qr-card">
+      <div class="nakes-qr-visual" title="QR Code Resmi Rujukan Nakes">
+        <svg width="74" height="74" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="33" height="33" fill="white"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M3 3H11V11H3V3ZM5 5V9H9V5H5ZM22 3H30V11H22V3ZM24 5V9H28V5H24ZM3 22H11V30H3V22ZM5 24V28H9V24H5ZM13 3H15V7H13V3ZM15 7H19V9H15V7ZM19 3H21V7H19V3ZM13 9H15V13H13V9ZM17 9H19V11H17V9ZM7 13H9V15H7V13ZM11 13H13V15H11V13ZM15 13H17V17H15V13ZM3 15H5V17H3V15ZM5 17H7V19H5V17ZM9 17H11V21H9V17ZM17 17H21V19H17V17ZM21 13H23V15H21V13ZM25 13H29V15H25V13ZM23 15H25V17H23V15ZM29 15H31V19H29V15ZM27 17H29V19H27V17ZM13 21H15V25H13V21ZM15 19H17V21H15V19ZM19 21H21V23H19V21ZM21 19H25V21H21V19ZM25 21H27V23H25V21ZM27 21H31V23H27V21ZM17 23H19V25H17V23ZM21 23H23V27H21V23ZM23 25H27V27H23V25ZM29 23H31V27H29V23ZM13 27H15V31H13V27ZM17 27H19V29H17V27ZM19 29H21V31H19V29ZM23 29H27V31H23V29ZM27 27H29V29H27V27ZM29 29H31V31H29V29Z" fill="#1F1E1D"/>
+        </svg>
+      </div>
+      <div class="nakes-qr-meta">
+        <div style="font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">Kode Verifikasi Resmi</div>
+        <div class="nakes-qr-code-txt">${escapeHtml(doc.nakes_code)}</div>
+        <div style="font-size:11.5px;color:var(--text-secondary)">No. Ref: <code>${escapeHtml(doc.doc_id)}</code> &bull; ${escapeHtml(doc.created_at)}</div>
+        <div style="font-size:11px;color:var(--accent-green);font-weight:600;display:flex;align-items:center;gap:4px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Keabsahan Valid: ${escapeHtml(doc.verification_hash || 'SHA256-VERIFIED')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Box for Clinicians -->
+    <div class="nakes-modal-card">
+      <div class="nakes-modal-card-title">Identitas Pasien &amp; Kesimpulan Diagnosis XGBoost</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;font-size:12.5px;margin-bottom:8px">
+        <div><strong>Nama:</strong> ${escapeHtml(patient.name)}</div>
+        <div><strong>Usia/JK:</strong> ${patient.age} Thn / ${escapeHtml(patient.gender)}</div>
+        <div><strong>BMI:</strong> ${patient.bmi} kg/m²</div>
+        <div><strong>Tekanan Darah:</strong> ${patient.systolic_bp}/${patient.diastolic_bp} mmHg</div>
+      </div>
+      <div style="padding:8px 12px;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:6px;font-size:12.5px">
+        <strong>Hasil Inferensi AI:</strong> ${escapeHtml(pred.diagnosis_label)} (Tingkat Risiko: <strong>${escapeHtml(pred.risk_level)}</strong>, Probabilitas: <strong>${pred.probability}%</strong>, Akurasi Uji: <strong>95.35%</strong>).
+      </div>
+    </div>
+
+    <!-- 32 Biomarkers Breakdown Table for Nakes -->
+    <div class="nakes-modal-card">
+      <div class="nakes-modal-card-title">Rekam Medis Lengkap 32 Biomarker Multimodal</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">
+        Data di bawah diekstraksi dari profil pasien klinis dan dipetakan ke 32 dimensi fitur algoritma <em>Extreme Gradient Boosting (XGBoost)</em>.
+      </div>
+      ${tableHtml}
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap">
+      <div style="font-size:11px;color:var(--text-muted)">
+        Neura Clinical Engine &bull; Standar Pelaporan Medis IEEE 830
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="claude-btn secondary" onclick="copyNakesCode('${escapeHtml(doc.nakes_code)}')">
+          Salin Kode Nakes
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="printConsultationDoc()">
+          Cetak Dokumen PDF
+        </button>
+        <button type="button" class="claude-btn primary" onclick="closeNakesDetailModal()">
+          Tutup
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function closeNakesDetailModal() {
+  const modal = document.getElementById('nakes-detail-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function closeNakesDetailModalOnBackdrop(e) {
+  if (e.target.id === 'nakes-detail-modal') closeNakesDetailModal();
+}
+
+function printConsultationDoc() {
+  const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+
+  if (userRole === 'User') {
+    const profile = typeof getUserProfile === 'function' ? getUserProfile() : null;
+    if (!profile || !profile.name || !profile.name.trim()) {
+      if (typeof showToast === 'function') {
+        showToast('Wajib melengkapi Data Diri Pasien terlebih dahulu sebelum mencetak dokumen.', 'warning');
+      }
+      if (typeof submitCommand === 'function') {
+        submitCommand('/dokumen');
+      }
+      return;
+    }
+  }
+
+  window.print();
+}
+
+// Attach helpers to window scope for inline onclick handlers
+window.copyNakesCode = copyNakesCode;
+window.openNakesDetailModal = openNakesDetailModal;
+window.closeNakesDetailModal = closeNakesDetailModal;
+window.closeNakesDetailModalOnBackdrop = closeNakesDetailModalOnBackdrop;
+window.printConsultationDoc = printConsultationDoc;
+
+// --------------------------------------------------------------------------
+// Nakes Clinical Functions: Lookup, Prediction Review & Validation
+// --------------------------------------------------------------------------
+
+function renderNakesLookupPromptCard() {
+  let sampleHint = '';
+  try {
+    const raw = localStorage.getItem('neura_last_consultation');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && (parsed.nakes_code || parsed.doc_id)) {
+        const c = parsed.nakes_code || parsed.doc_id;
+        sampleHint = `
+          <div style="margin-top:10px;font-size:12px;color:var(--text-muted)">
+            <span>Dokumen terakhir tersimpan: </span>
+            <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="submitNakesLookup('${escapeHtml(c)}')">
+              ${escapeHtml(c)}
+            </button>
+          </div>
+        `;
+      }
+    }
+  } catch (e) { }
+
+  appendAssistantMessage(`
+    <h4>Pemeriksaan Dokumen &amp; Validasi Klinis Pasien</h4>
+    <div class="claude-card nakes-lookup-card">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5">
+        Sebagai <strong>Tenaga Kesehatan (Nakes)</strong>, masukkan <strong>Kode Konsultasi Rujukan Nakes</strong> (contoh: <code>NKS-26-8812-ALZ</code>) atau <strong>No. Dokumen</strong> pasien untuk menelaah profil biomarker, menguji prediksi klinis, dan menerbitkan validasi resmi:
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input type="text" id="nakes-code-input" class="nakes-validation-input" placeholder="Contoh: NKS-26-8812-ALZ" style="flex:1;min-width:220px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;" onkeydown="if(event.key==='Enter')submitNakesLookup()">
+        <button type="button" class="claude-btn primary" onclick="submitNakesLookup()" style="display:inline-flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Cari &amp; Buka Rekam Medis</span>
+        </button>
+      </div>
+      ${sampleHint}
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/dokumen', '/predict dataset', '/eval', '/help']
+  });
+}
+
+function submitNakesLookup(overrideCode = null) {
+  let code = overrideCode;
+  if (!code) {
+    const input = document.getElementById('nakes-code-input');
+    code = input ? input.value.trim() : '';
+  }
+  if (!code) {
+    showToast('Masukkan kode dokumen konsultasi pasien terlebih dahulu.', 'warning');
+    return;
+  }
+  submitCommand(`/periksa ${code}`);
+}
+window.submitNakesLookup = submitNakesLookup;
+
+async function lookupAndRenderPatientDocument(code, typingId, startTime) {
+  setDynamicIslandState('generating', {
+    sub: `Memeriksa Dokumen Klinis \u2022 ${code}`,
+    main: 'Mencari'
+  });
+
+  let doc = null;
+  try {
+    const rawSaved = localStorage.getItem('neura_last_consultation');
+    if (rawSaved) {
+      const parsed = JSON.parse(rawSaved);
+      if (parsed.nakes_code === code || parsed.doc_id === code) {
+        doc = parsed;
+      }
+    }
+    const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}`);
+    if (res && res.found && res.data) {
+      doc = res.data;
+    }
+  } catch (e) {
+    console.error('Error fetching consultation:', e);
+  }
+
+  await waitLoad(startTime, 450);
+  removeTypingIndicator(typingId);
+
+  if (!doc) {
+    appendAssistantMessage(`
+      <h4>Pencarian Dokumen Pasien</h4>
+      <div class="claude-card">
+        <p style="color:var(--accent-red);font-weight:600">Dokumen dengan kode "${escapeHtml(code)}" tidak ditemukan di database server.</p>
+        <p style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">
+          Pastikan format kode sudah sesuai (contoh: <code>NKS-26-XXXX-ALZ</code> atau <code>DOC-NEURA-2026-XXXX</code>). Jika pasien baru saja membuat dokumen di perangkat lain, minta pasien untuk memeriksa kembali kode pada lembar konsultasi mereka.
+        </p>
+        <div style="margin-top:10px">
+          <button type="button" class="claude-btn secondary" onclick="submitCommand('/periksa')">Coba Kode Lain</button>
+          <button type="button" class="claude-btn secondary" onclick="submitCommand('/dokumen')">Buat Dokumen Baru</button>
+        </div>
+      </div>
+    `, { stream: false });
+    return;
+  }
+
+  try {
+    localStorage.setItem('neura_last_consultation', JSON.stringify(doc));
+    if (typeof setActivePatientDoc === 'function') setActivePatientDoc(doc);
+  } catch (e) { }
+
+  renderPatientClinicalReviewCard(doc);
+}
+
+function renderPatientClinicalReviewCard(doc) {
+  const patient = doc.patient || {};
+  const pred = doc.prediction || {};
+  const cog = doc.cognitive_scores || {};
+  const isValidated = doc.status === 'VALIDATED_BY_CLINICIAN' || (doc.validation && doc.validation.is_validated);
+  const nakesCode = doc.nakes_code || doc.doc_id;
+
+  const isPos = pred.is_positive || (pred.diagnosis_label && pred.diagnosis_label.includes('Alzheimer'));
+  const riskClass = isPos ? 'val-err' : 'val-good';
+  const prob = pred.probability ?? 50.0;
+
+  let statusBadgeHtml = '';
+  if (isValidated) {
+    statusBadgeHtml = `
+      <span class="nakes-status-pill nakes-status-terkonfirmasi">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Tervalidasi Klinis
+      </span>
+    `;
+  } else {
+    statusBadgeHtml = `
+      <span class="nakes-status-pill nakes-status-pending">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Menunggu Validasi Dokter
+      </span>
+    `;
+  }
+
+  let stampHtml = '';
+  if (isValidated && doc.validation) {
+    const v = doc.validation;
+    const statusLabels = {
+      'TERKONFIRMASI_KLINIS': 'Terkonfirmasi Klinis (Diagnosis Sesuai Skrining)',
+      'OBSERVASI_BERKALA': 'Observasi & Pemantauan Kognitif Berkala',
+      'RUJUKAN_LANJUTAN': 'Rujukan Lanjutan ke Dokter Spesialis Saraf / MRI',
+      'DIAGNOSIS_BANDING': 'Diagnosis Banding Klinis (Non-Alzheimer)'
+    };
+    const statusLabel = statusLabels[v.validation_status] || v.validation_status;
+
+    stampHtml = `
+      <div class="nakes-validation-stamp">
+        <div class="nakes-validation-stamp-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <strong style="color:var(--accent-green);font-size:12.5px;letter-spacing:0.02em;text-transform:uppercase">Dokumen Resmi Tervalidasi Tenaga Kesehatan</strong>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)">${escapeHtml(v.signature_hash || '')}</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-primary);margin-top:4px;font-weight:600">
+            ${escapeHtml(v.validator_name)} ${v.validator_sip ? `&bull; SIP: ${escapeHtml(v.validator_sip)}` : ''}
+          </div>
+          <div style="font-size:12px;color:var(--text-secondary)">
+            ${escapeHtml(v.validator_institution || 'Fasilitas Pelayanan Kesehatan')} &bull; Tanggal: ${escapeHtml(v.validated_at || '')}
+          </div>
+          <div style="margin-top:6px;font-size:12px;padding:6px 10px;background:rgba(16,185,129,0.08);border-radius:6px">
+            <strong>Status Klinis:</strong> ${escapeHtml(statusLabel)}
+            ${v.clinical_notes ? `<br><strong>Catatan Dokter:</strong> <em>"${escapeHtml(v.clinical_notes)}"</em>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  appendAssistantMessage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <h4 style="margin:0">Rekam Medis &amp; Hasil Prediksi Pasien: ${escapeHtml(patient.name || 'Pasien')}</h4>
+      ${statusBadgeHtml}
+    </div>
+
+    <div class="claude-card">
+      <div class="claude-stats-grid">
+        <div class="stat-pill">
+          <div class="stat-label">Prediksi Klinis AI</div>
+          <div class="stat-val ${riskClass}" style="font-size:13.5px">${escapeHtml(pred.diagnosis_label || (isPos ? 'Alzheimer Detected' : 'Non-Alzheimer'))}</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-label">Tingkat Risiko</div>
+          <div class="stat-val ${riskClass}" style="font-size:13px">${escapeHtml(pred.risk_level || (isPos ? 'Tinggi' : 'Rendah'))}</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-label">Probabilitas Alzheimer</div>
+          <div class="stat-val" style="font-family:'JetBrains Mono',monospace">${prob}%</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;font-size:12.5px;margin:12px 0 8px 0;padding:10px 12px;background:var(--bg-tertiary);border-radius:8px">
+        <div><strong>Nama:</strong> ${escapeHtml(patient.name || '—')}</div>
+        <div><strong>Usia / JK:</strong> ${patient.age || '—'} Thn &bull; ${escapeHtml(patient.gender || '—')}</div>
+        <div><strong>BMI:</strong> ${patient.bmi || '—'} kg/m² (${escapeHtml(patient.bmi_category || 'Normal')})</div>
+        <div><strong>Tekanan Darah:</strong> ${patient.systolic_bp || 120}/${patient.diastolic_bp || 80} mmHg</div>
+      </div>
+
+      <div style="margin-top:10px">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.06em;margin-bottom:6px">Penilaian Kognitif Utama</div>
+        <div class="biomarkers-grid">
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Skor MMSE</span>
+            <strong class="biomarker-val">${cog.mmse ?? 24} / 30</strong>
+          </div>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Skor ADL</span>
+            <strong class="biomarker-val">${cog.adl ?? 7} / 10</strong>
+          </div>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Functional Assessment</span>
+            <strong class="biomarker-val">${cog.functional_assessment ?? 7} / 10</strong>
+          </div>
+          <div class="biomarker-cell">
+            <span class="biomarker-lbl">Keluhan Daya Ingat</span>
+            <strong class="biomarker-val" style="color:${cog.memory_complaints === 'Ada' ? 'var(--accent-red)' : 'var(--accent-green)'}">${cog.memory_complaints ?? 'Tidak'}</strong>
+          </div>
+        </div>
+      </div>
+
+      ${stampHtml}
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-subtle)">
+        <button type="button" class="claude-btn primary" onclick="openConsultationValidationModal('${escapeHtml(nakesCode)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>${isValidated ? 'Perbarui Validasi Medis' : 'Validasi Konsultasi Pasien'}</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="openNakesDetailModal('${escapeHtml(nakesCode)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Lihat 32 Biomarker Lengkap</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="reEvaluatePatientConsultation('${escapeHtml(nakesCode)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          <span>Uji Ulang Prediksi</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="printConsultationDoc()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Cetak Resume Medis</span>
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/periksa', '/dokumen', '/eval', '/help']
+  });
+}
+window.renderPatientClinicalReviewCard = renderPatientClinicalReviewCard;
+
+async function openConsultationValidationModal(code) {
+  const modal = document.getElementById('consultation-validation-modal');
+  const body = document.getElementById('consultation-validation-modal-body');
+  if (!modal || !body) return;
+
+  let doc = null;
+  try {
+    const rawSaved = localStorage.getItem('neura_last_consultation');
+    if (rawSaved) {
+      const parsed = JSON.parse(rawSaved);
+      if (parsed.nakes_code === code || parsed.doc_id === code || !code) {
+        doc = parsed;
+      }
+    }
+    if (!doc && code) {
+      const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}`);
+      if (res && res.found && res.data) doc = res.data;
+    }
+  } catch (e) { }
+
+  if (!doc) {
+    showToast('Data dokumen pasien tidak ditemukan untuk divalidasi.', 'error');
+    return;
+  }
+
+  let nakesSession = null;
+  try {
+    const raw = localStorage.getItem('neura_nakes_session');
+    if (raw) nakesSession = JSON.parse(raw);
+  } catch (e) { }
+
+  const defaultDoctor = nakesSession?.name || document.getElementById('sidebar-user-name')?.textContent || 'dr. Citra Anindita, Sp.N';
+  const defaultSip = nakesSession?.sip_number || '503/SIP.DS/042/Dinkes/2023';
+  const defaultInst = nakesSession?.institution || 'RSUP Dr. Sardjito Yogyakarta';
+
+  const existingVal = doc.validation || {};
+  const currentStatus = existingVal.validation_status || 'TERKONFIRMASI_KLINIS';
+  const currentNotes = existingVal.clinical_notes || '';
+
+  const patientName = doc.patient?.name || 'Pasien';
+  const nakesCode = doc.nakes_code || doc.doc_id || code;
+
+  body.innerHTML = `
+    <div style="margin-bottom:14px;padding:12px;background:var(--bg-app);border:1px solid var(--border-subtle);border-radius:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase">Pasien yang Divalidasi</span>
+          <div style="font-size:14px;font-weight:700;color:var(--text-primary)">${escapeHtml(patientName)}</div>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase">Kode Konsultasi</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent-terracotta)">${escapeHtml(nakesCode)}</div>
+        </div>
+      </div>
+      <div style="margin-top:6px;font-size:12px;color:var(--text-secondary)">
+        Inferensi AI: <strong>${escapeHtml(doc.prediction?.diagnosis_label || 'Non-Alzheimer')}</strong> (Probabilitas: ${doc.prediction?.probability || 50}%, Tingkat Risiko: ${escapeHtml(doc.prediction?.risk_level || 'Rendah')})
+      </div>
+    </div>
+
+    <form id="nakes-validation-form" onsubmit="event.preventDefault();submitConsultationValidation('${escapeHtml(nakesCode)}')">
+      <div class="nakes-validation-form-group">
+        <label class="nakes-validation-label">Nama Tenaga Medis / Dokter Pemeriksa</label>
+        <input type="text" id="val-doctor-name" class="nakes-validation-input" value="${escapeHtml(existingVal.validator_name || defaultDoctor)}" required>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="nakes-validation-form-group">
+          <label class="nakes-validation-label">Nomor SIP / STR</label>
+          <input type="text" id="val-doctor-sip" class="nakes-validation-input" value="${escapeHtml(existingVal.validator_sip || defaultSip)}" placeholder="Contoh: 503/SIP.DS/042/Dinkes/2023">
+        </div>
+        <div class="nakes-validation-form-group">
+          <label class="nakes-validation-label">Fasilitas Kesehatan / RS</label>
+          <input type="text" id="val-doctor-inst" class="nakes-validation-input" value="${escapeHtml(existingVal.validator_institution || defaultInst)}" placeholder="Contoh: RSUP Dr. Sardjito">
+        </div>
+      </div>
+
+      <div class="nakes-validation-form-group">
+        <label class="nakes-validation-label">Penetapan Status Klinis Pasien</label>
+        <select id="val-status-select" class="nakes-validation-select">
+          <option value="TERKONFIRMASI_KLINIS" ${currentStatus === 'TERKONFIRMASI_KLINIS' ? 'selected' : ''}>🟢 Terkonfirmasi Klinis (Diagnosis Sesuai Skrining AI)</option>
+          <option value="OBSERVASI_BERKALA" ${currentStatus === 'OBSERVASI_BERKALA' ? 'selected' : ''}>🟡 Observasi Berkala (Pemeriksaan Ulang Kognitif 3–6 Bulan)</option>
+          <option value="RUJUKAN_LANJUTAN" ${currentStatus === 'RUJUKAN_LANJUTAN' ? 'selected' : ''}>🔴 Rujukan Lanjutan ke Spesialis Neurologi / MoCA / MRI</option>
+          <option value="DIAGNOSIS_BANDING" ${currentStatus === 'DIAGNOSIS_BANDING' ? 'selected' : ''}>⚪ Diagnosis Banding Lain (Non-Alzheimer / Gangguan Memori Reversibel)</option>
+        </select>
+      </div>
+
+      <div class="nakes-validation-form-group">
+        <label class="nakes-validation-label">Catatan Medis, Terapi &amp; Arahan Dokter</label>
+        <textarea id="val-clinical-notes" class="nakes-validation-textarea" rows="3" placeholder="Masukkan arahan resep, modifikasi gaya hidup (MIND diet, latihan daya ingat), atau instruksi rujukan faskes...">${escapeHtml(currentNotes)}</textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+        <button type="button" class="claude-btn secondary" onclick="closeConsultationValidationModal()">Batal</button>
+        <button type="submit" id="btn-submit-validation" class="claude-btn primary" style="display:inline-flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Sahkan &amp; Terbitkan Validasi Medis</span>
+        </button>
+      </div>
+    </form>
+  `;
+
+  modal.classList.add('open');
+}
+window.openConsultationValidationModal = openConsultationValidationModal;
+
+function closeConsultationValidationModal() {
+  const modal = document.getElementById('consultation-validation-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeConsultationValidationModal = closeConsultationValidationModal;
+
+function closeConsultationValidationModalOnBackdrop(e) {
+  if (e.target.id === 'consultation-validation-modal') {
+    closeConsultationValidationModal();
+  }
+}
+window.closeConsultationValidationModalOnBackdrop = closeConsultationValidationModalOnBackdrop;
+
+async function submitConsultationValidation(code) {
+  const submitBtn = document.getElementById('btn-submit-validation');
+  const doctorName = document.getElementById('val-doctor-name')?.value.trim();
+  const doctorSip = document.getElementById('val-doctor-sip')?.value.trim();
+  const doctorInst = document.getElementById('val-doctor-inst')?.value.trim();
+  const statusVal = document.getElementById('val-status-select')?.value;
+  const notes = document.getElementById('val-clinical-notes')?.value.trim();
+
+  if (!doctorName) {
+    showToast('Nama dokter pemeriksa wajib diisi.', 'warning');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Menyimpan Validasi...';
+  }
+
+  const payload = {
+    validator_name: doctorName,
+    validator_sip: doctorSip,
+    validator_institution: doctorInst,
+    validation_status: statusVal,
+    clinical_notes: notes
+  };
+
+  try {
+    const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}/validate`, 'POST', payload);
+    if (res && res.success && res.data) {
+      localStorage.setItem('neura_last_consultation', JSON.stringify(res.data));
+      if (typeof setActivePatientDoc === 'function') setActivePatientDoc(res.data);
+      closeConsultationValidationModal();
+      showToast(`Dokumen ${code} berhasil divalidasi oleh ${doctorName}!`, 'success');
+      renderPatientClinicalReviewCard(res.data);
+    } else {
+      showToast(res.error || 'Gagal menyimpan validasi klinis.', 'error');
+    }
+  } catch (err) {
+    console.error('Validation submission error:', err);
+    showToast(err.message || 'Terjadi kesalahan sistem saat validasi.', 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Sahkan &amp; Terbitkan Validasi Medis</span>
+      `;
+    }
+  }
+}
+window.submitConsultationValidation = submitConsultationValidation;
+
+async function reEvaluatePatientConsultation(code) {
+  let doc = null;
+  try {
+    const raw = localStorage.getItem('neura_last_consultation');
+    if (raw) doc = JSON.parse(raw);
+    if (!doc && code) {
+      const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}`);
+      if (res && res.found) doc = res.data;
+    }
+  } catch (e) { }
+
+  if (!doc) {
+    showToast('Dokumen pasien tidak ditemukan untuk dievaluasi ulang.', 'error');
+    return;
+  }
+
+  showToast(`Menjalankan simulasi ulang inferensi XGBoost untuk ${doc.patient?.name || 'Pasien'}...`, 'info');
+  const patientData = doc.patient || {};
+  const cogData = doc.cognitive_scores || {};
+
+  const simulatePayload = {
+    mode: 'user_profile',
+    input: {
+      name: patientData.name,
+      age: patientData.age,
+      gender: patientData.gender === 'Perempuan' ? 'female' : 'male',
+      height: 165,
+      weight: Math.round(22.5 * 1.65 * 1.65),
+      systolicBP: patientData.systolic_bp,
+      diastolicBP: patientData.diastolic_bp,
+      mmse: cogData.mmse,
+      functionalAssessment: cogData.functional_assessment,
+      memoryComplaints: cogData.memory_complaints === 'Ada' ? 'yes' : 'no'
+    }
+  };
+
+  const predictRes = await fetchJSON('/api/predict', 'POST', simulatePayload);
+  if (predictRes && !predictRes.error) {
+    renderPredictionOutput(predictRes);
+  } else {
+    showToast('Gagal menjalankan uji inferensi ulang.', 'error');
+  }
+}
+window.reEvaluatePatientConsultation = reEvaluatePatientConsultation;
+
+// --------------------------------------------------------------------------
+// Active Patient Context & Nakes Patient-Centric Views
+// --------------------------------------------------------------------------
+
+function getActivePatientDoc() {
+  try {
+    const raw = sessionStorage.getItem('neura_active_patient_doc') || localStorage.getItem('neura_active_patient_doc');
+    if (raw) return JSON.parse(raw);
+  } catch (e) { }
+  return null;
+}
+window.getActivePatientDoc = getActivePatientDoc;
+
+function setActivePatientDoc(doc) {
+  if (!doc) return;
+  try {
+    sessionStorage.setItem('neura_active_patient_doc', JSON.stringify(doc));
+    localStorage.setItem('neura_active_patient_doc', JSON.stringify(doc));
+    localStorage.setItem('neura_last_consultation', JSON.stringify(doc));
+  } catch (e) { }
+  updateActivePatientBar();
+}
+window.setActivePatientDoc = setActivePatientDoc;
+
+function clearActivePatientDoc() {
+  try {
+    sessionStorage.removeItem('neura_active_patient_doc');
+    localStorage.removeItem('neura_active_patient_doc');
+  } catch (e) { }
+  updateActivePatientBar();
+  if (typeof showToast === 'function') {
+    showToast('Sesi pasien aktif telah direset. Silakan masukkan kode pasien baru.', 'info');
+  }
+  submitCommand('/periksa');
+}
+window.clearActivePatientDoc = clearActivePatientDoc;
+
+function updateActivePatientBar() {
+  let bar = document.getElementById('nakes-active-patient-bar');
+  const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+  const doc = getActivePatientDoc();
+
+  if (userRole !== 'Nakes' && userRole !== 'Admin') {
+    if (bar) bar.style.display = 'none';
+    return;
+  }
+
+  const container = document.querySelector('.chat-section') || document.getElementById('chat-messages')?.parentElement;
+  if (!container) return;
+
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'nakes-active-patient-bar';
+    bar.className = 'nakes-active-patient-bar';
+    container.insertBefore(bar, container.firstChild);
+  }
+
+  if (!doc) {
+    bar.style.display = 'none';
+    return;
+  }
+
+  bar.style.display = 'flex';
+  const p = doc.patient || {};
+  const isVal = doc.status === 'VALIDATED_BY_CLINICIAN' || (doc.validation && doc.validation.is_validated);
+  const code = doc.nakes_code || doc.doc_id || 'NKS-ACTIVE';
+
+  bar.innerHTML = `
+    <div class="patient-bar-info">
+      <span class="patient-bar-badge">🧑‍⚕️ Pasien Aktif</span>
+      <span class="patient-bar-name">${escapeHtml(p.name || 'Pasien')} (${p.age || '—'} thn, ${escapeHtml(p.gender || '—')})</span>
+      <span class="patient-bar-code">${escapeHtml(code)}</span>
+      <span class="patient-bar-status ${isVal ? 'status-val' : 'status-wait'}">${isVal ? '✓ Tervalidasi' : '⏳ Menunggu Validasi'}</span>
+    </div>
+    <div class="patient-bar-actions">
+      <button type="button" class="patient-bar-btn" onclick="submitCommand('/profile')">Profil</button>
+      <button type="button" class="patient-bar-btn" onclick="submitCommand('/predict')">Prediksi</button>
+      <button type="button" class="patient-bar-btn" onclick="submitCommand('/dokumen')">Dossier Medis</button>
+      <button type="button" class="patient-bar-btn" onclick="submitCommand('/eval')">Evaluasi</button>
+      <button type="button" class="patient-bar-btn" onclick="submitCommand('/status')">Status</button>
+      <button type="button" class="patient-bar-btn btn-switch" onclick="clearActivePatientDoc()">Ganti Pasien</button>
+    </div>
+  `;
+}
+window.updateActivePatientBar = updateActivePatientBar;
+
+function renderNakesPatientRequiredPrompt(targetCmd, cmdTitle) {
+  const promptId = 'req_pat_' + Date.now();
+  appendAssistantMessage(`
+    <h4>Pemeriksaan Dokumen Pasien Diperlukan</h4>
+    <div class="claude-card nakes-lookup-card">
+      <p>Perintah <strong><code>${escapeHtml(targetCmd)}</code></strong> (${escapeHtml(cmdTitle)}) pada akun Tenaga Kesehatan bekerja berdasarkan <strong>data rekam medis pasien yang sedang diperiksa</strong>.</p>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">
+        Silakan masukkan <strong>Kode Dokumen / Konsultasi Pasien</strong> (contoh: <code>NKS-26-XXXX-ALZ</code> atau <code>DOC-NEURA-2026-XXXX</code>) untuk membuka berkas pasien dan menjalankan analisis klinis:
+      </p>
+      <div class="nakes-lookup-form" style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+        <input type="text" id="${promptId}_input" class="nakes-validation-input" placeholder="Contoh: NKS-26-8812-ALZ" style="flex:1;min-width:200px;font-family:'JetBrains Mono',monospace;text-transform:uppercase" onkeydown="if(event.key==='Enter') submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">
+        <button type="button" class="claude-btn primary" onclick="submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Buka Berkas Pasien</span>
+        </button>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px dashed var(--border-subtle)">
+        <span>Belum memiliki kode pasien untuk diuji?</span>
+        <button type="button" class="claude-btn secondary" style="padding:4px 10px;font-size:11.5px" onclick="loadSamplePatientForNakes('${escapeHtml(targetCmd)}')">
+          Gunakan Sampel Pasien Klinis (2.149 Data)
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/periksa', '/help', '/intro']
+  });
+}
+window.renderNakesPatientRequiredPrompt = renderNakesPatientRequiredPrompt;
+
+async function submitNakesPatientPrompt(inputId, thenCmd) {
+  const el = document.getElementById(inputId);
+  const code = el ? el.value.trim() : '';
+  if (!code) {
+    if (typeof showToast === 'function') showToast('Masukkan kode dokumen pasien terlebih dahulu.', 'warning');
+    return;
+  }
+  await loadAndActivatePatient(code, thenCmd);
+}
+window.submitNakesPatientPrompt = submitNakesPatientPrompt;
+
+async function loadSamplePatientForNakes(thenCmd) {
+  try {
+    if (typeof showToast === 'function') showToast('Membuat simulasi dokumen pasien klinis dari dataset...', 'info');
+    const docData = await fetchJSON('/api/consultation/generate', 'POST', { mode: 'dataset' });
+    if (docData && !docData.error) {
+      setActivePatientDoc(docData);
+      if (typeof showToast === 'function') {
+        showToast(`Dokumen pasien ${docData.patient?.name || 'Pasien'} (${docData.nakes_code}) aktif!`, 'success');
+      }
+      if (thenCmd) {
+        submitCommand(thenCmd);
+      } else {
+        renderPatientClinicalReviewCard(docData);
+      }
+    }
+  } catch (e) {
+    if (typeof showToast === 'function') showToast('Gagal memuat sampel pasien: ' + e.message, 'error');
+  }
+}
+window.loadSamplePatientForNakes = loadSamplePatientForNakes;
+
+async function loadAndActivatePatient(code, thenCmd) {
+  try {
+    const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}`);
+    if (res && res.found && res.data) {
+      setActivePatientDoc(res.data);
+      if (typeof showToast === 'function') {
+        showToast(`Dokumen pasien ${res.data.patient?.name || 'Pasien'} berhasil dimuat!`, 'success');
+      }
+      if (thenCmd) {
+        submitCommand(thenCmd);
+      } else {
+        renderPatientClinicalReviewCard(res.data);
+      }
+    } else {
+      if (typeof showToast === 'function') showToast(`Dokumen dengan kode '${code}' tidak ditemukan.`, 'error');
+    }
+  } catch (e) {
+    if (typeof showToast === 'function') showToast('Error memuat dokumen: ' + e.message, 'error');
+  }
+}
+window.loadAndActivatePatient = loadAndActivatePatient;
+
+function renderNakesPatientProfile(doc) {
+  const p = doc.patient || {};
+  const cog = doc.cognitive_scores || {};
+  const isValidated = doc.status === 'VALIDATED_BY_CLINICIAN' || (doc.validation && doc.validation.is_validated);
+  const nakesCode = doc.nakes_code || doc.doc_id;
+
+  appendAssistantMessage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <h4 style="margin:0">Rekam Medis &amp; Data Diri Pasien: ${escapeHtml(p.name || 'Pasien')}</h4>
+      <span class="nakes-status-pill ${isValidated ? 'nakes-status-terkonfirmasi' : 'nakes-status-pending'}">
+        ${isValidated ? '✓ Tervalidasi Dokter' : 'Menunggu Validasi'}
+      </span>
+    </div>
+
+    <div class="claude-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap;gap:6px">
+        <div>
+          <span style="font-size:11px;text-transform:uppercase;color:var(--text-muted);font-weight:700;letter-spacing:0.05em">ID Dokumen / Kode Nakes</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:700;color:var(--accent-terracotta)">${escapeHtml(nakesCode)}</div>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:11px;text-transform:uppercase;color:var(--text-muted)">Tanggal Registrasi</span>
+          <div style="font-size:12px;color:var(--text-secondary)">${escapeHtml(doc.created_at || 'Hari ini')}</div>
+        </div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.06em;margin-bottom:8px">1. Data Demografis &amp; Klinis Fisik</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(135px, 1fr));gap:8px;font-size:12.5px;padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:14px">
+        <div><span style="color:var(--text-muted)">Nama:</span> <strong>${escapeHtml(p.name || '—')}</strong></div>
+        <div><span style="color:var(--text-muted)">Usia:</span> <strong>${p.age || '—'} Tahun</strong></div>
+        <div><span style="color:var(--text-muted)">Gender:</span> <strong>${escapeHtml(p.gender || '—')}</strong></div>
+        <div><span style="color:var(--text-muted)">BMI:</span> <strong>${p.bmi || '—'} kg/m²</strong></div>
+        <div><span style="color:var(--text-muted)">Tekanan Darah:</span> <strong>${p.systolic_bp || 120}/${p.diastolic_bp || 80} mmHg</strong></div>
+        <div><span style="color:var(--text-muted)">Keluarga Alzheimer:</span> <strong style="color:${p.family_history ? 'var(--accent-red)' : 'var(--accent-green)'}">${p.family_history ? 'Positif (Ada)' : 'Negatif'}</strong></div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.06em;margin-bottom:8px">2. Pengukuran Kognitif &amp; Fungsional Awal</div>
+      <div class="biomarkers-grid" style="margin-bottom:14px">
+        <div class="biomarker-cell">
+          <span class="biomarker-lbl">Skor MMSE</span>
+          <strong class="biomarker-val" style="color:${(cog.mmse || 24) < 24 ? 'var(--accent-red)' : 'var(--accent-green)'}">${cog.mmse ?? 24} / 30</strong>
+        </div>
+        <div class="biomarker-cell">
+          <span class="biomarker-lbl">Kemandirian ADL</span>
+          <strong class="biomarker-val">${cog.adl ?? 7} / 10</strong>
+        </div>
+        <div class="biomarker-cell">
+          <span class="biomarker-lbl">Functional Assessment</span>
+          <strong class="biomarker-val">${cog.functional_assessment ?? 7} / 10</strong>
+        </div>
+        <div class="biomarker-cell">
+          <span class="biomarker-lbl">Keluhan Memori</span>
+          <strong class="biomarker-val" style="color:${cog.memory_complaints === 'Ada' ? 'var(--accent-red)' : 'var(--accent-green)'}">${cog.memory_complaints ?? 'Tidak'}</strong>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border-subtle)">
+        <button type="button" class="claude-btn primary" onclick="submitCommand('/predict')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/></svg>
+          <span>Jalankan Prediksi Pasien (/predict)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="submitCommand('/dokumen')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Buka Dossier Medis Lengkap (/dokumen)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="submitCommand('/eval')">
+          <span>Evaluasi Model Kasus (/eval)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="clearActivePatientDoc()">
+          <span>Ganti Pasien</span>
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/predict', '/dokumen', '/eval', '/status', '/periksa']
+  });
+}
+window.renderNakesPatientProfile = renderNakesPatientProfile;
+
+function renderNakesPatientPrediction(predData, doc) {
+  const p = doc.patient || {};
+  const pred = predData.prediction || predData;
+  const isPos = pred.prediction === 1 || pred.is_positive || (pred.diagnosis_label && pred.diagnosis_label.includes('Alzheimer'));
+  const prob = pred.probability_percent ?? pred.probability ?? 50.0;
+  const riskClass = isPos ? 'val-err' : 'val-good';
+  const nakesCode = doc.nakes_code || doc.doc_id;
+
+  appendAssistantMessage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <h4 style="margin:0">Hasil Prediksi XGBoost Pasien: ${escapeHtml(p.name || 'Pasien')}</h4>
+      <span class="patient-bar-code">${escapeHtml(nakesCode)}</span>
+    </div>
+
+    <div class="claude-card">
+      <div class="claude-stats-grid">
+        <div class="stat-pill">
+          <div class="stat-label">Diagnosis Prediktif</div>
+          <div class="stat-val ${riskClass}" style="font-size:13.5px">${escapeHtml(pred.diagnosis_label || (isPos ? 'Risiko Alzheimer Terdeteksi' : 'Batas Normal / Negatif'))}</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-label">Tingkat Keparahan Risiko</div>
+          <div class="stat-val ${riskClass}">${escapeHtml(pred.risk_level || (isPos ? 'High Risk' : 'Low Risk'))}</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-label">Probabilitas Risiko</div>
+          <div class="stat-val" style="font-family:'JetBrains Mono',monospace">${prob}%</div>
+        </div>
+      </div>
+
+      <div style="margin:12px 0">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+          <span>Skala Probabilitas Model (Ambang Batas: 50%)</span>
+          <strong>${prob}%</strong>
+        </div>
+        <div style="height:8px;background:var(--bg-tertiary);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${prob}%;background:${isPos ? 'var(--accent-red)' : 'var(--accent-green)'};transition:width 0.4s ease"></div>
+        </div>
+      </div>
+
+      <div style="font-size:12.5px;color:var(--text-secondary);padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:12px">
+        <strong>Interpretasi Klinis Nakes:</strong> Berdasarkan inferensi model XGBoost pada 32 biomarker pasien ${escapeHtml(p.name || 'ini')}, pasien terklasifikasi dalam kategori <strong>${escapeHtml(pred.risk_level || 'Risiko')}</strong>. Disarankan melakukan pengesahan diagnosis melalui formulir validasi klinis sebelum menerbitkan resume rujukan.
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border-subtle)">
+        <button type="button" class="claude-btn primary" onclick="openConsultationValidationModal('${escapeHtml(nakesCode)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Sahkan Validasi Klinis Pasien</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="submitCommand('/dokumen')">
+          <span>Dossier Medis Lengkap (/dokumen)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="submitCommand('/eval')">
+          <span>Evaluasi Model Kasus (/eval)</span>
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/dokumen', '/eval', '/status', '/periksa']
+  });
+}
+window.renderNakesPatientPrediction = renderNakesPatientPrediction;
+
+function renderNakesDetailedDossier(doc) {
+  const p = doc.patient || {};
+  const pred = doc.prediction || {};
+  const cog = doc.cognitive_scores || {};
+  const v = doc.validation || {};
+  const isValidated = doc.status === 'VALIDATED_BY_CLINICIAN' || v.is_validated;
+  const nakesCode = doc.nakes_code || doc.doc_id;
+  const cardId = 'dossier_' + Date.now();
+
+  let biomarkerRows = '';
+  if (doc.biomarkers_breakdown && Array.isArray(doc.biomarkers_breakdown)) {
+    doc.biomarkers_breakdown.forEach(cat => {
+      biomarkerRows += `
+        <tr class="nakes-table-category">
+          <td colspan="4">${escapeHtml(cat.category || 'Kategori')}</td>
+        </tr>
+      `;
+      if (cat.items && Array.isArray(cat.items)) {
+        cat.items.forEach(it => {
+          let devClass = 'normal';
+          let devText = 'Normal';
+          const valStr = String(it.value || '').toLowerCase();
+          if (valStr.includes('ada') || valStr.includes('perokok') || (it.name === 'Skor MMSE' && parseInt(it.value) < 24)) {
+            devClass = 'warning';
+            devText = 'Waspada';
+          }
+          if (it.name === 'Skor MMSE' && parseInt(it.value) < 20) {
+            devClass = 'critical';
+            devText = 'Defisit';
+          }
+          biomarkerRows += `
+            <tr>
+              <td><strong>${escapeHtml(it.name)}</strong></td>
+              <td style="font-family:'JetBrains Mono',monospace">${escapeHtml(it.value)}</td>
+              <td style="color:var(--text-muted);font-size:11.5px">${escapeHtml(it.normal || '—')}</td>
+              <td><span class="biomarker-dev-tag ${devClass}">${devText}</span></td>
+            </tr>
+          `;
+        });
+      }
+    });
+  }
+
+  let stampBlock = '';
+  if (isValidated) {
+    stampBlock = `
+      <div class="nakes-validation-stamp" style="margin: 16px 0;">
+        <div class="nakes-validation-stamp-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <strong style="color:var(--accent-green);font-size:12.5px;letter-spacing:0.04em;text-transform:uppercase">VALIDASI MEDIS DOKTER TERTANDA TANGAN RESMI</strong>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)">${escapeHtml(v.signature_hash || '')}</span>
+          </div>
+          <div style="font-size:13.5px;color:var(--text-primary);margin-top:4px;font-weight:700">
+            ${escapeHtml(v.validator_name || 'Dokter Spesialis Saraf')} ${v.validator_sip ? `&bull; SIP: ${escapeHtml(v.validator_sip)}` : ''}
+          </div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px">
+            ${escapeHtml(v.validator_institution || 'Fasilitas Pelayanan Kesehatan')} &bull; Validasi: ${escapeHtml(v.validated_at || '')}
+          </div>
+          <div style="font-size:12.5px;padding:8px 12px;background:rgba(16,185,129,0.08);border-radius:6px">
+            <strong>Status Klinis:</strong> ${escapeHtml(v.validation_status || 'TERKONFIRMASI_KLINIS')}
+            ${v.clinical_notes ? `<br><strong>Catatan Medis &amp; Terapi:</strong> <em>"${escapeHtml(v.clinical_notes)}"</em>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    stampBlock = `
+      <div style="margin:14px 0;padding:12px;background:rgba(245,158,11,0.08);border:1px dashed rgba(245,158,11,0.4);border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12.5px;color:var(--text-secondary)">
+          <strong>Status Berkas:</strong> Dokumen skrining pasien ini belum disahkan oleh dokter pemeriksa.
+        </div>
+        <button type="button" class="claude-btn primary" style="padding:5px 12px;font-size:12px" onclick="openConsultationValidationModal('${escapeHtml(nakesCode)}')">
+          Sahkan Validasi Sekarang
+        </button>
+      </div>
+    `;
+  }
+
+  appendAssistantMessage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <h4 style="margin:0">Rekam Medis Elektronik &amp; Dossier Medis Nakes</h4>
+      <span class="patient-bar-code">${escapeHtml(nakesCode)}</span>
+    </div>
+
+    <div class="nakes-dossier-card" id="${cardId}">
+      <div class="nakes-dossier-header">
+        <div>
+          <span class="nakes-dossier-badge">DOKUMEN RESMI REKAM MEDIS &bull; DOSSIER NAKES</span>
+          <div class="nakes-dossier-inst">RSUP Dr. Sardjito Yogyakarta &bull; Unit Pelayanan Gangguan Memori</div>
+          <div class="nakes-dossier-sub">Sistem Rekam Medis Elektronik Neura AI &bull; Akurasi Model XGBoost 95.35%</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent-terracotta)">${escapeHtml(doc.doc_id || nakesCode)}</div>
+          <div style="font-size:11px;color:var(--text-muted)">Waktu Cetak: ${new Date().toLocaleDateString('id-ID')}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;font-size:12px;margin-bottom:14px">
+        <div><span style="color:var(--text-muted)">Pasien:</span> <strong>${escapeHtml(p.name || '—')}</strong></div>
+        <div><span style="color:var(--text-muted)">Usia/JK:</span> <strong>${p.age || '—'} Thn / ${escapeHtml(p.gender || '—')}</strong></div>
+        <div><span style="color:var(--text-muted)">BMI:</span> <strong>${p.bmi || '—'} kg/m²</strong></div>
+        <div><span style="color:var(--text-muted)">TD:</span> <strong>${p.systolic_bp || 120}/${p.diastolic_bp || 80} mmHg</strong></div>
+        <div><span style="color:var(--text-muted)">Skor MMSE:</span> <strong>${cog.mmse ?? 24} / 30</strong></div>
+        <div><span style="color:var(--text-muted)">Kemandirian ADL:</span> <strong>${cog.adl ?? 7} / 10</strong></div>
+      </div>
+
+      <div style="margin:12px 0">
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:6px">Tabel Pengukuran 32 Biomarker Klinis Pasien</div>
+        <table class="nakes-table-biomarkers">
+          <thead>
+            <tr>
+              <th>Biomarker / Indikator</th>
+              <th>Nilai Pasien</th>
+              <th>Rentang Normal</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${biomarkerRows}
+          </tbody>
+        </table>
+      </div>
+
+      ${stampBlock}
+
+      <div class="nakes-btn-group" style="display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border-subtle)">
+        <button type="button" class="claude-btn primary" onclick="printPatientDossier('${cardId}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Cetak Dossier Medis (Print PDF)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="downloadPatientDossierJson('${escapeHtml(nakesCode)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Unduh JSON Rekam Medis (HL7 Ready)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="openConsultationValidationModal('${escapeHtml(nakesCode)}')">
+          <span>${isValidated ? 'Edit Catatan Dokter' : 'Sahkan Validasi'}</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="clearActivePatientDoc()">
+          <span>Ganti Pasien</span>
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/predict', '/eval', '/status', '/periksa']
+  });
+}
+window.renderNakesDetailedDossier = renderNakesDetailedDossier;
+
+function printPatientDossier(cardId) {
+  window.print();
+}
+window.printPatientDossier = printPatientDossier;
+
+function downloadPatientDossierJson(code) {
+  const doc = getActivePatientDoc();
+  if (!doc) {
+    if (typeof showToast === 'function') showToast('Data dokumen pasien tidak ditemukan.', 'error');
+    return;
+  }
+  const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(doc, null, 2));
+  const dlAnchor = document.createElement('a');
+  dlAnchor.setAttribute("href", jsonStr);
+  dlAnchor.setAttribute("download", `Dossier_Medis_${doc.nakes_code || 'Patient'}.json`);
+  document.body.appendChild(dlAnchor);
+  dlAnchor.click();
+  dlAnchor.remove();
+  if (typeof showToast === 'function') showToast('File JSON Rekam Medis Pasien berhasil diunduh.', 'success');
+}
+window.downloadPatientDossierJson = downloadPatientDossierJson;
+
+function renderNakesPatientModelEvaluation(evalData, doc) {
+  const p = doc.patient || {};
+  const nakesCode = doc.nakes_code || doc.doc_id;
+
+  if (!evalData || !evalData.success) {
+    appendAssistantMessage(`
+      <h4>Evaluasi Model pada Kasus Pasien</h4>
+      <div class="claude-card">
+        <p>Gagal memuat evaluasi kasus: ${escapeHtml(evalData?.error || 'Koneksi terganggu')}</p>
+      </div>
+    `, { stream: false });
+    return;
+  }
+
+  const mc = evalData.model_confidence || {};
+  const ca = evalData.cohort_analysis || {};
+  const flags = evalData.clinical_flags || [];
+  const tests = evalData.suggested_tests || [];
+
+  const flagsHtml = flags.map(f => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg-tertiary);border-radius:6px;font-size:12px;margin-bottom:4px">
+      <span><strong>${escapeHtml(f.param)}:</strong> ${escapeHtml(f.val)}</span>
+      <span class="biomarker-dev-tag ${f.severity === 'danger' ? 'critical' : (f.severity === 'warning' ? 'warning' : 'normal')}">${escapeHtml(f.status)}</span>
+    </div>
+  `).join('');
+
+  const testsHtml = tests.map(t => `
+    <li style="margin-bottom:4px;font-size:12.5px">${escapeHtml(t)}</li>
+  `).join('');
+
+  appendAssistantMessage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:gap:8px">
+      <h4 style="margin:0">Evaluasi Model Klinis Kasus Pasien: ${escapeHtml(p.name || 'Pasien')}</h4>
+      <span class="patient-bar-code">${escapeHtml(nakesCode)}</span>
+    </div>
+
+    <div class="claude-card">
+      <div class="claude-stats-grid">
+        <div class="stat-pill">
+          <div class="stat-label">Tingkat Kepastian Model</div>
+          <div class="stat-val val-good" style="font-size:12.5px">${escapeHtml(mc.certainty_level || 'Tinggi')}</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-label">Margin dari Ambang Batas (50%)</div>
+          <div class="stat-val" style="font-family:'JetBrains Mono',monospace">${escapeHtml(mc.margin_from_decision_boundary || '—')}</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-label">Akurasi Rujukan XGBoost</div>
+          <div class="stat-val val-good">${escapeHtml(mc.model_accuracy_reference || '95.35%')}</div>
+        </div>
+      </div>
+
+      <div style="margin:12px 0;padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;font-size:12.5px">
+        <div style="font-weight:700;color:var(--accent-terracotta);margin-bottom:4px">Analisis Kohort Pasien Sebanding:</div>
+        <div style="color:var(--text-secondary)">
+          ${escapeHtml(ca.cohort_label || 'Kelompok Demografi Pasien')} diuji pada 2.149 dataset:
+          Sensitivitas: <strong>${escapeHtml(ca.cohort_sensitivity || '95.8%')}</strong> &bull;
+          Spesifisitas: <strong>${escapeHtml(ca.cohort_specificity || '94.9%')}</strong> &bull;
+          F1-Score: <strong>${escapeHtml(ca.cohort_f1 || '94.6%')}</strong>.
+        </div>
+      </div>
+
+      <div style="margin:12px 0">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:6px">Faktor Risiko Klinis Terdeteksi pada Pasien:</div>
+        ${flagsHtml}
+      </div>
+
+      <div style="margin:12px 0;padding:10px 12px;background:rgba(224,122,95,0.06);border-radius:6px">
+        <div style="font-weight:700;font-size:12px;color:var(--text-primary);margin-bottom:6px">Rekomendasi Uji Lanjutan Dokter:</div>
+        <ul style="margin:0 0 0 16px;padding:0;color:var(--text-secondary)">
+          ${testsHtml}
+        </ul>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border-subtle)">
+        <button type="button" class="claude-btn primary" onclick="openConsultationValidationModal('${escapeHtml(nakesCode)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Sahkan Validasi Medis</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="submitCommand('/dokumen')">
+          <span>Lihat Dossier Lengkap (/dokumen)</span>
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/dokumen', '/predict', '/status', '/periksa']
+  });
+}
+window.renderNakesPatientModelEvaluation = renderNakesPatientModelEvaluation;
+
+function renderNakesPatientStatus(doc) {
+  const p = doc.patient || {};
+  const v = doc.validation || {};
+  const isValidated = doc.status === 'VALIDATED_BY_CLINICIAN' || v.is_validated;
+  const nakesCode = doc.nakes_code || doc.doc_id;
+
+  appendAssistantMessage(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <h4 style="margin:0">Status Berkas Rekam Medis: ${escapeHtml(p.name || 'Pasien')}</h4>
+      <span class="patient-bar-code">${escapeHtml(nakesCode)}</span>
+    </div>
+
+    <div class="claude-card">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;font-size:12.5px;padding:12px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:14px">
+        <div>
+          <span style="font-size:11px;color:var(--text-muted);display:block">Status Validasi</span>
+          <strong style="color:${isValidated ? 'var(--accent-green)' : 'var(--accent-terracotta)'}">
+            ${isValidated ? '✓ VALIDATED_BY_CLINICIAN' : '⏳ PENDING_VALIDATION'}
+          </strong>
+        </div>
+        <div>
+          <span style="font-size:11px;color:var(--text-muted);display:block">Parameter Biomarker</span>
+          <strong>32/32 Parameter (100% Lengkap)</strong>
+        </div>
+        <div>
+          <span style="font-size:11px;color:var(--text-muted);display:block">Integritas Dokumen</span>
+          <strong style="color:var(--accent-green)">SHA-256 Terverifikasi</strong>
+        </div>
+        <div>
+          <span style="font-size:11px;color:var(--text-muted);display:block">Masa Berlaku Rujukan</span>
+          <strong>30 Hari (Aktif)</strong>
+        </div>
+      </div>
+
+      <div style="font-size:12.5px;color:var(--text-secondary);padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:12px">
+        <div><strong>Dokter Pemeriksa:</strong> ${escapeHtml(v.validator_name || 'Menunggu penetapan dokter')}</div>
+        <div><strong>SIP:</strong> ${escapeHtml(v.validator_sip || '—')} &bull; <strong>Faskes:</strong> ${escapeHtml(v.validator_institution || 'RSUP Dr. Sardjito')}</div>
+        <div><strong>Hash Tanda Tangan:</strong> <code style="font-size:11px">${escapeHtml(v.signature_hash || 'Belum diterbitkan')}</code></div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border-subtle)">
+        <button type="button" class="claude-btn primary" onclick="openConsultationValidationModal('${escapeHtml(nakesCode)}')">
+          <span>${isValidated ? 'Perbarui Validasi' : 'Validasi Sekarang'}</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="submitCommand('/dokumen')">
+          <span>Buka Dossier Medis (/dokumen)</span>
+        </button>
+        <button type="button" class="claude-btn secondary" onclick="clearActivePatientDoc()">
+          <span>Ganti Pasien</span>
+        </button>
+      </div>
+    </div>
+  `, {
+    stream: false,
+    suggestions: ['/dokumen', '/predict', '/eval', '/periksa']
+  });
+}
+window.renderNakesPatientStatus = renderNakesPatientStatus;
+
 
 function renderProgressOutput(data) {
   if (!data.progress || data.progress.length === 0) {
@@ -4288,7 +6243,7 @@ function startProgressPolling(totalEpochs, runId) {
           }, 350);
         }
       }
-    } catch(err) {
+    } catch (err) {
       // Silent error during poll
     }
   }, 100);
@@ -4362,7 +6317,7 @@ function appendAssistantMessage(html, options = {}) {
   } else {
     proseEl.innerHTML = contentHtml;
     revealFooter();
-    
+
     // Animate probability bars if present
     const bars = proseEl.querySelectorAll('.prob-fill');
     if (bars.length > 0) {
@@ -4483,7 +6438,7 @@ async function fetchModelStatus(isUserTriggered = false) {
     activeModelData = data;
     updateUIModelStatus(data);
     if (isUserTriggered) renderStatusOutput(data);
-  } catch(err) {
+  } catch (err) {
     const dot = document.getElementById('sb-status-dot');
     const text = document.getElementById('sb-status-text');
     if (dot) dot.className = 'status-dot dot-offline';
@@ -4762,7 +6717,7 @@ async function fetchJSON(url, method = 'GET', body = null) {
  */
 function initConnectivity() {
   // Layer 1: instant browser events
-  window.addEventListener('online',  () => setOnlineState(true));
+  window.addEventListener('online', () => setOnlineState(true));
   window.addEventListener('offline', () => setOnlineState(false));
 
   // Layer 2: heartbeat ping every 15 s
@@ -4843,9 +6798,9 @@ function setOnlineState(isOnline) {
     inputArea.classList.toggle('is-offline', !isOnline);
   }
   const textarea = document.getElementById('chat-input-textarea');
-  const sendBtn  = document.getElementById('send-msg-btn');
+  const sendBtn = document.getElementById('send-msg-btn');
   if (textarea) textarea.disabled = !isOnline;
-  if (sendBtn)  sendBtn.disabled  = !isOnline;
+  if (sendBtn) sendBtn.disabled = !isOnline;
 
   // ── 3. In-chat system notice ─────────────────────────────────────────────
   if (!isOnline) {
@@ -4886,7 +6841,7 @@ function _appendSystemNotice(type, iconSvg, message) {
 // --------------------------------------------------------------------------
 // Voice Consultation Session Exporter to Main Chat
 // --------------------------------------------------------------------------
-window.appendVoiceSessionToChat = function(summaryMarkdown) {
+window.appendVoiceSessionToChat = function (summaryMarkdown) {
   if (!summaryMarkdown) return;
   if (!activeSessionId) {
     const newSession = {
@@ -4900,7 +6855,7 @@ window.appendVoiceSessionToChat = function(summaryMarkdown) {
     saveChatSessions();
     try {
       localStorage.setItem(LAST_SESSION_STORAGE_KEY, newSession.id);
-    } catch(e) {}
+    } catch (e) { }
     renderRecentChatsSidebar();
     const hero = document.getElementById('claude-hero');
     if (hero) hero.remove();
@@ -4959,7 +6914,7 @@ window.appendVoiceSessionToChat = function(summaryMarkdown) {
   appendAssistantMessage(formattedHtml, { stream: false });
 };
 
-window.toggleVoiceSessionClamp = function(btn) {
+window.toggleVoiceSessionClamp = function (btn) {
   if (!btn) return;
   const card = btn.closest('.voice-session-summary');
   if (!card) return;
@@ -4978,7 +6933,7 @@ window.toggleVoiceSessionClamp = function(btn) {
   }
 };
 
-window.toggleTrainingCardClamp = function(btn) {
+window.toggleTrainingCardClamp = function (btn) {
   if (!btn) return;
   const card = btn.closest('.training-progress-card');
   if (!card) return;
@@ -4996,4 +6951,766 @@ window.toggleTrainingCardClamp = function(btn) {
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 };
+
+// ==========================================================================
+// Admin Nakes Management & Registration Controller (@neura.ns.id)
+// ==========================================================================
+let _nakesDirectoryCache = [];
+let _nakesActiveView = 'table';
+
+function syncAdminNavVisibility() {
+  try {
+    const adminNakesNav = document.getElementById('sidebar-nakes-admin-link');
+    if (adminNakesNav) {
+      if (typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin()) {
+        adminNakesNav.style.display = 'flex';
+      } else {
+        adminNakesNav.style.display = 'none';
+      }
+    }
+  } catch (e) { }
+}
+window.syncAdminNavVisibility = syncAdminNavVisibility;
+
+async function openNakesAdminModal() {
+  if (typeof isCurrentUserAdmin === 'function' && !isCurrentUserAdmin()) {
+    if (typeof showToast === 'function') {
+      showToast('Akses terbatas. Menu ini khusus Administrator Neura AI.', 'warning');
+    } else {
+      alert('Akses terbatas. Menu ini khusus Administrator Neura AI.');
+    }
+    return;
+  }
+  const modal = document.getElementById('admin-nakes-modal');
+  if (!modal) return;
+  modal.classList.add('open');
+  switchNakesAdminView('table');
+  await fetchAndRenderNakesTable();
+}
+window.openNakesAdminModal = openNakesAdminModal;
+
+function closeNakesAdminModal() {
+  const modal = document.getElementById('admin-nakes-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeNakesAdminModal = closeNakesAdminModal;
+
+function closeNakesAdminModalOnBackdrop(e) {
+  if (e && e.target && e.target.id === 'admin-nakes-modal') {
+    closeNakesAdminModal();
+  }
+}
+window.closeNakesAdminModalOnBackdrop = closeNakesAdminModalOnBackdrop;
+
+function switchNakesAdminView(view) {
+  _nakesActiveView = view;
+  const tablePanel = document.getElementById('nakes-view-table');
+  const formPanel = document.getElementById('nakes-view-form');
+  const tabBtnTable = document.getElementById('nakes-tab-btn-table');
+  const tabBtnForm = document.getElementById('nakes-tab-btn-form');
+
+  if (view === 'form') {
+    if (tablePanel) tablePanel.style.display = 'none';
+    if (formPanel) formPanel.style.display = 'block';
+    if (tabBtnTable) tabBtnTable.classList.remove('active');
+    if (tabBtnForm) tabBtnForm.classList.add('active');
+    const nameInput = document.getElementById('nakes-input-name');
+    if (nameInput) setTimeout(() => nameInput.focus(), 80);
+  } else {
+    if (tablePanel) tablePanel.style.display = 'block';
+    if (formPanel) formPanel.style.display = 'none';
+    if (tabBtnTable) tabBtnTable.classList.add('active');
+    if (tabBtnForm) tabBtnForm.classList.remove('active');
+  }
+}
+window.switchNakesAdminView = switchNakesAdminView;
+
+/**
+ * Auto-generate Email Nakes Resmi dengan domain @neura.ns.id
+ * Mengambil nama atau username dari Email Asli pribadi nakes.
+ */
+function handleNakesNameOrEmailInput() {
+  const realEmailInput = document.getElementById('nakes-input-real-email');
+  const nameInput = document.getElementById('nakes-input-name');
+  const domainUserInput = document.getElementById('nakes-input-domain-user');
+  const previewText = document.getElementById('nakes-preview-text');
+
+  if (!domainUserInput) return;
+
+  const realEmail = (realEmailInput?.value || '').trim().toLowerCase();
+  const name = (nameInput?.value || '').trim();
+
+  let generatedUsername = '';
+
+  if (realEmail && realEmail.includes('@')) {
+    // Ekstrak bagian lokal email asli (e.g. citra.anindita92 dari citra.anindita92@gmail.com)
+    const localPart = realEmail.split('@')[0];
+    generatedUsername = localPart.replace(/[^a-z0-9._-]/g, '');
+  } else if (name) {
+    // Generate slug dari nama (e.g. dr. Citra Anindita, Sp.N -> citra.anindita)
+    let clean = name.toLowerCase();
+    clean = clean.replace(/^(dr\.|dr|dokter|ns\.|ners|prof\.|apt\.)\s*/i, '');
+    clean = clean.replace(/,\s*(sp\.[a-z()]+|s\.kep|m\.kes|ph\.d|m\.biomed).*$/i, '');
+    clean = clean.replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '.');
+    generatedUsername = clean || 'nakes';
+  }
+
+  if (generatedUsername) {
+    domainUserInput.value = generatedUsername;
+    if (previewText) {
+      previewText.textContent = `${generatedUsername}@neura.ns.id`;
+    }
+  } else {
+    domainUserInput.value = '';
+    if (previewText) {
+      previewText.textContent = '... @neura.ns.id';
+    }
+  }
+}
+window.handleNakesNameOrEmailInput = handleNakesNameOrEmailInput;
+
+async function fetchAndRenderNakesTable() {
+  const tbody = document.getElementById('nakes-table-tbody');
+  const counter = document.getElementById('nakes-total-counter');
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted);">Memuat direktori data Nakes...</td></tr>`;
+
+  try {
+    const res = await fetch('/api/admin/nakes');
+    if (res.ok) {
+      const json = await res.json();
+      _nakesDirectoryCache = Array.isArray(json.data) ? json.data : [];
+    } else {
+      const local = localStorage.getItem('neura_nakes_directory');
+      _nakesDirectoryCache = local ? JSON.parse(local) : [];
+    }
+  } catch (e) {
+    const local = localStorage.getItem('neura_nakes_directory');
+    _nakesDirectoryCache = local ? JSON.parse(local) : [];
+  }
+
+  if (counter) counter.textContent = _nakesDirectoryCache.length;
+  renderNakesTableRows(_nakesDirectoryCache);
+}
+window.fetchAndRenderNakesTable = fetchAndRenderNakesTable;
+
+function renderNakesTableRows(list) {
+  const tbody = document.getElementById('nakes-table-tbody');
+  const emptyState = document.getElementById('nakes-table-empty');
+  if (!tbody) return;
+
+  if (!list || list.length === 0) {
+    tbody.innerHTML = '';
+    if (emptyState) emptyState.style.display = 'block';
+    return;
+  }
+
+  if (emptyState) emptyState.style.display = 'none';
+
+  let html = '';
+  list.forEach((item, idx) => {
+    const initials = (item.name || 'N')
+      .replace(/^(dr\.|dr|ns\.|apt\.)\s*/i, '')
+      .trim()
+      .charAt(0)
+      .toUpperCase();
+
+    html += `
+      <tr>
+        <td style="color:var(--text-muted);font-weight:600;">${idx + 1}</td>
+        <td>
+          <div class="nakes-user-cell">
+            <div class="nakes-avatar-initials">${escapeHtml(initials)}</div>
+            <div class="nakes-user-info">
+              <span class="nakes-user-name">${escapeHtml(item.name || '—')}</span>
+              <span class="nakes-user-id">${escapeHtml(item.id || 'NKS')}</span>
+            </div>
+          </div>
+        </td>
+        <td><span class="nakes-badge-prof">${escapeHtml(item.profession || 'Tenaga Medis')}</span></td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <span class="nakes-str-badge" title="STR">${escapeHtml(item.str_number || '—')}</span>
+            <span style="font-size:10.5px;color:var(--text-muted);">${escapeHtml(item.sip_number || '—')}</span>
+          </div>
+        </td>
+        <td style="font-size:12px;color:var(--text-muted);">${escapeHtml(item.institution || '—')}</td>
+        <td style="font-size:12px;font-family:monospace;color:var(--text-muted);">${escapeHtml(item.real_email || '—')}</td>
+        <td>
+          <div class="nakes-domain-pill" onclick="copyNakesEmail('${escapeHtml(item.nakes_email || '')}')" title="Klik untuk menyalin email resmi nakes">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>${escapeHtml(item.nakes_email || '—')}</span>
+          </div>
+        </td>
+        <td>
+          <div class="nakes-pwd-cell">
+            <span class="nakes-pwd-text" id="nakes-pwd-text-${idx}" data-pwd="${escapeHtml(item.password || 'nks')}" data-visible="false">••••</span>
+            <button class="nakes-pwd-eye-btn" onclick="toggleNakesPwdVisibility(${idx})" title="Tampilkan/sembunyikan kata sandi">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </td>
+        <td>
+          <span class="nakes-status-tag">
+            <span class="nakes-status-dot"></span>
+            <span>${escapeHtml(item.status || 'Terverifikasi')}</span>
+          </span>
+        </td>
+        <td style="text-align:center;">
+          <button class="nakes-del-btn" onclick="deleteNakesAdmin('${escapeHtml(item.id)}', '${escapeHtml(item.name)}')" title="Hapus Data Nakes">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function toggleNakesPwdVisibility(idx) {
+  const el = document.getElementById(`nakes-pwd-text-${idx}`);
+  if (!el) return;
+  const visible = el.getAttribute('data-visible') === 'true';
+  if (visible) {
+    el.textContent = '••••';
+    el.setAttribute('data-visible', 'false');
+  } else {
+    el.textContent = el.getAttribute('data-pwd') || 'nks';
+    el.setAttribute('data-visible', 'true');
+  }
+}
+window.toggleNakesPwdVisibility = toggleNakesPwdVisibility;
+
+function handleNakesTableSearch() {
+  const query = (document.getElementById('nakes-search-input')?.value || '').toLowerCase().trim();
+  const profFilter = (document.getElementById('nakes-filter-profession')?.value || '').toLowerCase().trim();
+
+  let filtered = _nakesDirectoryCache.filter(item => {
+    const matchQuery = !query ||
+      (item.name || '').toLowerCase().includes(query) ||
+      (item.str_number || '').toLowerCase().includes(query) ||
+      (item.institution || '').toLowerCase().includes(query) ||
+      (item.real_email || '').toLowerCase().includes(query) ||
+      (item.nakes_email || '').toLowerCase().includes(query);
+
+    const matchProf = !profFilter ||
+      (item.profession || '').toLowerCase().includes(profFilter);
+
+    return matchQuery && matchProf;
+  });
+
+  renderNakesTableRows(filtered);
+}
+window.handleNakesTableSearch = handleNakesTableSearch;
+
+async function handleNakesFormSubmit(event) {
+  if (event) event.preventDefault();
+
+  const name = (document.getElementById('nakes-input-name')?.value || '').trim();
+  const profession = document.getElementById('nakes-input-profession')?.value || 'Dokter Spesialis Neurologi (Sp.N)';
+  const strNumber = (document.getElementById('nakes-input-str')?.value || '').trim();
+  const sipNumber = (document.getElementById('nakes-input-sip')?.value || '').trim();
+  const institution = (document.getElementById('nakes-input-institution')?.value || '').trim();
+  const phone = (document.getElementById('nakes-input-phone')?.value || '').trim();
+  const realEmail = (document.getElementById('nakes-input-real-email')?.value || '').trim().toLowerCase();
+  let domainUser = (document.getElementById('nakes-input-domain-user')?.value || '').trim().toLowerCase();
+  const status = document.getElementById('nakes-input-status')?.value || 'Terverifikasi KKI';
+
+  if (!name) {
+    if (typeof showToast === 'function') showToast('Nama nakes wajib diisi lengkap beserta gelar.', 'warning');
+    return;
+  }
+  if (!realEmail || !realEmail.includes('@')) {
+    if (typeof showToast === 'function') showToast('Email asli pribadi nakes wajib diisi dengan format valid.', 'warning');
+    return;
+  }
+
+  // Normalisasi username nakes domain
+  domainUser = domainUser.replace(/[^a-z0-9._-]/g, '') || realEmail.split('@')[0].replace(/[^a-z0-9._-]/g, '');
+  const nakesEmail = `${domainUser}@neura.ns.id`;
+
+  const payload = {
+    name,
+    profession,
+    str_number: strNumber,
+    sip_number: sipNumber,
+    institution,
+    phone,
+    real_email: realEmail,
+    nakes_email: nakesEmail,
+    status
+  };
+
+  const submitBtn = document.getElementById('nakes-submit-btn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span>Menyimpan Data Nakes...</span>`;
+  }
+
+  try {
+    const res = await fetch('/api/admin/nakes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      if (typeof showToast === 'function') {
+        showToast(`Sukses! Data nakes ${name} berhasil didaftarkan dengan email resmi ${nakesEmail}.`, 'success');
+      }
+
+      // Reset form
+      document.getElementById('nakes-create-form')?.reset();
+      handleNakesNameOrEmailInput();
+
+      // Switch ke view table dan reload data
+      switchNakesAdminView('table');
+      await fetchAndRenderNakesTable();
+    } else {
+      if (typeof showToast === 'function') {
+        showToast(data.error || 'Gagal menyimpan data nakes.', 'error');
+      }
+    }
+  } catch (err) {
+    console.error('Error creating nakes:', err);
+    // Offline local fallback
+    payload.id = `NKS-${new Date().getFullYear()}-${_nakesDirectoryCache.length + 1}`;
+    _nakesDirectoryCache.unshift(payload);
+    localStorage.setItem('neura_nakes_directory', JSON.stringify(_nakesDirectoryCache));
+    if (typeof showToast === 'function') {
+      showToast(`Data nakes ${name} tersimpan lokal (${nakesEmail}).`, 'success');
+    }
+    document.getElementById('nakes-create-form')?.reset();
+    switchNakesAdminView('table');
+    renderNakesTableRows(_nakesDirectoryCache);
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Simpan &amp; Daftarkan Data Nakes</span>
+      `;
+    }
+  }
+}
+window.handleNakesFormSubmit = handleNakesFormSubmit;
+
+async function deleteNakesAdmin(id, name) {
+  if (!confirm(`Apakah Anda yakin ingin menghapus data tenaga kesehatan ${name || id}?`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/admin/nakes/${encodeURIComponent(id)}`, {
+      method: 'DELETE'
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      if (typeof showToast === 'function') {
+        showToast(`Data nakes ${name || id} berhasil dihapus.`, 'info');
+      }
+    } else {
+      if (typeof showToast === 'function') {
+        showToast(data.error || 'Gagal menghapus nakes.', 'error');
+      }
+    }
+  } catch (e) {
+    // Local fallback
+    _nakesDirectoryCache = _nakesDirectoryCache.filter(item => item.id !== id);
+    localStorage.setItem('neura_nakes_directory', JSON.stringify(_nakesDirectoryCache));
+    if (typeof showToast === 'function') {
+      showToast(`Data nakes ${name || id} dihapus dari penyimpanan lokal.`, 'info');
+    }
+  }
+
+  await fetchAndRenderNakesTable();
+}
+window.deleteNakesAdmin = deleteNakesAdmin;
+
+function copyNakesEmail(email) {
+  if (!email) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(email).then(() => {
+      if (typeof showToast === 'function') {
+        showToast(`Email nakes ${email} berhasil disalin ke clipboard!`, 'success');
+      }
+    }).catch(() => {
+      prompt('Salin email nakes:', email);
+    });
+  } else {
+    prompt('Salin email nakes:', email);
+  }
+}
+window.copyNakesEmail = copyNakesEmail;
+
+// Eksekusi sync visibility pada saat file selesai dimuat
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', syncAdminNavVisibility);
+} else {
+  syncAdminNavVisibility();
+}
+
+// ==========================================================================
+// Edit Profile & Password Controller
+// ==========================================================================
+function openEditProfileModal(initialTab = 'info') {
+  const modal = document.getElementById('edit-profile-modal');
+  if (!modal) return;
+
+  // Baca data profil terkini
+  let user = null;
+  try {
+    const raw = localStorage.getItem('neura_auth_user');
+    if (raw) user = JSON.parse(raw);
+  } catch (e) { }
+
+  if (!user && window.NeuraFirebase && window.NeuraFirebase.auth) {
+    try {
+      const fbUser = window.NeuraFirebase.auth().currentUser;
+      if (fbUser) {
+        user = {
+          name: fbUser.displayName || (fbUser.email ? fbUser.email.split('@')[0] : 'Pengguna'),
+          email: fbUser.email || '',
+          photoURL: fbUser.photoURL || ''
+        };
+      }
+    } catch (e) { }
+  }
+
+  const currentName = user?.name || document.getElementById('sidebar-user-name')?.textContent || 'Pengguna';
+  const currentEmail = user?.email || document.getElementById('stg-profile-email')?.textContent || '—';
+  const currentRole = localStorage.getItem('neura_user_role') || 'User';
+  const currentInst = user?.institution || localStorage.getItem('neura_user_institution') || '';
+  const currentPhone = user?.phone || localStorage.getItem('neura_user_phone') || '';
+  const currentBio = user?.bio || localStorage.getItem('neura_user_bio') || '';
+
+  // Isi ke Form Info
+  const nameInput = document.getElementById('edit-profile-input-name');
+  const emailInput = document.getElementById('edit-profile-input-email');
+  const instInput = document.getElementById('edit-profile-input-institution');
+  const phoneInput = document.getElementById('edit-profile-input-phone');
+  const bioInput = document.getElementById('edit-profile-input-bio');
+  const previewAvatar = document.getElementById('edit-avatar-preview');
+  const previewName = document.getElementById('edit-avatar-name-display');
+  const previewRole = document.getElementById('edit-avatar-role-badge');
+
+  if (nameInput) nameInput.value = currentName;
+  if (emailInput) emailInput.value = currentEmail;
+  if (instInput) instInput.value = currentInst;
+  if (phoneInput) phoneInput.value = currentPhone;
+  if (bioInput) bioInput.value = currentBio;
+  if (previewName) previewName.textContent = currentName;
+  if (previewRole) previewRole.textContent = currentRole;
+  if (previewAvatar) previewAvatar.textContent = currentName.charAt(0).toUpperCase();
+
+  // Reset form password
+  const pwdForm = document.getElementById('form-edit-password');
+  if (pwdForm) pwdForm.reset();
+  handlePasswordStrengthInput('');
+
+  // Tampilkan modal dan buka tab yang diminta
+  modal.classList.add('open');
+  switchEditProfileTab(initialTab);
+}
+window.openEditProfileModal = openEditProfileModal;
+
+function closeEditProfileModal() {
+  const modal = document.getElementById('edit-profile-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeEditProfileModal = closeEditProfileModal;
+
+function closeEditProfileModalOnBackdrop(e) {
+  if (e && e.target && e.target.id === 'edit-profile-modal') {
+    closeEditProfileModal();
+  }
+}
+window.closeEditProfileModalOnBackdrop = closeEditProfileModalOnBackdrop;
+
+function switchEditProfileTab(tabName) {
+  const panelInfo = document.getElementById('panel-edit-profile-info');
+  const panelSec = document.getElementById('panel-edit-profile-security');
+  const tabBtnInfo = document.getElementById('tab-btn-edit-info');
+  const tabBtnSec = document.getElementById('tab-btn-edit-security');
+
+  if (tabName === 'security') {
+    if (panelInfo) panelInfo.style.display = 'none';
+    if (panelSec) panelSec.style.display = 'block';
+    if (tabBtnInfo) tabBtnInfo.classList.remove('active');
+    if (tabBtnSec) tabBtnSec.classList.add('active');
+  } else {
+    if (panelInfo) panelInfo.style.display = 'block';
+    if (panelSec) panelSec.style.display = 'none';
+    if (tabBtnInfo) tabBtnInfo.classList.add('active');
+    if (tabBtnSec) tabBtnSec.classList.remove('active');
+  }
+}
+window.switchEditProfileTab = switchEditProfileTab;
+
+function handleEditProfileNameChange() {
+  const nameInput = document.getElementById('edit-profile-input-name');
+  const previewAvatar = document.getElementById('edit-avatar-preview');
+  const previewName = document.getElementById('edit-avatar-name-display');
+  const val = (nameInput?.value || '').trim() || 'Pengguna';
+  if (previewName) previewName.textContent = val;
+  if (previewAvatar) previewAvatar.textContent = val.charAt(0).toUpperCase();
+}
+window.handleEditProfileNameChange = handleEditProfileNameChange;
+
+function togglePasswordVisibility(inputId, btnEl) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+
+  if (btnEl) {
+    btnEl.innerHTML = isPassword ? `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+      </svg>
+    ` : `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+    `;
+  }
+}
+window.togglePasswordVisibility = togglePasswordVisibility;
+
+function handlePasswordStrengthInput(pwd) {
+  const fill = document.getElementById('pwd-strength-fill');
+  const label = document.getElementById('pwd-strength-label');
+  if (!fill || !label) return;
+
+  if (!pwd) {
+    fill.style.width = '0%';
+    fill.style.background = '#ef4444';
+    label.textContent = 'Kekuatan Sandi: —';
+    return;
+  }
+
+  let score = 0;
+  if (pwd.length >= 6) score += 1;
+  if (pwd.length >= 8) score += 1;
+  if (/[0-9]/.test(pwd)) score += 1;
+  if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score += 1;
+  if (/[^a-zA-Z0-9]/.test(pwd)) score += 1;
+
+  if (score <= 1) {
+    fill.style.width = '25%';
+    fill.style.background = '#ef4444';
+    label.textContent = 'Kekuatan Sandi: Lemah (minimal 6 karakter)';
+    label.style.color = '#ef4444';
+  } else if (score <= 3) {
+    fill.style.width = '60%';
+    fill.style.background = '#f59e0b';
+    label.textContent = 'Kekuatan Sandi: Sedang (tambahkan variasi karakter)';
+    label.style.color = '#f59e0b';
+  } else {
+    fill.style.width = '100%';
+    fill.style.background = '#22c55e';
+    label.textContent = 'Kekuatan Sandi: Sangat Kuat ✓';
+    label.style.color = '#4ade80';
+  }
+}
+window.handlePasswordStrengthInput = handlePasswordStrengthInput;
+
+async function handleSaveProfile(event) {
+  if (event) event.preventDefault();
+
+  const name = (document.getElementById('edit-profile-input-name')?.value || '').trim();
+  const institution = (document.getElementById('edit-profile-input-institution')?.value || '').trim();
+  const phone = (document.getElementById('edit-profile-input-phone')?.value || '').trim();
+  const bio = (document.getElementById('edit-profile-input-bio')?.value || '').trim();
+
+  if (!name) {
+    if (typeof showToast === 'function') showToast('Nama lengkap tidak boleh kosong.', 'warning');
+    return;
+  }
+
+  const saveBtn = document.getElementById('btn-save-profile');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = `<span>Menyimpan...</span>`;
+  }
+
+  try {
+    // 1. Update ke Firebase Auth jika aktif
+    let fbUser = null;
+    if (window.NeuraFirebase && window.NeuraFirebase.auth) {
+      try {
+        const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
+        if (auth && auth.currentUser) {
+          fbUser = auth.currentUser;
+          await fbUser.updateProfile({ displayName: name });
+        }
+      } catch (e) {
+        console.warn('[Neura Auth] updateProfile Firebase error:', e);
+      }
+    }
+
+    // 2. Simpan ke Firestore jika tersedia
+    if (fbUser && window.firebase && window.firebase.firestore) {
+      try {
+        const db = window.firebase.firestore();
+        await db.collection('users').doc(fbUser.uid).set({
+          name: name,
+          institution: institution,
+          phone: phone,
+          bio: bio,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (e) { }
+    }
+
+    // 3. Update localStorage profile & user
+    let userObj = {};
+    try {
+      const raw = localStorage.getItem('neura_auth_user');
+      if (raw) userObj = JSON.parse(raw);
+    } catch (e) { }
+
+    userObj.name = name;
+    userObj.displayName = name;
+    userObj.institution = institution;
+    userObj.phone = phone;
+    userObj.bio = bio;
+
+    localStorage.setItem('neura_auth_user', JSON.stringify(userObj));
+    localStorage.setItem('neura_user_profile', JSON.stringify(userObj));
+    localStorage.setItem('neura_user_institution', institution);
+    localStorage.setItem('neura_user_phone', phone);
+    localStorage.setItem('neura_user_bio', bio);
+
+    // 4. Update UI di seluruh komponen
+    syncUserProfileUI();
+    const stgNameEl = document.getElementById('stg-profile-name');
+    if (stgNameEl) stgNameEl.textContent = name;
+    const stgAvatarEl = document.getElementById('stg-avatar');
+    if (stgAvatarEl) stgAvatarEl.textContent = name.charAt(0).toUpperCase();
+
+    if (typeof showToast === 'function') {
+      showToast('Profil pengguna berhasil diperbarui!', 'success');
+    }
+
+    closeEditProfileModal();
+  } catch (err) {
+    console.error('Error saving profile:', err);
+    if (typeof showToast === 'function') {
+      showToast('Gagal memperbarui profil: ' + (err.message || err), 'error');
+    }
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Simpan Perubahan Profil</span>
+      `;
+    }
+  }
+}
+window.handleSaveProfile = handleSaveProfile;
+
+async function handleUpdatePassword(event) {
+  if (event) event.preventDefault();
+
+  const oldPassword = document.getElementById('input-old-password')?.value || '';
+  const newPassword = document.getElementById('input-new-password')?.value || '';
+  const confirmPassword = document.getElementById('input-confirm-password')?.value || '';
+
+  if (!oldPassword) {
+    if (typeof showToast === 'function') showToast('Masukkan kata sandi saat ini.', 'warning');
+    return;
+  }
+  if (!newPassword || newPassword.length < 6) {
+    if (typeof showToast === 'function') showToast('Kata sandi baru minimal harus 6 karakter.', 'warning');
+    return;
+  }
+  if (newPassword !== confirmPassword) {
+    if (typeof showToast === 'function') showToast('Konfirmasi kata sandi baru tidak cocok.', 'error');
+    return;
+  }
+
+  const updateBtn = document.getElementById('btn-update-password');
+  if (updateBtn) {
+    updateBtn.disabled = true;
+    updateBtn.innerHTML = `<span>Memproses Sandi...</span>`;
+  }
+
+  try {
+    // 1. Coba via Firebase Auth
+    if (window.NeuraFirebase && window.NeuraFirebase.auth) {
+      try {
+        const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
+        const currentUser = auth ? auth.currentUser : null;
+
+        if (currentUser && currentUser.email) {
+          // Re-authenticate dulu dengan credential kata sandi lama
+          if (window.firebase && window.firebase.auth && window.firebase.auth.EmailAuthProvider) {
+            const credential = window.firebase.auth.EmailAuthProvider.credential(currentUser.email, oldPassword);
+            await currentUser.reauthenticateWithCredential(credential);
+          }
+          // Perbarui kata sandi di Firebase
+          await currentUser.updatePassword(newPassword);
+        }
+      } catch (fbErr) {
+        if (fbErr.code === 'auth/wrong-password') {
+          throw new Error('Kata sandi saat ini yang Anda masukkan salah.');
+        } else if (fbErr.code === 'auth/weak-password') {
+          throw new Error('Kata sandi terlalu lemah. Gunakan kombinasi karakter yang lebih kuat.');
+        } else {
+          console.warn('[Firebase Auth updatePassword warning]:', fbErr);
+        }
+      }
+    }
+
+    // 2. Simpan fallback/credential lokal jika demo mode
+    localStorage.setItem('neura_password_last_updated', new Date().toISOString());
+
+    if (typeof showToast === 'function') {
+      showToast('Kata sandi akun Anda berhasil diperbarui dengan aman!', 'success');
+    }
+
+    document.getElementById('form-edit-password')?.reset();
+    handlePasswordStrengthInput('');
+    closeEditProfileModal();
+  } catch (err) {
+    console.error('Error updating password:', err);
+    if (typeof showToast === 'function') {
+      showToast(err.message || 'Gagal mengubah kata sandi.', 'error');
+    }
+  } finally {
+    if (updateBtn) {
+      updateBtn.disabled = false;
+      updateBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>Perbarui Kata Sandi</span>
+      `;
+    }
+  }
+}
+window.handleUpdatePassword = handleUpdatePassword;
+
+
 

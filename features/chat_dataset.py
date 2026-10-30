@@ -762,6 +762,43 @@ CHAT_DATASET = {
                     )
                 }
             ]
+        },
+        {
+            "id": "model_004",
+            "topik": "Dokumen Hasil Konsultasi & Kode Rujukan Nakes",
+            "kata_kunci": [
+                "dokumen konsultasi", "hasil konsultasi", "kode nakes", "kode konsultasi",
+                "kode rujukan", "lembar hasil", "tampilkan dokumen", "/dokumen", "/hasil",
+                "/laporan", "/rujukan", "surat rujukan dokter", "kode rujukan nakes"
+            ],
+            "tags": ["dokumen", "konsultasi", "kode_nakes", "rujukan", "rekam_medis"],
+            "suggestions": [
+                "/dokumen",
+                "/predict",
+                "/profile",
+                "/status"
+            ],
+            "percakapan": [
+                {
+                    "role": "user",
+                    "content": "Bagaimana cara melihat lembar dokumen hasil konsultasi dan mendapatkan kode rujukan untuk nakes?"
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Untuk menampilkan **Lembar Resmi Dokumen Hasil Konsultasi** beserta **Kode Konsultasi Nakes**:\n\n"
+                        "1. Ketik perintah `/dokumen` di chat Workspace atau klik tombol menu **Dokumen Konsultasi**.\n"
+                        "2. Neura akan menyajikan satu kartu ringkasan medis lengkap berisi:\n"
+                        "   - Nomor dokumen resmi & timestamp pemeriksaan klinis.\n"
+                        "   - Identitas demografis pasien & tanda vital.\n"
+                        "   - Penilaian biomarker kognitif (skor MMSE, ADL, FA).\n"
+                        "   - Estimasi risiko Alzheimer & rekomendasi tindakan klinis.\n"
+                        "   - **Tombol Kode Konsultasi Nakes** (format: `NKS-26-XXXX-ALZ`) yang dapat disalin atau diserahkan langsung ke Dokter/Tenaga Kesehatan.\n\n"
+                        "3. Nakes dapat melihat detail 32 biomarker dan memvalidasi keabsahan data rekam medis dengan menekan tombol **'Lihat Detail Nakes'**."
+                    )
+                }
+            ]
         }
     ]
 }
+

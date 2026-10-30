@@ -1,0 +1,44 @@
+[
+  {
+    "id": "NKS-2024-001",
+    "name": "dr. Citra Anindita, Sp.N",
+    "profession": "Dokter Spesialis Neurologi (Sp.N)",
+    "str_number": "31.2.1.100.1.20.123456",
+    "sip_number": "503/SIP.DS/042/Dinkes/2023",
+    "institution": "RSUP Dr. Sardjito Yogyakarta",
+    "phone": "081223344556",
+    "real_email": "citra.anindita92@gmail.com",
+    "nakes_email": "citra.anindita@neura.ns.id",
+    "password": "nks2024001",
+    "status": "Terverifikasi KKI",
+    "created_at": "2024-10-15T09:30:00Z"
+  },
+  {
+    "id": "NKS-2024-002",
+    "name": "dr. Hendra Wijaya, Sp.KJ",
+    "profession": "Dokter Spesialis Kedokteran Jiwa (Sp.KJ)",
+    "str_number": "32.1.1.100.2.19.654321",
+    "sip_number": "503/SIP.KJ/118/DPMPTSP/2024",
+    "institution": "RSUPN Dr. Cipto Mangunkusumo Jakarta",
+    "phone": "081398765432",
+    "real_email": "hendra.wijaya.dr@yahoo.com",
+    "nakes_email": "hendra.wijaya@neura.ns.id",
+    "password": "nks2024002",
+    "status": "Terverifikasi KKI",
+    "created_at": "2024-10-18T14:15:00Z"
+  },
+  {
+    "id": "NKS-2024-003",
+    "name": "Ns. Dian Permatasari, S.Kep",
+    "profession": "Perawat Geriatri Klinis (Ners)",
+    "str_number": "33.2.2.200.3.21.789012",
+    "sip_number": "503/SIPP/089/Dinkes/2023",
+    "institution": "RS Siloam Hospitals Semanggi",
+    "phone": "085712348765",
+    "real_email": "dian.permatasari.ners@gmail.com",
+    "nakes_email": "dian.permatasari@neura.ns.id",
+    "password": "nks2024003",
+    "status": "Terverifikasi Kemenkes",
+    "created_at": "2024-10-22T11:00:00Z"
+  }
+]

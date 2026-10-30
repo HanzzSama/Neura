@@ -52,6 +52,18 @@
       }
     } catch (e) {}
 
+    // 3. Cek Sesi Tenaga Kesehatan (Nakes) - Login via /api/nakes/login
+    try {
+      var nakesRole = localStorage.getItem('neura_user_role');
+      var nakesSession = localStorage.getItem('neura_nakes_session');
+      if (nakesRole === 'Nakes' && nakesSession) {
+        var ns = JSON.parse(nakesSession);
+        if (ns && ns.email && ns.email.endsWith('@neura.ns.id')) {
+          return true;
+        }
+      }
+    } catch (e) {}
+
     return false;
   }
 
@@ -90,6 +102,8 @@
     try {
       localStorage.removeItem('neura_auth_user');
       localStorage.removeItem('neura_user_profile');
+      localStorage.removeItem('neura_nakes_session');
+      localStorage.removeItem('neura_user_role');
       sessionStorage.setItem('neura_iris_active', 'true');
       sessionStorage.setItem('neura_iris_x', String(window.innerWidth / 2));
       sessionStorage.setItem('neura_iris_y', String(window.innerHeight / 2));

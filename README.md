@@ -707,6 +707,8 @@ CARTESIA_API_KEY=
 | `GET` | `/api/train/progress` | — | Progres training real-time (streaming JSON) |
 | `GET/POST` | `/api/evaluate` | — | Evaluasi model: accuracy, F1, ROC-AUC |
 | `GET/POST` | `/api/predict` | — | Inferensi prediksi risiko Alzheimer |
+| `GET/POST` | `/api/consultation/generate` | `{"input": {...}}` | Generate lembar Dokumen Hasil Konsultasi & Kode Nakes |
+| `GET` | `/api/consultation/<code>` | — | Verifikasi & ambil rekam medis lengkap berdasarkan kode Nakes |
 
 ### Chat & Dataset
 
@@ -790,10 +792,15 @@ Ketik perintah berikut di kolom chat Workspace:
 | Perintah | Deskripsi |
 |---|---|
 | `/status` | Status model, checkpoint, dan environment server |
+| `/profile` | Input & pembaruan formulir Data Diri dan 32 biomarker klinis pasien |
+| `/predict` | Inferensi prediksi risiko Alzheimer berdasarkan profil user atau sampel dataset |
+| `/dokumen` | **Menampilkan lembar resmi Dokumen Hasil Konsultasi & Button Kode Rujukan Nakes** |
 | `/train [N]` | Training model XGBoost selama N epoch (default: 10) |
 | `/eval` | Evaluasi model: accuracy, F1-score, ROC-AUC, confusion matrix |
-| `/predict` | Inferensi prediksi risiko Alzheimer berdasarkan profil user |
 | `/progress` | Progres & log epoch training terbaru |
+| `/konsul` | Sesi konsultasi interaktif seputar daya ingat dan skrining klinis |
+| `/intro` | Sapaan awal dan pengenalan kapabilitas platform Neura AI |
+| `/voice` | Membuka Voice Room real-time WebRTC dengan asisten suara |
 | `/help` | Panduan semua perintah yang tersedia |
 
 ---

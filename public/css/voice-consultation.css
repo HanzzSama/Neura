@@ -772,9 +772,9 @@
 .assistant-prose .voice-prose-quote {
   margin: 0.7em 0;
   padding: 8px 14px;
-  border-left: 3px solid var(--accent-primary, #7c6af7);
   background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
-  border-radius: 0 6px 6px 0;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   font-size: 13.5px;
   line-height: 1.7;
