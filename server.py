@@ -11,6 +11,7 @@ Then open: http://localhost:5000
 import os
 import sys
 import json
+import uuid
 import threading
 import traceback
 from pathlib import Path
@@ -356,6 +357,7 @@ def api_admin_verify_otp():
     Verifikasi kode OTP yang dimasukkan oleh admin di card Verify Admin.
     """
     import time
+    import uuid
     from core.admin_config import get_admin_by_custom_email
 
     body = request.get_json(silent=True) or {}

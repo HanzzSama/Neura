@@ -777,6 +777,10 @@ a {
   letter-spacing: -0.02em;
   color: var(--color-text);
   margin: 0 0 28px;
+  transform: translateX(var(--hero-title-tx, 0px)) scale(var(--hero-title-scale, 1));
+  opacity: var(--hero-title-opacity, 1);
+  transform-origin: left center;
+  will-change: transform, opacity;
 }
 
 .hero-lead-text {
@@ -786,6 +790,10 @@ a {
   font-weight: 400;
   margin: 0 0 36px;
   max-width: 420px;
+  transform: translateX(var(--hero-lead-tx, 0px));
+  opacity: var(--hero-lead-opacity, 1);
+  transform-origin: left center;
+  will-change: transform, opacity;
 }
 
 .hero-actions {
@@ -794,6 +802,9 @@ a {
   gap: 14px;
   margin-bottom: 48px;
   flex-wrap: wrap;
+  transform: translateX(var(--hero-actions-tx, 0px));
+  opacity: var(--hero-actions-opacity, 1);
+  will-change: transform, opacity;
 }
 
 .hero-download-btn {
@@ -848,6 +859,8 @@ a {
   border-radius: 6px;
   padding: 9px 16px;
   background: rgba(0, 0, 0, 0.02);
+  opacity: var(--hero-tagline-opacity, 1);
+  will-change: opacity;
 }
 
 .hero-tagline-bar span {
@@ -879,6 +892,10 @@ a {
   object-fit: contain;
   display: block;
   margin: auto;
+  transform: scale(var(--hero-img-scale, 1)) translateY(var(--hero-img-ty, 0px));
+  opacity: var(--hero-img-opacity, 1);
+  transform-origin: center center;
+  will-change: transform, opacity;
 }
 
 /* CSS step shapes — hidden since steps are baked into the image */
@@ -904,8 +921,13 @@ a {
     text-align: center;
   }
 
+  .hero-headline {
+    transform-origin: center center;
+  }
+
   .hero-lead-text {
     max-width: 100%;
+    transform-origin: center center;
   }
 
   .hero-actions {

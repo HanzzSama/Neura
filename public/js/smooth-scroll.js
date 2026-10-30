@@ -192,9 +192,63 @@
       }
     }
 
+    // -----------------------------------------------------------------------
+    // Cinematic Hero Parallax Scroller (Image Scale Down & Title Shift Left + Scale Down)
+    // -----------------------------------------------------------------------
+    const heroSectionEl = document.querySelector('.hero-section');
+    function updateHeroParallax(currentScrollY, velocity = 0) {
+      if (!heroSectionEl) return;
+
+      const heroHeight = heroSectionEl.offsetHeight || window.innerHeight || 800;
+      // Parallax active within hero scroll range (0 to ~85% of hero height)
+      const maxScroll = Math.max(300, heroHeight * 0.85);
+      const rawProgress = Math.max(0, Math.min(1, currentScrollY / maxScroll));
+
+      // Ease curve: cubic ease-out for ultra fluid and responsive sensation
+      const progress = 1 - Math.pow(1 - rawProgress, 2.4);
+
+      const isMobile = window.innerWidth <= 1024;
+
+      // Title: bergeser ke kiri dan scale down
+      const titleShiftX = isMobile ? -(progress * 30) : -(progress * 85);
+      const titleScale = 1 - (progress * (isMobile ? 0.12 : 0.18));
+      const titleOpacity = Math.max(0.15, 1 - (progress * 0.72));
+
+      // Subtitle & Actions: follow subtly
+      const leadShiftX = titleShiftX * 0.45;
+      const leadOpacity = Math.max(0.1, 1 - (progress * 0.85));
+
+      const actionsShiftX = titleShiftX * 0.3;
+      const actionsOpacity = Math.max(0, 1 - (progress * 0.95));
+
+      const taglineOpacity = Math.max(0, 1 - (progress * 1.05));
+
+      // Gambar: scale down seiring scrolling + subtle depth floating parallax
+      const imgScale = 1 - (progress * (isMobile ? 0.16 : 0.22));
+      const imgTy = progress * (isMobile ? 18 : 36);
+      const imgOpacity = Math.max(0.35, 1 - (progress * 0.65));
+
+      heroSectionEl.style.setProperty('--hero-title-tx', `${titleShiftX.toFixed(2)}px`);
+      heroSectionEl.style.setProperty('--hero-title-scale', `${titleScale.toFixed(4)}`);
+      heroSectionEl.style.setProperty('--hero-title-opacity', `${titleOpacity.toFixed(3)}`);
+
+      heroSectionEl.style.setProperty('--hero-lead-tx', `${leadShiftX.toFixed(2)}px`);
+      heroSectionEl.style.setProperty('--hero-lead-opacity', `${leadOpacity.toFixed(3)}`);
+
+      heroSectionEl.style.setProperty('--hero-actions-tx', `${actionsShiftX.toFixed(2)}px`);
+      heroSectionEl.style.setProperty('--hero-actions-opacity', `${actionsOpacity.toFixed(3)}`);
+
+      heroSectionEl.style.setProperty('--hero-tagline-opacity', `${taglineOpacity.toFixed(3)}`);
+
+      heroSectionEl.style.setProperty('--hero-img-scale', `${imgScale.toFixed(4)}`);
+      heroSectionEl.style.setProperty('--hero-img-ty', `${imgTy.toFixed(2)}px`);
+      heroSectionEl.style.setProperty('--hero-img-opacity', `${imgOpacity.toFixed(3)}`);
+    }
+
     lenis.on('scroll', (e) => {
       updateHeaderParallax(e.scroll, e.velocity);
       updateIslandParallax(e.scroll, e.velocity);
+      updateHeroParallax(e.scroll, e.velocity);
     });
 
     // Native fallback in case Lenis is bypassed
@@ -210,8 +264,12 @@
         lastNativeTime = now;
         updateHeaderParallax(curY, estVelocity);
         updateIslandParallax(curY, estVelocity);
+        updateHeroParallax(curY, estVelocity);
       }
     }, { passive: true });
+
+    // Initial position on load / reload
+    updateHeroParallax(window.scrollY || 0, 0);
   }
 
   if (document.readyState === 'loading') {

@@ -586,7 +586,18 @@
         otp: otp
       })
     })
-    .then(function (res) { return res.json(); })
+    .then(function (res) {
+      return res.text().then(function (text) {
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return {
+            success: false,
+            error: 'Respons server tidak valid (' + res.status + '). Silakan periksa koneksi atau log server.'
+          };
+        }
+      });
+    })
     .then(function (data) {
       if (data && data.success) {
         // 2. Animasi Sukses: Kotak-kotak berubah hijau berkilau
