@@ -7723,8 +7723,7 @@ body.reduce-motion *::after {
   background: #121110 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 24px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow: hidden !important; /* Eliminate scrollbars and overflow completely */
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -7733,20 +7732,18 @@ body.reduce-motion *::after {
   box-sizing: border-box !important;
 }
 
-/* Custom Scrollbar for modal */
+/* Custom Scrollbar for modal (hidden when not needed) */
 .profile-custom-modal-card::-webkit-scrollbar {
-  width: 6px;
-}
-.profile-custom-modal-card::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Hero Banner & Floating Avatar Container */
 .profile-hero-banner-container {
   position: relative;
   width: 100%;
-  height: 350px; /* Dominant banner in preview mode */
+  height: 330px; /* Dominant banner in preview mode */
   border-radius: 18px;
   overflow: visible;
   margin-bottom: 0;
@@ -7759,19 +7756,19 @@ body.reduce-motion *::after {
 /* Preview Mode: Dominant banner showing full majestic orb filling upper card */
 .profile-hero-banner-container.is-preview,
 .profile-custom-modal-card.mode-preview .profile-hero-banner-container {
-  height: 350px;
+  height: 330px;
 }
 
 .profile-hero-banner-container.is-preview .profile-hero-banner-image,
 .profile-custom-modal-card.mode-preview .profile-hero-banner-image {
-  background-position: center 52%;
+  background-position: center 50%;
 }
 
 /* Update & Security Mode: Compact banner so form fields fit comfortably */
 .profile-hero-banner-container.is-compact,
 .profile-custom-modal-card.mode-update .profile-hero-banner-container,
 .profile-custom-modal-card.mode-security .profile-hero-banner-container {
-  height: 125px;
+  height: 120px;
 }
 
 .profile-hero-banner-container.is-compact .profile-hero-banner-image,
@@ -7787,7 +7784,7 @@ body.reduce-motion *::after {
   background-image: url('/assets/profile_banner_orb.jpg');
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: center 52%;
+  background-position: center 50%;
   overflow: hidden;
   transition: background-position 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: background-position;
@@ -8018,13 +8015,14 @@ body.reduce-motion *::after {
 
 /* User Identification Header (Name & @handle) */
 .profile-hero-user-header {
-  margin-top: 48px;
-  margin-bottom: 14px;
+  margin-top: 44px;
+  margin-bottom: 8px;
   padding: 0 6px;
+  flex-shrink: 0;
 }
 
 .profile-hero-user-name {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 700;
   color: #f5f4ef;
   margin: 0 0 2px 0;
@@ -8051,7 +8049,7 @@ body.reduce-motion *::after {
 @keyframes profilePanelSmoothFade {
   0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   100% {
     opacity: 1;
@@ -8063,11 +8061,11 @@ body.reduce-motion *::after {
 /* PANEL 1: PROFILE PREVIEW (Clean 1:1 matching reference image) */
 /* ============================================================ */
 .profile-preview-bio-text {
-  font-size: 13.5px;
-  line-height: 1.62;
+  font-size: 13px;
+  line-height: 1.55;
   color: #b5b0a7;
   margin: 0;
-  padding: 0 6px 6px 6px;
+  padding: 0 6px;
   font-weight: 400;
   background: transparent !important;
   border: none !important;
