@@ -23,11 +23,31 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-async function fetchJSON(url, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (body !== null) opts.body = JSON.stringify(body);
-  const res = await fetch((window.API || '') + url, opts);
-  return res.json();
+async function fetchJSON(url, method = 'GET', body = null, timeoutMs = 25000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const opts = { 
+      method, 
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal
+    };
+    if (body !== null) opts.body = JSON.stringify(body);
+    const res = await fetch((window.API || '') + url, opts);
+    clearTimeout(timer);
+    if (!res.ok) {
+      let errData = {};
+      try { errData = await res.json(); } catch (_) {}
+      throw new Error(errData.error || `Server responded with status ${res.status}`);
+    }
+    return await res.json();
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      throw new Error(`Permintaan ke ${url} melebihi batas waktu (timeout). Silakan coba lagi.`);
+    }
+    throw err;
+  }
 }
 
 // --------------------------------------------------------------------------

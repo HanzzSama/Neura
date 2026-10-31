@@ -377,6 +377,9 @@ function getHeroHtml() {
 function startNewChat(showNotification = true) {
   if (window.switchAdminRoom) window.switchAdminRoom('chat');
   activeSessionId = null;
+  _pendingMessageQueue = [];
+  _isProcessingMessage = false;
+  removeTypingIndicator();
   try {
     localStorage.setItem(_getLastSessionKey(), 'new');
     localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
@@ -520,10 +523,6 @@ function submitCommand(cmd) {
     finalCmd = slashMatch[0];
   }
 
-  // Force stop any ongoing typewriter streaming and clear input
-  stopRequested = true;
-  setGeneratingState(false);
-
   const input = document.getElementById('chat-input-textarea');
   if (input) {
     input.value = '';
@@ -531,15 +530,16 @@ function submitCommand(cmd) {
     updateSendBtnState();
   }
 
-  // Send message directly with the command
+  // Send message directly with the command (executes immediately or enqueues as pending send)
   sendUserMessage(finalCmd);
 }
 
 // --------------------------------------------------------------------------
-
-
 // Message Sending & Pipeline
 // --------------------------------------------------------------------------
+let _isProcessingMessage = false;
+let _pendingMessageQueue = [];
+
 async function waitLoad(startTime, minMs = 450) {
   const elapsed = Date.now() - startTime;
   if (elapsed < minMs) {
@@ -558,13 +558,6 @@ async function sendUserMessage(textOverride = null) {
   const text = (textOverride !== null ? String(textOverride) : (input ? input.value : '')).trim();
   if (!text) return;
 
-  // Reset states
-  if (isTyping) {
-    stopRequested = true;
-    setGeneratingState(false);
-  }
-  stopRequested = false;
-
   // If no active session exists, create a new one with title from this initial input!
   if (!activeSessionId) {
     const newSession = {
@@ -582,24 +575,56 @@ async function sendUserMessage(textOverride = null) {
     renderRecentChatsSidebar();
   }
 
-  // Clear input & draft
-  input.value = '';
-  input.style.height = 'auto';
-  try {
-    localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
-  } catch (e) { }
-  updateSendBtnState();
+  // Clear input & draft immediately for instant feedback
+  if (input) {
+    input.value = '';
+    input.style.height = 'auto';
+    try {
+      localStorage.removeItem(DRAFT_INPUT_STORAGE_KEY);
+    } catch (e) { }
+    updateSendBtnState();
+  }
 
   // Remove hero if present
   const hero = document.getElementById('claude-hero');
   if (hero) hero.remove();
 
-  // Append User Message Bubble
-  appendUserBubble(text);
+  // If a process is already running, prioritize that first process
+  // and queue this second process into "pending send"
+  if (_isProcessingMessage) {
+    const pendingId = 'pending_msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    appendUserBubble(text, { isPending: true, pendingId });
+    _pendingMessageQueue.push({ id: pendingId, text, createdAt: Date.now() });
+    showToast('Proses pertama diprioritaskan. Perintah kedua masuk antrean (pending send).', 'info');
+    return;
+  }
+
+  // No active process -> execute immediately
+  await _executeMessage(text, null);
+}
+
+async function _executeMessage(text, pendingId = null) {
+  _isProcessingMessage = true;
+  stopRequested = false;
+  setGeneratingState(true);
+
+  if (pendingId) {
+    const badge = document.getElementById(`badge_${pendingId}`);
+    if (badge) {
+      badge.style.opacity = '0';
+      badge.style.transform = 'translateY(-4px)';
+      setTimeout(() => badge.remove(), 250);
+    }
+    const bubble = document.getElementById(pendingId);
+    if (bubble) {
+      bubble.classList.remove('user-bubble-pending');
+    }
+  } else {
+    appendUserBubble(text);
+  }
 
   // Show Claude typing dots
   const typingId = showTypingIndicator();
-  setGeneratingState(true);
 
   const preview = text.length > 26 ? text.slice(0, 26) + '...' : text;
   setDynamicIslandState('thinking', {
@@ -612,18 +637,32 @@ async function sendUserMessage(textOverride = null) {
   try {
     await processMLInput(text, typingId, startTime);
   } catch (err) {
+    console.error('Process error:', err);
     await waitLoad(startTime, 350);
     removeTypingIndicator(typingId);
-    appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(err.message)}</p>`, { stream: false });
+    appendAssistantMessage(`<p style="color:var(--accent-red)">Error: ${escapeHtml(err.message || String(err))}</p>`, { stream: false });
   } finally {
-    setGeneratingState(false);
-    playSuccessChime();
-    if (currentIslandState !== 'training') {
-      setDynamicIslandState('ready', {
-        sub: 'Response complete \u2022 Neura MLP',
-        main: 'Ready',
-        keepTimer: true
-      });
+    removeTypingIndicator(typingId);
+
+    // If there is another message in queue, dequeue and process sequentially
+    if (_pendingMessageQueue.length > 0) {
+      const nextItem = _pendingMessageQueue.shift();
+      playSuccessChime();
+      setTimeout(() => {
+        _executeMessage(nextItem.text, nextItem.id);
+      }, 350);
+    } else {
+      _isProcessingMessage = false;
+      setGeneratingState(false);
+      playSuccessChime();
+      if (currentIslandState !== 'training') {
+        setDynamicIslandState('ready', {
+          sub: 'Response complete \u2022 Neura MLP',
+          main: 'Ready',
+          keepTimer: true
+        });
+      }
+      updateSendBtnState();
     }
   }
 }
@@ -1590,12 +1629,29 @@ function renderEvaluationOutput(data) {
 // --------------------------------------------------------------------------
 // DOM Message Appenders
 // --------------------------------------------------------------------------
-function appendUserBubble(text) {
+function appendUserBubble(text, options = {}) {
+  const { isPending = false, pendingId = null } = options;
   addMessageToActiveSession({ role: 'user', content: text });
   const container = document.getElementById('chat-content-container');
+  if (!container) return;
   const row = document.createElement('div');
   row.className = 'message-row user';
-  row.innerHTML = `<div class="user-bubble">${escapeHtml(text)}</div>`;
+  if (isPending && pendingId) {
+    row.innerHTML = `
+      <div class="user-bubble user-bubble-pending" id="${pendingId}">
+        <div class="user-bubble-text">${escapeHtml(text)}</div>
+        <div class="msg-pending-badge" id="badge_${pendingId}">
+          <svg class="spin-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+          <span>Menunggu antrean...</span>
+        </div>
+      </div>
+    `;
+  } else {
+    row.innerHTML = `<div class="user-bubble">${escapeHtml(text)}</div>`;
+  }
   container.appendChild(row);
   scrollToBottom();
 }
@@ -1748,9 +1804,13 @@ function showTypingIndicator() {
   return id;
 }
 
-function removeTypingIndicator(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
+function removeTypingIndicator(id = null) {
+  if (id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  } else {
+    document.querySelectorAll('.message-row.assistant[id^="typing-"]').forEach(el => el.remove());
+  }
 }
 
 function scrollToBottom() {

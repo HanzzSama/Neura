@@ -18,6 +18,18 @@ function handleSendClick() {
   if (now - lastVoiceBtnClick < 300) return; // Debounce rapid accidental double-clicks
   lastVoiceBtnClick = now;
 
+  const input = document.getElementById('chat-input-textarea');
+  const hasText = input && input.value.trim().length > 0;
+
+  // If user typed text, send it (if AI is currently busy, it will be queued as pending send)
+  if (hasText) {
+    if (typeof sendUserMessage === 'function') {
+      sendUserMessage();
+    }
+    return;
+  }
+
+  // If input is empty and AI is generating, button acts as Stop
   if (window.isTyping) {
     window.stopRequested = true;
     return;
@@ -28,16 +40,7 @@ function handleSendClick() {
     return;
   }
 
-  const input = document.getElementById('chat-input-textarea');
-  const hasText = input && input.value.trim().length > 0;
-
-  if (hasText) {
-    if (typeof sendUserMessage === 'function') {
-      sendUserMessage();
-    }
-  } else {
-    startChatVoiceInput();
-  }
+  startChatVoiceInput();
 }
 
 function startChatVoiceInput() {

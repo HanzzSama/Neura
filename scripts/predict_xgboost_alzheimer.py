@@ -18,9 +18,67 @@ if sys.stdout.encoding != "utf-8":
     except Exception:
         pass
 
+import math
+import re
 import numpy as np
 import pandas as pd
-import xgboost as xgb
+try:
+    import xgboost as xgb
+except Exception:
+    xgb = None
+
+
+class PureTreeEvaluator:
+    """Zero-dependency pure Python/NumPy decision tree evaluator for XGBoost JSON models."""
+
+    def __init__(self, model_path: Path):
+        with open(model_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        learner = data.get("learner", {})
+        self.trees = learner.get("gradient_booster", {}).get("model", {}).get("trees", [])
+        self.feature_names = learner.get("feature_names", [])
+        raw_base = learner.get("learner_model_param", {}).get("base_score", "0.5")
+        clean_base = float(re.sub(r"[\[\]]", "", str(raw_base)))
+        if 0 < clean_base < 1:
+            self.base_margin = math.log(clean_base / (1.0 - clean_base))
+        else:
+            self.base_margin = 0.0
+
+    def predict_proba_single(self, row_dict: Dict[str, Any]) -> float:
+        x_vec = []
+        for feat in self.feature_names:
+            val = row_dict.get(feat, 0.0)
+            try:
+                x_vec.append(float(val))
+            except (ValueError, TypeError):
+                x_vec.append(0.0)
+
+        score = self.base_margin
+        for tree in self.trees:
+            left = tree["left_children"]
+            right = tree["right_children"]
+            split_feat = tree["split_indices"]
+            split_cond = tree["split_conditions"]
+            weights = tree["base_weights"]
+
+            node = 0
+            while node >= 0 and left[node] != -1 and right[node] != -1:
+                f_idx = split_feat[node]
+                val = x_vec[f_idx]
+                if math.isnan(val) or val < split_cond[node]:
+                    node = left[node]
+                else:
+                    node = right[node]
+            score += weights[node]
+
+        try:
+            return 1.0 / (1.0 + math.exp(-score))
+        except OverflowError:
+            return 0.0 if score < 0 else 1.0
+
+    def predict_proba_df(self, df: pd.DataFrame) -> np.ndarray:
+        probs = [self.predict_proba_single(row.to_dict()) for _, row in df.iterrows()]
+        return np.array(probs)
 
 
 class AlzheimersPredictor:
@@ -40,19 +98,19 @@ class AlzheimersPredictor:
                 f"Please run 'python scripts/train_xgboost_alzheimer.py' first."
             )
 
-        self.model = xgb.XGBClassifier()
-        self.model.load_model(str(self.model_path))
+        # Use robust, zero-dependency PureTreeEvaluator (fast & immune to Windows/Python 3.14 DLL crash)
+        self._evaluator = PureTreeEvaluator(self.model_path)
+        self.feature_names = self._evaluator.feature_names
+        self.model = None
 
-        # Load feature metadata (from trained model attributes or metrics file)
-        if hasattr(self.model, "feature_names_in_") and self.model.feature_names_in_ is not None:
-            self.feature_names = [str(col) for col in self.model.feature_names_in_]
-        elif self.metrics_path.exists():
-            with open(self.metrics_path, "r", encoding="utf-8") as f:
-                self.metadata = json.load(f)
-            self.feature_names = self.metadata.get("features", [])
-        else:
-            self.metadata = {}
-            self.feature_names = []
+        if not self.feature_names:
+            if self.metrics_path.exists():
+                with open(self.metrics_path, "r", encoding="utf-8") as f:
+                    self.metadata = json.load(f)
+                self.feature_names = self.metadata.get("features", [])
+            else:
+                self.metadata = {}
+                self.feature_names = []
 
         if not self.feature_names:
             self.feature_names = [
@@ -78,7 +136,7 @@ class AlzheimersPredictor:
                     clean_df[f] = 0.0
             clean_df = clean_df[self.feature_names]
 
-        probabilities = self.model.predict_proba(clean_df)[:, 1]
+        probabilities = self._evaluator.predict_proba_df(clean_df)
         predictions = (probabilities >= 0.5).astype(int)
 
         results = df.copy()

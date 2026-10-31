@@ -201,6 +201,16 @@ function updateSendBtnState() {
 
   // — State 1: AI is generating —
   if (window.isTyping) {
+    const hasText = input && input.value.trim().length > 0;
+    if (hasText) {
+      btn.classList.remove('is-generating', 'is-voice', 'is-listening');
+      btn.title     = 'Kirim ke antrean (Pending Send)';
+      btn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.5a1.2 1.2 0 0 1 .85.35l6 6a1.2 1.2 0 1 1-1.7 1.7L13.2 6.55V20a1.2 1.2 0 1 1-2.4 0V6.55L6.85 10.55a1.2 1.2 0 1 1-1.7-1.7l6-6a1.2 1.2 0 0 1 .85-.35z"/>
+        </svg>`;
+      return;
+    }
     btn.classList.add('is-generating');
     btn.classList.remove('is-voice', 'is-listening');
     btn.title     = 'Hentikan respon';
