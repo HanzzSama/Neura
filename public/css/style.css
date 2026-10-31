@@ -7768,7 +7768,7 @@ body.reduce-motion *::after {
 .profile-hero-banner-container.is-compact,
 .profile-custom-modal-card.mode-update .profile-hero-banner-container,
 .profile-custom-modal-card.mode-security .profile-hero-banner-container {
-  height: 115px;
+  height: 110px;
 }
 
 .profile-hero-banner-container.is-compact .profile-hero-banner-image,
@@ -8015,9 +8015,9 @@ body.reduce-motion *::after {
 
 /* User Identification Header (Name & @handle) */
 .profile-hero-user-header {
-  margin-top: 42px;
-  margin-bottom: 16px;
-  padding: 0 4px;
+  margin-top: 54px;
+  margin-bottom: 14px;
+  padding: 0 6px;
   flex-shrink: 0;
 }
 
@@ -8025,7 +8025,7 @@ body.reduce-motion *::after {
   font-size: 20px;
   font-weight: 700;
   color: #f5f4ef;
-  margin: 0 0 2px 0;
+  margin: 0 0 4px 0;
   letter-spacing: -0.01em;
   line-height: 1.25;
 }
