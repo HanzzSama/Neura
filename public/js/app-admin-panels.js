@@ -8,6 +8,7 @@
 // Room Switching — shows panels inside main-view
 // ============================================================
 const ADMIN_ROOMS = {
+  nakes:    'admin-room-nakes',
   database: 'admin-room-database',
   stats:    'admin-room-stats',
   explorer: 'admin-room-explorer',
@@ -23,17 +24,34 @@ function switchAdminRoom(roomKey) {
   if (roomKey === 'chat' || !ADMIN_ROOMS[roomKey]) {
     if (mainView) mainView.classList.remove('admin-room-active');
     // Highlight no sidebar item as active
-    document.querySelectorAll('#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link').forEach(el => el.classList.remove('active'));
     return;
   }
   const roomEl = document.getElementById(ADMIN_ROOMS[roomKey]);
   if (roomEl) { roomEl.style.display = 'flex'; roomEl.setAttribute('aria-hidden', 'false'); }
   if (mainView) mainView.classList.add('admin-room-active');
   // Highlight active sidebar item
-  const sidebarMap = { database: 'sidebar-database-link', stats: 'sidebar-stats-link', explorer: 'sidebar-files-link' };
-  document.querySelectorAll('#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link').forEach(el => el.classList.remove('active'));
+  const sidebarMap = {
+    nakes:    'sidebar-nakes-admin-link',
+    database: 'sidebar-database-link',
+    stats:    'sidebar-stats-link',
+    explorer: 'sidebar-files-link'
+  };
+  document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link').forEach(el => el.classList.remove('active'));
   const activeNav = document.getElementById(sidebarMap[roomKey]);
   if (activeNav) activeNav.classList.add('active');
+
+  // Automatically load data when switching rooms
+  if (roomKey === 'nakes') {
+    if (typeof switchNakesAdminView === 'function') switchNakesAdminView('table');
+    if (typeof fetchAndRenderNakesTable === 'function') fetchAndRenderNakesTable();
+  } else if (roomKey === 'database') {
+    loadDatabaseCollections();
+  } else if (roomKey === 'stats') {
+    loadStatistics();
+  } else if (roomKey === 'explorer') {
+    _initExplorerView();
+  }
 }
 window.switchAdminRoom = switchAdminRoom;
 
@@ -171,9 +189,13 @@ async function loadStatistics() {
     try { totalPredict = (await db.collection('predictions').get()).size; } catch (_) {}
 
     _animateCounter('stat-total-users', totalUsers);
+    _animateCounter('stat-val-users', totalUsers);
     _animateCounter('stat-total-nakes', totalNakes);
+    _animateCounter('stat-val-nakes', totalNakes);
     _animateCounter('stat-total-consult', totalConsult);
+    _animateCounter('stat-val-consults', totalConsult);
     _animateCounter('stat-total-predict', totalPredict);
+    _animateCounter('stat-val-predictions', totalPredict);
     _drawDonut(totalUsers, totalNakes);
     _drawBarChart(usersSnap.docs);
     _renderRecentRegistrations(usersSnap.docs);
@@ -214,8 +236,8 @@ function _drawDonut(users, nakes) {
   const legend = document.getElementById('stats-donut-legend');
   if (legend) {
     legend.innerHTML = `
-      <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#6366f1"></span>Pasien (${users})</div>
-      <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#10b981"></span>Nakes (${nakes})</div>`;
+      <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#e07a5f"></span>Pasien (${users})</div>
+      <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#2a9d8f"></span>Nakes (${nakes})</div>`;
   }
 }
 
@@ -318,8 +340,7 @@ let _explorerHistory = [[]];
 let _explorerHistoryIdx = 0;
 let _explorerViewMode = 'list';
 
-function openFileExplorerModal() {
-  _showAdminOverlay('file-explorer-modal');
+function _initExplorerView() {
   _explorerCurrentPath = [];
   _explorerHistory = [[]];
   _explorerHistoryIdx = 0;
@@ -329,7 +350,10 @@ function openFileExplorerModal() {
   _updateExplorerAddress();
   _updateNavButtons();
 }
-function closeFileExplorerModal() { _hideAdminOverlay('file-explorer-modal'); }
+function openFileExplorerModal() {
+  switchAdminRoom('explorer');
+}
+function closeFileExplorerModal() { switchAdminRoom('chat'); }
 function closeFileExplorerModalOnBackdrop(e) {
   if (e.target.id === 'file-explorer-modal') closeFileExplorerModal();
 }

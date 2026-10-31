@@ -89,6 +89,7 @@ function renderRecentChatsSidebar() {
 }
 
 function switchChatSession(sessionId) {
+  if (window.switchAdminRoom) window.switchAdminRoom('chat');
   const session = chatSessions.find(s => s.id === sessionId);
   if (!session) return;
   activeSessionId = sessionId;
@@ -374,6 +375,7 @@ function getHeroHtml() {
 // Start New Chat Action
 // --------------------------------------------------------------------------
 function startNewChat(showNotification = true) {
+  if (window.switchAdminRoom) window.switchAdminRoom('chat');
   activeSessionId = null;
   try {
     localStorage.setItem(_getLastSessionKey(), 'new');

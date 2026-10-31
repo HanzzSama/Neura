@@ -778,7 +778,7 @@ html, body {
   flex-shrink: 0;
 }
 
-/* ── 3-dot User Context Menu ─────────────────────────────────────────────── */
+/* â”€â”€ 3-dot User Context Menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .user-dot-menu {
   position: relative;
   flex-shrink: 0;
@@ -954,13 +954,13 @@ html, body {
   overflow: hidden;
 }
 
-/* ── Chat dims as voice room enters ─────────────────────────────────────── */
+/* â”€â”€ Chat dims as voice room enters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .main-view.chat-is-exiting {
   animation: chat-blur-out 0.38s cubic-bezier(0.4, 0, 1, 1) forwards;
   pointer-events: none;
 }
 
-/* ── Chat comes back as voice room exits ─────────────────────────────────── */
+/* â”€â”€ Chat comes back as voice room exits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .main-view.chat-is-entering {
   animation: chat-blur-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -1332,7 +1332,7 @@ html, body {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* User Message — Rounded warm bubble on the right */
+/* User Message â€” Rounded warm bubble on the right */
 .message-row.user {
   justify-content: flex-end;
 }
@@ -1349,7 +1349,7 @@ html, body {
   white-space: pre-wrap;
 }
 
-/* Assistant Message — Borderless prose on the left with Claude star */
+/* Assistant Message â€” Borderless prose on the left with Claude star */
 .message-row.assistant {
   flex-direction: column;
   align-items: flex-start;
@@ -1628,7 +1628,7 @@ html, body {
   margin-top: 6px;
   box-shadow: var(--shadow-sm);
   position: relative;
-  /* JANGAN overflow:hidden di sini — akan memotong expand bar yang ada di luar body */
+  /* JANGAN overflow:hidden di sini â€” akan memotong expand bar yang ada di luar body */
   overflow: visible;
   box-sizing: border-box;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1755,7 +1755,7 @@ html, body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Training Progress Card — Collapsible (sama pola voice session card) */
+/* Training Progress Card â€” Collapsible (sama pola voice session card) */
 /* ------------------------------------------------------------------ */
 .training-progress-card {
   position: relative;
@@ -2009,7 +2009,7 @@ html, body {
   border-bottom: none;
 }
 
-/* Command Reference List — general two-column: code badge | description */
+/* Command Reference List â€” general two-column: code badge | description */
 .cmd-list {
   width: 100%;
   border-collapse: collapse;
@@ -3878,7 +3878,7 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-/* ─── Phase Bar & Progress ─── */
+/* â”€â”€â”€ Phase Bar & Progress â”€â”€â”€ */
 .profile-phase-bar {
   display: flex;
   align-items: center;
@@ -3993,7 +3993,7 @@ html, body {
   position: relative;
 }
 
-/* ─── Section Label per slide (fixed flex stretch) ─── */
+/* â”€â”€â”€ Section Label per slide (fixed flex stretch) â”€â”€â”€ */
 .tf-section-label {
   display: inline-flex;
   align-self: flex-start;
@@ -4018,10 +4018,10 @@ html, body {
   color: #5c9bf5;
 }
 
-/* ─── Advanced Group Wrapper ─── */
+/* â”€â”€â”€ Advanced Group Wrapper â”€â”€â”€ */
 .tf-adv-group { display: flex; flex-direction: column; gap: 14px; }
 
-/* ─── Advanced Slider ─── */
+/* â”€â”€â”€ Advanced Slider â”€â”€â”€ */
 .tf-adv-slider-group { display: flex; flex-direction: column; gap: 6px; }
 .tf-adv-slider-header { display: flex; justify-content: space-between; align-items: center; }
 .tf-adv-slider-label { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
@@ -4032,7 +4032,7 @@ html, body {
 .tf-adv-slider { width: 100%; }
 .tf-adv-slider-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-tertiary); }
 
-/* ─── Binary Toggle (Ya/Tidak) ─── */
+/* â”€â”€â”€ Binary Toggle (Ya/Tidak) â”€â”€â”€ */
 .tf-binary-row {
   display: flex;
   align-items: center;
@@ -4057,7 +4057,7 @@ html, body {
 .tf-binary-btn.active-yes { background: rgba(76,175,80,0.1); border-color: #4CAF50; color: #4CAF50; }
 .tf-binary-btn.active-no { background: rgba(217,119,87,0.1); border-color: var(--accent-terracotta); color: var(--accent-terracotta); }
 
-/* ─── Chip Select Row (single-select) ─── */
+/* â”€â”€â”€ Chip Select Row (single-select) â”€â”€â”€ */
 .tf-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .tf-chip-btn {
   padding: 5px 14px;
@@ -4071,7 +4071,7 @@ html, body {
 .tf-chip-btn.selected { background: rgba(217,119,87,0.12); border-color: var(--accent-terracotta); color: var(--accent-terracotta); font-weight: 600; }
 .tf-chip-btn:hover { border-color: var(--accent-terracotta); color: var(--accent-terracotta); }
 
-/* ─── Advanced Two-Column Grid (Cholesterol) ─── */
+/* â”€â”€â”€ Advanced Two-Column Grid (Cholesterol) â”€â”€â”€ */
 .tf-adv-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tf-unit-sm { width: 90px !important; min-width: 60px !important; }
 .tf-adv-field-label {
@@ -4079,7 +4079,7 @@ html, body {
   margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;
 }
 
-/* ─── MMSE Legend ─── */
+/* â”€â”€â”€ MMSE Legend â”€â”€â”€ */
 .tf-mmse-legend { display: flex; flex-wrap: wrap; gap: 5px; margin-top: -4px; margin-bottom: 6px; }
 .mmse-tag { padding: 2px 9px; border-radius: 8px; font-size: 10.5px; font-weight: 600; }
 .mmse-tag.severe  { background: rgba(244,67,54,0.12); color: #F44336; }
@@ -4087,7 +4087,7 @@ html, body {
 .mmse-tag.mild    { background: rgba(255,193,7,0.12); color: #F9A825; }
 .mmse-tag.normal  { background: rgba(76,175,80,0.12); color: #4CAF50; }
 
-/* ─── Confirmation Box (Slide 16) ─── */
+/* â”€â”€â”€ Confirmation Box (Slide 16) â”€â”€â”€ */
 .tf-confirmation-box {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -4494,7 +4494,7 @@ html, body {
 
 
 /* ==========================================================================
-   TYPEFORM-STYLE PROFILE SLIDES — Unique per-field UI components
+   TYPEFORM-STYLE PROFILE SLIDES â€” Unique per-field UI components
    ========================================================================== */
 
 /* ---- Question number + label + hint ---- */
@@ -5012,7 +5012,7 @@ html, body {
   color: var(--text-primary);
 }
 
-/* ── Sliding Viewport & Track Engine ─────────────────────── */
+/* â”€â”€ Sliding Viewport & Track Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .settings-nav-viewport {
   flex: 1;
   overflow: hidden;
@@ -5051,7 +5051,7 @@ html, body {
   padding: 0;
 }
 
-/* ── Level 1: Root Menu Cards ────────────────────────────── */
+/* â”€â”€ Level 1: Root Menu Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .settings-menu-list {
   display: flex;
   flex-direction: column;
@@ -5159,7 +5159,7 @@ html, body {
   transform: translateX(2px);
 }
 
-/* ── Level 2: Sub-panels ─────────────────────────────────── */
+/* â”€â”€ Level 2: Sub-panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .settings-subpanel {
   display: none;
   padding: 4px 0 24px;
@@ -5844,7 +5844,7 @@ html, body {
   color: #0f172a;
 }
 
-/* ── iOS / Claude-style Toggle Switch ─────────────────────── */
+/* â”€â”€ iOS / Claude-style Toggle Switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .settings-switch {
   position: relative;
   display: inline-block;
@@ -5893,7 +5893,7 @@ html, body {
   transform: translateX(18px);
 }
 
-/* ── Segmented Control Chips (S / M / L) ─────────────────── */
+/* â”€â”€ Segmented Control Chips (S / M / L) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .settings-segmented-group {
   display: inline-flex;
   align-items: center;
@@ -5934,7 +5934,7 @@ html, body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
-/* ── Storage Usage Bar ───────────────────────────────────── */
+/* â”€â”€ Storage Usage Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .storage-meta-row {
   display: flex;
   justify-content: space-between;
@@ -5958,7 +5958,7 @@ html, body {
   transition: width 0.3s ease;
 }
 
-/* ── Dynamic Modifier Classes (Font Size, Compact, Reduce Motion) ─ */
+/* â”€â”€ Dynamic Modifier Classes (Font Size, Compact, Reduce Motion) â”€ */
 body.font-size-small .assistant-prose,
 body.font-size-small .user-bubble {
   font-size: 13px !important;
@@ -6428,7 +6428,7 @@ body.reduce-motion *::after {
 }
 
 
-/* ── QR Code Verification Card (Minimalist & Modern) ────────── */
+/* â”€â”€ QR Code Verification Card (Minimalist & Modern) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nakes-qr-card {
   display: flex;
   align-items: center;
@@ -6495,7 +6495,7 @@ body.reduce-motion *::after {
 
 
 
-/* ── Patient Identity Medical Card Grid ────────────────────── */
+/* â”€â”€ Patient Identity Medical Card Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nakes-patient-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -6561,7 +6561,7 @@ body.reduce-motion *::after {
   }
 }
 
-/* ── Inference AI Summary Card ──────────────────────────────── */
+/* â”€â”€ Inference AI Summary Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nakes-inference-panel {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -6772,7 +6772,7 @@ body.reduce-motion *::after {
   border: 1px solid rgba(217, 119, 87, 0.3);
 }
 
-/* ── Nakes Active Patient Sticky Header Bar ── */
+/* â”€â”€ Nakes Active Patient Sticky Header Bar â”€â”€ */
 .nakes-active-patient-bar {
   display: flex;
   align-items: center;
@@ -6875,7 +6875,7 @@ body.reduce-motion *::after {
   background: rgba(239, 68, 68, 0.2);
 }
 
-/* ── Nakes Clinical Dossier Styling ── */
+/* â”€â”€ Nakes Clinical Dossier Styling â”€â”€ */
 .nakes-dossier-card {
   background: var(--bg-surface, #1e1d1b);
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
@@ -8004,9 +8004,9 @@ body.reduce-motion *::after {
    tanpa perlu menulis CSS berulang.
    ========================================================================== */
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    1. TYPOGRAPHY & TITLE HIERARCHY (HIGH, MID, LOW, MICRO)
-   ────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* Title High: Headline Utama, Hero Title, Judul Dokumen/Asesmen */
 .neura-title-high,
@@ -8106,9 +8106,9 @@ body.reduce-motion *::after {
   margin-bottom: 12px;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    2. DESCRIPTIONS, PARAGRAPHS & TEXT MODIFIERS
-   ────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* Deskripsi Lead: Paragraf Pengantar Utama (sedikit lebih tebal dan elegan) */
 .neura-desc-lead {
@@ -8155,9 +8155,9 @@ body.reduce-motion *::after {
 .neura-text-mono       { font-family: 'JetBrains Mono', monospace !important; }
 .neura-text-bold       { font-weight: 650 !important; }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    3. LISTS, BULLETS, POINTS & DATA ROWS (MODULAR & CLEAN)
-   ────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* Unordered List dengan Custom Bullet Terracotta yang Rapi */
 .neura-list,
@@ -8367,9 +8367,9 @@ body.reduce-motion *::after {
   line-height: 1.5;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   4. NOTES, CALLOUTS & NOTICES (MODERN APPLE/CLAUDE STYLE — NO AI-SLOP BORDER-LEFT)
-   ────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   4. NOTES, CALLOUTS & NOTICES (MODERN APPLE/CLAUDE STYLE â€” NO AI-SLOP BORDER-LEFT)
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .neura-note,
 .neura-callout {
@@ -8491,9 +8491,9 @@ body.reduce-motion *::after {
   color: #f87171;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    5. MODULAR FORM & INPUT SYSTEM (TEXT, SELECT, TEXTAREA, AFFIX, GRID)
-   ────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* Container Form Field / Group */
 .neura-form-group,
@@ -8673,9 +8673,9 @@ body.reduce-motion *::after {
   }
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    6. DATA TEMPLATES (CARDS, METRICS, STATS, BADGES, METADATA)
-   ────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* Modular Container Card */
 .neura-card {
@@ -8864,9 +8864,9 @@ body.reduce-motion *::after {
   border: 1px solid var(--border-subtle);
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    7. BUTTON SYSTEM (MODULAR TOKENS)
-   ────────────────────────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .neura-btn,
 .cl-btn,
@@ -9061,7 +9061,7 @@ body.reduce-motion *::after {
 }
 
 /* ================================================================
-   Admin Panel Modals � Shared Base Styles
+   Admin Panel Modals — Shared Base Styles
    ================================================================ */
 .admin-modal-overlay {
   display: none;
@@ -9169,25 +9169,24 @@ body.reduce-motion *::after {
   display: flex;
 }
 
-/* Sidebar nav tag variants */
-.sidebar-nav-tag--db {
-  background: rgba(99,102,241,0.12);
-  color: #818cf8;
-  border: 1px solid rgba(99,102,241,0.22);
-}
-.sidebar-nav-tag--stats {
-  background: rgba(16,185,129,0.12);
-  color: #34d399;
-  border: 1px solid rgba(16,185,129,0.22);
-}
+/* Sidebar nav tag variants - Harmonized with Dashboard & Data Nakes (Terracotta theme) */
+.sidebar-nav-tag--db,
+.sidebar-nav-tag--stats,
 .sidebar-nav-tag--files {
-  background: rgba(245,158,11,0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(245,158,11,0.22);
+  background: rgba(217, 119, 87, 0.12);
+  color: var(--accent-terracotta, #e07a5f);
+  border: 1px solid rgba(217, 119, 87, 0.20);
 }
-.sidebar-nav-item--database .sidebar-nav-left svg { color: #818cf8; }
-.sidebar-nav-item--stats .sidebar-nav-left svg { color: #34d399; }
-.sidebar-nav-item--files .sidebar-nav-left svg { color: #fbbf24; }
+.sidebar-nav-item--database .sidebar-nav-left svg,
+.sidebar-nav-item--stats .sidebar-nav-left svg,
+.sidebar-nav-item--files .sidebar-nav-left svg {
+  color: var(--accent-terracotta, #e07a5f);
+}
+.sidebar-nav-item.active {
+  background: rgba(217, 119, 87, 0.12) !important;
+  border-color: rgba(217, 119, 87, 0.25) !important;
+  color: var(--text-primary) !important;
+}
 
 /* ================================================================
    Database Modal Styles
@@ -9554,7 +9553,7 @@ body.reduce-motion *::after {
 .stats-recent-list tr:hover td { background: var(--bg-hover); }
 
 /* ================================================================
-   File Explorer Modal � Windows 11 Style
+   File Explorer Modal — Windows 11 Style
    ================================================================ */
 .explorer-modal-panel {
   width: 94vw;
@@ -9842,7 +9841,7 @@ body.reduce-motion *::after {
 }
 
 /* ================================================================
-   Admin Rooms � In-page panels replacing the chat area
+   Admin Rooms — In-page panels replacing the chat area
    ================================================================ */
 .admin-room {
   position: absolute;
@@ -9862,9 +9861,9 @@ body.reduce-motion *::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px 13px;
+  padding: 14px 22px 13px;
   border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
+  background: linear-gradient(180deg, rgba(224, 122, 95, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
   flex-shrink: 0;
   gap: 12px;
 }
@@ -9882,8 +9881,33 @@ body.reduce-motion *::after {
   justify-content: center;
   flex-shrink: 0;
 }
-.admin-room-icon--db { background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(99,102,241,0.06)); color: #818cf8; border: 1px solid rgba(99,102,241,0.2); }
-.admin-room-icon--stats { background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0.06)); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+.admin-room-icon,
+.admin-room-icon--db,
+.admin-room-icon--stats,
+.admin-room-icon--files,
+.admin-room-icon--nakes {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(224, 122, 95, 0.25), rgba(224, 122, 95, 0.08));
+  color: var(--accent-terracotta, #e07a5f);
+  border: 1px solid rgba(224, 122, 95, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.admin-room-portal-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent-terracotta, #e07a5f);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .admin-room-title {
   font-size: 15px;
   font-weight: 700;
@@ -9914,10 +9938,35 @@ body.reduce-motion *::after {
   cursor: pointer;
   transition: all 0.12s;
 }
+.admin-room-action-btn {
+  border-color: rgba(224, 122, 95, 0.25);
+  background: rgba(224, 122, 95, 0.08);
+  color: var(--accent-terracotta, #e07a5f);
+}
 .admin-room-action-btn:hover {
-  border-color: var(--border-strong);
-  color: var(--text-primary);
-  background: var(--bg-card-hover);
+  background: rgba(224, 122, 95, 0.18);
+  border-color: rgba(224, 122, 95, 0.45);
+  color: #ff9e80;
+}
+.admin-room-back-btn:hover {
+  background: rgba(224, 122, 95, 0.12) !important;
+  border-color: rgba(224, 122, 95, 0.35) !important;
+  color: var(--accent-terracotta, #e07a5f) !important;
+}
+.stats-tab-btn.active {
+  background: rgba(224, 122, 95, 0.14) !important;
+  color: var(--accent-terracotta, #e07a5f) !important;
+  border-color: rgba(224, 122, 95, 0.35) !important;
+}
+.db-collection-item.active {
+  background: rgba(224, 122, 95, 0.12) !important;
+  color: var(--accent-terracotta, #e07a5f) !important;
+  border-left: 2px solid var(--accent-terracotta, #e07a5f) !important;
+}
+.explorer-toolbar-btn.active {
+  background: rgba(224, 122, 95, 0.15) !important;
+  color: var(--accent-terracotta, #e07a5f) !important;
+  border-color: rgba(224, 122, 95, 0.35) !important;
 }
 .admin-room-back-btn {
   width: 30px;

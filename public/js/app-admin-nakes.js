@@ -37,22 +37,29 @@ async function openNakesAdminModal() {
     }
     return;
   }
-  const modal = document.getElementById('admin-nakes-modal');
-  if (!modal) return;
-  modal.classList.add('open');
-  switchNakesAdminView('table');
-  await fetchAndRenderNakesTable();
+  if (window.switchAdminRoom) {
+    window.switchAdminRoom('nakes');
+  } else {
+    const room = document.getElementById('admin-room-nakes');
+    if (room) room.style.display = 'flex';
+    switchNakesAdminView('table');
+    await fetchAndRenderNakesTable();
+  }
 }
 window.openNakesAdminModal = openNakesAdminModal;
 
 function closeNakesAdminModal() {
-  const modal = document.getElementById('admin-nakes-modal');
-  if (modal) modal.classList.remove('open');
+  if (window.switchAdminRoom) {
+    window.switchAdminRoom('chat');
+  } else {
+    const room = document.getElementById('admin-room-nakes');
+    if (room) room.style.display = 'none';
+  }
 }
 window.closeNakesAdminModal = closeNakesAdminModal;
 
 function closeNakesAdminModalOnBackdrop(e) {
-  if (e && e.target && e.target.id === 'admin-nakes-modal') {
+  if (e && e.target && (e.target.id === 'admin-nakes-modal' || e.target.id === 'admin-room-nakes')) {
     closeNakesAdminModal();
   }
 }
