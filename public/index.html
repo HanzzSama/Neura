@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=6.3" />
+  <link rel="stylesheet" href="/css/style.css?v=6.4" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
@@ -2557,11 +2557,48 @@
         <form id="form-edit-profile" onsubmit="handleSaveProfile(event)">
           <!-- Avatar Preview & Choice -->
           <div class="profile-avatar-banner">
-            <div class="profile-avatar-big" id="edit-avatar-preview">H</div>
+            <div class="profile-avatar-wrapper" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
+              <div class="profile-avatar-big" id="edit-avatar-preview">H</div>
+              <div class="profile-avatar-overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>Ubah</span>
+              </div>
+            </div>
+            
+            <input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="handleAvatarFileSelected(event)">
+
             <div class="profile-avatar-meta">
-              <div class="profile-avatar-name" id="edit-avatar-name-display">Hanzz</div>
-              <div class="profile-avatar-role" id="edit-avatar-role-badge">User</div>
-              <div class="profile-avatar-sub">Inisial avatar dan profil sinkron secara otomatis di seluruh sesi workspace.</div>
+              <div class="profile-avatar-header-row">
+                <div class="profile-avatar-name" id="edit-avatar-name-display">Hanzz</div>
+                <div class="profile-avatar-role" id="edit-avatar-role-badge">User</div>
+              </div>
+              <div class="profile-avatar-actions">
+                <button type="button" class="avatar-action-btn" onclick="triggerAvatarUpload()" title="Unggah foto baru dari perangkat">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>Unggah Foto</span>
+                </button>
+                <button type="button" class="avatar-action-btn btn-sync-google" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()" title="Sinkronkan dengan foto profil Google">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                  </svg>
+                  <span>Sinkronkan Google</span>
+                </button>
+                <button type="button" class="avatar-action-btn btn-remove-avatar" id="btn-remove-avatar" onclick="handleRemoveAvatar()" title="Hapus foto kustom dan gunakan inisial">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  <span>Hapus</span>
+                </button>
+              </div>
+              <div class="profile-avatar-sub" id="profile-avatar-subtext">Foto profil dan inisial sinkron otomatis di seluruh sesi workspace.</div>
             </div>
           </div>
 
@@ -2711,8 +2748,8 @@
   <script src="/js/app-core.js?v=7.0"></script>
   <script src="/js/app-translations.js?v=7.0"></script>
   <script src="/js/app-ui.js?v=7.0"></script>
-  <script src="/js/app-auth.js?v=7.0"></script>
-  <script src="/js/app-settings.js?v=7.0"></script>
+  <script src="/js/app-auth.js?v=7.1"></script>
+  <script src="/js/app-settings.js?v=7.1"></script>
   <script src="/js/app-voice-input.js?v=7.0"></script>
   <script src="/js/app-ml-commands.js?v=7.0"></script>
   <script src="/js/app-chat.js?v=7.0"></script>
@@ -2749,7 +2786,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-guard.js?v=2"></script>
+  <script src="/js/auth-guard.js?v=3"></script>
 
 </body>
 

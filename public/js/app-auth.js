@@ -87,9 +87,10 @@ function syncUserProfileUI() {
       roleEl.textContent = label;
       roleEl.setAttribute('data-role', savedRole.toLowerCase());
     }
+    const photoURL = user.photoURL || localStorage.getItem('neura_user_photo') || '';
     if (avatarEl) {
-      if (user.photoURL) {
-        avatarEl.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.parentElement.textContent='${displayName.charAt(0).toUpperCase()}'">`;
+      if (photoURL) {
+        avatarEl.innerHTML = `<img src="${photoURL}" alt="${displayName}" referrerpolicy="no-referrer" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;" onerror="this.onerror=null; this.parentElement.textContent='${displayName.charAt(0).toUpperCase()}';">`;
       } else {
         avatarEl.textContent = displayName.charAt(0).toUpperCase();
       }
@@ -133,6 +134,15 @@ function initAuthListeners() {
       try {
         window.NeuraFirebase.auth().onAuthStateChanged(function (user) {
           if (user) {
+            try {
+              const raw = localStorage.getItem('neura_auth_user');
+              let localUser = raw ? JSON.parse(raw) : {};
+              if (user.photoURL && !localUser.photoURL) {
+                localUser.photoURL = user.photoURL;
+                localStorage.setItem('neura_auth_user', JSON.stringify(localUser));
+                localStorage.setItem('neura_user_photo', user.photoURL);
+              }
+            } catch (e) { }
             syncUserProfileUI();
           }
         });

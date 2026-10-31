@@ -73,10 +73,13 @@ from api.user.user_consultation import user_consult_bp
 from api.user.user_chat import user_chat_bp
 from api.user.user_livekit import user_livekit_bp
 
+from api.user.user_profile import user_profile_bp
+
 app.register_blueprint(user_predict_bp, url_prefix="/api")
 app.register_blueprint(user_consult_bp, url_prefix="/api/consultation")
 app.register_blueprint(user_chat_bp, url_prefix="/api")
 app.register_blueprint(user_livekit_bp, url_prefix="/api/livekit")
+app.register_blueprint(user_profile_bp, url_prefix="/api/user")
 
 
 # -----------------------------------------------------------------------

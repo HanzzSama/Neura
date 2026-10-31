@@ -798,6 +798,182 @@ window.confirmResetAllSettings = confirmResetAllSettings;
 
 
 
+// Avatar Photo State in Edit Profile Modal
+let pendingAvatarUrl = undefined;
+let currentActivePhotoUrl = '';
+
+function renderEditAvatarPreview(photoUrl, name) {
+  const previewAvatar = document.getElementById('edit-avatar-preview');
+  if (!previewAvatar) return;
+  const initial = ((name || 'Pengguna').trim().charAt(0) || 'U').toUpperCase();
+  if (photoUrl) {
+    previewAvatar.innerHTML = `<img src="${photoUrl}" alt="${name || 'Avatar'}" referrerpolicy="no-referrer" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;" onerror="this.onerror=null; this.parentElement.textContent='${initial}';">`;
+  } else {
+    previewAvatar.textContent = initial;
+  }
+}
+window.renderEditAvatarPreview = renderEditAvatarPreview;
+
+function triggerAvatarUpload() {
+  const input = document.getElementById('edit-avatar-file-input');
+  if (input) {
+    input.value = '';
+    input.click();
+  }
+}
+window.triggerAvatarUpload = triggerAvatarUpload;
+
+async function handleAvatarFileSelected(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.match(/^image\/(jpeg|png|webp|gif)$/i)) {
+    if (typeof showToast === 'function') showToast('Format file harus berupa gambar (JPG, PNG, atau WebP).', 'warning');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    if (typeof showToast === 'function') showToast('Ukuran file maksimal 5MB.', 'warning');
+    return;
+  }
+
+  const nameInput = document.getElementById('edit-profile-input-name');
+  const currentName = (nameInput?.value || '').trim() || 'Pengguna';
+
+  try {
+    if (typeof showToast === 'function') showToast('Mengompres dan memproses foto...', 'info');
+
+    // 1. Baca dan kompres gambar via Canvas (max 256x256 WebP / JPEG)
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 256;
+          let w = img.width;
+          let h = img.height;
+          // Crop square center
+          const size = Math.min(w, h);
+          const startX = (w - size) / 2;
+          const startY = (h - size) / 2;
+
+          const canvas = document.createElement('canvas');
+          canvas.width = maxDim;
+          canvas.height = maxDim;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, startX, startY, size, size, 0, 0, maxDim, maxDim);
+          try {
+            resolve(canvas.toDataURL('image/webp', 0.85));
+          } catch (err) {
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+          }
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    // 2. Render preview seketika
+    renderEditAvatarPreview(dataUrl, currentName);
+
+    // 3. Upload ke server endpoint /api/user/upload-avatar
+    let user = null;
+    try {
+      const raw = localStorage.getItem('neura_auth_user');
+      if (raw) user = JSON.parse(raw);
+    } catch (e) { }
+
+    const res = await fetch('/api/user/upload-avatar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        uid: user?.uid || user?.id || 'user_' + Date.now(),
+        imageData: dataUrl
+      })
+    });
+    const result = await res.json();
+    if (result && result.success && result.photoURL) {
+      pendingAvatarUrl = result.photoURL;
+      if (typeof showToast === 'function') showToast('Foto profil baru berhasil diunggah! Klik Simpan untuk menerapkan.', 'success');
+    } else {
+      // Fallback ke dataUrl lokal
+      pendingAvatarUrl = dataUrl;
+      if (typeof showToast === 'function') showToast('Foto profil siap. Klik Simpan untuk menerapkan.', 'success');
+    }
+  } catch (err) {
+    console.error('Error handling avatar upload:', err);
+    if (typeof showToast === 'function') showToast('Gagal memproses gambar: ' + (err.message || err), 'error');
+  }
+}
+window.handleAvatarFileSelected = handleAvatarFileSelected;
+
+function syncAvatarFromGoogle() {
+  let googlePhoto = '';
+
+  // Coba ambil dari Firebase currentUser
+  try {
+    if (window.NeuraFirebase && window.NeuraFirebase.auth) {
+      const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        if (currentUser.photoURL) {
+          googlePhoto = currentUser.photoURL;
+        } else if (currentUser.providerData) {
+          for (let p of currentUser.providerData) {
+            if (p.photoURL) {
+              googlePhoto = p.photoURL;
+              break;
+            }
+          }
+        }
+      }
+    }
+  } catch (e) { }
+
+  // Coba ambil dari localStorage auth user jika ada photoURL dari Google
+  if (!googlePhoto) {
+    try {
+      const raw = localStorage.getItem('neura_auth_user');
+      if (raw) {
+        const u = JSON.parse(raw);
+        if (u.photoURL && (u.photoURL.includes('googleusercontent.com') || u.photoURL.includes('google'))) {
+          googlePhoto = u.photoURL;
+        }
+      }
+    } catch (e) { }
+  }
+
+  if (!googlePhoto) {
+    if (typeof showToast === 'function') {
+      showToast('Tidak ada foto profil Google yang terdeteksi untuk akun ini.', 'warning');
+    }
+    return;
+  }
+
+  pendingAvatarUrl = googlePhoto;
+  const nameInput = document.getElementById('edit-profile-input-name');
+  const currentName = (nameInput?.value || '').trim() || 'Pengguna';
+  renderEditAvatarPreview(googlePhoto, currentName);
+
+  if (typeof showToast === 'function') {
+    showToast('Foto profil dari akun Google berhasil disinkronkan! Klik Simpan untuk menerapkan.', 'success');
+  }
+}
+window.syncAvatarFromGoogle = syncAvatarFromGoogle;
+
+function handleRemoveAvatar() {
+  pendingAvatarUrl = '';
+  const nameInput = document.getElementById('edit-profile-input-name');
+  const currentName = (nameInput?.value || '').trim() || 'Pengguna';
+  renderEditAvatarPreview('', currentName);
+  if (typeof showToast === 'function') {
+    showToast('Foto profil dihapus. Inisial nama akan digunakan.', 'info');
+  }
+}
+window.handleRemoveAvatar = handleRemoveAvatar;
+
 // Edit Profile & Password Controller
 // ==========================================================================
 function openEditProfileModal(initialTab = 'info') {
@@ -831,13 +1007,17 @@ function openEditProfileModal(initialTab = 'info') {
   const currentPhone = user?.phone || localStorage.getItem('neura_user_phone') || '';
   const currentBio = user?.bio || localStorage.getItem('neura_user_bio') || '';
 
+  // Reset avatar state & render preview
+  currentActivePhotoUrl = user?.photoURL || localStorage.getItem('neura_user_photo') || '';
+  pendingAvatarUrl = undefined;
+  renderEditAvatarPreview(currentActivePhotoUrl, currentName);
+
   // Isi ke Form Info
   const nameInput = document.getElementById('edit-profile-input-name');
   const emailInput = document.getElementById('edit-profile-input-email');
   const instInput = document.getElementById('edit-profile-input-institution');
   const phoneInput = document.getElementById('edit-profile-input-phone');
   const bioInput = document.getElementById('edit-profile-input-bio');
-  const previewAvatar = document.getElementById('edit-avatar-preview');
   const previewName = document.getElementById('edit-avatar-name-display');
   const previewRole = document.getElementById('edit-avatar-role-badge');
 
@@ -848,7 +1028,6 @@ function openEditProfileModal(initialTab = 'info') {
   if (bioInput) bioInput.value = currentBio;
   if (previewName) previewName.textContent = currentName;
   if (previewRole) previewRole.textContent = currentRole;
-  if (previewAvatar) previewAvatar.textContent = currentName.charAt(0).toUpperCase();
 
   // Reset form password
   const pwdForm = document.getElementById('form-edit-password');
@@ -917,11 +1096,14 @@ window.switchEditProfileTab = switchEditProfileTab;
 
 function handleEditProfileNameChange() {
   const nameInput = document.getElementById('edit-profile-input-name');
-  const previewAvatar = document.getElementById('edit-avatar-preview');
   const previewName = document.getElementById('edit-avatar-name-display');
   const val = (nameInput?.value || '').trim() || 'Pengguna';
   if (previewName) previewName.textContent = val;
-  if (previewAvatar) previewAvatar.textContent = val.charAt(0).toUpperCase();
+  const currentPhoto = (pendingAvatarUrl !== undefined) ? pendingAvatarUrl : (currentActivePhotoUrl || '');
+  if (!currentPhoto) {
+    const previewAvatar = document.getElementById('edit-avatar-preview');
+    if (previewAvatar) previewAvatar.textContent = val.charAt(0).toUpperCase();
+  }
 }
 window.handleEditProfileNameChange = handleEditProfileNameChange;
 
@@ -1045,6 +1227,8 @@ async function handleSaveProfile(event) {
       }
     }
 
+    const finalPhotoURL = (pendingAvatarUrl !== undefined) ? pendingAvatarUrl : (currentActivePhotoUrl || user?.photoURL || '');
+
     // 2. Update ke Firebase Auth jika aktif (khusus akun Google/Firebase biasa)
     let fbUser = null;
     if (window.NeuraFirebase && window.NeuraFirebase.auth && !isNakes) {
@@ -1052,7 +1236,10 @@ async function handleSaveProfile(event) {
         const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
         if (auth && auth.currentUser) {
           fbUser = auth.currentUser;
-          await fbUser.updateProfile({ displayName: name });
+          await fbUser.updateProfile({
+            displayName: name,
+            photoURL: finalPhotoURL
+          });
         }
       } catch (e) {
         console.warn('[Neura Auth] updateProfile Firebase error:', e);
@@ -1085,6 +1272,7 @@ async function handleSaveProfile(event) {
           name: name,
           displayName: name,
           email: currentEmail,
+          photoURL: finalPhotoURL,
           institution: institution,
           phone: phone,
           bio: bio,
@@ -1105,22 +1293,38 @@ async function handleSaveProfile(event) {
 
     userObj.name = name;
     userObj.displayName = name;
+    userObj.photoURL = finalPhotoURL;
     userObj.institution = institution;
     userObj.phone = phone;
     userObj.bio = bio;
 
     localStorage.setItem('neura_auth_user', JSON.stringify(userObj));
     localStorage.setItem('neura_user_profile', JSON.stringify(userObj));
+    if (finalPhotoURL) {
+      localStorage.setItem('neura_user_photo', finalPhotoURL);
+    } else {
+      localStorage.removeItem('neura_user_photo');
+    }
     localStorage.setItem('neura_user_institution', institution);
     localStorage.setItem('neura_user_phone', phone);
     localStorage.setItem('neura_user_bio', bio);
+
+    // Update active cache in modal
+    currentActivePhotoUrl = finalPhotoURL;
+    pendingAvatarUrl = undefined;
 
     // 5. Update UI di seluruh komponen
     syncUserProfileUI();
     const stgNameEl = document.getElementById('stg-profile-name');
     if (stgNameEl) stgNameEl.textContent = name;
     const stgAvatarEl = document.getElementById('stg-avatar');
-    if (stgAvatarEl) stgAvatarEl.textContent = name.charAt(0).toUpperCase();
+    if (stgAvatarEl) {
+      if (finalPhotoURL) {
+        stgAvatarEl.innerHTML = `<img src="${finalPhotoURL}" alt="${name}" referrerpolicy="no-referrer" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;" onerror="this.onerror=null; this.parentElement.textContent='${name.charAt(0).toUpperCase()}';">`;
+      } else {
+        stgAvatarEl.textContent = name.charAt(0).toUpperCase();
+      }
+    }
 
     // Jika tabel nakes admin sedang terbuka, refresh otomatis
     if (typeof fetchAndRenderNakesTable === 'function') {

@@ -191,13 +191,19 @@
 
   function updateLocalCache(user) {
     try {
+      var existingRaw = localStorage.getItem('neura_auth_user');
+      var existingUser = existingRaw ? JSON.parse(existingRaw) : {};
+      var photo = user.photoURL || existingUser.photoURL || localStorage.getItem('neura_user_photo') || '';
       localStorage.setItem('neura_auth_user', JSON.stringify({
-        name: user.displayName || (user.email ? user.email.split('@')[0] : 'Pengguna'),
+        name: user.displayName || existingUser.name || (user.email ? user.email.split('@')[0] : 'Pengguna'),
         email: user.email,
         uid: user.uid,
-        photoURL: user.photoURL || '',
+        photoURL: photo,
         emailVerified: user.emailVerified
       }));
+      if (photo) {
+        localStorage.setItem('neura_user_photo', photo);
+      }
     } catch (e) {}
   }
 
