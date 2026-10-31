@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=43">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
-  <link rel="stylesheet" href="/css/auth-hero.css?v=57">
+  <link rel="stylesheet" href="/css/auth-hero.css?v=58">
 </head>
 
 <body>
@@ -235,12 +235,31 @@
                       <span class="comp-input-badge">@</span>
                       <input type="email" class="comp-pill-input" id="login-email" placeholder="e-mail address" required
                         autocomplete="email" />
+                      <span class="admin-verified-indicator" id="login-email-admin-icon" style="display: none;" title="Akun Terverifikasi">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
                     </div>
 
-                    <!-- Admin Detected Badge Notice (Dynamic) -->
-                    <div class="admin-detected-notice" id="admin-detected-notice" style="display:none;">
-                      <span class="admin-notice-dot"></span>
-                      <span>Akun Administrator Terdeteksi &bull; Mode 2FA Tanpa Password</span>
+                    <!-- Admin Security Identity Card (Active only in Admin Mode, Replaces Password Field) -->
+                    <div class="admin-identity-card" id="admin-detected-notice" style="display:none;" role="status" aria-live="polite">
+                      <div class="admin-identity-badge">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                          <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                      </div>
+                      <div class="admin-identity-info">
+                        <div class="admin-identity-title-row">
+                          <span class="admin-identity-title">Akses Administrator</span>
+                          <span class="admin-identity-tag">2FA Aktif</span>
+                        </div>
+                        <span class="admin-identity-sub">Kata sandi dilewati &bull; Autentikasi via OTP email</span>
+                      </div>
+                      <div class="admin-identity-status" title="Sesi Terproteksi">
+                        <span class="admin-identity-dot"></span>
+                      </div>
                     </div>
 
                     <!-- Pill Input 2: Password -->
@@ -2013,7 +2032,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-hero.js?v=57"></script>
+  <script src="/js/auth-hero.js?v=58"></script>
 </body>
 
 </html>

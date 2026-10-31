@@ -362,6 +362,8 @@
 
   function setAdminModeUI(active, email, name) {
     isAdminDetected = active;
+    var emailPill = document.getElementById('login-email-pill');
+    var emailAdminIcon = document.getElementById('login-email-admin-icon');
     var passPill = document.getElementById('login-password-pill');
     var passInput = document.getElementById('login-password');
     var notice = document.getElementById('admin-detected-notice');
@@ -369,24 +371,30 @@
     var descText = document.getElementById('comp1-desc-text');
 
     if (active) {
-      if (passPill) passPill.classList.add('is-admin-mode');
+      if (emailPill) emailPill.classList.add('is-admin-verified');
+      if (emailAdminIcon) emailAdminIcon.style.display = 'inline-flex';
+
+      if (passPill) passPill.style.display = 'none';
       if (passInput) {
         passInput.disabled = true;
         passInput.removeAttribute('required');
         passInput.value = '';
-        passInput.placeholder = '🔒 2FA Aktif — Kata sandi tidak diperlukan';
       }
       if (notice) notice.style.display = 'flex';
       if (submitBtn) {
         var label = submitBtn.querySelector('.comp1-submit-label');
         if (label) label.textContent = 'Verifikasi 2FA';
         submitBtn.title = 'Lanjut ke Verifikasi Admin 2FA';
+        submitBtn.classList.add('is-admin-action');
       }
       if (descText) {
-        descText.textContent = 'Akun Administrator terdeteksi. Autentikasi dua faktor (OTP) akan dikirimkan ke email terhubung Anda.';
+        descText.textContent = 'Kode OTP 6-digit akan dikirimkan ke email terhubung untuk memverifikasi sesi administrator.';
       }
     } else {
-      if (passPill) passPill.classList.remove('is-admin-mode');
+      if (emailPill) emailPill.classList.remove('is-admin-verified');
+      if (emailAdminIcon) emailAdminIcon.style.display = 'none';
+
+      if (passPill) passPill.style.display = 'flex';
       if (passInput) {
         passInput.disabled = false;
         passInput.setAttribute('required', '');
@@ -397,6 +405,7 @@
         var label = submitBtn.querySelector('.comp1-submit-label');
         if (label) label.textContent = 'Log in';
         submitBtn.title = 'Masuk ke Workspace';
+        submitBtn.classList.remove('is-admin-action');
       }
       if (descText) {
         descText.textContent = 'Tidak semua keputusan klinis mudah, evaluasi 32 biomarker Neura hadir membantu ketepatan diagnosis presisi.';
