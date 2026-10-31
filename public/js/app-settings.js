@@ -1004,10 +1004,50 @@ async function handleSaveProfile(event) {
     saveBtn.innerHTML = `<span>Menyimpan...</span>`;
   }
 
+  const currentRole = localStorage.getItem('neura_user_role') || 'User';
+  let user = null;
   try {
-    // 1. Update ke Firebase Auth jika aktif
+    const raw = localStorage.getItem('neura_auth_user');
+    if (raw) user = JSON.parse(raw);
+  } catch (e) { }
+
+  const currentEmail = (document.getElementById('edit-profile-input-email')?.value || user?.email || '').trim().toLowerCase();
+  const isNakes = currentRole === 'Nakes' || currentEmail.endsWith('@neura.ns.id');
+
+  try {
+    // 1. Jika peran Nakes: Simpan ke backend nakes_directory.json
+    if (isNakes) {
+      try {
+        const res = await fetch('/api/nakes/update-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: user?.uid || user?.id,
+            email: currentEmail,
+            name: name,
+            institution: institution,
+            phone: phone,
+            bio: bio
+          })
+        });
+        const json = await res.json();
+        if (json && json.success) {
+          try {
+            const nakesSess = JSON.parse(localStorage.getItem('neura_nakes_session') || '{}');
+            nakesSess.name = name;
+            nakesSess.institution = institution;
+            nakesSess.phone = phone;
+            localStorage.setItem('neura_nakes_session', JSON.stringify(nakesSess));
+          } catch (e) { }
+        }
+      } catch (err) {
+        console.warn('[Neura Nakes Profile Update Server Error]:', err);
+      }
+    }
+
+    // 2. Update ke Firebase Auth jika aktif (khusus akun Google/Firebase biasa)
     let fbUser = null;
-    if (window.NeuraFirebase && window.NeuraFirebase.auth) {
+    if (window.NeuraFirebase && window.NeuraFirebase.auth && !isNakes) {
       try {
         const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
         if (auth && auth.currentUser) {
@@ -1019,21 +1059,44 @@ async function handleSaveProfile(event) {
       }
     }
 
-    // 2. Simpan ke Firestore jika tersedia
-    if (fbUser && window.firebase && window.firebase.firestore) {
+    // 3. Simpan ke Firestore (collection 'nakes' dan 'users')
+    if (window.firebase && window.firebase.firestore) {
       try {
         const db = window.firebase.firestore();
-        await db.collection('users').doc(fbUser.uid).set({
+        // Jika Nakes, simpan langsung ke collection 'nakes'
+        if (isNakes) {
+          const nakesDocId = user?.uid || user?.id || (currentEmail ? currentEmail.replace(/[^a-zA-Z0-9_-]/g, '_') : 'nakes_current');
+          await db.collection('nakes').doc(nakesDocId).set({
+            id: nakesDocId,
+            name: name,
+            nakes_email: currentEmail,
+            institution: institution,
+            phone: phone,
+            bio: bio,
+            role: 'Nakes',
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        }
+
+        // Simpan ke collection 'users'
+        const userDocId = fbUser ? fbUser.uid : (user?.uid || (currentEmail ? currentEmail.replace(/[^a-zA-Z0-9_-]/g, '_') : 'user_current'));
+        await db.collection('users').doc(userDocId).set({
+          uid: userDocId,
           name: name,
+          displayName: name,
+          email: currentEmail,
           institution: institution,
           phone: phone,
           bio: bio,
+          role: currentRole,
           updatedAt: new Date().toISOString()
         }, { merge: true });
-      } catch (e) { }
+      } catch (e) {
+        console.warn('[Firestore Sync Warning]:', e);
+      }
     }
 
-    // 3. Update localStorage profile & user
+    // 4. Update localStorage profile & user
     let userObj = {};
     try {
       const raw = localStorage.getItem('neura_auth_user');
@@ -1052,15 +1115,20 @@ async function handleSaveProfile(event) {
     localStorage.setItem('neura_user_phone', phone);
     localStorage.setItem('neura_user_bio', bio);
 
-    // 4. Update UI di seluruh komponen
+    // 5. Update UI di seluruh komponen
     syncUserProfileUI();
     const stgNameEl = document.getElementById('stg-profile-name');
     if (stgNameEl) stgNameEl.textContent = name;
     const stgAvatarEl = document.getElementById('stg-avatar');
     if (stgAvatarEl) stgAvatarEl.textContent = name.charAt(0).toUpperCase();
 
+    // Jika tabel nakes admin sedang terbuka, refresh otomatis
+    if (typeof fetchAndRenderNakesTable === 'function') {
+      fetchAndRenderNakesTable();
+    }
+
     if (typeof showToast === 'function') {
-      showToast('Profil pengguna berhasil diperbarui!', 'success');
+      showToast('Profil pengguna berhasil diperbarui dan disinkronkan!', 'success');
     }
 
     closeEditProfileModal();
@@ -1109,38 +1177,92 @@ async function handleUpdatePassword(event) {
     updateBtn.innerHTML = `<span>Memproses Sandi...</span>`;
   }
 
+  const currentRole = localStorage.getItem('neura_user_role') || 'User';
+  let user = null;
   try {
-    // 1. Coba via Firebase Auth
-    if (window.NeuraFirebase && window.NeuraFirebase.auth) {
-      try {
-        const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
-        const currentUser = auth ? auth.currentUser : null;
+    const raw = localStorage.getItem('neura_auth_user');
+    if (raw) user = JSON.parse(raw);
+  } catch (e) { }
+  const currentEmail = (document.getElementById('edit-profile-input-email')?.value || user?.email || '').trim().toLowerCase();
+  const isNakes = currentRole === 'Nakes' || currentEmail.endsWith('@neura.ns.id');
 
-        if (currentUser && currentUser.email) {
-          // Re-authenticate dulu dengan credential kata sandi lama
-          if (window.firebase && window.firebase.auth && window.firebase.auth.EmailAuthProvider) {
-            const credential = window.firebase.auth.EmailAuthProvider.credential(currentUser.email, oldPassword);
-            await currentUser.reauthenticateWithCredential(credential);
-          }
-          // Perbarui kata sandi di Firebase
-          await currentUser.updatePassword(newPassword);
+  try {
+    if (isNakes) {
+      // 1. Update kata sandi Nakes di server direktori Neura
+      const res = await fetch('/api/nakes/update-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: currentEmail,
+          id: user?.uid || user?.id,
+          old_password: oldPassword,
+          new_password: newPassword
+        })
+      });
+      const json = await res.json();
+      if (!json.success) {
+        throw new Error(json.error || 'Gagal mengubah kata sandi Nakes.');
+      }
+
+      // Update session nakes di localStorage
+      try {
+        const nakesSess = JSON.parse(localStorage.getItem('neura_nakes_session') || '{}');
+        nakesSess.password = newPassword;
+        localStorage.setItem('neura_nakes_session', JSON.stringify(nakesSess));
+      } catch (e) { }
+
+      // Simpan kata sandi baru ke Firestore collection 'nakes'
+      if (window.firebase && window.firebase.firestore) {
+        try {
+          const db = window.firebase.firestore();
+          const nakesDocId = user?.uid || user?.id || (currentEmail ? currentEmail.replace(/[^a-zA-Z0-9_-]/g, '_') : 'nakes_current');
+          await db.collection('nakes').doc(nakesDocId).set({
+            password: newPassword,
+            passwordUpdatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (fsErr) {
+          console.warn('[Firestore Nakes Password Sync Warning]:', fsErr);
         }
-      } catch (fbErr) {
-        if (fbErr.code === 'auth/wrong-password') {
-          throw new Error('Kata sandi saat ini yang Anda masukkan salah.');
-        } else if (fbErr.code === 'auth/weak-password') {
-          throw new Error('Kata sandi terlalu lemah. Gunakan kombinasi karakter yang lebih kuat.');
-        } else {
-          console.warn('[Firebase Auth updatePassword warning]:', fbErr);
+      }
+
+      // Refresh tabel nakes admin jika sedang aktif
+      if (typeof fetchAndRenderNakesTable === 'function') {
+        fetchAndRenderNakesTable();
+      }
+
+    } else {
+      // 2. Coba via Firebase Auth untuk pengguna biasa
+      if (window.NeuraFirebase && window.NeuraFirebase.auth) {
+        try {
+          const auth = typeof window.NeuraFirebase.auth === 'function' ? window.NeuraFirebase.auth() : window.NeuraFirebase.auth;
+          const currentUser = auth ? auth.currentUser : null;
+
+          if (currentUser && currentUser.email) {
+            // Re-authenticate dulu dengan credential kata sandi lama
+            if (window.firebase && window.firebase.auth && window.firebase.auth.EmailAuthProvider) {
+              const credential = window.firebase.auth.EmailAuthProvider.credential(currentUser.email, oldPassword);
+              await currentUser.reauthenticateWithCredential(credential);
+            }
+            // Perbarui kata sandi di Firebase
+            await currentUser.updatePassword(newPassword);
+          }
+        } catch (fbErr) {
+          if (fbErr.code === 'auth/wrong-password') {
+            throw new Error('Kata sandi saat ini yang Anda masukkan salah.');
+          } else if (fbErr.code === 'auth/weak-password') {
+            throw new Error('Kata sandi terlalu lemah. Gunakan kombinasi karakter yang lebih kuat.');
+          } else {
+            console.warn('[Firebase Auth updatePassword warning]:', fbErr);
+          }
         }
       }
     }
 
-    // 2. Simpan fallback/credential lokal jika demo mode
+    // Simpan metadata waktu update sandi
     localStorage.setItem('neura_password_last_updated', new Date().toISOString());
 
     if (typeof showToast === 'function') {
-      showToast('Kata sandi akun Anda berhasil diperbarui dengan aman!', 'success');
+      showToast('Kata sandi akun Anda berhasil diperbarui dan disinkronkan ke server!', 'success');
     }
 
     document.getElementById('form-edit-password')?.reset();

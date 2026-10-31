@@ -47,6 +47,25 @@ def api_admin_emails():
     })
 
 
+@admin_auth_bp.route("/all-admins", methods=["GET"])
+def api_admin_all():
+    """Mengembalikan seluruh daftar akun admin terdaftar (beserta deskripsi & real_emails)."""
+    from core.admin_config import ADMIN_ACCOUNTS
+    admins_list = []
+    for email_addr, data in ADMIN_ACCOUNTS.items():
+        admins_list.append({
+            "id": email_addr.replace("@", "_at_").replace(".", "_"),
+            "custom_email": email_addr,
+            "name": data.get("name", "Administrator"),
+            "role": data.get("role", "Admin"),
+            "description": data.get("description", ""),
+            "real_emails": data.get("real_emails", []),
+            "created_at": "2024-01-01T00:00:00Z"
+        })
+    return jsonify({"success": True, "admins": admins_list, "total": len(admins_list)})
+
+
+
 @admin_auth_bp.route("/check-email", methods=["POST"])
 def api_admin_check_email():
     """

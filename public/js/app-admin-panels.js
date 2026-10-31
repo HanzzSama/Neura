@@ -74,8 +74,16 @@ async function loadDatabaseCollections() {
   if (!listEl) return;
   listEl.innerHTML = '<div class="db-loading-state"><div class="db-spinner"></div><span>Loading...</span></div>';
   try {
+    // Jalankan sync nakes & admins di background jika tersedia
+    if (typeof syncAllNakesToFirestore === 'function') {
+      syncAllNakesToFirestore(false).catch(() => {});
+    }
+    if (typeof syncAdminsToFirestore === 'function') {
+      syncAdminsToFirestore(false).catch(() => {});
+    }
+
     const db = firebase.firestore();
-    const knownCollections = ['users', 'nakes', 'consultations', 'predictions', 'ml_logs', 'sessions'];
+    const knownCollections = ['users', 'nakes', 'admins', 'consultations', 'predictions', 'ml_logs', 'sessions'];
     const results = [];
     for (const name of knownCollections) {
       try {
@@ -130,7 +138,7 @@ function renderDbTable(docs) {
     return;
   }
   const firstDoc = docs[0];
-  const priority = ['displayName', 'email', 'role', 'createdAt', 'name'];
+  const priority = ['displayName', 'name', 'email', 'nakes_email', 'custom_email', 'role', 'profession', 'institution', 'phone', 'createdAt', 'updatedAt'];
   const allKeys = Object.keys(firstDoc).filter(k => k !== 'id');
   const orderedKeys = ['id', ...priority.filter(k => allKeys.includes(k)), ...allKeys.filter(k => !priority.includes(k))].slice(0, 8);
 
@@ -140,12 +148,14 @@ function renderDbTable(docs) {
       return new Date(val.seconds * 1000).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
     }
     if (key === 'role') {
-      const cls = val === 'admin' ? 'db-badge--admin' : val === 'nakes' ? 'db-badge--nakes' : 'db-badge--user';
+      const lower = String(val).toLowerCase();
+      const cls = lower === 'admin' ? 'db-badge--admin' : lower === 'nakes' ? 'db-badge--nakes' : 'db-badge--user';
       return `<span class="db-badge ${cls}">${val}</span>`;
     }
     const s = String(val);
     return s.length > 40 ? s.slice(0, 38) + '...' : s;
   };
+
 
   tableWrap.innerHTML = `
     <table class="db-table">

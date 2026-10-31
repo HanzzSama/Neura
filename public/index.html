@@ -1699,6 +1699,10 @@
             </div>
           </div>
           <div class="admin-room-header-actions">
+            <button class="admin-room-action-btn" onclick="syncAllNakesToFirestore(true)" title="Sinkronkan Seluruh Data Nakes & Admin ke Cloud Firestore">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              <span>Sync Firestore</span>
+            </button>
             <button class="admin-room-action-btn" onclick="fetchAndRenderNakesTable()" title="Muat Ulang Data">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
               <span>Refresh</span>
@@ -1707,6 +1711,7 @@
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
+
         </div>
 
         <div class="nakes-admin-tabs-bar">
@@ -2373,6 +2378,131 @@
 
       <div class="nakes-modal-body" id="consultation-validation-modal-body">
         <!-- Content dynamically injected by openConsultationValidationModal() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Data Nakes (Admin) -->
+  <div class="modal-overlay" id="edit-nakes-admin-modal" onclick="closeEditNakesAdminModalOnBackdrop(event)">
+    <div class="claude-modal profile-edit-modal-container" style="max-width:650px;">
+      <div class="modal-header profile-edit-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="profile-edit-header-badge" style="background:rgba(217,119,87,0.15);color:var(--accent-terracotta,#D97757);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="profile-edit-subtitle-tag">
+              <span>ADMINISTRATOR</span> &bull; <span id="edit-nakes-modal-id-badge">NKS-XXXX-XXX</span>
+            </div>
+            <h3 class="modal-title" style="font-size:17px;margin:0;font-weight:700;">Edit Data Nakes &amp; Kata Sandi</h3>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeEditNakesAdminModal()" title="Tutup Modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="profile-edit-tab-content" style="display:block;padding:20px;">
+        <form id="edit-nakes-admin-form" onsubmit="handleEditNakesAdminSubmit(event)">
+          <input type="hidden" id="edit-nakes-hidden-id">
+          
+          <div class="nakes-form-grid" style="gap:14px;">
+            <!-- Nama Lengkap & Gelar -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-name">Nama Lengkap &amp; Gelar Medis <span class="nakes-required">*</span></label>
+              <input type="text" id="edit-nakes-name" required placeholder="Contoh: dr. Citra Anindita, Sp.N">
+            </div>
+
+            <!-- Profesi / Spesialisasi -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-profession">Profesi / Spesialisasi Klinis</label>
+              <select id="edit-nakes-profession">
+                <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi (Sp.N)</option>
+                <option value="Dokter Spesialis Kedokteran Jiwa (Sp.KJ)">Dokter Spesialis Kedokteran Jiwa (Sp.KJ)</option>
+                <option value="Dokter Umum (Pemeriksa Klinis)">Dokter Umum (Pemeriksa Klinis)</option>
+                <option value="Perawat Geriatri Klinis (Ners)">Perawat Geriatri Klinis (Ners)</option>
+                <option value="Psikolog Klinis Neuropsikologi">Psikolog Klinis Neuropsikologi</option>
+              </select>
+            </div>
+
+            <!-- Nomor STR -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-str">Nomor STR Resmi</label>
+              <input type="text" id="edit-nakes-str" placeholder="Contoh: 31.2.1.100.1.20.123456">
+            </div>
+
+            <!-- Nomor SIP -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-sip">Nomor SIP</label>
+              <input type="text" id="edit-nakes-sip" placeholder="Contoh: 503/SIP/123/Dinkes/2026">
+            </div>
+
+            <!-- Instansi / Faskes -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-institution">Instansi / Rumah Sakit</label>
+              <input type="text" id="edit-nakes-institution" placeholder="Contoh: RSUP Dr. Sardjito">
+            </div>
+
+            <!-- Nomor Telepon -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-phone">Nomor Telepon / WhatsApp</label>
+              <input type="tel" id="edit-nakes-phone" placeholder="Contoh: 081223344556">
+            </div>
+
+            <!-- Email Pribadi Asli -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-real-email">Email Pribadi Asli <span class="nakes-required">*</span></label>
+              <input type="email" id="edit-nakes-real-email" required placeholder="Contoh: nakes.pribadi@gmail.com">
+            </div>
+
+            <!-- Email Nakes Resmi (@neura.ns.id) -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-email">Email Nakes Resmi (@neura.ns.id)</label>
+              <input type="email" id="edit-nakes-email" readonly style="opacity:0.75;cursor:not-allowed;">
+            </div>
+
+            <!-- Kata Sandi Login (Dapat diubah oleh Admin) -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-password">Kata Sandi Login Nakes <span class="nakes-required">*</span></label>
+              <div style="display:flex;gap:6px;">
+                <input type="text" id="edit-nakes-password" required minlength="6" placeholder="Contoh: nks2026001" style="font-family:monospace;">
+                <button type="button" class="profile-btn-secondary" onclick="generateRandomNakesPwd()" style="white-space:nowrap;padding:0 10px;font-size:11px;" title="Reset ke sandi acak">
+                  Reset Sandi
+                </button>
+              </div>
+              <span class="nakes-field-hint">Kata sandi ini digunakan nakes untuk login di halaman utama.</span>
+            </div>
+
+            <!-- Status Verifikasi -->
+            <div class="nakes-form-field">
+              <label for="edit-nakes-status">Status Akreditasi &amp; Izin</label>
+              <select id="edit-nakes-status">
+                <option value="Terverifikasi KKI">Terverifikasi KKI</option>
+                <option value="Terverifikasi Kemenkes">Terverifikasi Kemenkes</option>
+                <option value="Dalam Tinjauan">Dalam Tinjauan</option>
+                <option value="Nonaktif">Nonaktif</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="profile-form-actions-footer" style="margin-top:20px;">
+            <button type="button" class="profile-btn-secondary" onclick="closeEditNakesAdminModal()">
+              Batal
+            </button>
+            <button type="submit" class="profile-btn-primary" id="btn-save-edit-nakes">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Simpan Perubahan Nakes</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

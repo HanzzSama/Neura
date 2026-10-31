@@ -155,6 +155,13 @@ async function fetchAndRenderNakesTable() {
 
   if (counter) counter.textContent = _nakesDirectoryCache.length;
   renderNakesTableRows(_nakesDirectoryCache);
+
+  // Otomatis sinkronkan cache data nakes ke Firestore
+  setTimeout(() => {
+    if (typeof syncAllNakesToFirestore === 'function') {
+      syncAllNakesToFirestore(false);
+    }
+  }, 500);
 }
 window.fetchAndRenderNakesTable = fetchAndRenderNakesTable;
 
@@ -226,13 +233,21 @@ function renderNakesTableRows(list) {
             <span>${escapeHtml(item.status || 'Terverifikasi')}</span>
           </span>
         </td>
-        <td style="text-align:center;">
-          <button class="nakes-del-btn" onclick="deleteNakesAdmin('${escapeHtml(item.id)}', '${escapeHtml(item.name)}')" title="Hapus Data Nakes">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-          </button>
+        <td style="text-align:center;white-space:nowrap;">
+          <div style="display:inline-flex;gap:6px;align-items:center;">
+            <button class="nakes-edit-btn" onclick="openEditNakesAdminModal('${escapeHtml(item.id)}')" title="Edit Data Nakes & Kata Sandi">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button class="nakes-del-btn" onclick="deleteNakesAdmin('${escapeHtml(item.id)}', '${escapeHtml(item.name)}')" title="Hapus Data Nakes">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -338,6 +353,23 @@ async function handleNakesFormSubmit(event) {
       document.getElementById('nakes-create-form')?.reset();
       handleNakesNameOrEmailInput();
 
+      // Sinkronkan data nakes baru ke Firestore collection 'nakes'
+      if (window.firebase && window.firebase.firestore) {
+        try {
+          const db = window.firebase.firestore();
+          const docId = data.data?.id || payload.id;
+          await db.collection('nakes').doc(docId).set({
+            ...payload,
+            id: docId,
+            password: data.data?.password || payload.password,
+            role: 'Nakes',
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (fsErr) {
+          console.warn('[Firestore Nakes Sync Error]:', fsErr);
+        }
+      }
+
       // Switch ke view table dan reload data
       switchNakesAdminView('table');
       await fetchAndRenderNakesTable();
@@ -372,6 +404,175 @@ async function handleNakesFormSubmit(event) {
 }
 window.handleNakesFormSubmit = handleNakesFormSubmit;
 
+// ==========================================================================
+// Edit Nakes Modal & Action Handlers (Admin Controller)
+// ==========================================================================
+function openEditNakesAdminModal(id) {
+  const item = _nakesDirectoryCache.find(it => it.id === id);
+  if (!item) {
+    if (typeof showToast === 'function') showToast('Data nakes tidak ditemukan.', 'warning');
+    return;
+  }
+
+  const modal = document.getElementById('edit-nakes-admin-modal');
+  if (!modal) return;
+
+  const idBadge = document.getElementById('edit-nakes-modal-id-badge');
+  const hiddenId = document.getElementById('edit-nakes-hidden-id');
+  const nameInput = document.getElementById('edit-nakes-name');
+  const profSelect = document.getElementById('edit-nakes-profession');
+  const strInput = document.getElementById('edit-nakes-str');
+  const sipInput = document.getElementById('edit-nakes-sip');
+  const instInput = document.getElementById('edit-nakes-institution');
+  const phoneInput = document.getElementById('edit-nakes-phone');
+  const realEmailInput = document.getElementById('edit-nakes-real-email');
+  const nakesEmailInput = document.getElementById('edit-nakes-email');
+  const pwdInput = document.getElementById('edit-nakes-password');
+  const statusSelect = document.getElementById('edit-nakes-status');
+
+  if (idBadge) idBadge.textContent = item.id || 'NKS';
+  if (hiddenId) hiddenId.value = item.id || '';
+  if (nameInput) nameInput.value = item.name || '';
+  if (profSelect) profSelect.value = item.profession || 'Dokter Spesialis Neurologi (Sp.N)';
+  if (strInput) strInput.value = item.str_number || '';
+  if (sipInput) sipInput.value = item.sip_number || '';
+  if (instInput) instInput.value = item.institution || '';
+  if (phoneInput) phoneInput.value = item.phone || '';
+  if (realEmailInput) realEmailInput.value = item.real_email || '';
+  if (nakesEmailInput) nakesEmailInput.value = item.nakes_email || '';
+  if (pwdInput) pwdInput.value = item.password || '';
+  if (statusSelect) statusSelect.value = item.status || 'Terverifikasi KKI';
+
+  modal.classList.add('open');
+}
+window.openEditNakesAdminModal = openEditNakesAdminModal;
+
+function closeEditNakesAdminModal() {
+  const modal = document.getElementById('edit-nakes-admin-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeEditNakesAdminModal = closeEditNakesAdminModal;
+
+function closeEditNakesAdminModalOnBackdrop(e) {
+  if (e && e.target && e.target.id === 'edit-nakes-admin-modal') {
+    closeEditNakesAdminModal();
+  }
+}
+window.closeEditNakesAdminModalOnBackdrop = closeEditNakesAdminModalOnBackdrop;
+
+function generateRandomNakesPwd() {
+  const hiddenId = document.getElementById('edit-nakes-hidden-id');
+  const pwdInput = document.getElementById('edit-nakes-password');
+  if (!pwdInput) return;
+  const parts = (hiddenId?.value || 'NKS-2026-001').split('-');
+  const year = parts[1] || new Date().getFullYear();
+  const num = parts[2] || Math.floor(Math.random() * 900 + 100);
+  pwdInput.value = `nks${year}${num}`;
+  if (typeof showToast === 'function') {
+    showToast(`Kata sandi di-reset ke format default: ${pwdInput.value}`, 'info');
+  }
+}
+window.generateRandomNakesPwd = generateRandomNakesPwd;
+
+async function handleEditNakesAdminSubmit(event) {
+  if (event) event.preventDefault();
+
+  const id = (document.getElementById('edit-nakes-hidden-id')?.value || '').trim();
+  if (!id) return;
+
+  const name = (document.getElementById('edit-nakes-name')?.value || '').trim();
+  const profession = document.getElementById('edit-nakes-profession')?.value || '';
+  const strNumber = (document.getElementById('edit-nakes-str')?.value || '').trim();
+  const sipNumber = (document.getElementById('edit-nakes-sip')?.value || '').trim();
+  const institution = (document.getElementById('edit-nakes-institution')?.value || '').trim();
+  const phone = (document.getElementById('edit-nakes-phone')?.value || '').trim();
+  const realEmail = (document.getElementById('edit-nakes-real-email')?.value || '').trim().toLowerCase();
+  const nakesEmail = (document.getElementById('edit-nakes-email')?.value || '').trim().toLowerCase();
+  const password = (document.getElementById('edit-nakes-password')?.value || '').trim();
+  const status = document.getElementById('edit-nakes-status')?.value || 'Terverifikasi KKI';
+
+  if (!name) {
+    if (typeof showToast === 'function') showToast('Nama lengkap nakes wajib diisi.', 'warning');
+    return;
+  }
+  if (!password || password.length < 6) {
+    if (typeof showToast === 'function') showToast('Kata sandi nakes minimal 6 karakter.', 'warning');
+    return;
+  }
+
+  const payload = {
+    name,
+    profession,
+    str_number: strNumber,
+    sip_number: sipNumber,
+    institution,
+    phone,
+    real_email: realEmail,
+    nakes_email: nakesEmail,
+    password,
+    status
+  };
+
+  const saveBtn = document.getElementById('btn-save-edit-nakes');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = `<span>Menyimpan Perubahan...</span>`;
+  }
+
+  try {
+    // 1. Kirim update ke endpoint backend
+    const res = await fetch(`/api/admin/nakes/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Gagal menyimpan perubahan nakes ke server.');
+    }
+
+    // 2. Simpan juga ke Cloud Firestore (collection 'nakes')
+    if (window.firebase && window.firebase.firestore) {
+      try {
+        const db = window.firebase.firestore();
+        await db.collection('nakes').doc(id).set({
+          id,
+          ...payload,
+          role: 'Nakes',
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (fsErr) {
+        console.warn('[Firestore Nakes Edit Sync Warning]:', fsErr);
+      }
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(`Data nakes ${name} berhasil diperbarui dan disinkronkan ke server & Firestore!`, 'success');
+    }
+
+    closeEditNakesAdminModal();
+    await fetchAndRenderNakesTable();
+
+  } catch (err) {
+    console.error('Error editing nakes:', err);
+    if (typeof showToast === 'function') {
+      showToast(err.message || 'Gagal memperbarui data nakes.', 'error');
+    }
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Simpan Perubahan Nakes</span>
+      `;
+    }
+  }
+}
+window.handleEditNakesAdminSubmit = handleEditNakesAdminSubmit;
+
 async function deleteNakesAdmin(id, name) {
   if (!confirm(`Apakah Anda yakin ingin menghapus data tenaga kesehatan ${name || id}?`)) {
     return;
@@ -385,6 +586,16 @@ async function deleteNakesAdmin(id, name) {
     if (res.ok && data.success) {
       if (typeof showToast === 'function') {
         showToast(`Data nakes ${name || id} berhasil dihapus.`, 'info');
+      }
+
+      // Hapus juga dari Cloud Firestore
+      if (window.firebase && window.firebase.firestore) {
+        try {
+          const db = window.firebase.firestore();
+          await db.collection('nakes').doc(id).delete();
+        } catch (fsErr) {
+          console.warn('[Firestore Nakes Delete Warning]:', fsErr);
+        }
       }
     } else {
       if (typeof showToast === 'function') {
@@ -403,6 +614,88 @@ async function deleteNakesAdmin(id, name) {
   await fetchAndRenderNakesTable();
 }
 window.deleteNakesAdmin = deleteNakesAdmin;
+
+/**
+ * Sinkronisasi Seluruh Direktori Nakes & Akun Admin ke Cloud Firestore
+ */
+async function syncAllNakesToFirestore(showFeedback = false) {
+  if (!window.firebase || !window.firebase.firestore) {
+    if (showFeedback && typeof showToast === 'function') {
+      showToast('Firebase Firestore belum siap atau belum diinisialisasi.', 'warning');
+    }
+    return;
+  }
+
+  try {
+    const db = window.firebase.firestore();
+
+    // 1. Sinkronkan seluruh data nakes
+    if (_nakesDirectoryCache && _nakesDirectoryCache.length > 0) {
+      const batch = db.batch();
+      _nakesDirectoryCache.forEach(item => {
+        if (!item.id) return;
+        const ref = db.collection('nakes').doc(item.id);
+        batch.set(ref, {
+          id: item.id,
+          name: item.name || '',
+          profession: item.profession || '',
+          str_number: item.str_number || '',
+          sip_number: item.sip_number || '',
+          institution: item.institution || '',
+          phone: item.phone || '',
+          real_email: item.real_email || '',
+          nakes_email: item.nakes_email || '',
+          password: item.password || '',
+          status: item.status || 'Terverifikasi',
+          role: 'Nakes',
+          syncedAt: new Date().toISOString()
+        }, { merge: true });
+      });
+      await batch.commit();
+    }
+
+    // 2. Sinkronkan seluruh akun Admin ke collection 'admins'
+    await syncAdminsToFirestore(false);
+
+    if (showFeedback && typeof showToast === 'function') {
+      showToast(`Sinkronisasi Firestore berhasil! ${_nakesDirectoryCache.length} data nakes & seluruh akun admin telah tersimpan.`, 'success');
+    }
+  } catch (err) {
+    console.warn('[Firestore Batch Sync Error]:', err);
+    if (showFeedback && typeof showToast === 'function') {
+      showToast('Gagal sinkronisasi ke Firestore: ' + (err.message || err), 'error');
+    }
+  }
+}
+window.syncAllNakesToFirestore = syncAllNakesToFirestore;
+
+/**
+ * Sinkronisasi seluruh akun Administrator Neura AI ke Firestore collection 'admins'
+ */
+async function syncAdminsToFirestore(showFeedback = false) {
+  if (!window.firebase || !window.firebase.firestore) return;
+  try {
+    const res = await fetch('/api/admin/all-admins');
+    if (!res.ok) return;
+    const json = await res.json();
+    if (!json.success || !Array.isArray(json.admins)) return;
+
+    const db = window.firebase.firestore();
+    const batch = db.batch();
+    json.admins.forEach(adm => {
+      const docId = adm.id || (adm.custom_email ? adm.custom_email.replace(/[^a-zA-Z0-9_-]/g, '_') : 'admin_default');
+      const ref = db.collection('admins').doc(docId);
+      batch.set(ref, {
+        ...adm,
+        syncedAt: new Date().toISOString()
+      }, { merge: true });
+    });
+    await batch.commit();
+  } catch (err) {
+    console.warn('[Firestore Admins Sync Warning]:', err);
+  }
+}
+window.syncAdminsToFirestore = syncAdminsToFirestore;
 
 function copyNakesEmail(email) {
   if (!email) return;

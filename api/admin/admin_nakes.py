@@ -130,6 +130,47 @@ def api_create_nakes():
     }), 201
 
 
+@admin_nakes_bp.route("/nakes/<nakes_id>", methods=["PUT", "PATCH"])
+def api_update_nakes(nakes_id):
+    """
+    Memperbarui data tenaga kesehatan profesional oleh Administrator.
+    Mendukung pengubahan nama, profesi, STR, SIP, faskes, email, kata sandi, dan status.
+    """
+    body = request.get_json(silent=True) or {}
+    items = _load_nakes_db()
+    matched = None
+    for item in items:
+        if item.get("id") == nakes_id:
+            matched = item
+            break
+
+    if not matched:
+        return jsonify({"success": False, "error": f"Data nakes {nakes_id} tidak ditemukan."}), 404
+
+    # Update field yang diberikan
+    fields = [
+        "name", "profession", "str_number", "sip_number",
+        "institution", "phone", "real_email", "nakes_email",
+        "password", "status", "bio"
+    ]
+    for key in fields:
+        if key in body and body[key] is not None:
+            val = str(body[key]).strip()
+            if key in ["real_email", "nakes_email"]:
+                val = val.lower()
+            matched[key] = val
+
+    matched["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    _save_nakes_db(items)
+    logger.info(f"[Admin Nakes] Nakes {nakes_id} ({matched.get('name')}) berhasil diperbarui oleh Admin.")
+
+    return jsonify({
+        "success": True,
+        "message": f"Data nakes {nakes_id} ({matched.get('name')}) berhasil diperbarui.",
+        "data": matched
+    })
+
+
 @admin_nakes_bp.route("/nakes/<nakes_id>", methods=["DELETE"])
 def api_delete_nakes(nakes_id):
     """Menghapus data tenaga kesehatan berdasarkan ID."""
@@ -142,3 +183,4 @@ def api_delete_nakes(nakes_id):
 
     _save_nakes_db(items)
     return jsonify({"success": True, "message": f"Data nakes {nakes_id} berhasil dihapus."})
+

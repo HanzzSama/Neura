@@ -7421,6 +7421,25 @@ body.reduce-motion *::after {
   background: rgba(239, 68, 68, 0.15);
 }
 
+.nakes-edit-btn {
+  background: transparent;
+  border: 1px solid rgba(217, 119, 87, 0.35);
+  color: var(--accent-terracotta, #D97757);
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nakes-edit-btn:hover {
+  background: rgba(217, 119, 87, 0.15);
+  border-color: var(--accent-terracotta, #D97757);
+}
+
+
 /* Password cell with masked display + eye toggle */
 .nakes-pwd-cell {
   display: inline-flex;
