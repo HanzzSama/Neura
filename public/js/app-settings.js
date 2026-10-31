@@ -1094,59 +1094,45 @@ function switchEditProfileTab(tabName) {
   const tabNavUpdate = document.getElementById('tab-nav-update');
   const tabNavSec = document.getElementById('tab-nav-security');
 
-  if (tabName === 'security' && !isAdmin) {
-    if (panelProfile) panelProfile.style.display = 'none';
-    if (panelUpdate) panelUpdate.style.display = 'none';
-    if (panelSec) panelSec.style.display = 'block';
+  const isSecurity = tabName === 'security' && !isAdmin;
+  const isUpdate = tabName === 'update';
+  const isProfile = !isSecurity && !isUpdate;
 
-    if (tabNavProfile) tabNavProfile.classList.remove('active');
-    if (tabNavUpdate) tabNavUpdate.classList.remove('active');
-    if (tabNavSec) tabNavSec.classList.add('active');
+  // Active navigation tab indicators
+  if (tabNavProfile) tabNavProfile.classList.toggle('active', isProfile);
+  if (tabNavUpdate) tabNavUpdate.classList.toggle('active', isUpdate);
+  if (tabNavSec) tabNavSec.classList.toggle('active', isSecurity);
 
-    if (modalCard) {
-      modalCard.classList.remove('mode-preview', 'mode-update');
-      modalCard.classList.add('mode-security');
-    }
-    if (bannerContainer) {
-      bannerContainer.classList.remove('is-preview');
-      bannerContainer.classList.add('is-compact');
-    }
-  } else if (tabName === 'update') {
-    if (panelProfile) panelProfile.style.display = 'none';
-    if (panelUpdate) panelUpdate.style.display = 'block';
-    if (panelSec) panelSec.style.display = 'none';
-
-    if (tabNavProfile) tabNavProfile.classList.remove('active');
-    if (tabNavUpdate) tabNavUpdate.classList.add('active');
-    if (tabNavSec) tabNavSec.classList.remove('active');
-
-    if (modalCard) {
-      modalCard.classList.remove('mode-preview', 'mode-security');
-      modalCard.classList.add('mode-update');
-    }
-    if (bannerContainer) {
-      bannerContainer.classList.remove('is-preview');
-      bannerContainer.classList.add('is-compact');
-    }
-  } else {
-    // Default: 'profile' (preview view)
-    if (panelProfile) panelProfile.style.display = 'block';
-    if (panelUpdate) panelUpdate.style.display = 'none';
-    if (panelSec) panelSec.style.display = 'none';
-
-    if (tabNavProfile) tabNavProfile.classList.add('active');
-    if (tabNavUpdate) tabNavUpdate.classList.remove('active');
-    if (tabNavSec) tabNavSec.classList.remove('active');
-
-    if (modalCard) {
-      modalCard.classList.add('mode-preview');
-      modalCard.classList.remove('mode-update', 'mode-security');
-    }
-    if (bannerContainer) {
-      bannerContainer.classList.add('is-preview');
-      bannerContainer.classList.remove('is-compact');
-    }
+  // Toggle modal card and banner sizing smoothly
+  if (modalCard) {
+    modalCard.classList.toggle('mode-preview', isProfile);
+    modalCard.classList.toggle('mode-update', isUpdate);
+    modalCard.classList.toggle('mode-security', isSecurity);
   }
+  if (bannerContainer) {
+    bannerContainer.classList.toggle('is-preview', isProfile);
+    bannerContainer.classList.toggle('is-compact', !isProfile);
+  }
+
+  // Smooth panel fade-in trigger
+  const panels = [
+    { el: panelProfile, active: isProfile },
+    { el: panelUpdate, active: isUpdate },
+    { el: panelSec, active: isSecurity }
+  ];
+
+  panels.forEach(p => {
+    if (!p.el) return;
+    if (p.active) {
+      p.el.style.display = 'block';
+      p.el.classList.remove('panel-fade-in');
+      void p.el.offsetWidth; // Force reflow so animation always triggers smoothly
+      p.el.classList.add('panel-fade-in');
+    } else {
+      p.el.style.display = 'none';
+      p.el.classList.remove('panel-fade-in');
+    }
+  });
 }
 window.switchEditProfileTab = switchEditProfileTab;
 
