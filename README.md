@@ -18,7 +18,7 @@
 
 ---
 
-## 📋 Daftar Isi
+## 📋 Daftar Isi Project
 
 - [Tentang Platform](#-tentang-platform)
 - [Fitur Utama](#-fitur-utama)
@@ -48,7 +48,7 @@
 
 ## 🎯 Tentang Platform
 
-**Neura AI** (Codename: *Iris*, v1.95.0 Beta) adalah platform kecerdasan buatan klinis yang dirancang khusus untuk mendukung evaluasi dini risiko penyakit Alzheimer. Platform ini mengintegrasikan model *gradient boosting* XGBoost yang terlatih pada 2.149 rekam medis dengan **32 biomarker multimodal**, mencapai akurasi prediksi **94.4%** dan ROC-AUC **0.933**.
+**Neura AI** (Codename: _Iris_, v1.95.0 Beta) adalah platform kecerdasan buatan klinis yang dirancang khusus untuk mendukung evaluasi dini risiko penyakit Alzheimer. Platform ini mengintegrasikan model _gradient boosting_ XGBoost yang terlatih pada 2.149 rekam medis dengan **32 biomarker multimodal**, mencapai akurasi prediksi **94.4%** dan ROC-AUC **0.933**.
 
 Neura AI bukan sekadar aplikasi prediksi — ia merupakan ekosistem platform lengkap yang mencakup:
 
@@ -67,24 +67,24 @@ Neura AI bukan sekadar aplikasi prediksi — ia merupakan ekosistem platform len
 
 ### 🤖 Kecerdasan Buatan & Machine Learning
 
-| Fitur | Detail |
-|---|---|
-| **Model Inti** | XGBoost Gradient Boosting v3.x |
-| **Input Features** | 32 biomarker klinis multimodal (MMSE, ADL, biomarker kognitif, faktor gaya hidup) |
-| **Dataset Training** | 2.149 rekam medis (`alzheimers_disease_data.csv`) |
-| **Akurasi** | 94.4% (Test Set) |
-| **F1-Score** | 92.0% |
-| **ROC-AUC** | 0.933 |
-| **Inferensi** | < 1.2 detik per prediksi |
-| **Task** | Binary Classification (Alzheimer Risk: Positive / Negative) |
-| **Training Mode** | Asynchronous thread-safe dengan live progress streaming |
+| Fitur                | Detail                                                                            |
+| -------------------- | --------------------------------------------------------------------------------- |
+| **Model Inti**       | XGBoost Gradient Boosting v3.x                                                    |
+| **Input Features**   | 32 biomarker klinis multimodal (MMSE, ADL, biomarker kognitif, faktor gaya hidup) |
+| **Dataset Training** | 2.149 rekam medis (`alzheimers_disease_data.csv`)                                 |
+| **Akurasi**          | 94.4% (Test Set)                                                                  |
+| **F1-Score**         | 92.0%                                                                             |
+| **ROC-AUC**          | 0.933                                                                             |
+| **Inferensi**        | < 1.2 detik per prediksi                                                          |
+| **Task**             | Binary Classification (Alzheimer Risk: Positive / Negative)                       |
+| **Training Mode**    | Asynchronous thread-safe dengan live progress streaming                           |
 
 ### 🎨 Antarmuka & Desain
 
 - **Landing page editorial** dengan split-layout hero section, parallax cinematic scroll (gambar scale-down + judul bergeser kiri seiring scroll), dan animasi glassmorphism.
-- **Workspace chat** bergaya Claude AI dengan palet *Warm Linen* (`#FAF9F5`) dan aksen *Terracotta* (`#D97757`).
+- **Workspace chat** bergaya Claude AI dengan palet _Warm Linen_ (`#FAF9F5`) dan aksen _Terracotta_ (`#D97757`).
 - **Dynamic Island** notch dengan status model, timer, dan animasi spring physics di atas layar.
-- **Mode tampilan** ganda: Light (*Warm Linen*) dan Dark (*Obsidian*).
+- **Mode tampilan** ganda: Light (_Warm Linen_) dan Dark (_Obsidian_).
 - **Bilingual** (Bahasa Indonesia / English) dengan toggle real-time tanpa reload halaman.
 - **Responsive design** penuh untuk desktop, tablet, dan mobile.
 - **Micro-animations** premium: hover, loading shimmer, scroll-reactive header, transisi halaman.
@@ -94,7 +94,7 @@ Neura AI bukan sekadar aplikasi prediksi — ia merupakan ekosistem platform len
 
 - **Firebase Authentication** untuk registrasi dan login pengguna umum (email/password + OAuth).
 - **Email Verification** dengan link verifikasi kustom HTML yang dikirim via SMTP Gmail.
-- **Admin 2FA OTP** — Admin login menggunakan *email custom* (`@neura.dr.id`), kode OTP 6-digit dikirim ke email asli terdaftar, valid 5 menit, maksimal 5 percobaan.
+- **Admin 2FA OTP** — Admin login menggunakan _email custom_ (`@neura.dr.id`), kode OTP 6-digit dikirim ke email asli terdaftar, valid 5 menit, maksimal 5 percobaan.
 - **Session token** UUID-based server-side untuk validasi sesi admin (berlaku 24 jam).
 - **Auth Guard** proteksi route-level di frontend agar workspace hanya bisa diakses pengguna terautentikasi.
 
@@ -139,6 +139,7 @@ Neura AI bukan sekadar aplikasi prediksi — ia merupakan ekosistem platform len
 ```
 
 **Alur Request:**
+
 ```
 Browser -> Flask server.py -> core/* / app/* -> ML Model / Firebase / LiveKit -> JSON Response
 ```
@@ -147,49 +148,49 @@ Browser -> Flask server.py -> core/* / app/* -> ML Model / Firebase / LiveKit ->
 
 ## 🧩 Komponen Sistem & Arsitektur Detail
 
-Neura AI dirancang secara modular dengan pemisahan tanggung jawab (*separation of concerns*) yang ketat antara antarmuka pengguna, server perantara, logika bisnis, pipeline machine learning, dan integrasi pihak ketiga.
+Neura AI dirancang secara modular dengan pemisahan tanggung jawab (_separation of concerns_) yang ketat antara antarmuka pengguna, server perantara, logika bisnis, pipeline machine learning, dan integrasi pihak ketiga.
 
 ### 1. Komponen Frontend (Client Layer)
 
-| Komponen | File Utama | Deskripsi Mendalam & Mekanisme Kerja |
-|---|---|---|
-| **Hero Parallax Engine** | `public/js/smooth-scroll.js`<br>`public/css/welcome.css` | Menggunakan pustaka Lenis untuk menghasilkan *inertial scroll physics*. Setiap frame `requestAnimationFrame` menghitung rasio scroll vertikal (`scrollProgress = currentScroll / heroHeight`). Rasio ini dikonversi menjadi CSS transform dinamis: Hero Image mengalami *scale down* dari `1.0` ke `0.88` dan `translateY(0px -> 60px)`, sedangkan Hero Title mengalami *shift left* `translateX(0px -> -40px)` dan *scale down* `1.0` ke `0.94`, menciptakan ilusi 3D depth field yang mulus pada 60 FPS tanpa repainting berlebihan. |
-| **Workspace Claude AI Chat** | `public/index.html`<br>`public/js/app.js`<br>`public/css/style.css` | Antarmuka obrolan berestetika tinggi yang meniru Claude AI Anthropic. Terdiri atas *Collapsible Sidebar* dengan riwayat obrolan, *Dynamic Breadcrumbs*, *Main Conversation Viewport* dengan render Markdown dan syntax-highlighted code block, serta *Floating Action Bar* di bagian bawah dengan textarea yang otomatis melebar (*auto-growing*) dan tombol *quick-command pills* (`/status`, `/train`, `/predict`, `/eval`). |
-| **Dynamic Island Top Notch** | `public/index.html`<br>`public/js/app.js` | Kapsul interaktif melayang (*floating island*) di bagian atas layar berbasis spring animation. Berfungsi menampilkan status terkini server dan model (*Ready*, *Training*, *Predicting*), timer aktif pelatihan, dan indikator koneksi WebSocket secara non-intrusif. |
-| **Auth Drawer & 2FA Modal** | `public/welcome.html`<br>`public/js/auth-hero.js`<br>`public/css/auth-hero.css` | Drawer geser samping (*sliding side-drawer*) untuk autentikasi Firebase. Memiliki sistem deteksi cerdas 0ms: saat pengguna mengetik email berakhiran `@neura.dr.id`, input password langsung disembunyikan dan digantikan oleh form verifikasi OTP 6-slot terpisah dengan auto-tab, paste listener, dan countdown timer 5 menit. |
-| **Auth Guard & Route Interceptor** | `public/js/auth-guard.js` | Modul pelindung rute sisi klien. Mengecek status autentikasi Firebase (`onAuthStateChanged`) serta memverifikasi session token admin melalui endpoint `/api/admin/verify-session`. Jika pengguna mencoba mengakses `/app` tanpa sesi valid, sistem secara otomatis mengarahkan kembali (*redirect*) ke `/welcome` dengan notifikasi keamanan. |
-| **Bilingual Internationalization (i18n)** | `public/js/welcome.js`<br>`public/js/app.js` | Modul penerjemahan dinamis Bahasa Indonesia dan English tanpa reload halaman (*DOM attribute replacement* berbasis kamus JSON internal). Status bahasa tersimpan di `localStorage` per peramban pengguna. |
+| Komponen                                  | File Utama                                                                      | Deskripsi Mendalam & Mekanisme Kerja                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hero Parallax Engine**                  | `public/js/smooth-scroll.js`<br>`public/css/welcome.css`                        | Menggunakan pustaka Lenis untuk menghasilkan _inertial scroll physics_. Setiap frame `requestAnimationFrame` menghitung rasio scroll vertikal (`scrollProgress = currentScroll / heroHeight`). Rasio ini dikonversi menjadi CSS transform dinamis: Hero Image mengalami _scale down_ dari `1.0` ke `0.88` dan `translateY(0px -> 60px)`, sedangkan Hero Title mengalami _shift left_ `translateX(0px -> -40px)` dan _scale down_ `1.0` ke `0.94`, menciptakan ilusi 3D depth field yang mulus pada 60 FPS tanpa repainting berlebihan. |
+| **Workspace Claude AI Chat**              | `public/index.html`<br>`public/js/app.js`<br>`public/css/style.css`             | Antarmuka obrolan berestetika tinggi yang meniru Claude AI Anthropic. Terdiri atas _Collapsible Sidebar_ dengan riwayat obrolan, _Dynamic Breadcrumbs_, _Main Conversation Viewport_ dengan render Markdown dan syntax-highlighted code block, serta _Floating Action Bar_ di bagian bawah dengan textarea yang otomatis melebar (_auto-growing_) dan tombol _quick-command pills_ (`/status`, `/train`, `/predict`, `/eval`).                                                                                                         |
+| **Dynamic Island Top Notch**              | `public/index.html`<br>`public/js/app.js`                                       | Kapsul interaktif melayang (_floating island_) di bagian atas layar berbasis spring animation. Berfungsi menampilkan status terkini server dan model (_Ready_, _Training_, _Predicting_), timer aktif pelatihan, dan indikator koneksi WebSocket secara non-intrusif.                                                                                                                                                                                                                                                                  |
+| **Auth Drawer & 2FA Modal**               | `public/welcome.html`<br>`public/js/auth-hero.js`<br>`public/css/auth-hero.css` | Drawer geser samping (_sliding side-drawer_) untuk autentikasi Firebase. Memiliki sistem deteksi cerdas 0ms: saat pengguna mengetik email berakhiran `@neura.dr.id`, input password langsung disembunyikan dan digantikan oleh form verifikasi OTP 6-slot terpisah dengan auto-tab, paste listener, dan countdown timer 5 menit.                                                                                                                                                                                                       |
+| **Auth Guard & Route Interceptor**        | `public/js/auth-guard.js`                                                       | Modul pelindung rute sisi klien. Mengecek status autentikasi Firebase (`onAuthStateChanged`) serta memverifikasi session token admin melalui endpoint `/api/admin/verify-session`. Jika pengguna mencoba mengakses `/app` tanpa sesi valid, sistem secara otomatis mengarahkan kembali (_redirect_) ke `/welcome` dengan notifikasi keamanan.                                                                                                                                                                                          |
+| **Bilingual Internationalization (i18n)** | `public/js/welcome.js`<br>`public/js/app.js`                                    | Modul penerjemahan dinamis Bahasa Indonesia dan English tanpa reload halaman (_DOM attribute replacement_ berbasis kamus JSON internal). Status bahasa tersimpan di `localStorage` per peramban pengguna.                                                                                                                                                                                                                                                                                                                              |
 
 ### 2. Komponen Backend & Server (Service Layer)
 
-| Komponen | File Utama | Deskripsi Mendalam & Mekanisme Kerja |
-|---|---|---|
-| **Flask Dispatcher & REST API** | `server.py` | Web server multi-threaded berbasis Flask 3.0. Menangani routing SPA (Single Page Application), penyajian aset statis dengan cache-busting versioning, manajemen error terpusat (404/500 JSON handler), serta CORS middleware untuk memfasilitasi komunikasi lintas domain yang aman. |
-| **Admin 2FA Security Engine** | `core/admin_config.py`<br>`core/email_sender.py` | Modul keamanan otentikasi lapis kedua khusus admin. Memetakan akun alias virtual (`@neura.dr.id`) ke alamat email asli yang terdaftar di `ADMIN_ACCOUNTS`. Menghasilkan kode OTP 6-digit acak kriptografis via `secrets.SystemRandom`, menyimpannya di memory store dengan batas kedaluwarsa 5 menit (TTL 300 detik), dan membatasi percobaan salah maksimal 5 kali sebelum terkunci. Mengirimkan email HTML berdesain resmi melalui SMTP Gmail (TLS port 587 atau SSL port 465). |
-| **Asynchronous Training Worker** | `server.py`<br>`app/models/neural_network.py` | Mengisolasi proses pelatihan model XGBoost ke dalam background thread (`threading.Thread`). Menggunakan objek `train_progress` yang thread-safe untuk mencatat progres per putaran pelatihan (*round/epoch*), log metrik (loss, akurasi, waktu tersisa), sehingga antarmuka klien dapat mengambil data progres secara real-time via `GET /api/train/progress` tanpa membuat server mengalami *freeze* atau *blocking request*. |
-| **Biomarker Preprocessing & Predictor** | `server.py`<br>`app/models/base_model.py` | Mengonsumsi 32 parameter biomarker klinis pengguna, memverifikasi tipe data dan rentang nilai valid (*Pydantic-like validation*), melakukan imputasi nilai hilang dengan median/modus pelatihan, mentransformasi fitur numerik, dan menyalurkannya ke model XGBoost yang telah dimuat sebelumnya di memori (*pre-warmed model*) untuk menghasilkan probabilitas risiko Alzheimer dan kategori diagnostik dalam tempo < 1.2 detik. |
-| **Chat Intent Matcher** | `features/chat_manager.py`<br>`features/chat_dataset.py` | Mesin pemrosesan teks berbasis pencocokan pola kata kunci (*keyword matching*) dan *fuzzy intent scoring*. Memetakan pesan teks pengguna ke koleksi basis pengetahuan percakapan kesehatan otak, FAQ Alzheimer, dan instruksi perintah sistem. |
-| **Single Source of Truth Metadata** | `about_app.json` | File konfigurasi terpusat yang menyimpan versi aplikasi, codename, spesifikasi model, profil pengembang, tautan legal, dan changelog. Dimuat ulang secara dinamis oleh backend tanpa memerlukan *server reboot* setiap kali ada pembaruan versi. |
+| Komponen                                | File Utama                                               | Deskripsi Mendalam & Mekanisme Kerja                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Flask Dispatcher & REST API**         | `server.py`                                              | Web server multi-threaded berbasis Flask 3.0. Menangani routing SPA (Single Page Application), penyajian aset statis dengan cache-busting versioning, manajemen error terpusat (404/500 JSON handler), serta CORS middleware untuk memfasilitasi komunikasi lintas domain yang aman.                                                                                                                                                                                              |
+| **Admin 2FA Security Engine**           | `core/admin_config.py`<br>`core/email_sender.py`         | Modul keamanan otentikasi lapis kedua khusus admin. Memetakan akun alias virtual (`@neura.dr.id`) ke alamat email asli yang terdaftar di `ADMIN_ACCOUNTS`. Menghasilkan kode OTP 6-digit acak kriptografis via `secrets.SystemRandom`, menyimpannya di memory store dengan batas kedaluwarsa 5 menit (TTL 300 detik), dan membatasi percobaan salah maksimal 5 kali sebelum terkunci. Mengirimkan email HTML berdesain resmi melalui SMTP Gmail (TLS port 587 atau SSL port 465). |
+| **Asynchronous Training Worker**        | `server.py`<br>`app/models/neural_network.py`            | Mengisolasi proses pelatihan model XGBoost ke dalam background thread (`threading.Thread`). Menggunakan objek `train_progress` yang thread-safe untuk mencatat progres per putaran pelatihan (_round/epoch_), log metrik (loss, akurasi, waktu tersisa), sehingga antarmuka klien dapat mengambil data progres secara real-time via `GET /api/train/progress` tanpa membuat server mengalami _freeze_ atau _blocking request_.                                                    |
+| **Biomarker Preprocessing & Predictor** | `server.py`<br>`app/models/base_model.py`                | Mengonsumsi 32 parameter biomarker klinis pengguna, memverifikasi tipe data dan rentang nilai valid (_Pydantic-like validation_), melakukan imputasi nilai hilang dengan median/modus pelatihan, mentransformasi fitur numerik, dan menyalurkannya ke model XGBoost yang telah dimuat sebelumnya di memori (_pre-warmed model_) untuk menghasilkan probabilitas risiko Alzheimer dan kategori diagnostik dalam tempo < 1.2 detik.                                                 |
+| **Chat Intent Matcher**                 | `features/chat_manager.py`<br>`features/chat_dataset.py` | Mesin pemrosesan teks berbasis pencocokan pola kata kunci (_keyword matching_) dan _fuzzy intent scoring_. Memetakan pesan teks pengguna ke koleksi basis pengetahuan percakapan kesehatan otak, FAQ Alzheimer, dan instruksi perintah sistem.                                                                                                                                                                                                                                    |
+| **Single Source of Truth Metadata**     | `about_app.json`                                         | File konfigurasi terpusat yang menyimpan versi aplikasi, codename, spesifikasi model, profil pengembang, tautan legal, dan changelog. Dimuat ulang secara dinamis oleh backend tanpa memerlukan _server reboot_ setiap kali ada pembaruan versi.                                                                                                                                                                                                                                  |
 
 ### 3. Komponen Voice AI Agent (Real-time Audio Layer)
 
-| Komponen | File Utama | Deskripsi Mendalam & Mekanisme Kerja |
-|---|---|---|
-| **LiveKit WebRTC Room Manager** | `voice_agent.py`<br>`server.py` | Menghubungkan browser pengguna ke server LiveKit Cloud melalui WebRTC data dan audio channels. Endpoint `/api/livekit/token` membuat JSON Web Token (JWT) kriptografis yang memberikan izin akses audio dua arah kepada pengguna. |
-| **Voice Activity Detector (VAD)** | `voice_agent.py` | Menggunakan model Silero VAD untuk mendeteksi suara manusia secara real-time dari stream mikrofon pengguna, membedakan jeda bicara alami dengan akhir kalimat untuk mencegah *interruption clipping*. |
-| **Speech-to-Text (STT)** | `voice_agent.py` | Memanfaatkan Deepgram Nova-2 streaming WebSocket API untuk mentranskripsi ucapan bahasa manusia (Bahasa Indonesia / English) menjadi teks dengan latensi ultra-rendah (< 300ms). |
-| **AI Brain & Clinical Reasoner** | `voice_agent.py` | Menggunakan OpenAI `gpt-4o-mini` yang diinstruksikan melalui *system prompt* klinis khusus untuk bertindak sebagai asisten medis Alzheimer: menjelaskan arti skor MMSE, faktor risiko kardiovaskular, dan langkah pencegahan gaya hidup sehat. |
-| **Text-to-Speech (TTS)** | `voice_agent.py` | Mengonversi respons teks AI kembali menjadi aliran audio berkualitas tinggi menggunakan OpenAI TTS (atau Cartesia) dan mengalirkannya ke speaker pengguna via WebRTC. |
+| Komponen                          | File Utama                      | Deskripsi Mendalam & Mekanisme Kerja                                                                                                                                                                                                           |
+| --------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **LiveKit WebRTC Room Manager**   | `voice_agent.py`<br>`server.py` | Menghubungkan browser pengguna ke server LiveKit Cloud melalui WebRTC data dan audio channels. Endpoint `/api/livekit/token` membuat JSON Web Token (JWT) kriptografis yang memberikan izin akses audio dua arah kepada pengguna.              |
+| **Voice Activity Detector (VAD)** | `voice_agent.py`                | Menggunakan model Silero VAD untuk mendeteksi suara manusia secara real-time dari stream mikrofon pengguna, membedakan jeda bicara alami dengan akhir kalimat untuk mencegah _interruption clipping_.                                          |
+| **Speech-to-Text (STT)**          | `voice_agent.py`                | Memanfaatkan Deepgram Nova-2 streaming WebSocket API untuk mentranskripsi ucapan bahasa manusia (Bahasa Indonesia / English) menjadi teks dengan latensi ultra-rendah (< 300ms).                                                               |
+| **AI Brain & Clinical Reasoner**  | `voice_agent.py`                | Menggunakan OpenAI `gpt-4o-mini` yang diinstruksikan melalui _system prompt_ klinis khusus untuk bertindak sebagai asisten medis Alzheimer: menjelaskan arti skor MMSE, faktor risiko kardiovaskular, dan langkah pencegahan gaya hidup sehat. |
+| **Text-to-Speech (TTS)**          | `voice_agent.py`                | Mengonversi respons teks AI kembali menjadi aliran audio berkualitas tinggi menggunakan OpenAI TTS (atau Cartesia) dan mengalirkannya ke speaker pengguna via WebRTC.                                                                          |
 
 ---
 
 ## 📑 Spesifikasi Kebutuhan Sistem (SRS — IEEE 830)
 
-Dokumen Spesifikasi Kebutuhan Perangkat Lunak (*Software Requirements Specification* - SRS) ini disusun mengikuti panduan standar **IEEE 830 / ISO/IEC/IEEE 29148** untuk mendefinisikan seluruh kapabilitas, batasan, dan kriteria penerimaan sistem Neura AI secara formal.
+Dokumen Spesifikasi Kebutuhan Perangkat Lunak (_Software Requirements Specification_ - SRS) ini disusun mengikuti panduan standar **IEEE 830 / ISO/IEC/IEEE 29148** untuk mendefinisikan seluruh kapabilitas, batasan, dan kriteria penerimaan sistem Neura AI secara formal.
 
 ### 1. Karakteristik Pengguna & Stakeholder (User Personas)
 
-Sistem Neura AI melayani tiga kelompok pemangku kepentingan (*stakeholders*) dengan karakteristik dan hak akses yang berbeda:
+Sistem Neura AI melayani tiga kelompok pemangku kepentingan (_stakeholders_) dengan karakteristik dan hak akses yang berbeda:
 
 ```
 +-----------------------------------------------------------------------------+
@@ -206,16 +207,19 @@ Sistem Neura AI melayani tiga kelompok pemangku kepentingan (*stakeholders*) den
 ```
 
 #### A. Pengguna Umum (Pasien / Mandiri)
+
 - **Tingkat Kemahiran Teknis:** Pemula hingga Menengah.
 - **Tujuan Utama:** Melakukan asesmen risiko dini penyakit Alzheimer secara mandiri, memahami gejala penurunan kognitif, dan mendapatkan edukasi gaya hidup sehat melalui antarmuka chat dan suara.
 - **Hak Akses:** Mendaftar akun reguler via Firebase Auth, mengisi profil dasar, melakukan asesmen risiko mandiri, berinteraksi dengan AI chat dan voice agent, serta melihat riwayat prediksi pribadi.
 
 #### B. Tenaga Kesehatan (Nakes / Dokter / Praktisi Medis)
+
 - **Tingkat Kemahiran Teknis:** Menengah.
 - **Tujuan Utama:** Memasukkan parameter 32 biomarker multimodal pasien secara presisi, menganalisis probabilitas risiko klinis, mengevaluasi kontribusi faktor risiko (MMSE, ADL, kolesterol, dsb.), dan mengekspor ringkasan asesmen untuk rekam medis pasien.
 - **Hak Akses:** Akses penuh ke formulir 32 biomarker tingkat lanjut, visualisasi probabilitas top fitur, laporan evaluasi model, dan rekomendasi klinis pendukung.
 
 #### C. Administrator Sistem (System Admin)
+
 - **Tingkat Kemahiran Teknis:** Ahli (Teknisi Medis / Machine Learning Engineer).
 - **Tujuan Utama:** Memelihara stabilitas platform, memantau metrik performa model, melakukan retraining model XGBoost dengan hyperparameter khusus, mengunggah pembaruan dataset, dan mengelola konfigurasi sistem.
 - **Hak Akses:** Login eksklusif melalui domain `@neura.dr.id` dengan verifikasi 2FA OTP, memicu endpoint retraining async (`/api/train`), mengakses metrik evaluasi test set (`/api/evaluate`), dan mengubah konfigurasi global.
@@ -226,20 +230,20 @@ Sistem Neura AI melayani tiga kelompok pemangku kepentingan (*stakeholders*) den
 
 Kebutuhan fungsional mendefinisikan aksi, transformasi data, dan fungsi spesifik yang wajib disediakan oleh sistem Neura AI.
 
-| ID | Nama Kebutuhan | Deskripsi & Spesifikasi Alur | Masukan (Input) | Proses | Keluaran (Output) | Prioritas |
-|---|---|---|---|---|---|---|
-| **FR-01** | Autentikasi Pengguna Reguler | Sistem harus memfasilitasi registrasi dan login pengguna umum menggunakan email dan kata sandi atau penyedia OAuth melalui Firebase Authentication. | Email, password, atau token OAuth | Validasi format email, hashing credential via Firebase Auth, pembuatan record pengguna di Cloud Firestore. | Sesi terautentikasi (JWT Firebase), profil pengguna aktif. | **Tinggi (Mandatori)** |
-| **FR-02** | Verifikasi Email Registrasi | Sistem harus mengirimkan tautan verifikasi email kustom berdesain HTML resmi ke alamat email pengguna baru via SMTP server. | Email pengguna, nama tampilan | Pembuatan token verifikasi Firebase, pengiriman email via SMTP Gmail port 465/587. | Email verifikasi terkirim, status email terverifikasi di halaman `/verify-email`. | **Tinggi (Mandatori)** |
-| **FR-03** | Autentikasi 2FA Khusus Administrator | Sistem harus mendeteksi email administrator beralias `@neura.dr.id`, menyembunyikan kata sandi, menghasilkan kode OTP 6-digit acak kriptografis, dan memvalidasinya sebelum mengizinkan sesi admin. | Email admin (`*@neura.dr.id`), kode OTP 6 digit | Pengecekan daftar `ADMIN_ACCOUNTS`, pembuatan OTP cryptorandom, pengiriman ke email asli, verifikasi kecocokan OTP & batas waktu (TTL 5 menit). | Session UUID Token admin (berlaku 24 jam) di server dan cookie/localStorage. | **Tinggi (Mandatori)** |
-| **FR-04** | Validasi & Sanitasi 32 Biomarker | Sistem harus memvalidasi kelengkapan, tipe data, dan rentang nilai rasional pada 32 biomarker klinis sebelum diteruskan ke model machine learning. | 32 nilai biomarker klinis (skor MMSE 0-30, ADL 0-10, BMI, tekanan darah, dll.) | Pemeriksaan batas minimum/maksimum, normalisasi tipe data numerik, penanganan nilai kosong (*median imputation*). | Objek array fitur ternormalisasi siap inferensi atau pesan error validasi. | **Tinggi (Mandatori)** |
-| **FR-05** | Inferensi Prediksi Risiko Alzheimer | Sistem harus memproses 32 biomarker input menggunakan model XGBoost terlatih untuk menghasilkan probabilitas risiko dan status klasifikasi biner. | Array 32 fitur biomarker terstandarisasi | Eksekusi model XGBoost `predict_proba()` dan `predict()` pada background memory. | Status risiko (*Positif Alzheimer / Negatif Normal*), persentase probabilitas (0-100%), dan faktor biomarker dominan. | **Tinggi (Mandatori)** |
-| **FR-06** | Pelatihan Model Ulang Asinkron (Async Retraining) | Sistem harus menyediakan fasilitas retraining model XGBoost di latar belakang (*asynchronous worker thread*) tanpa memblokir server. | Parameter jumlah epoch/round (default: 10), learning rate, max depth | Pembagian data training-testing 80:20, eksekusi boosting round per round, streaming log progres ke thread-safe variable. | Model checkpoint baru tersimpan di `public/checkpoints/` dan pembaruan metrik real-time via `/api/train/progress`. | **Tinggi (Mandatori)** |
-| **FR-07** | Evaluasi & Pengujian Metrik Model | Sistem harus menyediakan fungsi evaluasi otomatis terhadap performa model pada data pengujian independen. | Dataset uji (`test.csv` atau 20% holdout split) | Penghitungan metrik akurasi, presisi, recall, F1-score, ROC-AUC, dan confusion matrix. | Laporan metrik format JSON tersimpan di `public/reports/` dan ditampilkan di antarmuka web. | **Tinggi (Mandatori)** |
-| **FR-08** | Chatbot Asisten Klinis Interaktif | Sistem harus melayani percakapan teks pengguna seputar gejala Alzheimer, interpretasi hasil prediksi, dan instruksi perintah sistem. | Pesan teks pengguna di textarea | Pencocokan pola kata kunci (*intent matcher*) dan penelusuran basis pengetahuan percakapan `features/chat_dataset.py`. | Respons teks kontekstual dalam hitungan < 500ms beserta saran perintah berikutnya. | **Tinggi (Mandatori)** |
-| **FR-09** | Konsultasi Suara Real-time (Voice AI) | Sistem harus menyediakan sesi panggilan audio dua arah interaktif dengan agen AI cerdas berbasis WebRTC. | Aliran audio mikrofon pengguna | Transkripsi STT via Deepgram, pemrosesan nalar klinis via OpenAI GPT-4o-mini, sintesis audio via TTS, streaming balik via WebRTC. | Respons suara audio real-time dan transkripsi teks percakapan. | **Sedang** |
-| **FR-10** | Parallax Hero & Desain Responsif | Sistem harus menyajikan visual landing page editorial dengan animasi parallax interaktif terhadap scroll pengguna dan dukungan semua ukuran layar. | Interaksi scroll pengguna, dimensi layar | Perhitungan pergeseran posisi dan skala elemen hero secara dinamis via Lenis smooth scroll dan CSS variable. | Tampilan estetis 60 FPS di desktop, tablet, dan ponsel pintar. | **Tinggi (Mandatori)** |
-| **FR-11** | Dukungan Dwibahasa (Bilingual Switcher) | Sistem harus memungkinkan pertukaran bahasa tampilan antara Bahasa Indonesia dan English secara instan tanpa memuat ulang laman. | Klik tombol toggle bahasa (ID / EN) | Penggantian teks DOM berdasarkan kamus terjemahan i18n dan penyimpanan status di `localStorage`. | Seluruh label, tombol, kartu, dan penjelasan berganti bahasa dalam tempo < 100ms. | **Sedang** |
-| **FR-12** | Manajemen Sesi & Route Guarding | Sistem harus memverifikasi hak akses pengguna pada setiap perpindahan halaman dan menolak akses tidak terotorisasi. | Token sesi pengguna di peramban | Interseptor navigasi memeriksa status autentikasi Firebase dan keabsahan token admin di backend. | Izin navigasi ke `/app` atau pengalihan (*redirect*) ke `/welcome` dengan peringatan. | **Tinggi (Mandatori)** |
+| ID        | Nama Kebutuhan                                    | Deskripsi & Spesifikasi Alur                                                                                                                                                                        | Masukan (Input)                                                                | Proses                                                                                                                                          | Keluaran (Output)                                                                                                     | Prioritas              |
+| --------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| **FR-01** | Autentikasi Pengguna Reguler                      | Sistem harus memfasilitasi registrasi dan login pengguna umum menggunakan email dan kata sandi atau penyedia OAuth melalui Firebase Authentication.                                                 | Email, password, atau token OAuth                                              | Validasi format email, hashing credential via Firebase Auth, pembuatan record pengguna di Cloud Firestore.                                      | Sesi terautentikasi (JWT Firebase), profil pengguna aktif.                                                            | **Tinggi (Mandatori)** |
+| **FR-02** | Verifikasi Email Registrasi                       | Sistem harus mengirimkan tautan verifikasi email kustom berdesain HTML resmi ke alamat email pengguna baru via SMTP server.                                                                         | Email pengguna, nama tampilan                                                  | Pembuatan token verifikasi Firebase, pengiriman email via SMTP Gmail port 465/587.                                                              | Email verifikasi terkirim, status email terverifikasi di halaman `/verify-email`.                                     | **Tinggi (Mandatori)** |
+| **FR-03** | Autentikasi 2FA Khusus Administrator              | Sistem harus mendeteksi email administrator beralias `@neura.dr.id`, menyembunyikan kata sandi, menghasilkan kode OTP 6-digit acak kriptografis, dan memvalidasinya sebelum mengizinkan sesi admin. | Email admin (`*@neura.dr.id`), kode OTP 6 digit                                | Pengecekan daftar `ADMIN_ACCOUNTS`, pembuatan OTP cryptorandom, pengiriman ke email asli, verifikasi kecocokan OTP & batas waktu (TTL 5 menit). | Session UUID Token admin (berlaku 24 jam) di server dan cookie/localStorage.                                          | **Tinggi (Mandatori)** |
+| **FR-04** | Validasi & Sanitasi 32 Biomarker                  | Sistem harus memvalidasi kelengkapan, tipe data, dan rentang nilai rasional pada 32 biomarker klinis sebelum diteruskan ke model machine learning.                                                  | 32 nilai biomarker klinis (skor MMSE 0-30, ADL 0-10, BMI, tekanan darah, dll.) | Pemeriksaan batas minimum/maksimum, normalisasi tipe data numerik, penanganan nilai kosong (_median imputation_).                               | Objek array fitur ternormalisasi siap inferensi atau pesan error validasi.                                            | **Tinggi (Mandatori)** |
+| **FR-05** | Inferensi Prediksi Risiko Alzheimer               | Sistem harus memproses 32 biomarker input menggunakan model XGBoost terlatih untuk menghasilkan probabilitas risiko dan status klasifikasi biner.                                                   | Array 32 fitur biomarker terstandarisasi                                       | Eksekusi model XGBoost `predict_proba()` dan `predict()` pada background memory.                                                                | Status risiko (_Positif Alzheimer / Negatif Normal_), persentase probabilitas (0-100%), dan faktor biomarker dominan. | **Tinggi (Mandatori)** |
+| **FR-06** | Pelatihan Model Ulang Asinkron (Async Retraining) | Sistem harus menyediakan fasilitas retraining model XGBoost di latar belakang (_asynchronous worker thread_) tanpa memblokir server.                                                                | Parameter jumlah epoch/round (default: 10), learning rate, max depth           | Pembagian data training-testing 80:20, eksekusi boosting round per round, streaming log progres ke thread-safe variable.                        | Model checkpoint baru tersimpan di `public/checkpoints/` dan pembaruan metrik real-time via `/api/train/progress`.    | **Tinggi (Mandatori)** |
+| **FR-07** | Evaluasi & Pengujian Metrik Model                 | Sistem harus menyediakan fungsi evaluasi otomatis terhadap performa model pada data pengujian independen.                                                                                           | Dataset uji (`test.csv` atau 20% holdout split)                                | Penghitungan metrik akurasi, presisi, recall, F1-score, ROC-AUC, dan confusion matrix.                                                          | Laporan metrik format JSON tersimpan di `public/reports/` dan ditampilkan di antarmuka web.                           | **Tinggi (Mandatori)** |
+| **FR-08** | Chatbot Asisten Klinis Interaktif                 | Sistem harus melayani percakapan teks pengguna seputar gejala Alzheimer, interpretasi hasil prediksi, dan instruksi perintah sistem.                                                                | Pesan teks pengguna di textarea                                                | Pencocokan pola kata kunci (_intent matcher_) dan penelusuran basis pengetahuan percakapan `features/chat_dataset.py`.                          | Respons teks kontekstual dalam hitungan < 500ms beserta saran perintah berikutnya.                                    | **Tinggi (Mandatori)** |
+| **FR-09** | Konsultasi Suara Real-time (Voice AI)             | Sistem harus menyediakan sesi panggilan audio dua arah interaktif dengan agen AI cerdas berbasis WebRTC.                                                                                            | Aliran audio mikrofon pengguna                                                 | Transkripsi STT via Deepgram, pemrosesan nalar klinis via OpenAI GPT-4o-mini, sintesis audio via TTS, streaming balik via WebRTC.               | Respons suara audio real-time dan transkripsi teks percakapan.                                                        | **Sedang**             |
+| **FR-10** | Parallax Hero & Desain Responsif                  | Sistem harus menyajikan visual landing page editorial dengan animasi parallax interaktif terhadap scroll pengguna dan dukungan semua ukuran layar.                                                  | Interaksi scroll pengguna, dimensi layar                                       | Perhitungan pergeseran posisi dan skala elemen hero secara dinamis via Lenis smooth scroll dan CSS variable.                                    | Tampilan estetis 60 FPS di desktop, tablet, dan ponsel pintar.                                                        | **Tinggi (Mandatori)** |
+| **FR-11** | Dukungan Dwibahasa (Bilingual Switcher)           | Sistem harus memungkinkan pertukaran bahasa tampilan antara Bahasa Indonesia dan English secara instan tanpa memuat ulang laman.                                                                    | Klik tombol toggle bahasa (ID / EN)                                            | Penggantian teks DOM berdasarkan kamus terjemahan i18n dan penyimpanan status di `localStorage`.                                                | Seluruh label, tombol, kartu, dan penjelasan berganti bahasa dalam tempo < 100ms.                                     | **Sedang**             |
+| **FR-12** | Manajemen Sesi & Route Guarding                   | Sistem harus memverifikasi hak akses pengguna pada setiap perpindahan halaman dan menolak akses tidak terotorisasi.                                                                                 | Token sesi pengguna di peramban                                                | Interseptor navigasi memeriksa status autentikasi Firebase dan keabsahan token admin di backend.                                                | Izin navigasi ke `/app` atau pengalihan (_redirect_) ke `/welcome` dengan peringatan.                                 | **Tinggi (Mandatori)** |
 
 ---
 
@@ -264,32 +268,40 @@ Kebutuhan non-fungsional mendefinisikan batasan kualitas, keandalan, performa, d
 ```
 
 #### A. Kategori Performa & Latensi (NFR-PERF)
+
 - **NFR-PERF-01 (Inference Latency):** Waktu respon inferensi prediksi risiko Alzheimer pada endpoint `/api/predict` tidak boleh melebihi **1.2 detik** per permintaan pada kondisi beban server normal.
-- **NFR-PERF-02 (Page Load Performance):** Landing page (`welcome.html`) harus mencapai skor *First Contentful Paint (FCP)* di bawah **1.5 detik** dan *Time to Interactive (TTI)* di bawah **2.5 detik** pada koneksi broadband standar.
-- **NFR-PERF-03 (Voice Turnaround Latency):** Rangkaian siklus suara Voice AI (Speech-to-Text $ightarrow$ LLM Reasoning $ightarrow$ Text-to-Speech) tidak boleh melampaui **1.8 detik** latensi kumulatif.
-- **NFR-PERF-04 (Smooth Scrolling):** Animasi parallax hero dan momentum scrolling menggunakan Lenis harus mempertahankan kecepatan refresh minimal **60 FPS** tanpa *jank* atau frame skipping di peramban modern.
+- **NFR-PERF-02 (Page Load Performance):** Landing page (`welcome.html`) harus mencapai skor _First Contentful Paint (FCP)_ di bawah **1.5 detik** dan _Time to Interactive (TTI)_ di bawah **2.5 detik** pada koneksi broadband standar.
+- **NFR-PERF-03 (Voice Turnaround Latency):** Rangkaian siklus suara Voice AI (Speech-to-Text $
+ightarrow$ LLM Reasoning $
+ightarrow$ Text-to-Speech) tidak boleh melampaui **1.8 detik** latensi kumulatif.
+- **NFR-PERF-04 (Smooth Scrolling):** Animasi parallax hero dan momentum scrolling menggunakan Lenis harus mempertahankan kecepatan refresh minimal **60 FPS** tanpa _jank_ atau frame skipping di peramban modern.
 
 #### B. Kategori Keamanan & Privasi Data Medis (NFR-SEC)
+
 - **NFR-SEC-01 (Transport Encryption):** Semua pertukaran data antara browser klien dan server Flask wajib terenkripsi menggunakan protokol HTTPS (TLS 1.2 / TLS 1.3), serta WebSocket terenkripsi (WSS) untuk koneksi WebRTC.
-- **NFR-SEC-02 (OTP Lifecycle & Rate Limiting):** Kode verifikasi OTP 2FA Administrator harus kedaluwarsa secara otomatis dalam kurun waktu **300 detik (5 menit)** sejak diterbitkan. Percobaan input salah dibatasi maksimal **5 kali** sebelum kode dibatalkan (*invalidated*).
-- **NFR-SEC-03 (Credential Isolation):** Tidak boleh ada API key, kata sandi database, atau kredensial SMTP yang ditulis secara langsung (*hardcoded*) di dalam kode program publik. Semua rahasia wajib diisolasi di file konfigurasi lingkungan `.env` yang masuk ke daftar `.gitignore`.
-- **NFR-SEC-04 (Medical Data Privacy / HIPAA Aligned):** Parameter biomarker yang dimasukkan selama inferensi tidak boleh dipublikasikan atau diakses oleh pihak ketiga tanpa persetujuan pengguna. Sesi riwayat prediksi disimpan di Firestore dengan aturan keamanan (*Security Rules*) berbasis kepemilikan UID pengguna.
+- **NFR-SEC-02 (OTP Lifecycle & Rate Limiting):** Kode verifikasi OTP 2FA Administrator harus kedaluwarsa secara otomatis dalam kurun waktu **300 detik (5 menit)** sejak diterbitkan. Percobaan input salah dibatasi maksimal **5 kali** sebelum kode dibatalkan (_invalidated_).
+- **NFR-SEC-03 (Credential Isolation):** Tidak boleh ada API key, kata sandi database, atau kredensial SMTP yang ditulis secara langsung (_hardcoded_) di dalam kode program publik. Semua rahasia wajib diisolasi di file konfigurasi lingkungan `.env` yang masuk ke daftar `.gitignore`.
+- **NFR-SEC-04 (Medical Data Privacy / HIPAA Aligned):** Parameter biomarker yang dimasukkan selama inferensi tidak boleh dipublikasikan atau diakses oleh pihak ketiga tanpa persetujuan pengguna. Sesi riwayat prediksi disimpan di Firestore dengan aturan keamanan (_Security Rules_) berbasis kepemilikan UID pengguna.
 
 #### C. Kategori Keandalan & Ketersediaan (NFR-REL)
-- **NFR-REL-01 (Availability):** Sistem backend Flask dirancang untuk mempertahankan ketersediaan operasional (*uptime*) minimal **99.5%** pada lingkungan hosting produksi.
-- **NFR-REL-02 (Thread Isolation):** Proses retraining model machine learning (`POST /api/train`) wajib dijalankan pada thread terpisah (*worker thread*) sehingga kegagalan komputasi numerik tidak menyebabkan *crash* pada server HTTP utama.
-- **NFR-REL-03 (Error Fallback & Recovery):** Apabila terjadi gangguan pada koneksi API pihak ketiga (misalnya LiveKit atau Deepgram), sistem harus memberikan pesan kegagalan (*fallback notification*) yang informatif dan ramah pengguna tanpa merusak antarmuka web.
+
+- **NFR-REL-01 (Availability):** Sistem backend Flask dirancang untuk mempertahankan ketersediaan operasional (_uptime_) minimal **99.5%** pada lingkungan hosting produksi.
+- **NFR-REL-02 (Thread Isolation):** Proses retraining model machine learning (`POST /api/train`) wajib dijalankan pada thread terpisah (_worker thread_) sehingga kegagalan komputasi numerik tidak menyebabkan _crash_ pada server HTTP utama.
+- **NFR-REL-03 (Error Fallback & Recovery):** Apabila terjadi gangguan pada koneksi API pihak ketiga (misalnya LiveKit atau Deepgram), sistem harus memberikan pesan kegagalan (_fallback notification_) yang informatif dan ramah pengguna tanpa merusak antarmuka web.
 
 #### D. Kategori Kompatibilitas & Portabilitas (NFR-COMP)
+
 - **NFR-COMP-01 (Cross-Browser Compatibility):** Antarmuka web Neura AI harus berfungsi optimal dan mempertahankan konsistensi visual pada minimal 4 peramban modern utama: Google Chrome (v110+), Mozilla Firefox (v110+), Microsoft Edge (v110+), dan Apple Safari (v16+).
 - **NFR-COMP-02 (Multi-OS Portability):** Kode sumber backend Python harus dapat dijalankan secara identik tanpa perubahan logika pada sistem operasi **Windows 10/11**, **Ubuntu Linux 20.04/22.04 LTS**, dan **macOS Ventura/Sonoma**.
 
 #### E. Kategori Usabilitas & Desain Antarmuka (NFR-USE)
-- **NFR-USE-01 (Visual Fidelity):** Antarmuka obrolan workspace harus mempertahankan tingkat kemiripan visual (*visual fidelity*) minimal **95%** terhadap standar desain Claude AI Anthropic (skema warna Warm Linen, tipografi serif/sans-serif elegan, dan micro-interaction).
-- **NFR-USE-02 (Zero-Reload Language Switch):** Penggantian bahasa tampilan (ID/EN) harus terjadi secara instan dalam tempo kurang dari **100 milidetik** tanpa memicu pemuatan ulang laman peramban (*zero full-page reload*).
-- **NFR-USE-03 (Accessibility & Contrast):** Warna teks dan latar belakang pada mode terang (*Warm Linen*) maupun mode gelap (*Obsidian*) harus memenuhi rasio kontras warna standar WCAG 2.1 level AA (minimal 4.5:1 untuk teks biasa).
+
+- **NFR-USE-01 (Visual Fidelity):** Antarmuka obrolan workspace harus mempertahankan tingkat kemiripan visual (_visual fidelity_) minimal **95%** terhadap standar desain Claude AI Anthropic (skema warna Warm Linen, tipografi serif/sans-serif elegan, dan micro-interaction).
+- **NFR-USE-02 (Zero-Reload Language Switch):** Penggantian bahasa tampilan (ID/EN) harus terjadi secara instan dalam tempo kurang dari **100 milidetik** tanpa memicu pemuatan ulang laman peramban (_zero full-page reload_).
+- **NFR-USE-03 (Accessibility & Contrast):** Warna teks dan latar belakang pada mode terang (_Warm Linen_) maupun mode gelap (_Obsidian_) harus memenuhi rasio kontras warna standar WCAG 2.1 level AA (minimal 4.5:1 untuk teks biasa).
 
 #### F. Kategori Skalabilitas & Kemudahan Pemeliharaan (NFR-MAINT)
+
 - **NFR-MAINT-01 (Single Source of Truth):** Informasi versi, konfigurasi model, nama author, dan changelog harus dikonsolidasikan dalam file `about_app.json` sehingga pembaruan metadata di satu file otomatis terefleksi di seluruh komponen frontend dan backend.
 - **NFR-MAINT-02 (Modular Code Architecture):** Kode program harus mengikuti paradigma MVC modular, dengan batas direktori yang jelas antara file publik statis (`public/`), kontroler dan model bisnis (`app/`), utilitas keamanan (`core/`), dan manajemen dataset (`features/`, `datasets/`).
 
@@ -298,11 +310,13 @@ Kebutuhan non-fungsional mendefinisikan batasan kualitas, keandalan, performa, d
 ### 4. Batasan & Asumsi Sistem (Constraints & Assumptions)
 
 #### Batasan Perangkat Keras & Lunak (Hardware & Software Constraints)
+
 1. **Versi Python:** Sistem hanya mendukung Python versi **3.10, 3.11, atau 3.12**. Versi Python < 3.10 tidak didukung karena kompatibilitas pustaka modern Keras 3 dan LiveKit Agents.
 2. **Ketergantungan Layanan Cloud Eksternal:** Fitur Voice AI memerlukan konektivitas internet aktif untuk berkomunikasi dengan LiveKit Cloud WebRTC, Deepgram API, dan OpenAI API.
 3. **Penyedia Layanan Email:** Sistem pengiriman kode OTP mengandalkan server SMTP Gmail; operasionalitas pengiriman email bergantung pada kuota harian dan stabilitas Google SMTP relay.
 
 #### Asumsi Operasional (Operational Assumptions)
+
 1. Perangkat pengguna dilengkapi dengan monitor beresolusi minimal 360px (mobile) hingga 1920px+ (desktop).
 2. Pengguna yang menggunakan fitur konsultasi suara memiliki mikrofon dan speaker yang berfungsi dengan izin akses peramban yang telah disetujui.
 3. Data masukan 32 biomarker yang diisi oleh tenaga kesehatan berasal dari hasil rekam medis yang valid dan telah diverifikasi secara klinis.
@@ -420,44 +434,44 @@ Neura/
 
 ### Backend
 
-| Library | Versi | Fungsi |
-|---|---|---|
-| `flask` | >= 3.0.0 | Web framework & REST API server |
-| `flask-cors` | >= 4.0.0 | Cross-Origin Resource Sharing |
-| `python-dotenv` | >= 1.0.0 | Manajemen environment variables (.env) |
-| `PyYAML` | >= 6.0 | Parsing file konfigurasi YAML |
-| `rich` | >= 13.0.0 | Output terminal berwarna & logger premium |
+| Library         | Versi     | Fungsi                                    |
+| --------------- | --------- | ----------------------------------------- |
+| `flask`         | >= 3.0.0  | Web framework & REST API server           |
+| `flask-cors`    | >= 4.0.0  | Cross-Origin Resource Sharing             |
+| `python-dotenv` | >= 1.0.0  | Manajemen environment variables (.env)    |
+| `PyYAML`        | >= 6.0    | Parsing file konfigurasi YAML             |
+| `rich`          | >= 13.0.0 | Output terminal berwarna & logger premium |
 
 ### Machine Learning
 
-| Library | Versi | Fungsi |
-|---|---|---|
-| `xgboost` | >= 2.0.0 | Model utama: Gradient Boosting Classifier |
-| `scikit-learn` | >= 1.3.0 | Pipeline preprocessing & metrik evaluasi |
-| `pandas` | >= 2.0.0 | Manipulasi & analisis data tabular |
-| `numpy` | >= 1.24.0 | Operasi array & komputasi numerik |
-| `matplotlib` | >= 3.7.0 | Visualisasi grafik & plot |
+| Library        | Versi     | Fungsi                                    |
+| -------------- | --------- | ----------------------------------------- |
+| `xgboost`      | >= 2.0.0  | Model utama: Gradient Boosting Classifier |
+| `scikit-learn` | >= 1.3.0  | Pipeline preprocessing & metrik evaluasi  |
+| `pandas`       | >= 2.0.0  | Manipulasi & analisis data tabular        |
+| `numpy`        | >= 1.24.0 | Operasi array & komputasi numerik         |
+| `matplotlib`   | >= 3.7.0  | Visualisasi grafik & plot                 |
 
 ### Voice AI
 
-| Library | Versi | Fungsi |
-|---|---|---|
-| `livekit` | >= 1.1.20 | WebRTC real-time communication |
-| `livekit-api` | >= 1.2.2 | LiveKit server API & token generation |
-| `livekit-agents` | >= 1.8.8 | Agent framework untuk AI voice |
-| `livekit-plugins-silero` | >= 1.8.8 | VAD (Voice Activity Detection) |
-| `livekit-plugins-deepgram` | >= 1.8.8 | STT (Speech-to-Text) Deepgram |
-| `livekit-plugins-openai` | >= 1.8.8 | LLM + TTS OpenAI integration |
+| Library                    | Versi     | Fungsi                                |
+| -------------------------- | --------- | ------------------------------------- |
+| `livekit`                  | >= 1.1.20 | WebRTC real-time communication        |
+| `livekit-api`              | >= 1.2.2  | LiveKit server API & token generation |
+| `livekit-agents`           | >= 1.8.8  | Agent framework untuk AI voice        |
+| `livekit-plugins-silero`   | >= 1.8.8  | VAD (Voice Activity Detection)        |
+| `livekit-plugins-deepgram` | >= 1.8.8  | STT (Speech-to-Text) Deepgram         |
+| `livekit-plugins-openai`   | >= 1.8.8  | LLM + TTS OpenAI integration          |
 
 ### Frontend
 
-| Teknologi | Fungsi |
-|---|---|
-| **Vanilla JS (ES6+)** | Logic interaktif tanpa framework berat |
-| **CSS3 Custom Properties** | Desain sistem berbasis variabel CSS |
-| **Lenis** | Smooth momentum scroll physics |
-| **Firebase JS SDK v10** | Auth, Firestore, real-time listener |
-| **LiveKit Client** | WebRTC audio di browser |
+| Teknologi                  | Fungsi                                 |
+| -------------------------- | -------------------------------------- |
+| **Vanilla JS (ES6+)**      | Logic interaktif tanpa framework berat |
+| **CSS3 Custom Properties** | Desain sistem berbasis variabel CSS    |
+| **Lenis**                  | Smooth momentum scroll physics         |
+| **Firebase JS SDK v10**    | Auth, Firestore, real-time listener    |
+| **LiveKit Client**         | WebRTC audio di browser                |
 
 ---
 
@@ -469,11 +483,12 @@ Ikuti langkah berikut secara urut untuk menjalankan Neura AI dari nol di kompute
 
 Sebelum memulai, pastikan perangkat lunak berikut sudah terinstal:
 
-- **Python 3.10, 3.11, atau 3.12** — Unduh di [python.org](https://python.org) *(centang "Add python.exe to PATH" saat instalasi di Windows)*
+- **Python 3.10, 3.11, atau 3.12** — Unduh di [python.org](https://python.org) _(centang "Add python.exe to PATH" saat instalasi di Windows)_
 - **Git** — Unduh di [git-scm.com](https://git-scm.com)
-- **Akun GitHub** *(opsional, diperlukan untuk push/pull kode)*
+- **Akun GitHub** _(opsional, diperlukan untuk push/pull kode)_
 
 Verifikasi instalasi:
+
 ```bash
 python --version   # Pastikan: Python 3.10.x / 3.11.x / 3.12.x
 git --version      # Pastikan: git version 2.x.x
@@ -502,7 +517,7 @@ cd Neura
 
 ### Langkah 2 — Buat Virtual Environment
 
-**Virtual Environment** (`venv`) adalah lingkungan Python terisolasi yang menjaga agar *package* yang Anda instal untuk Neura tidak bentrok dengan instalasi Python lain di komputer Anda.
+**Virtual Environment** (`venv`) adalah lingkungan Python terisolasi yang menjaga agar _package_ yang Anda instal untuk Neura tidak bentrok dengan instalasi Python lain di komputer Anda.
 
 ```bash
 python -m venv venv
@@ -517,23 +532,28 @@ Perintah ini membuat folder `venv/` di dalam folder `Neura/`.
 Pilih perintah sesuai sistem operasi dan terminal yang Anda gunakan:
 
 **Windows — PowerShell:**
+
 ```powershell
 .\venv\Scripts\Activate.ps1
 ```
 
 > [!TIP]
-> Jika muncul error *"cannot be loaded because running scripts is disabled on this system"*, jalankan perintah berikut **sekali saja** di PowerShell sebagai langkah awal:
+> Jika muncul error _"cannot be loaded because running scripts is disabled on this system"_, jalankan perintah berikut **sekali saja** di PowerShell sebagai langkah awal:
+>
 > ```powershell
 > Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 > ```
+>
 > Setelah itu jalankan kembali `.\venv\Scripts\Activate.ps1`.
 
 **Windows — Command Prompt (CMD):**
+
 ```cmd
 venv\Scripts\activate.bat
 ```
 
 **macOS / Linux — Terminal:**
+
 ```bash
 source venv/bin/activate
 ```
@@ -584,11 +604,13 @@ python server.py
 ```
 
 **Atau tanpa mengaktifkan venv manual terlebih dahulu (Windows):**
+
 ```powershell
 .\venv\Scripts\python.exe server.py
 ```
 
 Server berjalan bila muncul pesan:
+
 ```
   Neura Web Server
   Open: http://localhost:5000
@@ -596,10 +618,10 @@ Server berjalan bila muncul pesan:
 
 Buka browser dan akses:
 
-| Halaman | URL |
-|---|---|
-| Landing Page | http://localhost:5000 |
-| Workspace AI | http://localhost:5000/app |
+| Halaman          | URL                                |
+| ---------------- | ---------------------------------- |
+| Landing Page     | http://localhost:5000              |
+| Workspace AI     | http://localhost:5000/app          |
 | Verifikasi Email | http://localhost:5000/verify-email |
 
 ---
@@ -683,64 +705,64 @@ CARTESIA_API_KEY=
 
 ### Halaman & Navigasi
 
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| `GET` | `/` | Landing page (`welcome.html`) |
-| `GET` | `/welcome` | Alias landing page |
-| `GET` | `/app` | Workspace AI (`index.html`) |
-| `GET` | `/chat` | Alias workspace |
-| `GET` | `/verify-email` | Halaman verifikasi email |
+| Method | Endpoint        | Deskripsi                     |
+| ------ | --------------- | ----------------------------- |
+| `GET`  | `/`             | Landing page (`welcome.html`) |
+| `GET`  | `/welcome`      | Alias landing page            |
+| `GET`  | `/app`          | Workspace AI (`index.html`)   |
+| `GET`  | `/chat`         | Alias workspace               |
+| `GET`  | `/verify-email` | Halaman verifikasi email      |
 
 ### Metadata & Config
 
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| `GET` | `/api/about` | Metadata platform dari `about_app.json` (auto-reload) |
-| `GET` | `/api/firebase-config` | Konfigurasi Firebase untuk client JS |
-| `GET` | `/api/status` | Status server, model, checkpoint, dan environment |
+| Method | Endpoint               | Deskripsi                                             |
+| ------ | ---------------------- | ----------------------------------------------------- |
+| `GET`  | `/api/about`           | Metadata platform dari `about_app.json` (auto-reload) |
+| `GET`  | `/api/firebase-config` | Konfigurasi Firebase untuk client JS                  |
+| `GET`  | `/api/status`          | Status server, model, checkpoint, dan environment     |
 
 ### Machine Learning
 
-| Method | Endpoint | Body / Params | Deskripsi |
-|---|---|---|---|
-| `POST` | `/api/train` | `{"epochs": 10}` | Mulai training model XGBoost secara async |
-| `GET` | `/api/train/progress` | — | Progres training real-time (streaming JSON) |
-| `GET/POST` | `/api/evaluate` | — | Evaluasi model: accuracy, F1, ROC-AUC |
-| `GET/POST` | `/api/predict` | — | Inferensi prediksi risiko Alzheimer |
-| `GET/POST` | `/api/consultation/generate` | `{"input": {...}}` | Generate lembar Dokumen Hasil Konsultasi & Kode Nakes |
-| `GET` | `/api/consultation/<code>` | — | Verifikasi & ambil rekam medis lengkap berdasarkan kode Nakes |
+| Method     | Endpoint                     | Body / Params      | Deskripsi                                                     |
+| ---------- | ---------------------------- | ------------------ | ------------------------------------------------------------- |
+| `POST`     | `/api/train`                 | `{"epochs": 10}`   | Mulai training model XGBoost secara async                     |
+| `GET`      | `/api/train/progress`        | —                  | Progres training real-time (streaming JSON)                   |
+| `GET/POST` | `/api/evaluate`              | —                  | Evaluasi model: accuracy, F1, ROC-AUC                         |
+| `GET/POST` | `/api/predict`               | —                  | Inferensi prediksi risiko Alzheimer                           |
+| `GET/POST` | `/api/consultation/generate` | `{"input": {...}}` | Generate lembar Dokumen Hasil Konsultasi & Kode Nakes         |
+| `GET`      | `/api/consultation/<code>`   | —                  | Verifikasi & ambil rekam medis lengkap berdasarkan kode Nakes |
 
 ### Chat & Dataset
 
-| Method | Endpoint | Body / Params | Deskripsi |
-|---|---|---|---|
-| `POST` | `/api/chat` | `{"message": "..."}` | Proses pesan chat berbasis dataset NLP |
-| `GET` | `/api/features/categories` | — | Daftar kategori & statistik dataset chat |
-| `GET` | `/api/features/chat-dataset` | `?category=&q=` | Query dataset percakapan dengan filter |
+| Method | Endpoint                     | Body / Params        | Deskripsi                                |
+| ------ | ---------------------------- | -------------------- | ---------------------------------------- |
+| `POST` | `/api/chat`                  | `{"message": "..."}` | Proses pesan chat berbasis dataset NLP   |
+| `GET`  | `/api/features/categories`   | —                    | Daftar kategori & statistik dataset chat |
+| `GET`  | `/api/features/chat-dataset` | `?category=&q=`      | Query dataset percakapan dengan filter   |
 
 ### Email & Autentikasi User
 
-| Method | Endpoint | Body | Deskripsi |
-|---|---|---|---|
+| Method | Endpoint                       | Body                                     | Deskripsi                                |
+| ------ | ------------------------------ | ---------------------------------------- | ---------------------------------------- |
 | `POST` | `/api/send-verification-email` | `{"email": "...", "displayName": "..."}` | Kirim email verifikasi Firebase via SMTP |
 
 ### Admin 2FA System
 
-| Method | Endpoint | Body | Deskripsi |
-|---|---|---|---|
-| `GET` | `/api/admin/emails` | — | Daftar email custom admin terdaftar |
-| `POST` | `/api/admin/check-email` | `{"email": "..."}` | Cek apakah email adalah admin terdaftar |
-| `POST` | `/api/admin/send-otp` | `{"email": "..."}` | Generate & kirim OTP 6-digit ke email asli admin |
-| `POST` | `/api/admin/verify-otp` | `{"email": "...", "otp": "..."}` | Verifikasi kode OTP & buat session token |
-| `GET/POST` | `/api/admin/verify-session` | `{"token": "..."}` | Validasi session token admin (berlaku 24 jam) |
-| `POST` | `/api/admin/logout` | `{"token": "..."}` | Hapus session admin di server |
+| Method     | Endpoint                    | Body                             | Deskripsi                                        |
+| ---------- | --------------------------- | -------------------------------- | ------------------------------------------------ |
+| `GET`      | `/api/admin/emails`         | —                                | Daftar email custom admin terdaftar              |
+| `POST`     | `/api/admin/check-email`    | `{"email": "..."}`               | Cek apakah email adalah admin terdaftar          |
+| `POST`     | `/api/admin/send-otp`       | `{"email": "..."}`               | Generate & kirim OTP 6-digit ke email asli admin |
+| `POST`     | `/api/admin/verify-otp`     | `{"email": "...", "otp": "..."}` | Verifikasi kode OTP & buat session token         |
+| `GET/POST` | `/api/admin/verify-session` | `{"token": "..."}`               | Validasi session token admin (berlaku 24 jam)    |
+| `POST`     | `/api/admin/logout`         | `{"token": "..."}`               | Hapus session admin di server                    |
 
 ### LiveKit Voice AI
 
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| `GET` | `/api/livekit/config` | Cek status konfigurasi LiveKit |
-| `GET/POST` | `/api/livekit/token` | Generate token akses room WebRTC |
+| Method     | Endpoint              | Deskripsi                        |
+| ---------- | --------------------- | -------------------------------- |
+| `GET`      | `/api/livekit/config` | Cek status konfigurasi LiveKit   |
+| `GET/POST` | `/api/livekit/token`  | Generate token akses room WebRTC |
 
 ---
 
@@ -789,19 +811,19 @@ ADMIN_ACCOUNTS = {
 
 Ketik perintah berikut di kolom chat Workspace:
 
-| Perintah | Deskripsi |
-|---|---|
-| `/status` | Status model, checkpoint, dan environment server |
-| `/profile` | Input & pembaruan formulir Data Diri dan 32 biomarker klinis pasien |
-| `/predict` | Inferensi prediksi risiko Alzheimer berdasarkan profil user atau sampel dataset |
-| `/dokumen` | **Menampilkan lembar resmi Dokumen Hasil Konsultasi & Button Kode Rujukan Nakes** |
-| `/train [N]` | Training model XGBoost selama N epoch (default: 10) |
-| `/eval` | Evaluasi model: accuracy, F1-score, ROC-AUC, confusion matrix |
-| `/progress` | Progres & log epoch training terbaru |
-| `/konsul` | Sesi konsultasi interaktif seputar daya ingat dan skrining klinis |
-| `/intro` | Sapaan awal dan pengenalan kapabilitas platform Neura AI |
-| `/voice` | Membuka Voice Room real-time WebRTC dengan asisten suara |
-| `/help` | Panduan semua perintah yang tersedia |
+| Perintah     | Deskripsi                                                                         |
+| ------------ | --------------------------------------------------------------------------------- |
+| `/status`    | Status model, checkpoint, dan environment server                                  |
+| `/profile`   | Input & pembaruan formulir Data Diri dan 32 biomarker klinis pasien               |
+| `/predict`   | Inferensi prediksi risiko Alzheimer berdasarkan profil user atau sampel dataset   |
+| `/dokumen`   | **Menampilkan lembar resmi Dokumen Hasil Konsultasi & Button Kode Rujukan Nakes** |
+| `/train [N]` | Training model XGBoost selama N epoch (default: 10)                               |
+| `/eval`      | Evaluasi model: accuracy, F1-score, ROC-AUC, confusion matrix                     |
+| `/progress`  | Progres & log epoch training terbaru                                              |
+| `/konsul`    | Sesi konsultasi interaktif seputar daya ingat dan skrining klinis                 |
+| `/intro`     | Sapaan awal dan pengenalan kapabilitas platform Neura AI                          |
+| `/voice`     | Membuka Voice Room real-time WebRTC dengan asisten suara                          |
+| `/help`      | Panduan semua perintah yang tersedia                                              |
 
 ---
 
@@ -809,13 +831,14 @@ Ketik perintah berikut di kolom chat Workspace:
 
 ### Dataset Utama
 
-| File | Lokasi | Deskripsi |
-|---|---|---|
+| File                          | Lokasi      | Deskripsi                                           |
+| ----------------------------- | ----------- | --------------------------------------------------- |
 | `alzheimers_disease_data.csv` | `datasets/` | 2.149 rekam medis, 35 kolom (32 fitur + ID + label) |
 
 ### 32 Biomarker Klinis
 
 Dataset mencakup biomarker dari kategori:
+
 - **Demografis**: Usia, jenis kelamin, etnis, tingkat pendidikan
 - **Klinis kognitif**: MMSE score, functional assessment, CDR
 - **Biomarker lab**: Kolesterol total, trigliserida, insulin, tekanan darah
@@ -845,6 +868,7 @@ python voice_agent.py dev
 ```
 
 **Kemampuan Agent:**
+
 - Menerima pertanyaan pasien/dokter via suara
 - Menjelaskan hasil prediksi risiko Alzheimer
 - Memberikan informasi tentang biomarker dan faktor risiko
@@ -854,20 +878,20 @@ python voice_agent.py dev
 
 ## 🌿 Git — Push, Pull & Kolaborasi
 
-Git adalah sistem *version control* yang memungkinkan Anda melacak perubahan kode, berkolaborasi dengan tim, dan menyinkronkan kode antara komputer lokal dan GitHub.
+Git adalah sistem _version control_ yang memungkinkan Anda melacak perubahan kode, berkolaborasi dengan tim, dan menyinkronkan kode antara komputer lokal dan GitHub.
 
 ### Konsep Penting
 
-| Istilah | Penjelasan Singkat |
-|---|---|
-| **`repository`** | Tempat penyimpanan seluruh kode dan histori perubahan |
-| **`commit`** | "Snapshot" kondisi kode pada satu titik waktu tertentu |
-| **`branch`** | Cabang paralel untuk mengerjakan fitur tanpa mengganggu kode utama |
-| **`origin`** | Nama default untuk remote repository di GitHub |
-| **`main`** | Branch utama / produksi (nama default GitHub) |
-| **`push`** | Mengirim commit lokal ke GitHub |
-| **`pull`** | Mengambil & menggabungkan perubahan terbaru dari GitHub ke lokal |
-| **`clone`** | Mengunduh seluruh repository dari GitHub ke komputer baru |
+| Istilah          | Penjelasan Singkat                                                 |
+| ---------------- | ------------------------------------------------------------------ |
+| **`repository`** | Tempat penyimpanan seluruh kode dan histori perubahan              |
+| **`commit`**     | "Snapshot" kondisi kode pada satu titik waktu tertentu             |
+| **`branch`**     | Cabang paralel untuk mengerjakan fitur tanpa mengganggu kode utama |
+| **`origin`**     | Nama default untuk remote repository di GitHub                     |
+| **`main`**       | Branch utama / produksi (nama default GitHub)                      |
+| **`push`**       | Mengirim commit lokal ke GitHub                                    |
+| **`pull`**       | Mengambil & menggabungkan perubahan terbaru dari GitHub ke lokal   |
+| **`clone`**      | Mengunduh seluruh repository dari GitHub ke komputer baru          |
 
 ---
 
@@ -896,12 +920,14 @@ git push origin main
 
 > [!TIP]
 > Tulis pesan commit yang jelas dan deskriptif. Gunakan format konvensional:
+>
 > - `feat: ...` — fitur baru
 > - `fix: ...` — perbaikan bug
 > - `docs: ...` — perubahan dokumentasi
 > - `refactor: ...` — refaktor kode tanpa perubahan fitur
 
 **Contoh skenario nyata:**
+
 ```bash
 git add core/admin_config.py server.py
 git commit -m "fix: tambah 7 akun admin & perbaiki uuid import di verify-otp"
@@ -919,6 +945,7 @@ git pull origin main
 ```
 
 Perintah ini setara dengan kombinasi dua langkah:
+
 ```bash
 git fetch origin       # Mengambil data terbaru dari GitHub (tanpa merge)
 git merge origin/main  # Menggabungkan ke branch lokal
@@ -977,18 +1004,18 @@ git restore nama_file.py     # Kembalikan file ke kondisi commit terakhir
 
 ## 🔧 Troubleshooting
 
-| Masalah / Pesan Error | Penyebab | Solusi |
-|---|---|---|
-| `ModuleNotFoundError: No module named 'flask'` | Menjalankan Python sistem, bukan venv | Aktifkan venv: `.\venv\Scripts\Activate.ps1` lalu jalankan kembali |
-| `ModuleNotFoundError: No module named 'xgboost'` | Dependencies belum terinstal | Jalankan `pip install -r requirements.txt` saat venv aktif |
-| `cannot be loaded because running scripts is disabled` | Execution Policy Windows memblokir script | Jalankan: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
-| `Address already in use` / Port 5000 bentrok | Server lain masih berjalan di port 5000 | Hentikan proses lama atau tambah `port=5001` di `server.py` baris terakhir |
-| `NameError: name 'uuid' is not defined` | Modul uuid belum diimport | Pastikan `import uuid` ada di bagian atas `server.py` |
-| OTP Admin muncul error 500 | Server belum di-restart setelah perubahan kode | Restart `python server.py` agar perubahan kode terbaca |
-| `SMTP Authentication Error` | App Password Gmail salah atau belum dikonfigurasi | Buat App Password baru di myaccount.google.com/apppasswords |
-| `Firebase: Auth not configured` | `FIREBASE_API_KEY` di `.env` kosong | Isi semua variabel `FIREBASE_*` dari Firebase Console project Anda |
-| `git push` ditolak (rejected) | Ada commit baru di GitHub yang belum di-pull | Jalankan `git pull origin main` terlebih dahulu, resolve konflik jika ada, baru push ulang |
-| `xgboost.core.XGBoostError: model not loaded` | Checkpoint model belum ada | Lakukan training terlebih dahulu via chat `/train` atau `POST /api/train` |
+| Masalah / Pesan Error                                  | Penyebab                                          | Solusi                                                                                     |
+| ------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `ModuleNotFoundError: No module named 'flask'`         | Menjalankan Python sistem, bukan venv             | Aktifkan venv: `.\venv\Scripts\Activate.ps1` lalu jalankan kembali                         |
+| `ModuleNotFoundError: No module named 'xgboost'`       | Dependencies belum terinstal                      | Jalankan `pip install -r requirements.txt` saat venv aktif                                 |
+| `cannot be loaded because running scripts is disabled` | Execution Policy Windows memblokir script         | Jalankan: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`           |
+| `Address already in use` / Port 5000 bentrok           | Server lain masih berjalan di port 5000           | Hentikan proses lama atau tambah `port=5001` di `server.py` baris terakhir                 |
+| `NameError: name 'uuid' is not defined`                | Modul uuid belum diimport                         | Pastikan `import uuid` ada di bagian atas `server.py`                                      |
+| OTP Admin muncul error 500                             | Server belum di-restart setelah perubahan kode    | Restart `python server.py` agar perubahan kode terbaca                                     |
+| `SMTP Authentication Error`                            | App Password Gmail salah atau belum dikonfigurasi | Buat App Password baru di myaccount.google.com/apppasswords                                |
+| `Firebase: Auth not configured`                        | `FIREBASE_API_KEY` di `.env` kosong               | Isi semua variabel `FIREBASE_*` dari Firebase Console project Anda                         |
+| `git push` ditolak (rejected)                          | Ada commit baru di GitHub yang belum di-pull      | Jalankan `git pull origin main` terlebih dahulu, resolve konflik jika ada, baru push ulang |
+| `xgboost.core.XGBoostError: model not loaded`          | Checkpoint model belum ada                        | Lakukan training terlebih dahulu via chat `/train` atau `POST /api/train`                  |
 
 ---
 
@@ -996,15 +1023,15 @@ git restore nama_file.py     # Kembalikan file ke kondisi commit terakhir
 
 ### Tim Pengembang — Neura Health AI
 
-| No | Nama | Role | Email Admin |
-|---|---|---|---|
-| 01 | Haidar Rifky A | Lead System Admin & Core AI | `hanzz@neura.dr.id` |
-| 02 | Syafiq Ahmad A. | System Administrator | `jkmaiden@neura.dr.id` |
-| 03 | Muhammad Hasanudin | System Administrator | `maman@neura.dr.id` |
-| 04 | Muhammad Khoir Luqman | System Administrator | `muhammadhasan.cg@neura.dr.id` |
-| 05 | Bahtiar Dzikrul Redjeb | System Administrator | `mychel09@neura.dr.id` |
-| 06 | Andika Putra S | System Administrator | `jester19@neura.dr.id` |
-| 07 | Ridho Romadhani | System Administrator | `tsaritsaanastasya@neura.dr.id` |
+| No  | Nama                   | Role                        | Email Admin                     |
+| --- | ---------------------- | --------------------------- | ------------------------------- |
+| 01  | Haidar Rifky A         | Lead System Admin & Core AI | `hanzz@neura.dr.id`             |
+| 02  | Syafiq Ahmad A.        | System Administrator        | `jkmaiden@neura.dr.id`          |
+| 03  | Muhammad Hasanudin     | System Administrator        | `maman@neura.dr.id`             |
+| 04  | Muhammad Khoir Luqman  | System Administrator        | `muhammadhasan.cg@neura.dr.id`  |
+| 05  | Bahtiar Dzikrul Redjeb | System Administrator        | `mychel09@neura.dr.id`          |
+| 06  | Andika Putra S         | System Administrator        | `jester19@neura.dr.id`          |
+| 07  | Ridho Romadhani        | System Administrator        | `tsaritsaanastasya@neura.dr.id` |
 
 ### Cara Berkontribusi
 
@@ -1039,7 +1066,7 @@ copies or substantial portions of the Software.
 
 <div align="center">
 
-**Neura AI** — *Mendeteksi Alzheimer Lebih Awal, Lebih Tepat.*
+**Neura AI** — _Mendeteksi Alzheimer Lebih Awal, Lebih Tepat._
 
 Dibangun dengan ❤️ oleh **Neura Health AI Team** | [GitHub](https://github.com/HanzzSama/Neura)
 
