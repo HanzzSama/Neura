@@ -1082,6 +1082,10 @@ function switchEditProfileTab(tabName) {
     tabName = 'profile';
   }
 
+  const modal = document.getElementById('edit-profile-modal');
+  const modalCard = modal ? modal.querySelector('.profile-custom-modal-card') : null;
+  const bannerContainer = modal ? modal.querySelector('.profile-hero-banner-container') : null;
+
   const panelProfile = document.getElementById('panel-profile-view');
   const panelUpdate = document.getElementById('panel-profile-update');
   const panelSec = document.getElementById('panel-edit-profile-security');
@@ -1098,6 +1102,15 @@ function switchEditProfileTab(tabName) {
     if (tabNavProfile) tabNavProfile.classList.remove('active');
     if (tabNavUpdate) tabNavUpdate.classList.remove('active');
     if (tabNavSec) tabNavSec.classList.add('active');
+
+    if (modalCard) {
+      modalCard.classList.remove('mode-preview', 'mode-update');
+      modalCard.classList.add('mode-security');
+    }
+    if (bannerContainer) {
+      bannerContainer.classList.remove('is-preview');
+      bannerContainer.classList.add('is-compact');
+    }
   } else if (tabName === 'update') {
     if (panelProfile) panelProfile.style.display = 'none';
     if (panelUpdate) panelUpdate.style.display = 'block';
@@ -1106,6 +1119,15 @@ function switchEditProfileTab(tabName) {
     if (tabNavProfile) tabNavProfile.classList.remove('active');
     if (tabNavUpdate) tabNavUpdate.classList.add('active');
     if (tabNavSec) tabNavSec.classList.remove('active');
+
+    if (modalCard) {
+      modalCard.classList.remove('mode-preview', 'mode-security');
+      modalCard.classList.add('mode-update');
+    }
+    if (bannerContainer) {
+      bannerContainer.classList.remove('is-preview');
+      bannerContainer.classList.add('is-compact');
+    }
   } else {
     // Default: 'profile' (preview view)
     if (panelProfile) panelProfile.style.display = 'block';
@@ -1115,6 +1137,15 @@ function switchEditProfileTab(tabName) {
     if (tabNavProfile) tabNavProfile.classList.add('active');
     if (tabNavUpdate) tabNavUpdate.classList.remove('active');
     if (tabNavSec) tabNavSec.classList.remove('active');
+
+    if (modalCard) {
+      modalCard.classList.add('mode-preview');
+      modalCard.classList.remove('mode-update', 'mode-security');
+    }
+    if (bannerContainer) {
+      bannerContainer.classList.add('is-preview');
+      bannerContainer.classList.remove('is-compact');
+    }
   }
 }
 window.switchEditProfileTab = switchEditProfileTab;

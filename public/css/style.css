@@ -7718,6 +7718,7 @@ body.reduce-motion *::after {
 .profile-custom-modal-card {
   max-width: 580px !important;
   width: 94% !important;
+  min-height: 535px !important; /* Consistent height across preview and update/security */
   max-height: 90vh !important;
   background: #121110 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -7728,6 +7729,7 @@ body.reduce-motion *::after {
   flex-direction: column !important;
   padding: 16px 16px 24px 16px !important;
   gap: 0 !important;
+  transition: min-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Custom Scrollbar for modal */
@@ -7743,26 +7745,55 @@ body.reduce-motion *::after {
 .profile-hero-banner-container {
   position: relative;
   width: 100%;
-  height: 156px;
+  height: 245px; /* Default Preview: Dominant banner height */
   border-radius: 18px;
   overflow: visible;
   margin-bottom: 0;
   user-select: none;
+  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Preview Mode: Dominant banner showing full majestic orb */
+.profile-hero-banner-container.is-preview,
+.profile-custom-modal-card.mode-preview .profile-hero-banner-container {
+  height: 245px;
+}
+
+.profile-hero-banner-container.is-preview .profile-hero-banner-image,
+.profile-custom-modal-card.mode-preview .profile-hero-banner-image {
+  background-position: center 36%;
+}
+
+/* Update & Security Mode: Compact banner so form fields fit comfortably */
+.profile-hero-banner-container.is-compact,
+.profile-custom-modal-card.mode-update .profile-hero-banner-container,
+.profile-custom-modal-card.mode-security .profile-hero-banner-container {
+  height: 138px;
+}
+
+.profile-hero-banner-container.is-compact .profile-hero-banner-image,
+.profile-custom-modal-card.mode-update .profile-hero-banner-image,
+.profile-custom-modal-card.mode-security .profile-hero-banner-image {
+  background-position: center 20%;
 }
 
 .profile-hero-banner-image {
   position: absolute;
   inset: 0;
   border-radius: 18px;
-  background: url('/assets/profile_banner_orb.jpg') center 28% / cover no-repeat;
+  background-image: url('/assets/profile_banner_orb.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center 36%;
   overflow: hidden;
+  transition: background-position 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .profile-hero-banner-overlay {
   position: absolute;
   inset: 0;
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.65) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
   pointer-events: none;
 }
 
