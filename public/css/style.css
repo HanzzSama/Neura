@@ -7057,8 +7057,867 @@ body.reduce-motion *::after {
 }
 
 /* ==========================================================================
-   Admin Nakes Management & Form Modal Styling (@neura.ns.id)
+   Admin Nakes Management — Premium Redesign (@neura.ns.id)
+   Obsidian core · Warm terracotta accent · Enterprise-grade UI
    ========================================================================== */
+
+/* ── Tag / Badge kecil bertipe pill ─────────────────────────────────────── */
+.nakes-admin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(224, 122, 95, 0.12) !important;
+  color: var(--accent-terracotta, #e07a5f) !important;
+  border: 1px solid rgba(224, 122, 95, 0.3) !important;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 2px 7px !important;
+  border-radius: 9999px !important;
+}
+
+/* ── Room header container (ditimpa oleh .admin-room-header di atas) ─────── */
+.admin-room-nakes-header-gradient {
+  background: linear-gradient(135deg, rgba(224, 122, 95, 0.07) 0%, rgba(0,0,0,0) 70%) !important;
+}
+
+/* ── Tabs Bar ────────────────────────────────────────────────────────────── */
+.nakes-admin-tabs-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--bg-surface, #1a1918);
+  flex-shrink: 0;
+  height: 44px;
+}
+
+.nakes-tabs-left {
+  display: flex;
+  gap: 0;
+  height: 100%;
+}
+
+.nakes-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  height: 100%;
+  font-size: 12.5px;
+  font-weight: 580;
+  color: var(--text-muted, #8a8880);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.nakes-tab-btn:hover {
+  color: var(--text-secondary, #c4c0ba);
+}
+
+.nakes-tab-btn.active {
+  color: var(--text-primary, #f5f4ef);
+  border-bottom-color: var(--accent-terracotta, #e07a5f);
+  font-weight: 640;
+}
+
+.nakes-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  min-width: 22px;
+  border-radius: 9999px;
+  background: rgba(224, 122, 95, 0.14);
+  color: var(--accent-terracotta, #e07a5f);
+  border: 1px solid rgba(224, 122, 95, 0.22);
+  line-height: 1;
+}
+
+.nakes-tabs-right {
+  display: flex;
+  align-items: center;
+}
+
+.nakes-primary-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 620;
+  color: #ffffff;
+  background: var(--accent-terracotta, #e07a5f);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 10px rgba(224, 122, 95, 0.28);
+  letter-spacing: -0.01em;
+}
+
+.nakes-primary-action-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(224, 122, 95, 0.38);
+}
+
+/* ── View Panels ─────────────────────────────────────────────────────────── */
+.nakes-admin-view-panel {
+  padding: 18px 22px 20px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.nakes-admin-view-panel::-webkit-scrollbar { width: 4px; }
+.nakes-admin-view-panel::-webkit-scrollbar-track { background: transparent; }
+.nakes-admin-view-panel::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 9999px;
+}
+
+/* ── Table Toolbar (Search + Filter) ─────────────────────────────────────── */
+.nakes-table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.nakes-search-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nakes-search-wrapper svg {
+  position: absolute;
+  left: 11px;
+  color: var(--text-muted, #8a8880);
+  pointer-events: none;
+}
+
+.nakes-search-wrapper input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  font-size: 12.5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  color: var(--text-primary, #f5f4ef);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  font-family: inherit;
+}
+
+.nakes-search-wrapper input::placeholder {
+  color: var(--text-muted, #8a8880);
+  font-size: 12px;
+}
+
+.nakes-search-wrapper input:focus {
+  border-color: rgba(224, 122, 95, 0.45);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.1);
+}
+
+.nakes-filter-wrapper select {
+  padding: 8px 14px 8px 11px;
+  font-size: 12.5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  color: var(--text-primary, #f5f4ef);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  appearance: auto;
+  transition: border-color 0.18s ease;
+}
+
+.nakes-filter-wrapper select:focus {
+  border-color: rgba(224, 122, 95, 0.45);
+}
+
+/* ── Responsive Table Container ──────────────────────────────────────────── */
+.nakes-table-responsive-box {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 12px;
+  overflow: hidden;
+  overflow-x: auto;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.03);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+.nakes-table-responsive-box::-webkit-scrollbar { height: 4px; }
+.nakes-table-responsive-box::-webkit-scrollbar-track { background: transparent; }
+.nakes-table-responsive-box::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 9999px;
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.nakes-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  text-align: left;
+}
+
+.nakes-admin-table thead tr {
+  background: rgba(255, 255, 255, 0.025);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.nakes-admin-table th {
+  padding: 10px 14px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(180, 174, 166, 0.8);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.nakes-admin-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.038);
+  color: var(--text-secondary, #c2bfb8);
+  vertical-align: middle;
+  transition: background 0.12s ease;
+}
+
+.nakes-admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.nakes-admin-table tbody tr {
+  transition: background 0.1s ease;
+}
+
+.nakes-admin-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.nakes-admin-table tbody tr:hover td {
+  color: var(--text-primary, #f5f4ef);
+}
+
+/* Column width distribution */
+.nakes-admin-table th:nth-child(1)  { width: 40px;  min-width: 36px; }
+.nakes-admin-table th:nth-child(2)  { min-width: 190px; }
+.nakes-admin-table th:nth-child(3)  { min-width: 160px; }
+.nakes-admin-table th:nth-child(4)  { min-width: 140px; }
+.nakes-admin-table th:nth-child(5)  { min-width: 140px; }
+.nakes-admin-table th:nth-child(6)  { min-width: 150px; }
+.nakes-admin-table th:nth-child(7)  { min-width: 170px; }
+.nakes-admin-table th:nth-child(8)  { min-width: 95px; }
+.nakes-admin-table th:nth-child(9)  { min-width: 110px; }
+.nakes-admin-table th:nth-child(10) { width: 80px; min-width: 72px; text-align: center; }
+
+/* ── User Cell (Avatar + Name + ID) ─────────────────────────────────────── */
+.nakes-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 170px;
+}
+
+.nakes-avatar-initials {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(224, 122, 95, 0.22), rgba(224, 122, 95, 0.08));
+  color: var(--accent-terracotta, #e07a5f);
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(224, 122, 95, 0.25);
+  letter-spacing: 0.02em;
+}
+
+.nakes-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nakes-user-name {
+  font-weight: 620;
+  font-size: 12.5px;
+  color: var(--text-primary, #f5f4ef);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 185px;
+  letter-spacing: -0.01em;
+}
+
+.nakes-user-id {
+  font-size: 10.5px;
+  font-family: monospace;
+  color: rgba(155, 150, 142, 0.8);
+  letter-spacing: 0.01em;
+}
+
+/* ── Profesi Badge ───────────────────────────────────────────────────────── */
+.nakes-badge-prof {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(100, 116, 139, 0.12);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.18);
+  font-size: 11.5px;
+  font-weight: 540;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+/* ── STR / SIP monospace badge ───────────────────────────────────────────── */
+.nakes-str-badge {
+  display: inline-block;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 10.5px;
+  color: rgba(148, 163, 184, 0.9);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Neura Domain Email Pill ─────────────────────────────────────────────── */
+.nakes-domain-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(224, 122, 95, 0.1);
+  color: var(--accent-terracotta, #e07a5f);
+  border: 1px solid rgba(224, 122, 95, 0.22);
+  font-size: 11.5px;
+  font-family: monospace;
+  font-weight: 620;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.nakes-domain-pill:hover {
+  background: rgba(224, 122, 95, 0.18);
+  border-color: rgba(224, 122, 95, 0.38);
+}
+
+.nakes-domain-pill svg {
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+/* ── Status Tag ──────────────────────────────────────────────────────────── */
+.nakes-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.22);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.nakes-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.7);
+  display: inline-block;
+  animation: nakesStatusPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes nakesStatusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* ── Action Buttons (Edit / Delete) ─────────────────────────────────────── */
+.nakes-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.nakes-edit-btn {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  color: rgba(217, 119, 87, 0.8);
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.nakes-edit-btn:hover {
+  background: rgba(217, 119, 87, 0.14);
+  border-color: rgba(217, 119, 87, 0.5);
+  color: #e07a5f;
+  transform: scale(1.06);
+}
+
+.nakes-del-btn {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: rgba(239, 68, 68, 0.65);
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.nakes-del-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  transform: scale(1.06);
+}
+
+/* ── Password Cell ───────────────────────────────────────────────────────── */
+.nakes-pwd-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+  min-width: 72px;
+}
+
+.nakes-pwd-text {
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted, #9e9d99);
+  letter-spacing: 0.06em;
+  min-width: 36px;
+  display: inline-block;
+}
+
+.nakes-pwd-eye-btn {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: rgba(155,150,142,0.6);
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 0.12s ease, background 0.12s ease;
+  flex-shrink: 0;
+}
+
+.nakes-pwd-eye-btn:hover {
+  color: var(--text-primary, #f5f4ef);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Empty State ─────────────────────────────────────────────────────────── */
+.nakes-empty-state {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--text-muted, #9e9d99);
+}
+
+.nakes-empty-state svg {
+  margin-bottom: 14px;
+  color: rgba(155, 150, 142, 0.45);
+}
+
+.nakes-empty-state p {
+  margin-bottom: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nakes-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  background: var(--accent-terracotta, #e07a5f);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 620;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 2px 10px rgba(224, 122, 95, 0.28);
+}
+
+.nakes-inline-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Form Input Nakes Profesional — Premium Redesign
+   ========================================================================== */
+
+/* Intro / Registration Info Banner */
+.nakes-form-intro-banner {
+  display: flex;
+  gap: 13px;
+  padding: 13px 16px;
+  border-radius: 11px;
+  background: rgba(224, 122, 95, 0.07);
+  border: 1px solid rgba(224, 122, 95, 0.2);
+  margin-bottom: 20px;
+  color: var(--text-secondary, #c2bfb8);
+  line-height: 1.5;
+}
+
+.nakes-form-intro-banner strong {
+  color: var(--text-primary, #f5f4ef);
+  font-weight: 640;
+}
+
+.nakes-banner-icon {
+  color: var(--accent-terracotta, #e07a5f);
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.9;
+}
+
+/* Form Grid */
+.nakes-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .nakes-form-grid { grid-template-columns: 1fr; }
+}
+
+/* Individual Field */
+.nakes-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nakes-form-field label {
+  font-size: 11.5px;
+  font-weight: 640;
+  color: rgba(200, 196, 190, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: -0.01em;
+  user-select: none;
+}
+
+.nakes-form-field label svg {
+  color: rgba(224, 122, 95, 0.7);
+  flex-shrink: 0;
+}
+
+.nakes-required {
+  color: var(--accent-terracotta, #e07a5f);
+  font-weight: 700;
+}
+
+/* Inputs & Selects */
+.nakes-form-field input,
+.nakes-form-field select {
+  padding: 9px 12px;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  color: var(--text-primary, #f5f4ef);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  font-family: inherit;
+}
+
+.nakes-form-field input::placeholder {
+  color: rgba(155,150,142,0.6);
+  font-size: 12.5px;
+}
+
+.nakes-form-field input:focus,
+.nakes-form-field select:focus {
+  border-color: rgba(224, 122, 95, 0.5);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.12);
+}
+
+.nakes-field-hint {
+  font-size: 11px;
+  color: rgba(155, 150, 142, 0.75);
+  line-height: 1.35;
+}
+
+/* Highlighted Wrapper Fields */
+.nakes-field-highlight {
+  background: rgba(224, 122, 95, 0.04);
+  border: 1px solid rgba(224, 122, 95, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.nakes-field-generated {
+  background: rgba(34, 197, 94, 0.03);
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+/* Domain email composite input */
+.nakes-domain-input-box {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  overflow: hidden;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.nakes-domain-input-box:focus-within {
+  border-color: rgba(224, 122, 95, 0.5);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.12);
+}
+
+.nakes-domain-input-box input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 9px 12px;
+}
+
+.nakes-domain-input-box input:focus {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.nakes-domain-suffix {
+  padding: 9px 14px;
+  background: rgba(224, 122, 95, 0.1);
+  color: var(--accent-terracotta, #e07a5f);
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: monospace;
+  border-left: 1px solid rgba(224, 122, 95, 0.2);
+  white-space: nowrap;
+  user-select: none;
+  letter-spacing: -0.02em;
+}
+
+/* Auto-generated email preview */
+.nakes-auto-generated-preview {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: #4ade80;
+  margin-top: 5px;
+}
+
+.preview-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  display: inline-block;
+  animation: nakesPreviewDotPulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes nakesPreviewDotPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.75; }
+  50%       { transform: scale(1.25); opacity: 1; }
+}
+
+/* Password field: input + auto-generate button */
+.nakes-password-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.nakes-password-input-group input {
+  flex: 1;
+}
+
+.nakes-pwd-badge-btn {
+  flex-shrink: 0;
+  padding: 0 13px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--accent-terracotta, #e07a5f);
+  background: rgba(224, 122, 95, 0.1);
+  border: 1px solid rgba(224, 122, 95, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.nakes-pwd-badge-btn:hover {
+  background: rgba(224, 122, 95, 0.18);
+  border-color: rgba(224, 122, 95, 0.4);
+}
+
+/* ── Form Actions Footer ─────────────────────────────────────────────────── */
+.nakes-form-actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nakes-btn-secondary {
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 580;
+  color: var(--text-muted, #9e9d99);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.nakes-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary, #c2bfb8);
+  border-color: rgba(255, 255, 255, 0.13);
+}
+
+.nakes-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  font-size: 13px;
+  font-weight: 640;
+  color: #ffffff;
+  background: var(--accent-terracotta, #e07a5f);
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 14px rgba(224, 122, 95, 0.3);
+  letter-spacing: -0.01em;
+  font-family: inherit;
+}
+
+.nakes-btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(224, 122, 95, 0.38);
+}
+
+/* Legacy modal containers (kept for backward compatibility) */
+.nakes-admin-modal-container {
+  max-width: 980px !important;
+  width: 94% !important;
+  max-height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--bg-surface, #1a1918) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(224, 122, 95, 0.1) !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.nakes-admin-header {
+  padding: 18px 24px 16px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: linear-gradient(180deg, rgba(224, 122, 95, 0.07) 0%, transparent 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.nakes-header-avatar-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, rgba(224, 122, 95, 0.22), rgba(224, 122, 95, 0.06));
+  color: var(--accent-terracotta, #e07a5f);
+  border: 1px solid rgba(224, 122, 95, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nakes-header-kemenkes-tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-terracotta, #e07a5f);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.85;
+}
+
 .nakes-admin-tag {
   background: rgba(224, 122, 95, 0.15) !important;
   color: var(--accent-terracotta, #e07a5f) !important;
