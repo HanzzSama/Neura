@@ -113,7 +113,7 @@ def api_send_verification_email():
     Generate Firebase email verification link dan kirim custom HTML email
     via Gmail SMTP.
 
-    Body JSON: { "email": str, "displayName": str, "continueUrl": str (optional) }
+    Body JSON: { "email": str, "displayName": str, "continueUrl": str (optional), "idToken": str (optional) }
     """
     from core.email_sender import send_verification_email, is_smtp_configured
 
@@ -121,6 +121,7 @@ def api_send_verification_email():
     email        = (body.get("email") or "").strip()
     display_name = (body.get("displayName") or email.split("@")[0]).strip()
     continue_url = (body.get("continueUrl") or "http://localhost:5000/verify-email").strip()
+    id_token     = (body.get("idToken") or "").strip()
 
     if not email or "@" not in email:
         return jsonify({"success": False, "error": "Email tidak valid."}), 400
@@ -133,24 +134,59 @@ def api_send_verification_email():
         }), 503
 
     verify_link = None
-    fb_auth = get_firebase_admin_auth()
-    if fb_auth:
-        try:
-            action_settings = fb_auth.ActionCodeSettings(
-                url=continue_url,
-                handle_code_in_app=False,
-            )
-            verify_link = fb_auth.generate_email_verification_link(email, action_code_settings=action_settings)
-        except Exception as e:
-            logger.warning(f"[Firebase Admin] Gagal generate link: {e}")
 
+    # Metode 1: Gunakan Firebase REST API jika idToken tersedia (tidak perlu service account)
+    api_key = os.getenv("FIREBASE_API_KEY", "").strip()
+    if id_token and api_key:
+        try:
+            import requests
+            from urllib.parse import urlparse, parse_qs
+            resp = requests.post(
+                f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={api_key}",
+                json={
+                    "requestType": "VERIFY_EMAIL",
+                    "idToken": id_token,
+                    "returnOobLink": True
+                },
+                timeout=10
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                raw_link = data.get("oobLink", "")
+                if raw_link:
+                    parsed = urlparse(raw_link)
+                    qs = parse_qs(parsed.query)
+                    oob_code = qs.get("oobCode", [""])[0]
+                    if oob_code:
+                        verify_link = f"{continue_url}?mode=verifyEmail&oobCode={oob_code}&email={email}"
+                    else:
+                        verify_link = raw_link
+                    logger.info(f"[Neura Email] Berhasil generate Firebase oobLink via REST API untuk {email}")
+            else:
+                logger.warning(f"[Firebase REST sendOobCode] Status {resp.status_code}: {resp.text}")
+        except Exception as e:
+            logger.warning(f"[Firebase REST sendOobCode] Exception: {e}")
+
+    # Metode 2: Coba Firebase Admin SDK jika service account tersedia
     if not verify_link:
-        return jsonify({
-            "success": False,
-            "error": "Firebase Admin SDK belum dikonfigurasi. Tambahkan kredensial service account di .env",
-            "admin_required": True,
-        }), 503
+        fb_auth = get_firebase_admin_auth()
+        if fb_auth:
+            try:
+                action_settings = fb_auth.ActionCodeSettings(
+                    url=continue_url,
+                    handle_code_in_app=False,
+                )
+                verify_link = fb_auth.generate_email_verification_link(email, action_code_settings=action_settings)
+                logger.info(f"[Neura Email] Berhasil generate link via Firebase Admin SDK untuk {email}")
+            except Exception as e:
+                logger.warning(f"[Firebase Admin] Gagal generate link: {e}")
+
+    # Metode 3: Fallback direct link
+    if not verify_link:
+        verify_link = f"{continue_url}?mode=verifyEmail&email={email}"
+        logger.info(f"[Neura Email] Menggunakan direct fallback link untuk {email}")
 
     result = send_verification_email(email, display_name, verify_link)
-    status_code = 200 if result["success"] else 500
+    status_code = 200 if result.get("success") else 500
     return jsonify(result), status_code
+

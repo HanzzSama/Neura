@@ -921,39 +921,54 @@
   }
 
   /**
-   * Kirim email verifikasi HTML premium via server endpoint.
-   * Server menggunakan Firebase Admin SDK + Gmail SMTP dengan pengirim "Neura AI".
-   * Fallback ke Firebase sendEmailVerification jika server belum dikonfigurasi.
+   * Kirim email verifikasi "Confirm Email" HTML premium via server Gmail SMTP.
+   * Mengirimkan idToken agar backend bisa generate OOB link resmi dari Firebase.
    */
-  function sendCustomVerificationEmail(email, displayName) {
+  function sendCustomVerificationEmail(email, displayName, idToken) {
     var continueUrl = window.location.origin + '/verify-email';
 
-    fetch('/api/send-verification-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: email,
-        displayName: displayName || '',
-        continueUrl: continueUrl
+    function postEmail(token) {
+      return fetch('/api/send-verification-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          displayName: displayName || '',
+          continueUrl: continueUrl,
+          idToken: token || ''
+        })
       })
-    })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data.success) {
-        console.log('[Neura Email] Email verifikasi "Neura AI" terkirim ke', email);
-      } else if (data.smtp_required || data.admin_required) {
-        // Server belum dikonfigurasi SMTP/Admin SDK — fallback ke Firebase email
-        console.warn('[Neura Email] Server belum dikonfigurasi, fallback ke Firebase email:', data.error);
-        _sendFirebaseVerificationEmail(email);
-      } else {
-        console.warn('[Neura Email] Gagal kirim via server:', data.error);
-        _sendFirebaseVerificationEmail(email);
-      }
-    })
-    .catch(function () {
-      // Server tidak merespons — fallback ke Firebase email
-      _sendFirebaseVerificationEmail(email);
-    });
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          console.log('[Neura Email] Email verifikasi "Confirm Email" terkirim via SMTP ke', email);
+          return true;
+        } else {
+          console.warn('[Neura Email] Gagal kirim via SMTP server:', data.error);
+          return false;
+        }
+      })
+      .catch(function (err) {
+        console.warn('[Neura Email] Server SMTP request failed:', err);
+        return false;
+      });
+    }
+
+    if (idToken) {
+      return postEmail(idToken);
+    }
+
+    var fb = window.NeuraFirebase;
+    var user = activeVerificationUser || (fb && fb.getAuth() ? fb.getAuth().currentUser : null);
+    if (user && typeof user.getIdToken === 'function') {
+      return user.getIdToken(true).then(function (token) {
+        return postEmail(token);
+      }).catch(function () {
+        return postEmail('');
+      });
+    }
+
+    return postEmail('');
   }
 
   function _sendFirebaseVerificationEmail(email) {
@@ -1471,13 +1486,17 @@
             // Step 1: Update display name
             var updateProfilePromise = user.updateProfile({ displayName: name }).catch(function () {});
 
-            // Step 2: Simpan ke Firestore & kirim email verifikasi via server (non-blocking)
+            // Step 2: Simpan ke Firestore & kirim email verifikasi via server SMTP (non-blocking)
             updateProfilePromise.then(function () {
               // Simpan ke Firestore (non-blocking)
               saveUserToFirestore(db, user, name);
 
-              // Kirim custom HTML email "Neura AI" via server endpoint
-              sendCustomVerificationEmail(user.email, name);
+              // Ambil idToken user dan kirim custom email "Confirm Email" via Gmail SMTP
+              user.getIdToken(true).then(function (token) {
+                sendCustomVerificationEmail(user.email, name, token);
+              }).catch(function () {
+                sendCustomVerificationEmail(user.email, name, '');
+              });
             });
 
             // Step 3: Langsung tampilkan slide verify tanpa menunggu side effects
@@ -1541,10 +1560,17 @@
 
         btnResendVerification.disabled = true;
         btnResendVerification.textContent = 'Mengirim...';
-        user.sendEmailVerification({
-          url: window.location.origin + '/welcome?verified=true'
-        }).then(function () {
-          btnResendVerification.textContent = '✓ Tautan Terkirim!';
+
+        user.getIdToken(true).then(function (token) {
+          return sendCustomVerificationEmail(user.email, activeVerificationName, token);
+        }).then(function (success) {
+          if (success) {
+            btnResendVerification.textContent = '✓ Email Terkirim!';
+            showAlert('Tautan verifikasi "Confirm Email" berhasil dikirim ulang ke ' + user.email, false);
+          } else {
+            btnResendVerification.textContent = 'Gagal Mengirim';
+            showAlert('Gagal mengirim ulang email verifikasi. Coba beberapa saat lagi.', true);
+          }
           setTimeout(function () {
             btnResendVerification.disabled = false;
             btnResendVerification.innerHTML = '&#9993; Kirim Ulang Tautan';
