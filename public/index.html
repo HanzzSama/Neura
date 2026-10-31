@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=6.5" />
+  <link rel="stylesheet" href="/css/style.css?v=6.6" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
@@ -2507,234 +2507,240 @@
     </div>
   </div>
 
-  <!-- Modal Edit Profile & Edit Password -->
+  <!-- Modal Edit Profile (Redesigned: Profile Preview & Update Data) -->
   <div class="modal-overlay" id="edit-profile-modal" onclick="closeEditProfileModalOnBackdrop(event)">
-    <div class="claude-modal profile-edit-modal-container">
-      <!-- Modal Header -->
-      <div class="modal-header profile-edit-header">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="profile-edit-header-badge">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
+    <div class="claude-modal profile-custom-modal-card">
+      
+      <!-- Top Bar: Nav Tabs & Close Button -->
+      <div class="profile-modal-topbar">
+        <div class="profile-modal-tabs">
+          <button type="button" class="profile-nav-tab active" id="tab-nav-profile" onclick="switchEditProfileTab('profile')">
+            <span>Profile</span>
+          </button>
+          <button type="button" class="profile-nav-tab" id="tab-nav-update" onclick="switchEditProfileTab('update')">
+            <span>Update</span>
+          </button>
+          <button type="button" class="profile-nav-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')">
+            <span>Keamanan</span>
+          </button>
+        </div>
+
+        <button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Hero Banner & Floating Avatar Container -->
+      <div class="profile-hero-banner-container">
+        <div class="profile-hero-banner-image"></div>
+        <div class="profile-hero-banner-overlay"></div>
+
+        <!-- Floating Avatar (overlapping banner bottom edge) -->
+        <div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
+          <div class="profile-floating-avatar-circle" id="edit-avatar-preview">H</div>
+          <div class="profile-avatar-camera-mini" title="Ubah Foto">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
             </svg>
           </div>
-          <div>
-            <div class="profile-edit-subtitle-tag">
-              <span>PENGATURAN AKUN</span> &bull; <span>KEAMANAN NEURA AI</span>
-            </div>
-            <h3 class="modal-title" style="font-size:17px;margin:0;font-weight:700;">Edit Profil &amp; Kata Sandi</h3>
+        </div>
+
+        <!-- Banner Action Controls (Google Pill + Circle Actions) -->
+        <div class="profile-banner-action-controls">
+          <button type="button" class="profile-banner-pill-btn" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()" title="Sinkronkan foto profil dari akun Google">
+            <svg width="13" height="13" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z"/>
+            </svg>
+            <span>Google Acc...</span>
+          </button>
+
+          <button type="button" class="profile-banner-circle-btn" onclick="triggerAvatarUpload()" title="Unggah foto baru dari perangkat">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </button>
+
+          <button type="button" class="profile-banner-circle-btn btn-delete-circle" id="btn-remove-avatar" onclick="handleRemoveAvatar()" title="Hapus foto profil">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="handleAvatarFileSelected(event)">
+
+      <!-- User Identification Header (Name & @handle) -->
+      <div class="profile-hero-user-header">
+        <h3 class="profile-hero-user-name" id="edit-avatar-name-display">HanzzSama</h3>
+        <div class="profile-hero-user-handle" id="edit-avatar-role-badge">@user</div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- PANEL 1: PROFILE PREVIEW (Desain seperti gambar atas) -->
+      <!-- ============================================================ -->
+      <div class="profile-view-panel" id="panel-profile-view" style="display:block;">
+        <div class="profile-preview-bio-text" id="preview-profile-bio">
+          Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzheimer berbasis 32 biomarker multimodal, dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis.
+        </div>
+
+        <div class="profile-preview-info-grid">
+          <div class="profile-preview-info-box">
+            <span class="info-box-label">Email Terdaftar</span>
+            <span class="info-box-value" id="preview-profile-email">haidar@neura.ai</span>
+          </div>
+          <div class="profile-preview-info-box">
+            <span class="info-box-label">Instansi / Faskes</span>
+            <span class="info-box-value" id="preview-profile-inst">—</span>
+          </div>
+          <div class="profile-preview-info-box">
+            <span class="info-box-label">Nomor Telepon</span>
+            <span class="info-box-value" id="preview-profile-phone">—</span>
+          </div>
+          <div class="profile-preview-info-box">
+            <span class="info-box-label">Status Workspace</span>
+            <span class="info-box-value text-accent-green">✓ Aktif &bull; Terverifikasi</span>
           </div>
         </div>
-        <button class="modal-close-btn" onclick="closeEditProfileModal()" title="Tutup Modal">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
+
+        <div class="profile-preview-footer-action">
+          <button type="button" class="profile-preview-edit-cta-btn" onclick="switchEditProfileTab('update')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            <span>Update Data Profil</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <div class="profile-edit-tabs-bar">
-        <button class="profile-edit-tab-btn active" id="tab-btn-edit-info" onclick="switchEditProfileTab('info')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          <span>Informasi Profil</span>
-        </button>
-        <button class="profile-edit-tab-btn" id="tab-btn-edit-security" onclick="switchEditProfileTab('security')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          <span>Keamanan &amp; Kata Sandi</span>
-        </button>
-      </div>
-
-      <!-- TAB 1: FORM EDIT INFORMASI PROFIL -->
-      <div class="profile-edit-tab-content" id="panel-edit-profile-info" style="display:block;">
+      <!-- ============================================================ -->
+      <!-- PANEL 2: UPDATE FORM (Desain seperti gambar bawah) -->
+      <!-- ============================================================ -->
+      <div class="profile-view-panel" id="panel-profile-update" style="display:none;">
         <form id="form-edit-profile" onsubmit="handleSaveProfile(event)">
-          <!-- Avatar Preview & Choice -->
-          <div class="profile-avatar-banner">
-            <div class="profile-avatar-wrapper" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
-              <div class="profile-avatar-big" id="edit-avatar-preview">H</div>
-              <div class="profile-avatar-camera-badge" title="Ubah Foto">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                  <circle cx="12" cy="13" r="4"></circle>
-                </svg>
-              </div>
+          <div class="profile-update-form-grid">
+            <!-- Nama Lengkap -->
+            <div class="profile-form-pill-group">
+              <label class="profile-pill-label" for="edit-profile-input-name">Nama Lengkap</label>
+              <input type="text" class="profile-pill-input" id="edit-profile-input-name" placeholder="Nama Lengkap" required oninput="handleEditProfileNameChange()">
             </div>
-            
-            <input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="handleAvatarFileSelected(event)">
 
-            <div class="profile-avatar-meta">
-              <div class="profile-avatar-header-row">
-                <div class="profile-avatar-name" id="edit-avatar-name-display">Hanzz</div>
-                <div class="profile-avatar-role" id="edit-avatar-role-badge">User</div>
-              </div>
-              <div class="profile-avatar-sub" id="profile-avatar-subtext">JPG, PNG, atau WebP • Ukuran maksimal 5MB</div>
-              <div class="profile-avatar-actions">
-                <button type="button" class="avatar-action-btn btn-upload-avatar" onclick="triggerAvatarUpload()" title="Unggah foto baru dari perangkat">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <span>Unggah Foto</span>
-                </button>
-                <button type="button" class="avatar-action-btn btn-sync-google" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()" title="Sinkronkan dengan foto profil Google">
-                  <svg width="13" height="13" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
-                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z"/>
-                    <path fill="#FBBC05" d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z"/>
-                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z"/>
-                  </svg>
-                  <span>Sinkronkan Google</span>
-                </button>
-                <button type="button" class="avatar-action-btn btn-remove-avatar" id="btn-remove-avatar" onclick="handleRemoveAvatar()" title="Hapus foto kustom dan gunakan inisial">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                  </svg>
-                  <span>Hapus</span>
-                </button>
-              </div>
+            <!-- Email Terdaftar (Readonly) -->
+            <div class="profile-form-pill-group">
+              <label class="profile-pill-label" for="edit-profile-input-email">Alamat Email</label>
+              <input type="email" class="profile-pill-input input-readonly" id="edit-profile-input-email" readonly placeholder="Alamat Email">
+            </div>
+
+            <!-- Instansi / RS -->
+            <div class="profile-form-pill-group">
+              <label class="profile-pill-label" for="edit-profile-input-institution">Instansi / Organisasi</label>
+              <input type="text" class="profile-pill-input" id="edit-profile-input-institution" placeholder="Instansi / Rumah Sakit">
+            </div>
+
+            <!-- Nomor Telepon -->
+            <div class="profile-form-pill-group">
+              <label class="profile-pill-label" for="edit-profile-input-phone">Nomor Telepon</label>
+              <input type="tel" class="profile-pill-input" id="edit-profile-input-phone" placeholder="Nomor Telepon / WhatsApp">
+            </div>
+
+            <!-- Bio Singkat (Full width) -->
+            <div class="profile-form-pill-group full-width">
+              <label class="profile-pill-label" for="edit-profile-input-bio">Bio Singkat / Minat Klinis</label>
+              <textarea class="profile-pill-textarea" id="edit-profile-input-bio" rows="2" placeholder="Tuliskan catatan peran klinis atau bio profil Anda..."></textarea>
             </div>
           </div>
 
-          <div class="profile-form-grid">
-            <!-- Nama Lengkap / Display Name -->
-            <div class="profile-form-field">
-              <label for="edit-profile-input-name">Nama Lengkap / Nama Tampilan <span class="profile-required">*</span></label>
-              <input type="text" id="edit-profile-input-name" placeholder="Nama Anda" required oninput="handleEditProfileNameChange()">
-            </div>
-
-            <!-- Email (Readonly) -->
-            <div class="profile-form-field">
-              <label for="edit-profile-input-email">Alamat Email Terdaftar</label>
-              <input type="email" id="edit-profile-input-email" readonly style="opacity:0.75;cursor:not-allowed;">
-              <span class="profile-field-hint">Email akun utama terikat dengan autentikasi Neura AI.</span>
-            </div>
-
-            <!-- Instansi / Faskes / Organisasi -->
-            <div class="profile-form-field">
-              <label for="edit-profile-input-institution">Instansi / Rumah Sakit / Organisasi</label>
-              <input type="text" id="edit-profile-input-institution" placeholder="Contoh: RSUP Dr. Sardjito / Pribadi">
-            </div>
-
-            <!-- Nomor Telepon / WhatsApp -->
-            <div class="profile-form-field">
-              <label for="edit-profile-input-phone">Nomor Telepon / WhatsApp</label>
-              <input type="tel" id="edit-profile-input-phone" placeholder="Contoh: 0812-2334-4556">
-            </div>
-
-            <!-- Bio Singkat -->
-            <div class="profile-form-field" style="grid-column: span 2;">
-              <label for="edit-profile-input-bio">Bio Singkat / Minat Klinis</label>
-              <textarea id="edit-profile-input-bio" rows="2" placeholder="Tuliskan catatan singkat peran klinis atau minat medis Anda..."></textarea>
-            </div>
-          </div>
-
-          <div class="profile-form-actions-footer">
-            <button type="button" class="profile-btn-secondary" onclick="closeEditProfileModal()">
+          <div class="profile-update-actions-footer">
+            <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
               Batal
             </button>
-            <button type="submit" class="profile-btn-primary" id="btn-save-profile">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <button type="submit" class="profile-action-btn-solid" id="btn-save-profile">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
-              <span>Simpan Perubahan Profil</span>
+              <span>Simpan Perubahan</span>
             </button>
           </div>
         </form>
       </div>
 
-      <!-- TAB 2: FORM GANTI KATA SANDI (EDIT PASSWORD) -->
-      <div class="profile-edit-tab-content" id="panel-edit-profile-security" style="display:none;">
+      <!-- ============================================================ -->
+      <!-- PANEL 3: SECURITY / GANTI PASSWORD -->
+      <!-- ============================================================ -->
+      <div class="profile-view-panel" id="panel-edit-profile-security" style="display:none;">
         <form id="form-edit-password" onsubmit="handleUpdatePassword(event)">
-          <div class="profile-security-banner">
-            <div class="profile-security-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
+          <div class="profile-security-banner-clean">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
             <div>
-              <strong>Perlindungan Akun &amp; Kriptografi Kata Sandi:</strong>
-              <p style="margin:2px 0 0 0;font-size:12px;opacity:0.88;">
-                Gunakan minimal 6 karakter dengan kombinasi huruf besar, huruf kecil, dan angka untuk menjaga keamanan konsultasi &amp; rekam medis Anda.
-              </p>
+              <span>Gunakan minimal 6 karakter kombinasi huruf besar, kecil, dan angka.</span>
             </div>
           </div>
 
-          <div class="profile-password-fields">
-            <!-- Password Lama -->
-            <div class="profile-form-field">
-              <label for="input-old-password">Kata Sandi Saat Ini <span class="profile-required">*</span></label>
-              <div class="profile-password-box">
-                <input type="password" id="input-old-password" placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
-                <button type="button" class="profile-eye-btn" onclick="togglePasswordVisibility('input-old-password', this)" title="Lihat kata sandi">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
+          <div class="profile-update-form-grid" style="margin-top:14px;">
+            <div class="profile-form-pill-group full-width">
+              <label class="profile-pill-label" for="input-old-password">Kata Sandi Saat Ini</label>
+              <div class="profile-pill-password-wrap">
+                <input type="password" class="profile-pill-input" id="input-old-password" placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
+                <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-old-password', this)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
               </div>
             </div>
 
-            <!-- Password Baru -->
-            <div class="profile-form-field">
-              <label for="input-new-password">Kata Sandi Baru <span class="profile-required">*</span></label>
-              <div class="profile-password-box">
-                <input type="password" id="input-new-password" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password" oninput="handlePasswordStrengthInput(this.value)">
-                <button type="button" class="profile-eye-btn" onclick="togglePasswordVisibility('input-new-password', this)" title="Lihat kata sandi">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
+            <div class="profile-form-pill-group">
+              <label class="profile-pill-label" for="input-new-password">Kata Sandi Baru</label>
+              <div class="profile-pill-password-wrap">
+                <input type="password" class="profile-pill-input" id="input-new-password" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password" oninput="handlePasswordStrengthInput(this.value)">
+                <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-new-password', this)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
-              </div>
-              
-              <!-- Password Strength Meter -->
-              <div class="password-strength-container" id="pwd-strength-container">
-                <div class="password-strength-bar">
-                  <div class="password-strength-fill" id="pwd-strength-fill"></div>
-                </div>
-                <div class="password-strength-label" id="pwd-strength-label">Kekuatan Sandi: —</div>
               </div>
             </div>
 
-            <!-- Konfirmasi Password Baru -->
-            <div class="profile-form-field">
-              <label for="input-confirm-password">Konfirmasi Kata Sandi Baru <span class="profile-required">*</span></label>
-              <div class="profile-password-box">
-                <input type="password" id="input-confirm-password" placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
-                <button type="button" class="profile-eye-btn" onclick="togglePasswordVisibility('input-confirm-password', this)" title="Lihat kata sandi">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
+            <div class="profile-form-pill-group">
+              <label class="profile-pill-label" for="input-confirm-password">Konfirmasi Kata Sandi Baru</label>
+              <div class="profile-pill-password-wrap">
+                <input type="password" class="profile-pill-input" id="input-confirm-password" placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+                <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-confirm-password', this)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <div class="profile-form-actions-footer">
-            <button type="button" class="profile-btn-secondary" onclick="closeEditProfileModal()">
+          <!-- Password Strength Meter -->
+          <div class="password-strength-container" id="pwd-strength-container" style="margin-top:10px;">
+            <div class="password-strength-bar">
+              <div class="password-strength-fill" id="pwd-strength-fill"></div>
+            </div>
+            <div class="password-strength-label" id="pwd-strength-label">Kekuatan Sandi: —</div>
+          </div>
+
+          <div class="profile-update-actions-footer">
+            <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
               Batal
             </button>
-            <button type="submit" class="profile-btn-primary" id="btn-update-password">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
+            <button type="submit" class="profile-action-btn-solid" id="btn-save-password">
               <span>Perbarui Kata Sandi</span>
             </button>
           </div>
         </form>
       </div>
+
     </div>
   </div>
 
@@ -2752,7 +2758,7 @@
   <script src="/js/app-translations.js?v=7.0"></script>
   <script src="/js/app-ui.js?v=7.0"></script>
   <script src="/js/app-auth.js?v=7.1"></script>
-  <script src="/js/app-settings.js?v=7.1"></script>
+  <script src="/js/app-settings.js?v=7.2"></script>
   <script src="/js/app-voice-input.js?v=7.0"></script>
   <script src="/js/app-ml-commands.js?v=7.0"></script>
   <script src="/js/app-chat.js?v=7.0"></script>

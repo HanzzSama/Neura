@@ -1005,29 +1005,40 @@ function openEditProfileModal(initialTab = 'info') {
   const currentRole = localStorage.getItem('neura_user_role') || 'User';
   const currentInst = user?.institution || localStorage.getItem('neura_user_institution') || '';
   const currentPhone = user?.phone || localStorage.getItem('neura_user_phone') || '';
-  const currentBio = user?.bio || localStorage.getItem('neura_user_bio') || '';
+  const currentBio = user?.bio || localStorage.getItem('neura_user_bio') || 'Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzheimer berbasis 32 biomarker multimodal, dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis.';
 
   // Reset avatar state & render preview
   currentActivePhotoUrl = user?.photoURL || localStorage.getItem('neura_user_photo') || '';
   pendingAvatarUrl = undefined;
   renderEditAvatarPreview(currentActivePhotoUrl, currentName);
 
-  // Isi ke Form Info
+  // Isi ke Form Update
   const nameInput = document.getElementById('edit-profile-input-name');
   const emailInput = document.getElementById('edit-profile-input-email');
   const instInput = document.getElementById('edit-profile-input-institution');
   const phoneInput = document.getElementById('edit-profile-input-phone');
   const bioInput = document.getElementById('edit-profile-input-bio');
-  const previewName = document.getElementById('edit-avatar-name-display');
-  const previewRole = document.getElementById('edit-avatar-role-badge');
 
   if (nameInput) nameInput.value = currentName;
   if (emailInput) emailInput.value = currentEmail;
   if (instInput) instInput.value = currentInst;
   if (phoneInput) phoneInput.value = currentPhone;
-  if (bioInput) bioInput.value = currentBio;
-  if (previewName) previewName.textContent = currentName;
-  if (previewRole) previewRole.textContent = currentRole;
+  if (bioInput) bioInput.value = (user?.bio || localStorage.getItem('neura_user_bio') || '');
+
+  // Isi ke Profile Preview Elements
+  const heroName = document.getElementById('edit-avatar-name-display');
+  const heroHandle = document.getElementById('edit-avatar-role-badge');
+  const prevBio = document.getElementById('preview-profile-bio');
+  const prevEmail = document.getElementById('preview-profile-email');
+  const prevInst = document.getElementById('preview-profile-inst');
+  const prevPhone = document.getElementById('preview-profile-phone');
+
+  if (heroName) heroName.textContent = currentName;
+  if (heroHandle) heroHandle.textContent = '@' + currentRole.toLowerCase();
+  if (prevBio) prevBio.textContent = currentBio;
+  if (prevEmail) prevEmail.textContent = currentEmail;
+  if (prevInst) prevInst.textContent = currentInst || '—';
+  if (prevPhone) prevPhone.textContent = currentPhone || '—';
 
   // Reset form password
   const pwdForm = document.getElementById('form-edit-password');
@@ -1036,22 +1047,15 @@ function openEditProfileModal(initialTab = 'info') {
 
   // Untuk Admin: sembunyikan menu/tab Keamanan & Kata Sandi
   const isAdmin = typeof isCurrentUserAdmin === 'function' ? isCurrentUserAdmin() : (currentRole === 'Admin');
-  const tabSecBtn = document.getElementById('tab-btn-edit-security');
-  const panelSec = document.getElementById('panel-edit-profile-security');
-  const modalTitle = modal.querySelector('.modal-title');
-  if (isAdmin) {
-    if (tabSecBtn) tabSecBtn.style.display = 'none';
-    if (panelSec) panelSec.style.display = 'none';
-    if (modalTitle) modalTitle.textContent = 'Edit Profil Administrator';
-    initialTab = 'info';
-  } else {
-    if (tabSecBtn) tabSecBtn.style.display = 'inline-flex';
-    if (modalTitle) modalTitle.textContent = 'Edit Profil & Kata Sandi';
+  const tabSecBtn = document.getElementById('tab-nav-security');
+  if (tabSecBtn) {
+    tabSecBtn.style.display = isAdmin ? 'none' : 'inline-block';
   }
 
   // Tampilkan modal dan buka tab yang diminta
   modal.classList.add('open');
-  switchEditProfileTab(initialTab);
+  if (initialTab === 'info') initialTab = 'profile';
+  switchEditProfileTab(initialTab || 'profile');
 }
 window.openEditProfileModal = openEditProfileModal;
 
@@ -1072,24 +1076,45 @@ function switchEditProfileTab(tabName) {
   const currentRole = localStorage.getItem('neura_user_role') || 'User';
   const isAdmin = typeof isCurrentUserAdmin === 'function' ? isCurrentUserAdmin() : (currentRole === 'Admin');
   if (isAdmin && tabName === 'security') {
-    tabName = 'info';
+    tabName = 'profile';
+  }
+  if (tabName === 'info') {
+    tabName = 'profile';
   }
 
-  const panelInfo = document.getElementById('panel-edit-profile-info');
+  const panelProfile = document.getElementById('panel-profile-view');
+  const panelUpdate = document.getElementById('panel-profile-update');
   const panelSec = document.getElementById('panel-edit-profile-security');
-  const tabBtnInfo = document.getElementById('tab-btn-edit-info');
-  const tabBtnSec = document.getElementById('tab-btn-edit-security');
+  
+  const tabNavProfile = document.getElementById('tab-nav-profile');
+  const tabNavUpdate = document.getElementById('tab-nav-update');
+  const tabNavSec = document.getElementById('tab-nav-security');
 
   if (tabName === 'security' && !isAdmin) {
-    if (panelInfo) panelInfo.style.display = 'none';
+    if (panelProfile) panelProfile.style.display = 'none';
+    if (panelUpdate) panelUpdate.style.display = 'none';
     if (panelSec) panelSec.style.display = 'block';
-    if (tabBtnInfo) tabBtnInfo.classList.remove('active');
-    if (tabBtnSec) tabBtnSec.classList.add('active');
-  } else {
-    if (panelInfo) panelInfo.style.display = 'block';
+
+    if (tabNavProfile) tabNavProfile.classList.remove('active');
+    if (tabNavUpdate) tabNavUpdate.classList.remove('active');
+    if (tabNavSec) tabNavSec.classList.add('active');
+  } else if (tabName === 'update') {
+    if (panelProfile) panelProfile.style.display = 'none';
+    if (panelUpdate) panelUpdate.style.display = 'block';
     if (panelSec) panelSec.style.display = 'none';
-    if (tabBtnInfo) tabBtnInfo.classList.add('active');
-    if (tabBtnSec) tabBtnSec.classList.remove('active');
+
+    if (tabNavProfile) tabNavProfile.classList.remove('active');
+    if (tabNavUpdate) tabNavUpdate.classList.add('active');
+    if (tabNavSec) tabNavSec.classList.remove('active');
+  } else {
+    // Default: 'profile' (preview view)
+    if (panelProfile) panelProfile.style.display = 'block';
+    if (panelUpdate) panelUpdate.style.display = 'none';
+    if (panelSec) panelSec.style.display = 'none';
+
+    if (tabNavProfile) tabNavProfile.classList.add('active');
+    if (tabNavUpdate) tabNavUpdate.classList.remove('active');
+    if (tabNavSec) tabNavSec.classList.remove('active');
   }
 }
 window.switchEditProfileTab = switchEditProfileTab;
@@ -1326,16 +1351,28 @@ async function handleSaveProfile(event) {
       }
     }
 
+    // Update Profile Preview Elements inside modal
+    const heroName = document.getElementById('edit-avatar-name-display');
+    const prevBio = document.getElementById('preview-profile-bio');
+    const prevInst = document.getElementById('preview-profile-inst');
+    const prevPhone = document.getElementById('preview-profile-phone');
+    if (heroName) heroName.textContent = name;
+    if (prevBio) prevBio.textContent = bio || 'Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzheimer berbasis 32 biomarker multimodal, dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis.';
+    if (prevInst) prevInst.textContent = institution || '—';
+    if (prevPhone) prevPhone.textContent = phone || '—';
+    renderEditAvatarPreview(finalPhotoURL, name);
+
     // Jika tabel nakes admin sedang terbuka, refresh otomatis
     if (typeof fetchAndRenderNakesTable === 'function') {
       fetchAndRenderNakesTable();
     }
 
     if (typeof showToast === 'function') {
-      showToast('Profil pengguna berhasil diperbarui dan disinkronkan!', 'success');
+      showToast('Profil pengguna berhasil diperbarui!', 'success');
     }
 
-    closeEditProfileModal();
+    // Kembali ke tab Profile preview agar user dapat melihat hasil update
+    switchEditProfileTab('profile');
   } catch (err) {
     console.error('Error saving profile:', err);
     if (typeof showToast === 'function') {
