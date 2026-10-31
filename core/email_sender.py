@@ -381,12 +381,33 @@ Neura AI — Sistem Deteksi Alzheimer Berbasis AI
 
 def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> str:
     digits = list(str(otp_code).strip())
-    # Format each digit into a styled box
+
+    # Individual digit cells — minimalist Claude-style floating boxes
     digit_cells = "".join([
-        f'<td style="background:#FAF9F5;border:2px solid #DC2626;border-radius:10px;width:44px;height:52px;text-align:center;font-size:24px;font-weight:700;color:#1F1E1D;font-family:\'Courier New\',Courier,monospace;letter-spacing:1px;vertical-align:middle;">{d}</td>'
-        + ('<td style="width:8px;"></td>' if i < len(digits) - 1 else '')
+        f'<td style="'
+        f'background:#0D1117;'
+        f'border:1.5px solid #30363D;'
+        f'border-radius:12px;'
+        f'width:48px;height:58px;'
+        f'text-align:center;'
+        f'font-size:26px;font-weight:700;'
+        f'color:#E6EDF3;'
+        f'font-family:\'SF Mono\',\'Fira Code\',\'Courier New\',monospace;'
+        f'vertical-align:middle;'
+        f'box-shadow:0 2px 8px rgba(0,0,0,0.4);'
+        f'">{d}</td>'
+        + ('<td style="width:10px;"></td>' if i < len(digits) - 1 else '')
         for i, d in enumerate(digits)
     ])
+
+    # Subtle abstract SVG dot grid pattern for background
+    bg_pattern = (
+        "data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' "
+        "xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E"
+        "%3Cg fill='%23ffffff' fill-opacity='0.03'%3E"
+        "%3Ccircle cx='30' cy='30' r='1.5'/%3E"
+        "%3C/g%3E%3C/g%3E%3C/svg%3E"
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="id">
@@ -394,98 +415,126 @@ def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Kode Keamanan Admin 2FA — Neura AI</title>
+  <title>Kode OTP Admin — Neura AI</title>
+  <!--[if mso]><style>table{{border-collapse:collapse;}}</style><![endif]-->
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body, html {{ margin:0; padding:0; background:#0F172A; font-family:'Inter',Arial,sans-serif; }}
-    * {{ box-sizing:border-box; }}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700&display=swap');
+    body,html{{margin:0;padding:0;background:#0D1117;font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}}
+    *{{box-sizing:border-box;}}
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0F172A;font-family:'Inter',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#0D1117;font-family:'Inter',system-ui,-apple-system,sans-serif;">
 
-  <!-- Outer wrapper -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0F172A;padding:40px 16px;">
+  <!-- ═══ OUTER WRAPPER with dot pattern ═══ -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background:#0D1117;background-image:url('{bg_pattern}');padding:48px 16px;">
     <tr>
       <td align="center">
 
-        <!-- Card container (max 560px) -->
-        <table width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+        <!-- ═══ CONTAINER 580px ═══ -->
+        <table width="580" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;width:100%;">
 
-          <!-- ── HEADER BRAND ── -->
+          <!-- ── BRAND HEADER ── -->
           <tr>
-            <td align="center" style="padding-bottom:24px;">
+            <td align="center" style="padding-bottom:32px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:#DC2626;border-radius:12px;padding:10px 14px;vertical-align:middle;">
-                    <img src="https://img.icons8.com/ios-filled/24/ffffff/shield.png" alt="Shield" width="22" height="22" style="display:block;" />
+                  <!-- Logo icon -->
+                  <td style="vertical-align:middle;">
+                    <div style="width:38px;height:38px;background:linear-gradient(135deg,#D97757,#C0614A);border-radius:10px;display:table-cell;text-align:center;vertical-align:middle;">
+                      <img src="https://img.icons8.com/ios-filled/20/ffffff/shield.png"
+                           alt="⊙" width="20" height="20"
+                           style="display:block;margin:9px auto;" />
+                    </div>
                   </td>
+                  <!-- Brand name -->
                   <td style="padding-left:12px;vertical-align:middle;">
-                    <span style="font-size:1.3rem;font-weight:700;color:#F8FAFC;letter-spacing:-0.03em;">Neura <span style="color:#EF4444;">Admin</span></span>
+                    <span style="font-size:1.15rem;font-weight:700;color:#E6EDF3;letter-spacing:-0.02em;">
+                      Neura <span style="color:#D97757;">Admin</span>
+                    </span>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
 
-          <!-- ── MAIN CARD ── -->
+          <!-- ═══ MAIN CARD ═══ -->
           <tr>
-            <td style="background:#1E293B;border-radius:24px;border:1px solid #334155;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+            <td style="background:#161B22;border-radius:20px;border:1px solid #21262D;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.03);">
 
-              <!-- Top accent bar (Crimson security) -->
+              <!-- Top gradient line -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:linear-gradient(90deg,#DC2626 0%,#EF4444 50%,#B91C1C 100%);height:5px;"></td>
+                  <td style="height:3px;background:linear-gradient(90deg,#D97757 0%,#E8A87C 40%,#6E6AFF 80%,#D97757 100%);"></td>
                 </tr>
               </table>
 
-              <!-- Card body -->
+              <!-- CARD BODY -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="padding:40px 40px 0 40px;">
+                  <td style="padding:40px 44px 32px 44px;">
 
-                    <!-- Security Badge -->
-                    <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                    <!-- Badge row -->
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:26px;">
                       <tr>
-                        <td style="background:rgba(220,38,38,0.18);border:1px solid rgba(239,68,68,0.4);border-radius:999px;padding:5px 14px;">
-                          <span style="font-size:0.72rem;font-weight:700;color:#FCA5A5;letter-spacing:0.06em;text-transform:uppercase;">
-                            &#9679;&nbsp; Verifikasi Keamanan Dua Faktor (2FA)
+                        <!-- 2FA badge -->
+                        <td style="background:rgba(217,119,87,0.12);border:1px solid rgba(217,119,87,0.35);border-radius:999px;padding:4px 12px 4px 10px;">
+                          <span style="font-size:0.7rem;font-weight:600;color:#D97757;letter-spacing:0.06em;text-transform:uppercase;">
+                            ● &nbsp;2FA Aktif
                           </span>
                         </td>
-                        <td style="padding-left:10px;">
-                          <span style="font-size:0.72rem;font-weight:600;color:#94A3B8;">AES-256</span>
+                        <!-- Spacer -->
+                        <td style="width:12px;"></td>
+                        <!-- Encryption chip -->
+                        <td style="background:rgba(110,106,255,0.1);border:1px solid rgba(110,106,255,0.25);border-radius:999px;padding:4px 12px;">
+                          <span style="font-size:0.68rem;font-weight:600;color:#9D9AFF;letter-spacing:0.05em;text-transform:uppercase;">AES-256</span>
                         </td>
                       </tr>
                     </table>
 
-                    <!-- Title -->
-                    <h1 style="font-size:1.55rem;font-weight:700;color:#F8FAFC;letter-spacing:-0.03em;line-height:1.25;margin:0 0 12px 0;">
+                    <!-- Heading -->
+                    <h1 style="font-size:1.5rem;font-weight:700;color:#E6EDF3;letter-spacing:-0.025em;line-height:1.2;margin:0 0 10px 0;">
                       Autentikasi Administrator
                     </h1>
-                    <p style="font-size:0.92rem;color:#CBD5E1;line-height:1.6;margin:0 0 24px 0;">
-                      Halo <strong style="color:#FFFFFF;">{admin_name}</strong>,<br/>
-                      Permintaan masuk dengan hak akses penuh terdeteksi menggunakan email custom admin:
-                      <br/>
-                      <span style="display:inline-block;margin-top:6px;background:rgba(15,23,42,0.6);border:1px solid #475569;border-radius:8px;padding:5px 12px;font-family:monospace;font-size:0.88rem;color:#FCA5A5;">
-                        {custom_email}
-                      </span>
+
+                    <!-- Subtext -->
+                    <p style="font-size:0.9rem;color:#8B949E;line-height:1.65;margin:0 0 28px 0;">
+                      Halo <strong style="color:#E6EDF3;font-weight:600;">{admin_name}</strong>,<br/>
+                      Permintaan akses penuh terdeteksi menggunakan email:
                     </p>
 
-                    <!-- OTP Code Box Container -->
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                           style="background:#0F172A;border:1px solid #334155;border-radius:16px;padding:28px 20px;margin-bottom:26px;">
+                    <!-- Email chip -->
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
                       <tr>
-                        <td align="center">
-                          <p style="font-size:0.75rem;font-weight:600;color:#94A3B8;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 14px 0;">
-                            Kode One-Time Password (OTP) Anda
-                          </p>
-                          <table cellpadding="0" cellspacing="0" border="0">
-                            <tr>
-                              {digit_cells}
-                            </tr>
-                          </table>
-                          <p style="font-size:0.8rem;color:#EF4444;margin:14px 0 0 0;font-weight:600;">
-                            &#9201;&nbsp; Berlaku selama 5 menit
-                          </p>
+                        <td style="background:#0D1117;border:1px solid #30363D;border-radius:10px;padding:9px 16px;">
+                          <span style="font-family:'SF Mono','Fira Code','Courier New',monospace;font-size:0.85rem;color:#D97757;letter-spacing:0.01em;">{custom_email}</span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- OTP SECTION LABEL -->
+                    <p style="font-size:0.7rem;font-weight:600;color:#6E7681;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px 0;">
+                      Kode One-Time Password (OTP)
+                    </p>
+
+                    <!-- OTP DIGIT BOXES -->
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:14px;">
+                      <tr>
+                        {digit_cells}
+                      </tr>
+                    </table>
+
+                    <!-- Validity -->
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:0;">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:6px;">
+                          <!-- Clock dot indicator -->
+                          <div style="width:8px;height:8px;background:#D97757;border-radius:50%;display:inline-block;"></div>
+                        </td>
+                        <td>
+                          <span style="font-size:0.8rem;color:#8B949E;font-weight:500;">
+                            Berlaku selama <strong style="color:#D97757;">5 menit</strong> — jangan tunda
+                          </span>
                         </td>
                       </tr>
                     </table>
@@ -497,27 +546,25 @@ def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> 
               <!-- ── DIVIDER ── -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="padding:0 40px;">
-                    <hr style="border:none;border-top:1px solid #334155;margin:0;" />
+                  <td style="padding:0 44px;">
+                    <hr style="border:none;border-top:1px solid #21262D;margin:0;" />
                   </td>
                 </tr>
               </table>
 
-              <!-- ── CAUTION INFO BOX ── -->
+              <!-- ── SECURITY NOTICE ── -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="padding:22px 40px;">
+                  <td style="padding:24px 44px;">
+                    <!-- Notice card with left accent border -->
                     <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                           style="background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.3);border-radius:12px;padding:14px 16px;">
+                           style="background:#0D1117;border:1px solid #21262D;border-left:3px solid #D97757;border-radius:8px;">
                       <tr>
-                        <td style="vertical-align:top;padding-right:10px;width:18px;">
-                          <span style="font-size:1.1rem;color:#EF4444;">&#9888;</span>
-                        </td>
-                        <td>
-                          <p style="font-size:0.8rem;color:#E2E8F0;line-height:1.55;margin:0;">
-                            <strong style="color:#FFFFFF;">Peringatan Keamanan:</strong>
-                            Jangan pernah membagikan kode ini kepada siapa pun termasuk staf dukungan.
-                            Jika Anda tidak meminta masuk, segera amankan kredensial akun Anda.
+                        <td style="padding:16px 18px;">
+                          <p style="font-size:0.78rem;color:#8B949E;line-height:1.6;margin:0;">
+                            <strong style="color:#E6EDF3;font-weight:600;">⚠ Peringatan Keamanan</strong><br/>
+                            Jangan pernah membagikan kode ini kepada siapa pun — termasuk staf dukungan Neura AI.
+                            Jika Anda tidak meminta masuk ini, <strong style="color:#D97757;">segera amankan akun Anda</strong>.
                           </p>
                         </td>
                       </tr>
@@ -529,17 +576,17 @@ def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> 
               <!-- ── FOOTER CARD ── -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:#0F172A;border-top:1px solid #334155;border-radius:0 0 24px 24px;padding:18px 40px;">
+                  <td style="background:#0D1117;border-top:1px solid #21262D;border-radius:0 0 20px 20px;padding:16px 44px;">
                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td>
-                          <p style="font-size:0.76rem;color:#94A3B8;margin:0;line-height:1.4;">
-                            Email verifikasi ini dikirimkan otomatis oleh sistem keamanan Neura AI.
+                          <p style="font-size:0.73rem;color:#6E7681;margin:0;line-height:1.5;">
+                            Dikirim otomatis oleh sistem keamanan Neura AI
                           </p>
                         </td>
                         <td align="right" style="white-space:nowrap;">
-                          <span style="font-size:0.72rem;color:#94A3B8;font-weight:600;">
-                            &#128274; Role: Administrator
+                          <span style="font-size:0.7rem;color:#6E7681;font-weight:500;background:rgba(110,106,255,0.08);border:1px solid rgba(110,106,255,0.2);border-radius:6px;padding:3px 9px;">
+                            🔒 Administrator
                           </span>
                         </td>
                       </tr>
@@ -551,13 +598,22 @@ def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> 
             </td>
           </tr>
 
-          <!-- ── OUTER FOOTER ── -->
+          <!-- ═══ OUTER FOOTER ═══ -->
           <tr>
-            <td align="center" style="padding:24px 0 0 0;">
-              <p style="font-size:0.75rem;color:#64748B;margin:0 0 4px 0;">
-                <strong style="color:#94A3B8;">Neura AI Security Controller</strong> &mdash; Sistem Deteksi Alzheimer Berbasis AI
+            <td align="center" style="padding:28px 0 4px 0;">
+              <!-- Abstract thin line decoration -->
+              <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;">
+                <tr>
+                  <td style="width:32px;height:1px;background:linear-gradient(90deg,transparent,#30363D);"></td>
+                  <td style="width:8px;height:4px;background:#D97757;border-radius:2px;margin:0 6px;"></td>
+                  <td style="width:32px;height:1px;background:linear-gradient(90deg,#30363D,transparent);"></td>
+                </tr>
+              </table>
+              <p style="font-size:0.75rem;color:#6E7681;margin:0 0 5px 0;letter-spacing:0.01em;">
+                <strong style="color:#8B949E;font-weight:600;">Neura AI Security Controller</strong>
+                &nbsp;—&nbsp; Sistem Deteksi Alzheimer Berbasis AI
               </p>
-              <p style="font-size:0.72rem;color:#475569;margin:0;">
+              <p style="font-size:0.7rem;color:#484F58;margin:0;">
                 &copy; 2024 Neura AI. Hak Cipta Dilindungi Undang-Undang.
               </p>
             </td>
