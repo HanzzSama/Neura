@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=6.6" />
+  <link rel="stylesheet" href="/css/style.css?v=6.7" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
@@ -2510,33 +2510,33 @@
   <!-- Modal Edit Profile (Redesigned: Profile Preview & Update Data) -->
   <div class="modal-overlay" id="edit-profile-modal" onclick="closeEditProfileModalOnBackdrop(event)">
     <div class="claude-modal profile-custom-modal-card">
-      
-      <!-- Top Bar: Nav Tabs & Close Button -->
-      <div class="profile-modal-topbar">
-        <div class="profile-modal-tabs">
-          <button type="button" class="profile-nav-tab active" id="tab-nav-profile" onclick="switchEditProfileTab('profile')">
-            <span>Profile</span>
-          </button>
-          <button type="button" class="profile-nav-tab" id="tab-nav-update" onclick="switchEditProfileTab('update')">
-            <span>Update</span>
-          </button>
-          <button type="button" class="profile-nav-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')">
-            <span>Keamanan</span>
-          </button>
-        </div>
-
-        <button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
 
       <!-- Hero Banner & Floating Avatar Container -->
       <div class="profile-hero-banner-container">
         <div class="profile-hero-banner-image"></div>
         <div class="profile-hero-banner-overlay"></div>
+
+        <!-- Absolute Top Bar: Nav Tabs (Profile, Update, Keamanan) & Close Button -->
+        <div class="profile-banner-top-overlay">
+          <div class="profile-banner-nav-tabs">
+            <button type="button" class="profile-banner-tab active" id="tab-nav-profile" onclick="switchEditProfileTab('profile')" title="Lihat Profil">
+              <span>Profile</span>
+            </button>
+            <button type="button" class="profile-banner-tab" id="tab-nav-update" onclick="switchEditProfileTab('update')" title="Perbarui Data">
+              <span>Update</span>
+            </button>
+            <button type="button" class="profile-banner-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')" title="Keamanan Sandi">
+              <span>Keamanan</span>
+            </button>
+          </div>
+
+          <button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
 
         <!-- Floating Avatar (overlapping banner bottom edge) -->
         <div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
@@ -2588,41 +2588,12 @@
       </div>
 
       <!-- ============================================================ -->
-      <!-- PANEL 1: PROFILE PREVIEW (Desain seperti gambar atas) -->
+      <!-- PANEL 1: PROFILE PREVIEW (Desain 1:1 seperti gambar atas) -->
       <!-- ============================================================ -->
       <div class="profile-view-panel" id="panel-profile-view" style="display:block;">
-        <div class="profile-preview-bio-text" id="preview-profile-bio">
-          Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzheimer berbasis 32 biomarker multimodal, dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis.
-        </div>
-
-        <div class="profile-preview-info-grid">
-          <div class="profile-preview-info-box">
-            <span class="info-box-label">Email Terdaftar</span>
-            <span class="info-box-value" id="preview-profile-email">haidar@neura.ai</span>
-          </div>
-          <div class="profile-preview-info-box">
-            <span class="info-box-label">Instansi / Faskes</span>
-            <span class="info-box-value" id="preview-profile-inst">—</span>
-          </div>
-          <div class="profile-preview-info-box">
-            <span class="info-box-label">Nomor Telepon</span>
-            <span class="info-box-value" id="preview-profile-phone">—</span>
-          </div>
-          <div class="profile-preview-info-box">
-            <span class="info-box-label">Status Workspace</span>
-            <span class="info-box-value text-accent-green">✓ Aktif &bull; Terverifikasi</span>
-          </div>
-        </div>
-
-        <div class="profile-preview-footer-action">
-          <button type="button" class="profile-preview-edit-cta-btn" onclick="switchEditProfileTab('update')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-            <span>Update Data Profil</span>
-          </button>
-        </div>
+        <p class="profile-preview-bio-text" id="preview-profile-bio">
+          Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzbheimer berbasis 32 biomarker multimodal, dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis
+        </p>
       </div>
 
       <!-- ============================================================ -->
@@ -2758,7 +2729,7 @@
   <script src="/js/app-translations.js?v=7.0"></script>
   <script src="/js/app-ui.js?v=7.0"></script>
   <script src="/js/app-auth.js?v=7.1"></script>
-  <script src="/js/app-settings.js?v=7.2"></script>
+  <script src="/js/app-settings.js?v=7.3"></script>
   <script src="/js/app-voice-input.js?v=7.0"></script>
   <script src="/js/app-ml-commands.js?v=7.0"></script>
   <script src="/js/app-chat.js?v=7.0"></script>
