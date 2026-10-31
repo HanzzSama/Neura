@@ -555,16 +555,31 @@ def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> 
               <!-- ── SECURITY NOTICE ── -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="padding:24px 44px;">
-                    <!-- Notice card with left accent border -->
+                  <td style="padding:20px 44px 24px 44px;">
+                    <!-- Clean uniform border notice card -->
                     <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                           style="background:#0D1117;border:1px solid #21262D;border-left:3px solid #D97757;border-radius:8px;">
+                           style="background:#161B22;border:1px solid #30363D;border-radius:10px;overflow:hidden;">
+                      <!-- Top accent strip -->
                       <tr>
-                        <td style="padding:16px 18px;">
-                          <p style="font-size:0.78rem;color:#8B949E;line-height:1.6;margin:0;">
-                            <strong style="color:#E6EDF3;font-weight:600;">⚠ Peringatan Keamanan</strong><br/>
+                        <td style="height:2px;background:rgba(217,119,87,0.45);"></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:14px 18px;">
+                          <!-- Label row -->
+                          <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+                            <tr>
+                              <td style="vertical-align:middle;padding-right:7px;">
+                                <span style="font-size:0.85rem;">&#9888;</span>
+                              </td>
+                              <td>
+                                <span style="font-size:0.78rem;font-weight:600;color:#E6EDF3;">Peringatan Keamanan</span>
+                              </td>
+                            </tr>
+                          </table>
+                          <p style="font-size:0.77rem;color:#8B949E;line-height:1.6;margin:0;">
                             Jangan pernah membagikan kode ini kepada siapa pun — termasuk staf dukungan Neura AI.
-                            Jika Anda tidak meminta masuk ini, <strong style="color:#D97757;">segera amankan akun Anda</strong>.
+                            Jika Anda tidak meminta masuk ini,
+                            <strong style="color:#D97757;font-weight:600;">segera amankan akun Anda</strong>.
                           </p>
                         </td>
                       </tr>
@@ -576,17 +591,17 @@ def _build_admin_otp_html(admin_name: str, otp_code: str, custom_email: str) -> 
               <!-- ── FOOTER CARD ── -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:#0D1117;border-top:1px solid #21262D;border-radius:0 0 20px 20px;padding:16px 44px;">
+                  <td style="background:#0D1117;border-top:1px solid #21262D;border-radius:0 0 20px 20px;padding:14px 44px;">
                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td>
-                          <p style="font-size:0.73rem;color:#6E7681;margin:0;line-height:1.5;">
+                          <p style="font-size:0.72rem;color:#484F58;margin:0;line-height:1.5;">
                             Dikirim otomatis oleh sistem keamanan Neura AI
                           </p>
                         </td>
                         <td align="right" style="white-space:nowrap;">
-                          <span style="font-size:0.7rem;color:#6E7681;font-weight:500;background:rgba(110,106,255,0.08);border:1px solid rgba(110,106,255,0.2);border-radius:6px;padding:3px 9px;">
-                            🔒 Administrator
+                          <span style="font-size:0.69rem;color:#6E7681;font-weight:500;background:rgba(255,255,255,0.04);border:1px solid #30363D;border-radius:6px;padding:3px 9px;">
+                            &#128274;&nbsp;Administrator
                           </span>
                         </td>
                       </tr>

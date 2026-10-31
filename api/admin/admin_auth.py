@@ -126,7 +126,7 @@ def api_admin_send_otp():
         custom_email=email,
     )
 
-    logger.info(f"[Admin OTP] Generated OTP for {email} → dest: {real_emails}")
+    logger.info(f"[Admin OTP] Generated OTP for {email} -> dest: {real_emails}")
 
     masked_list = [mask_email(e) for e in real_emails]
     smtp_ok     = bool(send_result.get("success", False))
@@ -135,6 +135,7 @@ def api_admin_send_otp():
         "success":          True,
         "message":          "Kode OTP telah dikirimkan ke email terhubung.",
         "custom_email":     email,
+        "name":             admin.get("name", "Administrator"),
         "masked_emails":    masked_list,
         "smtp_sent":        smtp_ok,
         "expires_in_seconds": 300,

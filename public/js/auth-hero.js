@@ -35,6 +35,7 @@
   var currentAdminEmail = '';
   var currentAdminData = null;
   var adminOtpTimerInterval = null;
+  var _isSendingOtp = false; // Guard: mencegah pengiriman OTP ganda
 
   // Step Tracking State
   var activeVerificationUser = null;
@@ -1233,6 +1234,9 @@
         e.preventDefault();
         hideAlert();
 
+        // Guard: cegah submit ganda / OTP terkirim lebih dari satu kali
+        if (_isSendingOtp) return;
+
         var emailInput = document.getElementById('login-email');
         var passwordInput = document.getElementById('login-password');
         var email = emailInput ? emailInput.value.trim().toLowerCase() : '';
@@ -1255,6 +1259,7 @@
 
         // Jika terdeteksi admin secara lokal -> langsung kirim OTP tanpa buang waktu!
         if (isLocalAdmin) {
+          _isSendingOtp = true; // Kunci: mencegah pengiriman duplikat
           fetch('/api/admin/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1262,15 +1267,19 @@
           })
           .then(function (res) { return res.json(); })
           .then(function (otpResult) {
+            _isSendingOtp = false;
             setButtonLoading(loginSubmitBtn, false);
             if (otpResult && otpResult.success) {
-              currentAdminData = { name: 'Haidar Andrianno', custom_email: email };
-              showAdminVerifySlide(email, 'Haidar Andrianno', otpResult.masked_emails, otpResult.dev_otp);
+              // Gunakan nama dari API jika tersedia, fallback ke email prefix
+              var adminName = (otpResult.name) || email.split('@')[0];
+              currentAdminData = { name: adminName, custom_email: email };
+              showAdminVerifySlide(email, adminName, otpResult.masked_emails, otpResult.dev_otp);
             } else {
               showAlert(otpResult.error || 'Gagal mengirimkan kode OTP admin.', true);
             }
           })
           .catch(function (err) {
+            _isSendingOtp = false;
             setButtonLoading(loginSubmitBtn, false);
             showAlert('Gagal mengirim kode OTP admin: ' + err.message, true);
           });
