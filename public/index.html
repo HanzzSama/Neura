@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=6.4" />
+  <link rel="stylesheet" href="/css/style.css?v=6.5" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
@@ -2559,12 +2559,11 @@
           <div class="profile-avatar-banner">
             <div class="profile-avatar-wrapper" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
               <div class="profile-avatar-big" id="edit-avatar-preview">H</div>
-              <div class="profile-avatar-overlay">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <div class="profile-avatar-camera-badge" title="Ubah Foto">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                   <circle cx="12" cy="13" r="4"></circle>
                 </svg>
-                <span>Ubah</span>
               </div>
             </div>
             
@@ -2575,9 +2574,10 @@
                 <div class="profile-avatar-name" id="edit-avatar-name-display">Hanzz</div>
                 <div class="profile-avatar-role" id="edit-avatar-role-badge">User</div>
               </div>
+              <div class="profile-avatar-sub" id="profile-avatar-subtext">JPG, PNG, atau WebP • Ukuran maksimal 5MB</div>
               <div class="profile-avatar-actions">
-                <button type="button" class="avatar-action-btn" onclick="triggerAvatarUpload()" title="Unggah foto baru dari perangkat">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button type="button" class="avatar-action-btn btn-upload-avatar" onclick="triggerAvatarUpload()" title="Unggah foto baru dari perangkat">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -2585,20 +2585,23 @@
                   <span>Unggah Foto</span>
                 </button>
                 <button type="button" class="avatar-action-btn btn-sync-google" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()" title="Sinkronkan dengan foto profil Google">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                  <svg width="13" height="13" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z"/>
                   </svg>
                   <span>Sinkronkan Google</span>
                 </button>
                 <button type="button" class="avatar-action-btn btn-remove-avatar" id="btn-remove-avatar" onclick="handleRemoveAvatar()" title="Hapus foto kustom dan gunakan inisial">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
                   </svg>
                   <span>Hapus</span>
                 </button>
               </div>
-              <div class="profile-avatar-sub" id="profile-avatar-subtext">Foto profil dan inisial sinkron otomatis di seluruh sesi workspace.</div>
             </div>
           </div>
 
