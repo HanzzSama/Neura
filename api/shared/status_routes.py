@@ -50,7 +50,7 @@ def api_status():
         pass
 
     return jsonify({
-        "model_name":       config.get("model.name", "AlzheimersXGBoost"),
+        "model_name":       config.get("model.name", "Alzheimer"),
         "algorithm":        "XGBoost Classifier",
         "environment":      config.get("project.environment", "development"),
         "model_ready":      model_ready,

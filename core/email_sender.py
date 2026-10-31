@@ -50,9 +50,11 @@ def _create_smtp_connection(cfg):
     return server
 
 
-def send_verification_email(to_email: str, display_name: str, verify_link: str) -> dict:
+def send_verification_email(to_email: str, display_name: str, verify_link: str, firebase_sent: bool = False) -> dict:
     """
     Kirim email verifikasi "Confirm Email" HTML premium ke pengguna via Gmail SMTP.
+    Jika firebase_sent=True, Firebase sudah kirim email native-nya — SMTP ini sebagai
+    notifikasi pendamping yang menginformasikan user untuk cek inbox.
     Returns: {"success": True} atau {"success": False, "error": str}
     """
     cfg = _get_smtp_config()
@@ -66,8 +68,8 @@ def send_verification_email(to_email: str, display_name: str, verify_link: str) 
     first_name = (display_name or to_email.split("@")[0]).split()[0]
     subject = f"Konfirmasi Email Akun Neura AI — Confirm Email: {first_name}"
 
-    html_body = _build_email_html(first_name, to_email, verify_link)
-    text_body = _build_email_plain(first_name, verify_link)
+    html_body = _build_email_html(first_name, to_email, verify_link, firebase_sent=firebase_sent)
+    text_body = _build_email_plain(first_name, verify_link, firebase_sent=firebase_sent)
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
@@ -161,7 +163,7 @@ def send_admin_otp_email(to_emails: list, admin_name: str, otp_code: str, custom
 # Email HTML Template — User Verification "Confirm Email" (Claude AI Minimalist Dark)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _build_email_html(first_name: str, email: str, verify_link: str) -> str:
+def _build_email_html(first_name: str, email: str, verify_link: str, firebase_sent: bool = False) -> str:
     return f"""<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -267,13 +269,13 @@ def _build_email_html(first_name: str, email: str, verify_link: str) -> str:
                       </tr>
                     </table>
 
-                    <!-- CTA BUTTON (Confirm Email) -->
+                    <!-- CTA BUTTON -->
                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
                       <tr>
                         <td align="center">
                           <a href="{verify_link}" target="_blank"
                              style="display:inline-block;background:linear-gradient(135deg,#D97757 0%,#C0614A 100%);color:#FFFFFF;font-size:0.95rem;font-weight:600;padding:14px 38px;border-radius:10px;letter-spacing:-0.01em;text-decoration:none;box-shadow:0 4px 16px rgba(217,119,87,0.35);">
-                            &#10003;&nbsp; Confirm Email
+                            {'&#128236;&nbsp; Cek Inbox Anda' if firebase_sent else '&#10003;&nbsp; Confirm Email'}
                           </a>
                         </td>
                       </tr>
@@ -388,16 +390,25 @@ def _build_email_html(first_name: str, email: str, verify_link: str) -> str:
 </html>"""
 
 
-def _build_email_plain(first_name: str, verify_link: str) -> str:
+def _build_email_plain(first_name: str, verify_link: str, firebase_sent: bool = False) -> str:
+    if firebase_sent:
+        action_line = """Firebase telah mengirimkan email verifikasi ke inbox Anda.
+Silakan cek inbox (dan folder Spam) untuk email dari noreply@neura-f20b9.firebaseapp.com.
+
+Atau klik tautan berikut untuk kembali ke halaman verifikasi:
+{verify_link}""".format(verify_link=verify_link)
+    else:
+        action_line = """Klik tautan berikut untuk mengonfirmasi email dan mengaktifkan akun Anda:
+
+Confirm Email:
+{verify_link}""".format(verify_link=verify_link)
+
     return f"""Halo {first_name},
 
 KONFIRMASI ALAMAT EMAIL - NEURA AI
 
 Terima kasih telah mendaftar di platform Neura AI.
-Klik tautan berikut untuk mengonfirmasi email dan mengaktifkan akun Anda:
-
-Confirm Email:
-{verify_link}
+{action_line}
 
 Tautan ini berlaku selama 24 jam dan hanya dapat digunakan satu kali.
 Jika Anda tidak merasa mendaftar di Neura AI, abaikan email ini.

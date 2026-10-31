@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/css/welcome.css?v=49">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
-  <link rel="stylesheet" href="/css/dynamic-island.css?v=40">
+  <link rel="stylesheet" href="/css/dynamic-island.css?v=63">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=43">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
   <link rel="stylesheet" href="/css/auth-hero.css?v=57">
@@ -31,7 +31,7 @@
   <aside class="announcement-bar" id="announcement-bar">
     <div class="announcement-content">
       <span class="announcement-pill" data-i18n="announcement_pill">✦ RISET KLINIS</span>
-      <span class="announcement-text" data-i18n="announcement_text">Model AlzheimersXGBoost tervalidasi dengan 32
+      <span class="announcement-text" data-i18n="announcement_text">Model Alzheimer tervalidasi dengan 32
         biomarker klinis &bull; Akurasi
         94.4% (ROC-AUC 0.933)</span>
       <a href="/app" class="announcement-link" data-i18n="announcement_link">Pelajari lebih lanjut &rarr;</a>
@@ -1541,9 +1541,9 @@
               <span class="python-dot"></span>
               <span>clinical_inference.py</span>
             </div>
-            <pre class="sdk-code-body"><code><span class="sdk-kw">from</span> neura.clinical <span class="sdk-kw">import</span> AlzheimersXGBoost, Cohort
+            <pre class="sdk-code-body"><code><span class="sdk-kw">from</span> neura.clinical <span class="sdk-kw">import</span> Alzheimer, Cohort
 
-model = AlzheimersXGBoost.load(<span class="sdk-str">"xgboost_alzheimers.json"</span>)
+model = Alzheimer.load(<span class="sdk-str">"xgboost_alzheimers.json"</span>)
 cohort = Cohort.from_csv(<span class="sdk-str">"./patient_cohort_430.csv"</span>)
 diagnosis = model.predict(cohort.patient(<span class="sdk-str">"P-104"</span>))
 print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></code></pre>
@@ -1818,7 +1818,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
           Riset &amp; Publikasi Klinis Neura
         </h2>
         <p class="sync-updates-sub" data-i18n="sync_sub">
-          Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur AlzheimersXGBoost, serta telaah kasus
+          Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur Alzheimer, serta telaah kasus
           kognitif langsung ke inbox Anda.
         </p>
 
@@ -1947,7 +1947,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
         <div class="footer-col">
           <div class="footer-col-title"><span class="col-num">02</span> Model &amp; Riset</div>
           <ul class="footer-links-list">
-            <li><a href="/app" class="footer-link">AlzheimersXGBoost 3.x</a></li>
+            <li><a href="/app" class="footer-link">Alzheimer 3.x</a></li>
             <li><a href="#specification" class="footer-link">32 Biomarker Klinis</a></li>
             <li><a href="/app" class="footer-link">Validasi 430 Pasien</a></li>
             <li><a href="/app" class="footer-link">ROC-AUC 0.933</a></li>
@@ -2003,7 +2003,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="/js/lenis.min.js"></script>
   <script src="/js/about_app.js?v=1"></script>
   <script src="/js/smooth-scroll.js?v=45"></script>
-  <script src="/js/dynamic-island.js?v=42"></script>
+  <script src="/js/dynamic-island.js?v=60"></script>
   <script src="/js/welcome.js?v=49"></script>
   <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
   <script src="/js/voice-consultation.js?v=64"></script>

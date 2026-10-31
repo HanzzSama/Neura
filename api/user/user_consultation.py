@@ -143,7 +143,7 @@ def _build_consultation_document(patient_input=None, mode=""):
             "probability": prob_pos,
             "probability_negative": prob_neg,
             "confidence": res["confidence"],
-            "model_name": "AlzheimersXGBoost",
+            "model_name": "Alzheimer",
             "accuracy_reference": "95.35%",
         },
         "biomarkers_breakdown": biomarkers_breakdown,

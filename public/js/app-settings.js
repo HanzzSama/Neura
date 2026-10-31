@@ -367,7 +367,7 @@ function syncSettingsPanel() {
   if (modelValEl) {
     const sbStatus = document.getElementById('sb-status-text')?.textContent;
     modelValEl.textContent = sbStatus && sbStatus !== 'Checking model...' && sbStatus !== 'Memeriksa model...'
-      ? sbStatus : 'AlzheimersXGBoost v2.5';
+      ? sbStatus : 'Alzheimer v2.5';
   }
 
   // ── Translate all settings labels (ID / EN)

@@ -157,7 +157,7 @@ function renderSessionMessages(session) {
         <div class="assistant-header">
           <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
           <span class="assistant-name">Neura</span>
-          <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
+          <span class="assistant-model-tag">&bull; Alzheimer</span>
         </div>
         <div class="assistant-prose">${msg.html}</div>
         <div class="assistant-suggestions-slot">${suggestionsHtml}</div>
@@ -825,7 +825,7 @@ async function processMLInput(rawText, typingId, startTime) {
       const runId = 'train_' + Date.now();
       appendAssistantMessage(`
         <h4>XGBoost Training Initialized</h4>
-        <p>Executing gradient boosting training for <strong>${epochs} boosting rounds</strong> on <code>AlzheimersXGBoost</code> (datasets/alzheimers_disease_data.csv).</p>
+        <p>Executing gradient boosting training for <strong>${epochs} boosting rounds</strong> on <code>Alzheimer</code> (datasets/alzheimers_disease_data.csv).</p>
         <div class="terracotta-progress-wrap" id="${runId}_container">
           <div class="progress-meta-row">
             <span id="${runId}_status">Optimization Progress</span>
@@ -1562,7 +1562,7 @@ function renderStatusOutput(data) {
         </div>
         <div class="neura-stat-pill stat-pill">
           <div class="neura-stat-label stat-label">Model Architecture</div>
-          <div class="neura-stat-val stat-val" style="font-size:13.5px">${escapeHtml(data.model_name || 'AlzheimersXGBoost')}</div>
+          <div class="neura-stat-val stat-val" style="font-size:13.5px">${escapeHtml(data.model_name || 'Alzheimer')}</div>
         </div>
         <div class="neura-stat-pill stat-pill">
           <div class="neura-stat-label stat-label">Environment</div>
@@ -1673,7 +1673,7 @@ function appendAssistantMessage(html, options = {}) {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
-      <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
+      <span class="assistant-model-tag">&bull; Alzheimer</span>
     </div>
     <div class="assistant-prose fade-in"></div>
     <div class="assistant-suggestions-slot"></div>
@@ -1784,7 +1784,7 @@ function showTypingIndicator() {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
-      <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
+      <span class="assistant-model-tag">&bull; Alzheimer</span>
     </div>
     <div class="claude-loading-row">
       <div class="claude-loading-sparkle" title="Neura is thinking...">

@@ -149,7 +149,7 @@ def api_train():
             os.makedirs("public/reports", exist_ok=True)
             with open("public/reports/alzheimers_xgboost_metrics.json", "w", encoding="utf-8") as f:
                 json.dump({
-                    "model_name": "AlzheimersXGBoost",
+                    "model_name": "Alzheimer",
                     "algorithm":  "XGBoost",
                     "metrics":    report,
                     "confusion_matrix": {
@@ -191,7 +191,7 @@ def api_evaluate():
             with open(metrics_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
             return jsonify({
-                "model":            "AlzheimersXGBoost",
+                "model":            "Alzheimer",
                 "algorithm":        "XGBoost Classifier",
                 "metrics":          data.get("metrics", {}),
                 "confusion_matrix": data.get("confusion_matrix", {}),
@@ -201,7 +201,7 @@ def api_evaluate():
             from scripts.train_xgboost_alzheimer import train_alzheimers_xgboost
             _, metrics_summary = train_alzheimers_xgboost()
             return jsonify({
-                "model":            "AlzheimersXGBoost",
+                "model":            "Alzheimer",
                 "algorithm":        "XGBoost Classifier",
                 "metrics":          metrics_summary.get("metrics", {}),
                 "confusion_matrix": metrics_summary.get("confusion_matrix", {}),

@@ -81,12 +81,12 @@
 
   const files = {
     'patient_eval.py': `
-<span class="code-keyword">from</span> neura.clinical <span class="code-keyword">import</span> AlzheimersXGBoost, PatientProfile
+<span class="code-keyword">from</span> neura.clinical <span class="code-keyword">import</span> Alzheimer, PatientProfile
 <span class="code-keyword">from</span> neura.analytics <span class="code-keyword">import</span> generate_clinical_report
 
 <span class="code-comment"># Evaluasi rekam medis pasien dengan 32 biomarker klinis</span>
 <span class="code-keyword">def</span> <span class="code-fn">evaluate_patient_risk</span>(patient_id: <span class="code-type">str</span>):
-    model = AlzheimersXGBoost.<span class="code-fn">load_checkpoint</span>(<span class="code-string">"xgboost_alzheimers.json"</span>)
+    model = Alzheimer.<span class="code-fn">load_checkpoint</span>(<span class="code-string">"xgboost_alzheimers.json"</span>)
     patient = PatientProfile.<span class="code-fn">from_cohort</span>(patient_id, n_biomarkers=<span class="code-prop">32</span>)
     
     <span class="code-comment"># Prediksi risiko penurunan fungsi kognitif &amp; biomarker MMSE</span>
@@ -160,7 +160,7 @@
     ID: {
       // Announcement
       announcement_pill: '✦ RISET KLINIS',
-      announcement_text: 'Model AlzheimersXGBoost tervalidasi dengan 32 biomarker klinis &bull; Akurasi 94.4% (ROC-AUC 0.933)',
+      announcement_text: 'Model Alzheimer tervalidasi dengan 32 biomarker klinis &bull; Akurasi 94.4% (ROC-AUC 0.933)',
       announcement_link: 'Pelajari lebih lanjut &rarr;',
 
       // Main Navigation
@@ -237,7 +237,7 @@
 
       // Updates / Newsletter
       sync_title: 'Riset &amp; Publikasi Klinis Neura',
-      sync_sub: 'Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur AlzheimersXGBoost, serta telaah kasus kognitif langsung ke inbox Anda.',
+      sync_sub: 'Dapatkan pembaruan berkala evaluasi 32 biomarker, rilis arsitektur Alzheimer, serta telaah kasus kognitif langsung ke inbox Anda.',
       sync_pill_all: 'Semua Riset',
       sync_email_ph: 'Masukkan email institusi atau klinis Anda...',
       sync_btn: 'Langganan Riset',
@@ -259,7 +259,7 @@
     EN: {
       // Announcement
       announcement_pill: '✦ CLINICAL RESEARCH',
-      announcement_text: 'AlzheimersXGBoost model validated across 32 clinical biomarkers &bull; 94.4% Accuracy (ROC-AUC 0.933)',
+      announcement_text: 'Alzheimer model validated across 32 clinical biomarkers &bull; 94.4% Accuracy (ROC-AUC 0.933)',
       announcement_link: 'Learn more &rarr;',
 
       // Main Navigation
@@ -336,7 +336,7 @@
 
       // Updates / Newsletter
       sync_title: 'Neura Clinical Research &amp; Dispatches',
-      sync_sub: 'Receive periodic updates on 32 biomarker evaluations, AlzheimersXGBoost architecture releases, and cognitive case reviews directly in your inbox.',
+      sync_sub: 'Receive periodic updates on 32 biomarker evaluations, Alzheimer architecture releases, and cognitive case reviews directly in your inbox.',
       sync_pill_all: 'All Research',
       sync_email_ph: 'Enter your institutional or clinical email...',
       sync_btn: 'Subscribe to Research',

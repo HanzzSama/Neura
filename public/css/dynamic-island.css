@@ -48,6 +48,7 @@
   border-bottom-left-radius: 18px;
   border-bottom-right-radius: 18px;
   width: 260px;
+  max-width: calc(100vw - 24px);
   height: 44px;
   box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.25),
               0 10px 24px -4px rgba(0, 0, 0, 0.35),
@@ -90,7 +91,8 @@
 }
 
 .dynamic-island:hover {
-  width: 440px;
+  width: min(480px, calc(100vw - 20px));
+  max-width: calc(100vw - 20px);
   height: 260px;
   border-bottom-left-radius: 26px;
   border-bottom-right-radius: 26px;
@@ -150,7 +152,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 236px;
+  max-width: 180px;
   line-height: 1.1;
   transition: color 0.3s ease, opacity 0.3s ease;
 }
@@ -464,7 +466,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  padding: 16px 18px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -473,6 +475,8 @@
   pointer-events: none;
   transition: opacity 0.25s ease,
               transform 0.32s ease;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .dynamic-island:hover .island-expanded {
@@ -487,14 +491,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+  width: 100%;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .island-header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.island-header-left > div:last-child {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .island-logo-mini {
@@ -513,18 +528,28 @@
   font-weight: 600;
   color: #FFFFFF;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 155px;
+  line-height: 1.2;
 }
 
 .island-model-sub {
-  font-size: 11px;
+  font-size: 10.5px;
   color: rgba(255, 255, 255, 0.55);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
+  line-height: 1.2;
 }
 
 .island-header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .island-user-badge {
@@ -534,11 +559,16 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 99px;
-  padding: 2px 8px;
+  padding: 2.5px 8px;
   font-family: 'Inter', sans-serif;
   font-size: 10.5px;
   color: rgba(255, 255, 255, 0.85);
   transition: all 0.2s ease;
+  max-width: 125px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 1;
 }
 
 .island-user-dot {
@@ -552,44 +582,50 @@
 
 .island-user-name {
   font-weight: 500;
-  max-width: 90px;
+  max-width: 75px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .island-badge-live {
   font-family: 'JetBrains Mono', 'Google Sans Code', monospace;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 500;
-  padding: 2px 7px;
+  padding: 2.5px 7px;
   border-radius: 99px;
   background: rgba(34, 197, 94, 0.18);
   color: #4ade80;
   border: 1px solid rgba(34, 197, 94, 0.3);
   white-space: nowrap;
   flex-shrink: 0;
+  letter-spacing: 0.02em;
 }
 
 /* Metrics Row (4-Grid Layout) */
 .island-metrics-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
-  margin: 10px 0;
+  margin: 8px 0;
+  width: 100%;
 }
 
 .island-stat-box {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 10px;
-  padding: 7px 8px;
+  padding: 6px 4px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 2px;
   white-space: nowrap;
   transition: all 0.25s ease;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .island-stat-box.stat-default {
@@ -624,44 +660,61 @@
 
 .island-stat-num {
   font-family: 'JetBrains Mono', 'Google Sans Code', monospace;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #FFFFFF;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .island-stat-lbl {
-  font-size: 9.5px;
+  font-size: 9px;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* Quick Actions in Island */
 .island-quick-actions {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
+  width: 100%;
 }
 
 .island-btn {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  height: 27px;
-  padding: 0 6px;
+  gap: 3px;
+  height: 28px;
+  padding: 0 4px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.08);
   color: #F1F5F9;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.island-btn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .island-btn svg {
@@ -748,22 +801,25 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 10px;
+  margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 .island-prompts-row::-webkit-scrollbar { display: none; }
 
 .island-prompts-label {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .island-prompt-pill {
@@ -771,13 +827,17 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.78);
   border-radius: 99px;
-  padding: 3px 9px;
+  padding: 3px 8px;
   font-family: 'Inter', sans-serif;
   font-size: 10px;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.15s ease;
+  flex-shrink: 0;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .island-prompt-pill:hover {
@@ -786,3 +846,94 @@
   border-color: rgba(255, 255, 255, 0.28);
   transform: translateY(-1px);
 }
+
+/* ==========================================================================
+   Responsive Breakpoints for Dynamic Island
+   ========================================================================== */
+@media (max-width: 500px) {
+  .dynamic-island:hover {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    height: auto;
+    min-height: 255px;
+    border-bottom-left-radius: 22px;
+    border-bottom-right-radius: 22px;
+  }
+
+  .island-expanded {
+    padding: 12px 12px;
+  }
+
+  .island-model-name {
+    max-width: 115px;
+    font-size: 12px;
+  }
+
+  .island-model-sub {
+    max-width: 120px;
+    font-size: 9.5px;
+  }
+
+  .island-user-name {
+    max-width: 60px;
+  }
+
+  .island-user-badge {
+    padding: 2px 6px;
+    font-size: 9.5px;
+    max-width: 105px;
+  }
+
+  .island-badge-live {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+
+  .island-btn {
+    font-size: 9.5px;
+    padding: 0 2px;
+    gap: 2px;
+  }
+
+  .island-stat-num {
+    font-size: 12px;
+  }
+
+  .island-stat-lbl {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .island-prompt-pill {
+    max-width: 100px;
+    font-size: 9.5px;
+    padding: 2px 7px;
+  }
+}
+
+@media (max-width: 380px) {
+  .island-badge-live {
+    display: none;
+  }
+
+  .island-model-name {
+    max-width: 95px;
+  }
+
+  .island-model-sub {
+    max-width: 100px;
+  }
+
+  .island-user-name {
+    max-width: 50px;
+  }
+
+  .island-btn svg {
+    display: none;
+  }
+
+  .island-btn {
+    font-size: 9px;
+  }
+}
+

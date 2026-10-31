@@ -20,7 +20,7 @@
       <div class="dynamic-island theme-green" id="dynamic-island">
         <!-- Compact Notch State -->
         <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
-          <span class="island-notch-sub" id="island-sub-text">XGBoost &bull; 32 Biomarkers</span>
+          <span class="island-notch-sub" id="island-sub-text">Alzheimer • 32 Bio</span>
           <div class="island-notch-main-row">
             <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
               <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
@@ -251,7 +251,7 @@
 
       case 'generating':
         island.classList.add('theme-orange', 'is-thinking');
-        subEl.textContent = options.sub || 'Synthesizing response \u2022 AlzheimersXGBoost';
+        subEl.textContent = options.sub || 'Synthesizing • Alzheimer';
         mainEl.textContent = options.main || 'Generating';
         break;
 
@@ -286,7 +286,7 @@
       case 'ready':
       default:
         island.classList.add('theme-green', 'is-ready');
-        subEl.textContent = options.sub || "Alzheimer's AI \u2022 32 Clinical Biomarkers";
+        subEl.textContent = options.sub || 'Alzheimer • 32 Biomarkers';
         mainEl.textContent = options.main || 'Ready';
         window.stopIslandTimer(options.keepTimer ? 3500 : 0);
         break;
@@ -342,6 +342,20 @@
     }
   };
 
+  // Helper to format long user names cleanly (e.g. "Muhammad Khoir Luqman" -> "Muhammad K.")
+  function formatDisplayName(name, maxLen = 14) {
+    if (!name) return 'Guest';
+    const trimmed = String(name).trim();
+    if (trimmed.length <= maxLen) return trimmed;
+    const parts = trimmed.split(/\s+/);
+    if (parts.length > 1) {
+      const short = parts[0] + ' ' + parts[1].charAt(0) + '.';
+      if (short.length <= maxLen) return short;
+      if (parts[0].length <= maxLen) return parts[0];
+    }
+    return trimmed.slice(0, maxLen - 1) + '…';
+  }
+
   // 5. Background Poller for Live Model Sync
   async function syncStatus() {
     try {
@@ -353,9 +367,11 @@
           if (rawUser) {
             const parsed = JSON.parse(rawUser);
             const name = parsed.name || parsed.username || parsed.email || 'Dr. Hanzz';
-            userBadgeEl.textContent = name;
+            userBadgeEl.textContent = formatDisplayName(name, 12);
+            userBadgeEl.title = name;
           } else {
             userBadgeEl.textContent = 'Guest';
+            userBadgeEl.title = 'Guest';
           }
         } catch (_) {
           userBadgeEl.textContent = 'Dr. Hanzz';
@@ -401,7 +417,16 @@
       }
 
       if (islandEnv) {
-        islandEnv.textContent = `${data.model_name || 'AlzheimersXGBoost'} \u2022 ${data.environment || 'development'}`;
+        // Normalize model names: strip redundant suffixes, shorten for display
+        let mName = (data.model_name || 'Alzheimer').replace(/xgboost/gi, '').replace(/[-_]+/g, ' ').trim();
+        if (!mName) mName = 'Alzheimer';
+        // Capitalize first letter
+        mName = mName.charAt(0).toUpperCase() + mName.slice(1);
+        const eName = data.environment || 'development';
+        const shortEnv = eName === 'development' ? 'dev' : eName.slice(0, 4);
+        const shortM = mName.length > 12 ? mName.slice(0, 11) + '…' : mName;
+        islandEnv.textContent = `${shortM} • ${shortEnv}`;
+        islandEnv.title = `${mName} • ${eName}`;
       }
 
       // Do not override voice states while active
@@ -411,11 +436,11 @@
 
       if (currentIslandState === 'ready' || currentIslandState === 'idle') {
         if (data.training_running) {
-          window.setDynamicIslandState('training', { sub: 'Training active in background...', main: 'Training...' });
+          window.setDynamicIslandState('training', { sub: 'Training in background…', main: 'Training…' });
         } else {
           const subEl = document.getElementById('island-sub-text');
           const mainEl = document.getElementById('island-main-text');
-          if (subEl) subEl.textContent = data.model_ready ? 'XGBoost \u2022 32 Biomarkers' : 'No Model Checkpoint';
+          if (subEl) subEl.textContent = data.model_ready ? 'Alzheimer • 32 Bio' : 'No Checkpoint';
           if (mainEl) mainEl.textContent = data.model_ready ? 'Ready' : 'Idle';
         }
       }

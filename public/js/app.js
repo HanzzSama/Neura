@@ -1256,7 +1256,7 @@ function syncSettingsPanel() {
   if (modelValEl) {
     const sbStatus = document.getElementById('sb-status-text')?.textContent;
     modelValEl.textContent = sbStatus && sbStatus !== 'Checking model...' && sbStatus !== 'Memeriksa model...'
-      ? sbStatus : 'AlzheimersXGBoost v2.5';
+      ? sbStatus : 'Alzheimer v2.5';
   }
 
   // ── Translate all settings labels (ID / EN)
@@ -2057,7 +2057,7 @@ function renderSessionMessages(session) {
         <div class="assistant-header">
           <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
           <span class="assistant-name">Neura</span>
-          <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
+          <span class="assistant-model-tag">&bull; Alzheimer</span>
         </div>
         <div class="assistant-prose">${msg.html}</div>
         <div class="assistant-suggestions-slot">${suggestionsHtml}</div>
@@ -2592,7 +2592,7 @@ async function processMLInput(rawText, typingId, startTime) {
       const runId = 'train_' + Date.now();
       appendAssistantMessage(`
         <h4>XGBoost Training Initialized</h4>
-        <p>Executing gradient boosting training for <strong>${epochs} boosting rounds</strong> on <code>AlzheimersXGBoost</code> (datasets/alzheimers_disease_data.csv).</p>
+        <p>Executing gradient boosting training for <strong>${epochs} boosting rounds</strong> on <code>Alzheimer</code> (datasets/alzheimers_disease_data.csv).</p>
         <div class="terracotta-progress-wrap" id="${runId}_container">
           <div class="progress-meta-row">
             <span id="${runId}_status">Optimization Progress</span>
@@ -4581,7 +4581,7 @@ function renderStatusOutput(data) {
         </div>
         <div class="stat-pill">
           <div class="stat-label">Model Architecture</div>
-          <div class="stat-val" style="font-size:13.5px">${escapeHtml(data.model_name || 'AlzheimersXGBoost')}</div>
+          <div class="stat-val" style="font-size:13.5px">${escapeHtml(data.model_name || 'Alzheimer')}</div>
         </div>
         <div class="stat-pill">
           <div class="stat-label">Environment</div>
@@ -6507,7 +6507,7 @@ function appendAssistantMessage(html, options = {}) {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
-      <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
+      <span class="assistant-model-tag">&bull; Alzheimer</span>
     </div>
     <div class="assistant-prose fade-in"></div>
     <div class="assistant-suggestions-slot"></div>
@@ -6618,7 +6618,7 @@ function showTypingIndicator() {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
-      <span class="assistant-model-tag">&bull; AlzheimersXGBoost</span>
+      <span class="assistant-model-tag">&bull; Alzheimer</span>
     </div>
     <div class="claude-loading-row">
       <div class="claude-loading-sparkle" title="Neura is thinking...">
@@ -6720,7 +6720,7 @@ function updateUIModelStatus(data) {
   }
 
   if (islandEnv) {
-    islandEnv.textContent = `${data.model_name || 'AlzheimersXGBoost'} \u2022 ${data.environment || 'development'}`;
+    islandEnv.textContent = `${data.model_name || 'Alzheimer'} \u2022 ${data.environment || 'development'}`;
   }
 
   // Sync compact notch if island is currently in ready state
@@ -6743,7 +6743,7 @@ function updateUIModelStatus(data) {
   const mEnv = document.getElementById('modal-env');
   const mCp = document.getElementById('modal-checkpoint');
   const mStat = document.getElementById('modal-status');
-  if (mName) mName.textContent = data.model_name || 'AlzheimersXGBoost';
+  if (mName) mName.textContent = data.model_name || 'Alzheimer';
   if (mEnv) mEnv.textContent = data.environment || 'development';
   if (mCp) mCp.textContent = data.checkpoint || 'public/checkpoints/xgboost_alzheimers.json';
   if (mStat) {
@@ -6823,7 +6823,7 @@ function setDynamicIslandState(state, options = {}) {
 
     case 'generating':
       island.classList.add('theme-orange', 'is-thinking');
-      subEl.textContent = options.sub || 'Synthesizing response \u2022 AlzheimersXGBoost';
+      subEl.textContent = options.sub || 'Synthesizing response \u2022 Alzheimer';
       mainEl.textContent = options.main || 'Generating';
       break;
 

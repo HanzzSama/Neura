@@ -1,5 +1,5 @@
 {
-  "model_name": "AlzheimersXGBoost",
+  "model_name": "Alzheimer",
   "algorithm": "XGBoost",
   "metrics": {
     "accuracy": 0.9442,

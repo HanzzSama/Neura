@@ -71,7 +71,7 @@ def run_status(config: Config) -> None:
     logger.info("[bold cyan]               NEURA AI SYSTEM STATUS                          [/bold cyan]")
     logger.info("[bold cyan]═══════════════════════════════════════════════════════════════[/bold cyan]")
 
-    model_name = config.get("model.name", "AlzheimersXGBoost")
+    model_name = config.get("model.name", "Alzheimer")
     algorithm = "XGBoost Classifier (Gradient Boosted Decision Trees)"
     checkpoint_path = Path("public/checkpoints/xgboost_alzheimers.json")
     dataset_path = Path(config.get("dataset.train_path", "datasets/alzheimers_disease_data.csv"))

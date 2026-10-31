@@ -251,7 +251,12 @@ function updateUIModelStatus(data) {
   }
 
   if (islandEnv) {
-    islandEnv.textContent = `${data.model_name || 'AlzheimersXGBoost'} \u2022 ${data.environment || 'development'}`;
+    const mName = data.model_name || 'Alzheimer';
+    const eName = data.environment || 'development';
+    const shortEnv = eName === 'development' ? 'dev' : eName;
+    const shortM = mName.length > 16 ? mName.slice(0, 15) + '…' : mName;
+    islandEnv.textContent = `${shortM} \u2022 ${shortEnv}`;
+    islandEnv.title = `${mName} \u2022 ${eName}`;
   }
 
   if (window.currentIslandState === 'ready' || window.currentIslandState === 'idle') {
@@ -272,7 +277,7 @@ function updateUIModelStatus(data) {
   const mEnv = document.getElementById('modal-env');
   const mCp = document.getElementById('modal-checkpoint');
   const mStat = document.getElementById('modal-status');
-  if (mName) mName.textContent = data.model_name || 'AlzheimersXGBoost';
+  if (mName) mName.textContent = data.model_name || 'Alzheimer';
   if (mEnv) mEnv.textContent = data.environment || 'development';
   if (mCp) mCp.textContent = data.checkpoint || 'public/checkpoints/xgboost_alzheimers.json';
   if (mStat) {
@@ -354,7 +359,7 @@ function setDynamicIslandState(state, options = {}) {
 
     case 'generating':
       island.classList.add('theme-orange', 'is-thinking');
-      subEl.textContent = options.sub || 'Synthesizing response \u2022 AlzheimersXGBoost';
+      subEl.textContent = options.sub || 'Synthesizing response \u2022 Alzheimer';
       mainEl.textContent = options.main || 'Generating';
       break;
 
