@@ -13,6 +13,7 @@ Konfigurasi di .env:
 import os
 import smtplib
 import logging
+from dotenv import load_dotenv
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_smtp_config():
+    load_dotenv(override=True)
     return {
         "email": os.getenv("SMTP_EMAIL", "").strip(),
         "password": os.getenv("SMTP_PASSWORD", "").strip(),
@@ -29,9 +31,24 @@ def _get_smtp_config():
     }
 
 
+
 def is_smtp_configured():
     cfg = _get_smtp_config()
     return bool(cfg["email"] and cfg["password"] and "@" in cfg["email"])
+
+
+def _create_smtp_connection(cfg):
+    """Membuat koneksi SMTP yang mendukung SSL (465) maupun STARTTLS (587)."""
+    if cfg["port"] == 465:
+        server = smtplib.SMTP_SSL(cfg["host"], cfg["port"], timeout=15)
+    else:
+        server = smtplib.SMTP(cfg["host"], cfg["port"], timeout=15)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+    server.login(cfg["email"], cfg["password"])
+    return server
+
 
 
 def send_verification_email(to_email: str, display_name: str, verify_link: str) -> dict:
@@ -63,19 +80,15 @@ def send_verification_email(to_email: str, display_name: str, verify_link: str) 
     msg.attach(MIMEText(html_body, "html", "utf-8"))
 
     try:
-        with smtplib.SMTP(cfg["host"], cfg["port"], timeout=15) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(cfg["email"], cfg["password"])
+        with _create_smtp_connection(cfg) as server:
             server.sendmail(cfg["email"], [to_email], msg.as_bytes())
 
         logger.info(f"[Neura Email] Verifikasi terkirim ke {to_email}")
         return {"success": True}
 
-    except smtplib.SMTPAuthenticationError:
-        msg_err = "Autentikasi SMTP gagal. Pastikan App Password Gmail sudah benar di SMTP_PASSWORD."
-        logger.error(f"[Neura Email] {msg_err}")
+    except (smtplib.SMTPAuthenticationError, smtplib.SMTPServerDisconnected) as exc:
+        msg_err = "Autentikasi SMTP gagal (BadCredentials). Pastikan App Password Gmail 16-karakter sudah benar di SMTP_PASSWORD."
+        logger.error(f"[Neura Email] {msg_err} (detail: {exc})")
         return {"success": False, "error": msg_err}
     except Exception as exc:
         logger.error(f"[Neura Email] Kirim email gagal: {exc}")
@@ -112,12 +125,7 @@ def send_admin_otp_email(to_emails: list, admin_name: str, otp_code: str, custom
     errors = []
 
     try:
-        with smtplib.SMTP(cfg["host"], cfg["port"], timeout=15) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(cfg["email"], cfg["password"])
-
+        with _create_smtp_connection(cfg) as server:
             for recipient in to_emails:
                 recipient = recipient.strip()
                 if not recipient or "@" not in recipient:
@@ -125,7 +133,7 @@ def send_admin_otp_email(to_emails: list, admin_name: str, otp_code: str, custom
 
                 msg = MIMEMultipart("alternative")
                 msg["Subject"] = subject
-                msg["From"]    = f"{cfg['sender_name']} Security <{cfg['email']}>"
+                msg["From"]    = f"{cfg['sender_name']} <{cfg['email']}>"
                 msg["To"]      = recipient
                 msg["Reply-To"] = cfg["email"]
 
@@ -141,9 +149,9 @@ def send_admin_otp_email(to_emails: list, admin_name: str, otp_code: str, custom
         else:
             return {"success": False, "error": "Tidak ada email tujuan yang valid.", "details": errors}
 
-    except smtplib.SMTPAuthenticationError:
-        msg_err = "Autentikasi SMTP gagal. Periksa App Password Gmail di SMTP_PASSWORD."
-        logger.error(f"[Neura Admin 2FA] {msg_err}")
+    except (smtplib.SMTPAuthenticationError, smtplib.SMTPServerDisconnected) as exc:
+        msg_err = "Autentikasi SMTP gagal (BadCredentials). Periksa App Password Gmail di SMTP_PASSWORD."
+        logger.error(f"[Neura Admin 2FA] {msg_err} (detail: {exc})")
         return {"success": False, "error": msg_err}
     except Exception as exc:
         logger.error(f"[Neura Admin 2FA] Gagal mengirim OTP: {exc}")
