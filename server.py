@@ -38,7 +38,28 @@ threading.Thread(target=_warmup_ml_libs, daemon=True).start()
 
 # Flask App Initialization
 app = Flask(__name__, static_folder="public", static_url_path="")
-CORS(app)
+CORS(app, supports_credentials=True)
+
+# -----------------------------------------------------------------------
+# Session & Secure Cookie Configuration
+# -----------------------------------------------------------------------
+import secrets
+from flask_session import Session
+
+os.makedirs(".flask_sessions", exist_ok=True)
+app.config.update(
+    SECRET_KEY=os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32),
+    SESSION_TYPE="filesystem",
+    SESSION_FILE_DIR=".flask_sessions",
+    SESSION_PERMANENT=False,
+    SESSION_USE_SIGNER=True,
+    SESSION_COOKIE_NAME="neura_session",
+    SESSION_COOKIE_HTTPONLY=True,       # JavaScript cannot read session cookie (XSS protection)
+    SESSION_COOKIE_SAMESITE="Lax",      # Prevents CSRF while allowing standard navigation
+    SESSION_COOKIE_SECURE=False,        # Set to True on production HTTPS
+    PERMANENT_SESSION_LIFETIME=86400,   # 24 hours expiry
+)
+Session(app)
 
 # -----------------------------------------------------------------------
 # Register Modular Blueprints
@@ -72,14 +93,15 @@ from api.user.user_predict import user_predict_bp
 from api.user.user_consultation import user_consult_bp
 from api.user.user_chat import user_chat_bp
 from api.user.user_livekit import user_livekit_bp
-
 from api.user.user_profile import user_profile_bp
+from api.user.user_session import user_session_bp
 
 app.register_blueprint(user_predict_bp, url_prefix="/api")
 app.register_blueprint(user_consult_bp, url_prefix="/api/consultation")
 app.register_blueprint(user_chat_bp, url_prefix="/api")
 app.register_blueprint(user_livekit_bp, url_prefix="/api/livekit")
 app.register_blueprint(user_profile_bp, url_prefix="/api/user")
+app.register_blueprint(user_session_bp, url_prefix="/api/user")
 
 
 # -----------------------------------------------------------------------

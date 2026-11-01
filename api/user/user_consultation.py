@@ -6,10 +6,12 @@ User / Pasien Consultation routes:
   GET      /api/consultation/<code>   — Lookup dokumen hasil konsultasi
 """
 
+import json
 import random
 import hashlib
 import traceback
 from datetime import datetime
+from pathlib import Path
 import pandas as pd
 from flask import Blueprint, request, jsonify
 from core.logger import get_logger
@@ -19,8 +21,27 @@ logger = get_logger(__name__)
 
 user_consult_bp = Blueprint("user_consultation", __name__)
 
-# Shared memory store for consultations (accessed by nakes via get_consultations_store())
-_consultations_store = {}
+# Persistent file & shared memory store for consultations
+CONSULT_FILE = Path("datasets/consultations_records.json")
+
+def _load_stored_consultations():
+    if CONSULT_FILE.exists():
+        try:
+            with open(CONSULT_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_consultations_store():
+    try:
+        CONSULT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(CONSULT_FILE, "w", encoding="utf-8") as f:
+            json.dump(_consultations_store, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        logger.warning(f"Gagal menyimpan consultations_records.json: {e}")
+
+_consultations_store = _load_stored_consultations()
 
 
 def get_consultations_store():
@@ -155,6 +176,7 @@ def _build_consultation_document(patient_input=None, mode=""):
 
     _consultations_store[nakes_code] = doc
     _consultations_store[doc_id] = doc
+    save_consultations_store()
     return doc
 
 

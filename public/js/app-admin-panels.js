@@ -5,6 +5,47 @@
  */
 
 // ============================================================
+// Admin Menu Dropdown (Accordion)
+// ============================================================
+const ADMIN_DROPDOWN_STORAGE_KEY = 'neura_admin_menu_dropdown_collapsed';
+
+function toggleAdminMenuDropdown() {
+  const list = document.getElementById('admin-menu-list');
+  const btn = document.getElementById('admin-menu-toggle-btn');
+  if (!list || !btn) return;
+
+  const isCollapsed = list.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed', isCollapsed);
+  btn.setAttribute('aria-expanded', !isCollapsed);
+
+  try {
+    localStorage.setItem(ADMIN_DROPDOWN_STORAGE_KEY, isCollapsed ? 'true' : 'false');
+  } catch (e) { }
+}
+window.toggleAdminMenuDropdown = toggleAdminMenuDropdown;
+
+function initAdminMenuDropdown() {
+  try {
+    const saved = localStorage.getItem(ADMIN_DROPDOWN_STORAGE_KEY);
+    const isCollapsed = saved === 'true';
+    const list = document.getElementById('admin-menu-list');
+    const btn = document.getElementById('admin-menu-toggle-btn');
+    if (list) list.classList.toggle('collapsed', isCollapsed);
+    if (btn) {
+      btn.classList.toggle('collapsed', isCollapsed);
+      btn.setAttribute('aria-expanded', !isCollapsed);
+    }
+  } catch (e) { }
+}
+window.initAdminMenuDropdown = initAdminMenuDropdown;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdminMenuDropdown);
+} else {
+  initAdminMenuDropdown();
+}
+
+// ============================================================
 // Room Switching — shows panels inside main-view
 // ============================================================
 const ADMIN_ROOMS = {

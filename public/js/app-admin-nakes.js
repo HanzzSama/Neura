@@ -24,6 +24,10 @@ function syncAdminNavVisibility() {
       const el = document.getElementById(id);
       if (el) el.style.display = isAdmin ? 'flex' : 'none';
     });
+    const adminSection = document.getElementById('admin-menu-dropdown-section');
+    if (adminSection) {
+      adminSection.style.display = isAdmin ? 'block' : 'none';
+    }
   } catch (e) { }
 }
 window.syncAdminNavVisibility = syncAdminNavVisibility;

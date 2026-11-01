@@ -101,6 +101,12 @@ def api_consultation_validate(code_or_id):
         if doc_id:
             store[doc_id] = doc
 
+        try:
+            from api.user.user_consultation import save_consultations_store
+            save_consultations_store()
+        except Exception:
+            pass
+
         return jsonify({
             "success": True,
             "data":    doc,

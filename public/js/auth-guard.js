@@ -69,11 +69,14 @@
 
   function verifyAdminSessionWithServer() {
     try {
-      var token = localStorage.getItem('neura_admin_token') || sessionStorage.getItem('neura_admin_token');
-      if (!token) return;
+      var token = localStorage.getItem('neura_admin_token') || sessionStorage.getItem('neura_admin_token') || '';
+      var isAdminRole = localStorage.getItem('neura_user_role') === 'Admin' || localStorage.getItem('neura_admin_authenticated') === 'true';
+      if (!token && !isAdminRole) return;
+
       fetch('/api/admin/verify-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ token: token })
       })
       .then(function (res) { return res.json(); })
@@ -85,6 +88,9 @@
           sessionStorage.removeItem('neura_admin_session');
           sessionStorage.removeItem('neura_admin_token');
           redirectToWelcome('session_expired');
+        } else {
+          localStorage.setItem('neura_admin_authenticated', 'true');
+          localStorage.setItem('neura_user_role', 'Admin');
         }
       })
       .catch(function () {});

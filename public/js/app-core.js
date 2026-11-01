@@ -82,6 +82,12 @@ function clearAllUserSessionData() {
     localStorage.removeItem('neura_admin_authenticated');
     localStorage.removeItem('neura_admin_token');
 
+    // Invalidate server-side session & HTTPOnly cookies
+    try {
+      fetch('/api/user/logout-session', { method: 'POST', credentials: 'include' }).catch(() => {});
+      fetch('/api/admin/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    } catch (_) { }
+
     // 2. Clear personal info & consultation documents
     localStorage.removeItem('neura_last_consultation');
     localStorage.removeItem('neura_active_patient_doc');
@@ -295,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof renderRecentChatsSidebar === 'function') renderRecentChatsSidebar();
 
   // — Feature Modules —
+  if (typeof initAdminMenuDropdown    === 'function') initAdminMenuDropdown();
   if (typeof initMLCommandsDropdown   === 'function') initMLCommandsDropdown();
   if (typeof updateActivePatientBar   === 'function') updateActivePatientBar();
   if (typeof initAppSettingsModifiers === 'function') initAppSettingsModifiers();

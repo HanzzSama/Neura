@@ -246,7 +246,7 @@
           <span class="shortcut-badge">Ctrl K</span>
         </button>
 
-        <!-- Sidebar Navigation Menu (Dashboard Link & Admin Nakes) -->
+        <!-- Sidebar Navigation Menu (Dashboard Link) -->
         <div class="sidebar-nav-menu">
           <a href="/welcome" class="sidebar-nav-item" id="sidebar-dashboard-link" title="Buka Dashboard & Clinical Hub">
             <div class="sidebar-nav-left">
@@ -261,65 +261,6 @@
             </div>
             <span class="sidebar-nav-tag">Hub</span>
           </a>
-
-          <!-- Menu Khusus Halaman Admin: Kelola Data Nakes (Hanya Tampil Jika User = Admin) -->
-          <div class="sidebar-nav-item admin-only-feature" id="sidebar-nakes-admin-link" style="display: none;"
-            onclick="switchAdminRoom('nakes')" title="Manajemen & Tambah Data Nakes (Khusus Admin)">
-            <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-              <span data-i18n="nav_nakes_admin">Data Nakes</span>
-            </div>
-            <span class="sidebar-nav-tag nakes-admin-tag">Admin</span>
-          </div>
-
-          <!-- Menu Database (Admin Only) -->
-          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--database" id="sidebar-database-link"
-            style="display: none;" onclick="switchAdminRoom('database')" title="Database & Firestore Viewer">
-            <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <ellipse cx="12" cy="5" rx="9" ry="3" />
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-              </svg>
-              <span>Database</span>
-            </div>
-            <span class="sidebar-nav-tag sidebar-nav-tag--db">DB</span>
-          </div>
-
-          <!-- Menu Statistik (Admin Only) -->
-          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--stats" id="sidebar-stats-link"
-            style="display: none;" onclick="switchAdminRoom('stats')" title="Statistik & Analytics">
-            <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10" />
-                <line x1="12" y1="20" x2="12" y2="4" />
-                <line x1="6" y1="20" x2="6" y2="14" />
-              </svg>
-              <span>Statistik</span>
-            </div>
-            <span class="sidebar-nav-tag sidebar-nav-tag--stats">Stats</span>
-          </div>
-
-          <!-- Menu Struktur Folder (Admin Only) -->
-          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--files" id="sidebar-files-link"
-            style="display: none;" onclick="switchAdminRoom('explorer')" title="Struktur Folder Project">
-            <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-              </svg>
-              <span>Struktur Folder</span>
-            </div>
-            <span class="sidebar-nav-tag sidebar-nav-tag--files">Files</span>
-          </div>
         </div>
       </div>
 
@@ -329,6 +270,77 @@
           <div class="nav-group-title" data-i18n="nav_recent_chats">Recent Chats</div>
           <div class="chat-history-list" id="chat-history-list">
             <!-- Populated dynamically by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Menu Khusus Halaman Admin: Dropdown Accordion (Di Atas ML Commands) -->
+        <div class="nav-group-section admin-only-section" id="admin-menu-dropdown-section" style="display: none;">
+          <button class="nav-group-header" id="admin-menu-toggle-btn" onclick="toggleAdminMenuDropdown()" aria-expanded="true">
+            <span class="nav-group-title" data-i18n="nav_admin_menu">MENU ADMIN</span>
+            <svg class="dropdown-chevron-icon" id="admin-menu-chevron" width="13" height="13" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div class="ml-commands-list" id="admin-menu-list">
+            <!-- 1. Data Nakes -->
+            <button class="ml-command-item admin-menu-item" id="sidebar-nakes-admin-link"
+              onclick="switchAdminRoom('nakes')" title="Manajemen & Tambah Data Nakes (Khusus Admin)">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span data-i18n="nav_nakes_admin">Data Nakes</span>
+              </div>
+              <span class="ml-tag">ADMIN</span>
+            </button>
+
+            <!-- 2. Database -->
+            <button class="ml-command-item admin-menu-item" id="sidebar-database-link"
+              onclick="switchAdminRoom('database')" title="Database & Firestore Viewer">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+                <span data-i18n="nav_database_admin">Database</span>
+              </div>
+              <span class="ml-tag">DB</span>
+            </button>
+
+            <!-- 3. Statistik -->
+            <button class="ml-command-item admin-menu-item" id="sidebar-stats-link"
+              onclick="switchAdminRoom('stats')" title="Statistik & Analytics">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span data-i18n="nav_stats_admin">Statistik</span>
+              </div>
+              <span class="ml-tag">STATS</span>
+            </button>
+
+            <!-- 4. Struktur Folder -->
+            <button class="ml-command-item admin-menu-item" id="sidebar-files-link"
+              onclick="switchAdminRoom('explorer')" title="Struktur Folder Project">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span data-i18n="nav_files_admin">Struktur Folder</span>
+              </div>
+              <span class="ml-tag">FILES</span>
+            </button>
           </div>
         </div>
 
@@ -3189,63 +3201,7 @@
 
     </div>
   </div>
-
-
-  <!-- ============================================================ -->
-  <!-- Toast Container -->
-  <div class="toast-box" id="toast-box"></div>
-
-  <!-- External JavaScript -->
-  <script src="/js/qrcode.min.js"></script>
-  <script src="/js/about_app.js?v=1"></script>
-  <script src="/js/dynamic-island.js?v=60"></script>
-  <!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
-  <script src="/js/app-core.js?v=7.0"></script>
-  <script src="/js/app-translations.js?v=7.0"></script>
-  <script src="/js/app-ui.js?v=7.0"></script>
-  <script src="/js/app-auth.js?v=7.1"></script>
-  <script src="/js/app-settings.js?v=7.5"></script>
-  <script src="/js/app-voice-input.js?v=7.0"></script>
-  <script src="/js/app-ml-commands.js?v=7.0"></script>
-  <script src="/js/app-chat.js?v=7.0"></script>
-
-  <!-- Neura Modular Architecture: 2. Role User (Pasien) -->
-  <script src="/js/app-user-profile.js?v=7.0"></script>
-  <script src="/js/app-user-predict.js?v=7.0"></script>
-  <script src="/js/app-user-consultation.js?v=7.0"></script>
-  <script src="/js/app-user-voice.js?v=7.0"></script>
-  <script src="/js/app-user-history.js?v=7.0"></script>
-  <script src="/js/app-user.js?v=7.0"></script>
-
-  <!-- Neura Modular Architecture: 3. Role Nakes (Tenaga Kesehatan) -->
-  <script src="/js/app-nakes-auth.js?v=7.0"></script>
-  <script src="/js/app-nakes-lookup.js?v=7.0"></script>
-  <script src="/js/app-nakes-validate.js?v=7.0"></script>
-  <script src="/js/app-nakes-patient.js?v=7.0"></script>
-  <script src="/js/app-nakes-history.js?v=7.0"></script>
-  <script src="/js/app-nakes.js?v=7.0"></script>
-
-  <!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
-  <script src="/js/app-admin-auth.js?v=7.0"></script>
-  <script src="/js/app-admin-nakes.js?v=7.0"></script>
-  <script src="/js/app-admin-ml.js?v=7.0"></script>
-  <script src="/js/app-admin-history.js?v=7.0"></script>
-  <script src="/js/app-admin.js?v=7.0"></script>
-  <script src="/js/app-admin-panels.js?v=1.0"></script>
-
-  <script src="/js/voice-consultation.js?v=64"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
-
-  <!-- Firebase Authentication & Workspace Security Guard -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-guard.js?v=3"></script>
-
-</body>
-
-</html> </button>
+</button>
 <button type="button" class="profile-banner-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')"
   title="Keamanan Sandi">
   <span>Keamanan</span>
@@ -3476,51 +3432,51 @@
 
 <!-- External JavaScript -->
 <script src="/js/qrcode.min.js"></script>
-<script src="/js/about_app.js?v=1"></script>
-<script src="/js/dynamic-island.js?v=60"></script>
+<script src="/js/about_app.js?v=2"></script>
+<script src="/js/dynamic-island.js?v=61"></script>
 <!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
-<script src="/js/app-core.js?v=7.0"></script>
-<script src="/js/app-translations.js?v=7.0"></script>
-<script src="/js/app-ui.js?v=7.0"></script>
-<script src="/js/app-auth.js?v=7.1"></script>
-<script src="/js/app-settings.js?v=7.5"></script>
-<script src="/js/app-voice-input.js?v=7.0"></script>
-<script src="/js/app-ml-commands.js?v=7.0"></script>
-<script src="/js/app-chat.js?v=7.0"></script>
+<script src="/js/app-core.js?v=7.3"></script>
+<script src="/js/app-translations.js?v=7.3"></script>
+<script src="/js/app-ui.js?v=7.3"></script>
+<script src="/js/app-auth.js?v=7.3"></script>
+<script src="/js/app-settings.js?v=7.7"></script>
+<script src="/js/app-voice-input.js?v=7.3"></script>
+<script src="/js/app-ml-commands.js?v=7.3"></script>
+<script src="/js/app-chat.js?v=7.3"></script>
 
 <!-- Neura Modular Architecture: 2. Role User (Pasien) -->
-<script src="/js/app-user-profile.js?v=7.0"></script>
-<script src="/js/app-user-predict.js?v=7.0"></script>
-<script src="/js/app-user-consultation.js?v=7.0"></script>
-<script src="/js/app-user-voice.js?v=7.0"></script>
-<script src="/js/app-user-history.js?v=7.0"></script>
-<script src="/js/app-user.js?v=7.0"></script>
+<script src="/js/app-user-profile.js?v=7.3"></script>
+<script src="/js/app-user-predict.js?v=7.3"></script>
+<script src="/js/app-user-consultation.js?v=7.3"></script>
+<script src="/js/app-user-voice.js?v=7.3"></script>
+<script src="/js/app-user-history.js?v=7.3"></script>
+<script src="/js/app-user.js?v=7.3"></script>
 
 <!-- Neura Modular Architecture: 3. Role Nakes (Tenaga Kesehatan) -->
-<script src="/js/app-nakes-auth.js?v=7.0"></script>
-<script src="/js/app-nakes-lookup.js?v=7.0"></script>
-<script src="/js/app-nakes-validate.js?v=7.0"></script>
-<script src="/js/app-nakes-patient.js?v=7.0"></script>
-<script src="/js/app-nakes-history.js?v=7.0"></script>
-<script src="/js/app-nakes.js?v=7.0"></script>
+<script src="/js/app-nakes-auth.js?v=7.3"></script>
+<script src="/js/app-nakes-lookup.js?v=7.3"></script>
+<script src="/js/app-nakes-validate.js?v=7.3"></script>
+<script src="/js/app-nakes-patient.js?v=7.3"></script>
+<script src="/js/app-nakes-history.js?v=7.3"></script>
+<script src="/js/app-nakes.js?v=7.3"></script>
 
 <!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
-<script src="/js/app-admin-auth.js?v=7.0"></script>
-<script src="/js/app-admin-nakes.js?v=7.0"></script>
-<script src="/js/app-admin-ml.js?v=7.0"></script>
-<script src="/js/app-admin-history.js?v=7.0"></script>
-<script src="/js/app-admin.js?v=7.0"></script>
-<script src="/js/app-admin-panels.js?v=1.0"></script>
+<script src="/js/app-admin-auth.js?v=7.3"></script>
+<script src="/js/app-admin-nakes.js?v=7.3"></script>
+<script src="/js/app-admin-ml.js?v=7.3"></script>
+<script src="/js/app-admin-history.js?v=7.3"></script>
+<script src="/js/app-admin.js?v=7.3"></script>
+<script src="/js/app-admin-panels.js?v=1.2"></script>
 
-<script src="/js/voice-consultation.js?v=64"></script>
+<script src="/js/voice-consultation.js?v=65"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 
 <!-- Firebase Authentication & Workspace Security Guard -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="/js/firebase-config.js?v=2"></script>
-<script src="/js/auth-guard.js?v=3"></script>
+<script src="/js/firebase-config.js?v=3"></script>
+<script src="/js/auth-guard.js?v=4"></script>
 
 </body>
 

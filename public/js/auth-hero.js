@@ -686,8 +686,10 @@
     });
   }
 
+  var _isResendingAdminOtp = false;
   function handleAdminOtpResend() {
-    if (!currentAdminEmail) return;
+    if (!currentAdminEmail || _isResendingAdminOtp) return;
+    _isResendingAdminOtp = true;
     setButtonLoading(btnResendAdminOtp, true);
     fetch('/api/admin/send-otp', {
       method: 'POST',
@@ -696,6 +698,7 @@
     })
     .then(function (res) { return res.json(); })
     .then(function (data) {
+      _isResendingAdminOtp = false;
       setButtonLoading(btnResendAdminOtp, false);
       if (data && data.success) {
         startAdminOtpTimer(300);
@@ -706,7 +709,7 @@
           });
           if (adminOtpDigits[0]) adminOtpDigits[0].focus();
         }
-        var msg = 'Kode OTP baru telah dikirimkan ke email terhubung.';
+        var msg = data.message || 'Kode OTP baru telah dikirimkan ke email terhubung.';
         if (data.dev_otp) {
           msg += '<br>Dev OTP: <strong style="font-size:15px;color:#dc2626;">' + data.dev_otp + '</strong>';
         }
@@ -716,6 +719,7 @@
       }
     })
     .catch(function (err) {
+      _isResendingAdminOtp = false;
       setButtonLoading(btnResendAdminOtp, false);
       showAlert('Gagal mengirim ulang OTP: ' + err.message, true);
     });
@@ -1279,11 +1283,11 @@
           return;
         }
 
+        _isSendingOtp = true; // Kunci segera: mencegah pengiriman duplikat
         setButtonLoading(loginSubmitBtn, true);
 
         // Jika terdeteksi admin secara lokal -> langsung kirim OTP tanpa buang waktu!
         if (isLocalAdmin) {
-          _isSendingOtp = true; // Kunci: mencegah pengiriman duplikat
           fetch('/api/admin/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1326,6 +1330,7 @@
             })
             .then(function (res) { return res.json(); })
             .then(function (otpResult) {
+              _isSendingOtp = false;
               setButtonLoading(loginSubmitBtn, false);
               if (otpResult && otpResult.success) {
                 currentAdminData = checkResult;
@@ -1335,11 +1340,14 @@
               }
             })
             .catch(function (err) {
+              _isSendingOtp = false;
               setButtonLoading(loginSubmitBtn, false);
               showAlert('Gagal mengirim kode OTP admin: ' + err.message, true);
             });
             return;
           }
+
+          _isSendingOtp = false;
 
           // Bukan admin -> Cek dulu apakah email nakes (@neura.ns.id atau email asli)
           // Intercept login nakes sebelum Firebase Auth
@@ -1635,6 +1643,12 @@
           if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
             try { firebase.auth().signOut().catch(function () {}); } catch (e) {}
           }
+        } catch (e) {}
+
+        // Bersihkan sesi server-side & cookies
+        try {
+          fetch('/api/user/logout-session', { method: 'POST', credentials: 'include' }).catch(function () {});
+          fetch('/api/admin/logout', { method: 'POST', credentials: 'include' }).catch(function () {});
         } catch (e) {}
 
         // Bersihkan seluruh data sesi, riwayat, dan dokumen

@@ -676,6 +676,11 @@ const APP_TRANSLATIONS = {
     nav_new_chat: 'Obrolan Baru',
     nav_dashboard: 'Dasbor',
     nav_recent_chats: 'Percakapan Terakhir',
+    nav_admin_menu: 'Menu Admin',
+    nav_nakes_admin: 'Data Nakes',
+    nav_database_admin: 'Database',
+    nav_stats_admin: 'Statistik',
+    nav_files_admin: 'Struktur Folder',
     nav_ml_commands: 'Perintah ML',
     user_role: 'User',
     checking_model: 'Memeriksa model...',
@@ -718,6 +723,11 @@ const APP_TRANSLATIONS = {
     nav_new_chat: 'New Chat',
     nav_dashboard: 'Dashboard',
     nav_recent_chats: 'Recent Chats',
+    nav_admin_menu: 'Admin Menu',
+    nav_nakes_admin: 'Data Nakes',
+    nav_database_admin: 'Database',
+    nav_stats_admin: 'Statistics',
+    nav_files_admin: 'Folder Structure',
     nav_ml_commands: 'ML Commands',
     user_role: 'User',
     checking_model: 'Checking model...',
@@ -1705,16 +1715,16 @@ function setupGreeting() {
 // ML Commands Dropdown (Accordion) & Role-Based Customization
 // --------------------------------------------------------------------------
 const ML_COMMANDS_CONFIG = [
+  // 1. User & Nakes Commands
   {
     cmd: '/profile',
     tag: '/profile',
     label: { id: 'Data Diri Pasien', en: 'Patient Profile' },
     desc: {
       User: 'Lengkapi atau perbarui formulir data diri & 32 biomarker klinis Anda',
-      Nakes: 'Input & evaluasi rekam medis biomarker pasien untuk skrining',
-      Admin: 'Inspeksi & pengelolaan profil biomarker pengguna'
+      Nakes: 'Input & evaluasi rekam medis biomarker pasien untuk skrining'
     },
-    roles: ['User', 'Nakes', 'Admin']
+    roles: ['User', 'Nakes']
   },
   {
     cmd: '/predict',
@@ -1722,10 +1732,9 @@ const ML_COMMANDS_CONFIG = [
     label: { id: 'Jalankan Prediksi', en: 'Run Prediction' },
     desc: {
       User: 'Skrining risiko Alzheimer personal berbasis 32 biomarker klinis',
-      Nakes: 'Inferensi diagnostik klinis (Mode Pasien & Uji Dataset 2.149 Data)',
-      Admin: 'Diagnostik inferensi XGBoost & pengujian benchmark'
+      Nakes: 'Inferensi diagnostik klinis (Mode Pasien & Uji Dataset 2.149 Data)'
     },
-    roles: ['User', 'Nakes', 'Admin']
+    roles: ['User', 'Nakes']
   },
   {
     cmd: '/dokumen',
@@ -1733,49 +1742,77 @@ const ML_COMMANDS_CONFIG = [
     label: { id: 'Dokumen Konsultasi', en: 'Consultation Doc' },
     desc: {
       User: 'Unduh lembar hasil konsultasi & Kode Nakes untuk rujukan ke faskes',
-      Nakes: 'Validasi resume medis, lembar rujukan klinis & verifikasi Kode Nakes',
-      Admin: 'Generator dokumen konsultasi & pemeriksaan template rujukan'
+      Nakes: 'Validasi resume medis, lembar rujukan klinis & verifikasi Kode Nakes'
     },
-    roles: ['User', 'Nakes', 'Admin']
+    roles: ['User', 'Nakes']
   },
   {
     cmd: '/periksa',
     tag: '/periksa',
     label: { id: 'Periksa Dokumen Pasien', en: 'Inspect Patient Doc' },
     desc: {
-      Nakes: 'Input kode konsultasi pasien untuk menelaah rekam medis & validasi klinis',
-      Admin: 'Pencarian & validasi dokumen konsultasi pasien via kode'
+      Nakes: 'Input kode konsultasi pasien untuk menelaah rekam medis & validasi klinis'
     },
-    roles: ['Nakes', 'Admin']
+    roles: ['Nakes']
   },
   {
     cmd: '/eval',
     tag: '/eval',
     label: { id: 'Evaluasi Model', en: 'Evaluate Model' },
     desc: {
-      Nakes: 'Validasi metrik diagnostik (Akurasi 95.4%, Sensitivitas, Spesifisitas, AUC-ROC)',
-      Admin: 'Evaluasi performa XGBoost, Confusion Matrix, log-loss, F1-Score & ROC'
+      Nakes: 'Validasi metrik diagnostik (Akurasi 95.4%, Sensitivitas, Spesifisitas, AUC-ROC)'
     },
-    roles: ['Nakes', 'Admin']
+    roles: ['Nakes']
   },
+
+  // 2. Admin Statistics & Platform Monitoring Commands (Khusus Admin)
   {
-    cmd: '/train 5',
-    tag: '/train 5',
-    label: { id: 'Latih 5 Epoch', en: 'Train 5 Epochs' },
+    cmd: '/stats',
+    tag: '/stats',
+    label: { id: 'Statistik Platform', en: 'Platform Statistics' },
     desc: {
-      Admin: 'Latih ulang model XGBoost 5 boosting rounds pada dataset klinis'
+      Admin: 'Executive dashboard agregat pengguna, dokumen, tenaga medis, dan status AI'
     },
     roles: ['Admin']
   },
   {
-    cmd: '/progress',
-    tag: '/progress',
-    label: { id: 'Progress Live', en: 'Live Progress' },
+    cmd: '/count_user',
+    tag: '/count_user',
+    label: { id: 'Hitung Pengguna', en: 'Count Users' },
     desc: {
-      Admin: 'Pantau log telemetri optimasi boosting iteratif secara realtime'
+      Admin: 'Statistik total pengguna klinis terdaftar, status verifikasi akun, dan peran'
     },
     roles: ['Admin']
   },
+  {
+    cmd: '/count_doc',
+    tag: '/count_doc',
+    label: { id: 'Hitung Dokumen', en: 'Count Documents' },
+    desc: {
+      Admin: 'Statistik total rekam medis & dokumen rujukan konsultasi tersimpan'
+    },
+    roles: ['Admin']
+  },
+  {
+    cmd: '/count_nakes',
+    tag: '/count_nakes',
+    label: { id: 'Hitung Nakes', en: 'Count Clinicians' },
+    desc: {
+      Admin: 'Statistik total tenaga kesehatan profesional & faskes mitra terdaftar'
+    },
+    roles: ['Admin']
+  },
+  {
+    cmd: '/data_summary',
+    tag: '/data_summary',
+    label: { id: 'Ringkasan Data', en: 'Data Summary' },
+    desc: {
+      Admin: 'Statistik analitik 2.149 sampel dataset klinis Alzheimer & distribusi diagnosis'
+    },
+    roles: ['Admin']
+  },
+
+  // 3. Shared Utility Commands
   {
     cmd: '/status',
     tag: '/status',
@@ -1794,7 +1831,7 @@ const ML_COMMANDS_CONFIG = [
     desc: {
       User: 'Panduan lengkap perintah dan cara penggunaan konsultasi Neura',
       Nakes: 'Panduan perintah klinis, diagnostik biomarker, dan evaluasi',
-      Admin: 'Dokumentasi seluruh perintah sistem, pelatihan, dan telemetri'
+      Admin: 'Dokumentasi seluruh perintah statistik platform dan telemetri'
     },
     roles: ['User', 'Nakes', 'Admin']
   },
@@ -1833,12 +1870,17 @@ function renderRoleMLCommands(roleOverride = null) {
     sidebarList.innerHTML = html;
   }
 
-  // 2. Update Header Title (without role pill badge)
+  // 2. Update Header Title
   const headerBtn = document.getElementById('ml-commands-toggle-btn');
   if (headerBtn) {
     const titleSpan = headerBtn.querySelector('.nav-group-title');
     if (titleSpan) {
-      const mainText = lang === 'en' ? 'ML Commands' : 'Perintah ML';
+      let mainText;
+      if (currentRole === 'Admin') {
+        mainText = lang === 'en' ? 'Admin Statistics' : 'Statistik Admin';
+      } else {
+        mainText = lang === 'en' ? 'ML Commands' : 'Perintah ML';
+      }
       titleSpan.textContent = mainText;
     }
   }
@@ -1874,6 +1916,38 @@ function renderRoleMLCommands(roleOverride = null) {
 }
 
 window.renderRoleMLCommands = renderRoleMLCommands;
+
+const ADMIN_DROPDOWN_STORAGE_KEY = 'neura_admin_menu_dropdown_collapsed';
+
+function toggleAdminMenuDropdown() {
+  const list = document.getElementById('admin-menu-list');
+  const btn = document.getElementById('admin-menu-toggle-btn');
+  if (!list || !btn) return;
+
+  const isCollapsed = list.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed', isCollapsed);
+  btn.setAttribute('aria-expanded', !isCollapsed);
+
+  try {
+    localStorage.setItem(ADMIN_DROPDOWN_STORAGE_KEY, isCollapsed ? 'true' : 'false');
+  } catch (e) { }
+}
+window.toggleAdminMenuDropdown = toggleAdminMenuDropdown;
+
+function initAdminMenuDropdown() {
+  try {
+    const saved = localStorage.getItem(ADMIN_DROPDOWN_STORAGE_KEY);
+    const isCollapsed = saved === 'true';
+    const list = document.getElementById('admin-menu-list');
+    const btn = document.getElementById('admin-menu-toggle-btn');
+    if (list) list.classList.toggle('collapsed', isCollapsed);
+    if (btn) {
+      btn.classList.toggle('collapsed', isCollapsed);
+      btn.setAttribute('aria-expanded', !isCollapsed);
+    }
+  } catch (e) { }
+}
+window.initAdminMenuDropdown = initAdminMenuDropdown;
 
 function toggleMLCommandsDropdown() {
   const list = document.getElementById('ml-commands-list');
@@ -2376,8 +2450,8 @@ function submitCommand(cmd) {
     }
   }
 
-  // If the suggestion chip contains a slash command (e.g. /status, /predict, /eval, /train 5, /help, /voice, /intro, /konsul, /dokumen, /periksa, /validasi), extract and run it
-  const slashMatch = cmd.match(/\/(status|predict|dokumen|doc|hasil|laporan|rujukan|nakes|periksa|validasi|kode|eval|train(?:\s+\d+)?|help|progress|voice|intro|about|konsul)(?:\s+[^\s]+)?\b/i);
+  // If the suggestion chip contains a slash command (e.g. /status, /count_user, /count_doc, /count_nakes, /stats, /data_summary, /predict, /eval, etc.)
+  const slashMatch = cmd.match(/\/(status|count_user|count-user|count_doc|count-doc|count_nakes|count-nakes|data_summary|data-summary|stats|predict|dokumen|doc|hasil|laporan|rujukan|nakes|periksa|validasi|kode|eval|train(?:\s+\d+)?|help|progress|voice|intro|about|konsul)(?:\s+[^\s]+)?\b/i);
   let finalCmd = cmd;
   if (slashMatch && (cmd.startsWith('/') || cmd.includes('/'))) {
     finalCmd = slashMatch[0];
@@ -2549,6 +2623,141 @@ async function processMLInput(rawText, typingId, startTime) {
     await waitLoad(startTime, 450);
     removeTypingIndicator(typingId);
     renderStatusOutput(data);
+
+  } else if (lower === '/count_user' || lower === '/count-user' || lower.startsWith('/count_user') || lower.startsWith('/count-user')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Akses Terbatas: Statistik Pengguna</h4>
+        <div class="claude-card">
+          <p>Peran Anda saat ini adalah <strong>${userRole === 'Nakes' ? 'Tenaga Kesehatan (Nakes)' : 'Pengguna Umum (Pasien)'}</strong>. Perintah <code>/count_user</code> merupakan hak akses khusus <strong>Administrator</strong> untuk memantau metrik pengguna platform.</p>
+        </div>
+      `, { stream: false, suggestions: ['/status', '/dokumen', '/help'] });
+      return;
+    }
+    setDynamicIslandState('generating', { sub: 'Memuat statistik pengguna platform...', main: 'Statistics' });
+    try {
+      const data = await fetchJSON('/api/admin/count-user');
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      if (typeof window.renderCountUserOutput === 'function') {
+        window.renderCountUserOutput(data);
+      }
+    } catch (err) {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Gagal memuat statistik pengguna: ${escapeHtml(err.message)}</p>`, { stream: false });
+    }
+
+  } else if (lower === '/count_doc' || lower === '/count-doc' || lower.startsWith('/count_doc') || lower.startsWith('/count-doc')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Akses Terbatas: Statistik Dokumen</h4>
+        <div class="claude-card">
+          <p>Peran Anda saat ini adalah <strong>${userRole === 'Nakes' ? 'Tenaga Kesehatan (Nakes)' : 'Pengguna Umum (Pasien)'}</strong>. Perintah <code>/count_doc</code> merupakan hak akses khusus <strong>Administrator</strong> untuk memantau dokumen konsultasi klinis.</p>
+        </div>
+      `, { stream: false, suggestions: ['/dokumen', '/status', '/help'] });
+      return;
+    }
+    setDynamicIslandState('generating', { sub: 'Memuat statistik dokumen konsultasi...', main: 'Statistics' });
+    try {
+      const data = await fetchJSON('/api/admin/count-doc');
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      if (typeof window.renderCountDocOutput === 'function') {
+        window.renderCountDocOutput(data);
+      }
+    } catch (err) {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Gagal memuat statistik dokumen: ${escapeHtml(err.message)}</p>`, { stream: false });
+    }
+
+  } else if (lower === '/count_nakes' || lower === '/count-nakes' || lower.startsWith('/count_nakes') || lower.startsWith('/count-nakes')) {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Akses Terbatas: Direktori & Statistik Nakes</h4>
+        <div class="claude-card">
+          <p>Peran Anda saat ini adalah <strong>Pengguna Umum (Pasien)</strong>. Perintah <code>/count_nakes</code> merupakan hak akses khusus <strong>Administrator</strong> untuk meninjau tenaga kesehatan terdaftar.</p>
+        </div>
+      `, { stream: false, suggestions: ['/status', '/dokumen', '/help'] });
+      return;
+    }
+    setDynamicIslandState('generating', { sub: 'Memuat direktori & statistik tenaga medis...', main: 'Statistics' });
+    try {
+      const data = await fetchJSON('/api/admin/count-nakes');
+      await waitLoad(startTime, 400);
+      removeTypingIndicator(typingId);
+      if (typeof window.renderCountNakesOutput === 'function') {
+        window.renderCountNakesOutput(data);
+      }
+    } catch (err) {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Gagal memuat statistik tenaga kesehatan: ${escapeHtml(err.message)}</p>`, { stream: false });
+    }
+
+  } else if (lower === '/data_summary' || lower === '/data-summary' || lower.startsWith('/data_summary') || lower.startsWith('/data-summary') || lower === '/dataset_stats') {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Akses Terbatas: Ringkasan Dataset</h4>
+        <div class="claude-card">
+          <p>Peran Anda saat ini adalah <strong>${userRole === 'Nakes' ? 'Tenaga Kesehatan (Nakes)' : 'Pengguna Umum (Pasien)'}</strong>. Perintah <code>/data_summary</code> merupakan hak akses khusus <strong>Administrator</strong> untuk meninjau analitik dataset klinis.</p>
+        </div>
+      `, { stream: false, suggestions: ['/status', '/help'] });
+      return;
+    }
+    setDynamicIslandState('generating', { sub: 'Menganalisis 2.149 sampel dataset klinis...', main: 'Data Summary' });
+    try {
+      const data = await fetchJSON('/api/admin/data-summary');
+      await waitLoad(startTime, 450);
+      removeTypingIndicator(typingId);
+      if (typeof window.renderDataSummaryOutput === 'function') {
+        window.renderDataSummaryOutput(data);
+      }
+    } catch (err) {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Gagal memuat ringkasan dataset: ${escapeHtml(err.message)}</p>`, { stream: false });
+    }
+
+  } else if (lower === '/stats' || lower === '/platform_stats' || lower === '/platform-stats') {
+    const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
+    if (userRole !== 'Admin') {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`
+        <h4>Akses Terbatas: Statistik Platform</h4>
+        <div class="claude-card">
+          <p>Peran Anda saat ini adalah <strong>${userRole === 'Nakes' ? 'Tenaga Kesehatan (Nakes)' : 'Pengguna Umum (Pasien)'}</strong>. Gunakan perintah <code>/status</code> untuk memeriksa kesiapan layanan Neura AI.</p>
+        </div>
+      `, { stream: false, suggestions: ['/status', '/help'] });
+      return;
+    }
+    setDynamicIslandState('generating', { sub: 'Memuat dashboard statistik platform...', main: 'Statistics' });
+    try {
+      const data = await fetchJSON('/api/admin/stats');
+      await waitLoad(startTime, 450);
+      removeTypingIndicator(typingId);
+      if (typeof window.renderPlatformStatsOutput === 'function') {
+        window.renderPlatformStatsOutput(data);
+      }
+    } catch (err) {
+      await waitLoad(startTime, 350);
+      removeTypingIndicator(typingId);
+      appendAssistantMessage(`<p style="color:var(--accent-red)">Gagal memuat platform statistics: ${escapeHtml(err.message)}</p>`, { stream: false });
+    }
 
   } else if (lower.startsWith('/train') || lower.includes('/train')) {
     const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
@@ -4471,7 +4680,7 @@ function renderHelpOutput() {
     </tr>
   `;
 
-  if (currentRole === 'Nakes' || currentRole === 'Admin') {
+  if (currentRole === 'Nakes') {
     rows += `
       <tr>
         <td><code>/predict dataset</code></td>
@@ -4481,17 +4690,19 @@ function renderHelpOutput() {
   }
 
   // 3. Dokumen
-  rows += `
-    <tr>
-      <td><code>/dokumen</code></td>
-      <td>${currentRole === 'Nakes'
-        ? (lang === 'en' ? 'Review & validate clinical consultation summary, medical referral & Nakes code' : 'Validasi resume medis, lembar rujukan faskes &amp; verifikasi Kode Nakes')
-        : (lang === 'en' ? 'Download official consultation summary & Nakes referral code for clinics' : 'Tampilkan lembar resmi Dokumen Hasil Konsultasi &amp; Kode Rujukan Nakes')}</td>
-    </tr>
-  `;
+  if (currentRole !== 'Admin') {
+    rows += `
+      <tr>
+        <td><code>/dokumen</code></td>
+        <td>${currentRole === 'Nakes'
+          ? (lang === 'en' ? 'Review & validate clinical consultation summary, medical referral & Nakes code' : 'Validasi resume medis, lembar rujukan faskes &amp; verifikasi Kode Nakes')
+          : (lang === 'en' ? 'Download official consultation summary & Nakes referral code for clinics' : 'Tampilkan lembar resmi Dokumen Hasil Konsultasi &amp; Kode Rujukan Nakes')}</td>
+      </tr>
+    `;
+  }
 
-  // 3b. Periksa Dokumen Pasien (Nakes & Admin)
-  if (currentRole === 'Nakes' || currentRole === 'Admin') {
+  // 3b. Periksa Dokumen Pasien (Nakes only)
+  if (currentRole === 'Nakes') {
     rows += `
       <tr>
         <td><code>/periksa [kode]</code></td>
@@ -4500,28 +4711,38 @@ function renderHelpOutput() {
     `;
   }
 
-  // 4. Eval (Nakes & Admin)
-  if (currentRole === 'Nakes' || currentRole === 'Admin') {
+  // 4. Eval (Nakes only)
+  if (currentRole === 'Nakes') {
     rows += `
       <tr>
         <td><code>/eval</code></td>
-        <td>${currentRole === 'Nakes'
-          ? (lang === 'en' ? 'Inspect clinical validation metrics (95.4% Accuracy, Sensitivity, Specificity, AUC)' : 'Evaluasi metrik validasi klinis (Akurasi 95.4%, Sensitivitas, Spesifisitas, AUC-ROC)')
-          : (lang === 'en' ? 'Evaluate model performance (Precision, Recall, F1, Log-loss, ROC-AUC curve)' : 'Evaluasi metrik teknis model (Precision, Recall, F1-Score, Confusion Matrix, Loss)')}</td>
+        <td>${lang === 'en' ? 'Inspect clinical validation metrics (95.4% Accuracy, Sensitivity, Specificity, AUC)' : 'Evaluasi metrik validasi klinis (Akurasi 95.4%, Sensitivitas, Spesifisitas, AUC-ROC)'}</td>
       </tr>
     `;
   }
 
-  // 5. Train & Progress (Admin only)
+  // 5. Statistics Commands (Admin only)
   if (currentRole === 'Admin') {
     rows += `
       <tr>
-        <td><code>/train [N]</code></td>
-        <td>${lang === 'en' ? 'Train XGBoost model for N boosting rounds on datasets/alzheimers_disease_data.csv' : 'Latih model XGBoost untuk N boosting rounds pada dataset klinis'}</td>
+        <td><code>/stats</code></td>
+        <td>${lang === 'en' ? 'Platform executive statistics dashboard (users, documents, clinicians, and AI readiness)' : 'Dashboard statistik platform (total pengguna, dokumen, nakes, dan kesiapan AI)'}</td>
       </tr>
       <tr>
-        <td><code>/progress</code></td>
-        <td>${lang === 'en' ? 'Monitor iterative boosting telemetry and live loss updates in realtime' : 'Pantau log telemetri optimasi boosting iteratif secara realtime'}</td>
+        <td><code>/count_user</code></td>
+        <td>${lang === 'en' ? 'Count total registered patients, clinicians, and administrators' : 'Statistik total pengguna klinis terdaftar, status verifikasi akun, dan pembagian peran'}</td>
+      </tr>
+      <tr>
+        <td><code>/count_doc</code></td>
+        <td>${lang === 'en' ? 'Count total consultation documents, referrals, and validation metrics' : 'Statistik total rekam medis & dokumen rujukan konsultasi tersimpan'}</td>
+      </tr>
+      <tr>
+        <td><code>/count_nakes</code></td>
+        <td>${lang === 'en' ? 'Directory & statistics of verified healthcare professionals and partner institutions' : 'Statistik total tenaga kesehatan profesional & faskes mitra terdaftar'}</td>
+      </tr>
+      <tr>
+        <td><code>/data_summary</code></td>
+        <td>${lang === 'en' ? 'Statistical analytics of 2,149 Alzheimer clinical records & biomarker distribution' : 'Statistik analitik 2.149 sampel dataset klinis Alzheimer & distribusi diagnosis'}</td>
       </tr>
     `;
   }
@@ -6928,7 +7149,7 @@ function escapeHtml(str) {
 }
 
 async function fetchJSON(url, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  const opts = { method, headers: { 'Content-Type': 'application/json' }, credentials: 'include' };
   if (body !== null) opts.body = JSON.stringify(body);
   const res = await fetch(API + url, opts);
   return res.json();
@@ -7199,6 +7420,10 @@ function syncAdminNavVisibility() {
       const el = document.getElementById(id);
       if (el) el.style.display = isAdmin ? 'flex' : 'none';
     });
+    const adminSection = document.getElementById('admin-menu-dropdown-section');
+    if (adminSection) {
+      adminSection.style.display = isAdmin ? 'block' : 'none';
+    }
   } catch (e) { }
 }
 window.syncAdminNavVisibility = syncAdminNavVisibility;

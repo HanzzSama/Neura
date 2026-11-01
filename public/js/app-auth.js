@@ -144,6 +144,34 @@ function initAuthListeners() {
               }
             } catch (e) { }
             syncUserProfileUI();
+
+            // Sinkronkan sesi login user ke server Flask & set HTTPOnly cookie
+            if (typeof user.getIdToken === 'function') {
+              user.getIdToken().then(function (token) {
+                fetch('/api/user/session', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  credentials: 'include',
+                  body: JSON.stringify({
+                    idToken: token,
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || ''
+                  })
+                }).catch(function () {});
+              }).catch(function () {
+                fetch('/api/user/session', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  credentials: 'include',
+                  body: JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || ''
+                  })
+                }).catch(function () {});
+              });
+            }
           }
         });
       } catch (e) { }
@@ -165,6 +193,12 @@ async function handleLogout() {
     if (typeof showToast === 'function') {
       showToast('Sedang keluar dari akun...', 'info');
     }
+
+    // Invalidate server session & clear cookies
+    try {
+      await fetch('/api/user/logout-session', { method: 'POST', credentials: 'include' }).catch(function () {});
+      await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' }).catch(function () {});
+    } catch (_) {}
 
     let auth = null;
     if (window.NeuraFirebase) {

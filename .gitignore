@@ -16,6 +16,10 @@ env/
 # Environment Variables
 .env
 
+# Flask Session storage
+.flask_sessions/
+*.bak
+
 # Jupyter Notebooks
 .ipynb_checkpoints/
 *.ipynb

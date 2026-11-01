@@ -30,6 +30,7 @@ async function fetchJSON(url, method = 'GET', body = null, timeoutMs = 25000) {
     const opts = { 
       method, 
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       signal: controller.signal
     };
     if (body !== null) opts.body = JSON.stringify(body);
