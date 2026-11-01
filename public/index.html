@@ -5,7 +5,7 @@
   <!-- ═══ Neura Iris Transition Engine: FIRST in head for pre-render blocking ═══ -->
   <script src="/js/page-transition.js?v=10"></script>
   <!-- Theme Restore — runs before CSS to prevent flash-of-wrong-theme -->
-  <script>try{var t=localStorage.getItem('neura_theme_v1');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>try { var t = localStorage.getItem('neura_theme_v1'); if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) { }</script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=7.4" />
+  <link rel="stylesheet" href="/css/style.css?v=7.3" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
@@ -114,8 +114,7 @@
           <div class="island-header-left">
             <div class="island-logo-mini">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
+                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
               </svg>
             </div>
             <div>
@@ -161,9 +160,10 @@
             <span>Diagnose</span>
           </button>
           <button class="island-btn btn-cyan" onclick="globalIslandAction('voice')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
             </svg>
             <span>Voice AI</span>
           </button>
@@ -194,10 +194,14 @@
         <!-- Quick Clinical Suggestions Row -->
         <div class="island-prompts-row">
           <span class="island-prompts-label">Quick Consult:</span>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('perbedaan pikun biasa vs alzheimer')">Beda Pikun</button>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('berapa skor normal tes mmse')">Skor MMSE</button>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('apa itu diet mind untuk alzheimer')">Diet MIND</button>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('bagaimana cara merawat penderita alzheimer')">Caregiver</button>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('perbedaan pikun biasa vs alzheimer')">Beda
+            Pikun</button>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('berapa skor normal tes mmse')">Skor
+            MMSE</button>
+          <button class="island-prompt-pill" onclick="triggerIslandPrompt('apa itu diet mind untuk alzheimer')">Diet
+            MIND</button>
+          <button class="island-prompt-pill"
+            onclick="triggerIslandPrompt('bagaimana cara merawat penderita alzheimer')">Caregiver</button>
         </div>
       </div>
     </div>
@@ -246,7 +250,8 @@
         <div class="sidebar-nav-menu">
           <a href="/welcome" class="sidebar-nav-item" id="sidebar-dashboard-link" title="Buka Dashboard & Clinical Hub">
             <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
@@ -258,9 +263,11 @@
           </a>
 
           <!-- Menu Khusus Halaman Admin: Kelola Data Nakes (Hanya Tampil Jika User = Admin) -->
-          <div class="sidebar-nav-item admin-only-feature" id="sidebar-nakes-admin-link" style="display: none;" onclick="switchAdminRoom('nakes')" title="Manajemen & Tambah Data Nakes (Khusus Admin)">
+          <div class="sidebar-nav-item admin-only-feature" id="sidebar-nakes-admin-link" style="display: none;"
+            onclick="switchAdminRoom('nakes')" title="Manajemen & Tambah Data Nakes (Khusus Admin)">
             <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -272,12 +279,14 @@
           </div>
 
           <!-- Menu Database (Admin Only) -->
-          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--database" id="sidebar-database-link" style="display: none;" onclick="switchAdminRoom('database')" title="Database & Firestore Viewer">
+          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--database" id="sidebar-database-link"
+            style="display: none;" onclick="switchAdminRoom('database')" title="Database & Firestore Viewer">
             <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <ellipse cx="12" cy="5" rx="9" ry="3"/>
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
               </svg>
               <span>Database</span>
             </div>
@@ -285,12 +294,14 @@
           </div>
 
           <!-- Menu Statistik (Admin Only) -->
-          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--stats" id="sidebar-stats-link" style="display: none;" onclick="switchAdminRoom('stats')" title="Statistik & Analytics">
+          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--stats" id="sidebar-stats-link"
+            style="display: none;" onclick="switchAdminRoom('stats')" title="Statistik & Analytics">
             <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10"/>
-                <line x1="12" y1="20" x2="12" y2="4"/>
-                <line x1="6" y1="20" x2="6" y2="14"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
               </svg>
               <span>Statistik</span>
             </div>
@@ -298,10 +309,12 @@
           </div>
 
           <!-- Menu Struktur Folder (Admin Only) -->
-          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--files" id="sidebar-files-link" style="display: none;" onclick="switchAdminRoom('explorer')" title="Struktur Folder Project">
+          <div class="sidebar-nav-item admin-only-feature sidebar-nav-item--files" id="sidebar-files-link"
+            style="display: none;" onclick="switchAdminRoom('explorer')" title="Struktur Folder Project">
             <div class="sidebar-nav-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
               </svg>
               <span>Struktur Folder</span>
             </div>
@@ -381,7 +394,8 @@
         </div>
 
         <div class="user-profile-row">
-          <div class="user-info" id="sidebar-user-info" title="Klik untuk Edit Profil & Kata Sandi" onclick="openEditProfileModal()" style="cursor:pointer;">
+          <div class="user-info" id="sidebar-user-info" title="Klik untuk Edit Profil & Kata Sandi"
+            onclick="openEditProfileModal()" style="cursor:pointer;">
             <div class="user-avatar-circle" id="sidebar-user-avatar">H</div>
             <div class="user-text-meta">
               <div class="user-meta-name" id="sidebar-user-name">Hanzz</div>
@@ -391,9 +405,12 @@
           <div class="user-profile-actions">
             <!-- 3-dot menu trigger -->
             <div class="user-dot-menu" id="user-dot-menu">
-              <button class="user-dot-btn" id="user-dot-trigger" title="More options" onclick="toggleUserDotMenu(event)" aria-haspopup="true" aria-expanded="false">
+              <button class="user-dot-btn" id="user-dot-trigger" title="More options" onclick="toggleUserDotMenu(event)"
+                aria-haspopup="true" aria-expanded="false">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                  <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+                  <circle cx="5" cy="12" r="2" />
+                  <circle cx="12" cy="12" r="2" />
+                  <circle cx="19" cy="12" r="2" />
                 </svg>
               </button>
 
@@ -402,7 +419,8 @@
                 <!-- Edit Profil & Password -->
                 <button class="dot-menu-item" role="menuitem" onclick="openEditProfileModal(); closeUserDotMenu()">
                   <span class="dot-menu-icon">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                      stroke-linecap="round" stroke-linejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
@@ -411,11 +429,15 @@
                 </button>
 
                 <!-- Translate -->
-                <button class="dot-menu-item" id="dot-lang-btn" role="menuitem" onclick="toggleAppLanguage(); closeUserDotMenu()">
+                <button class="dot-menu-item" id="dot-lang-btn" role="menuitem"
+                  onclick="toggleAppLanguage(); closeUserDotMenu()">
                   <span class="dot-menu-icon">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path
+                        d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                     </svg>
                   </span>
                   <span class="dot-menu-label" id="dot-lang-label">Ganti Bahasa</span>
@@ -423,14 +445,20 @@
                 </button>
 
                 <!-- Theme -->
-                <button class="dot-menu-item" id="dot-theme-btn" role="menuitem" onclick="toggleTheme(); closeUserDotMenu()">
+                <button class="dot-menu-item" id="dot-theme-btn" role="menuitem"
+                  onclick="toggleTheme(); closeUserDotMenu()">
                   <span class="dot-menu-icon">
-                    <svg id="dot-theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="5"/>
-                      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    <svg id="dot-theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                     </svg>
                   </span>
                   <span class="dot-menu-label" id="dot-theme-label">Mode Terang</span>
@@ -439,9 +467,11 @@
                 <!-- Settings -->
                 <button class="dot-menu-item" role="menuitem" onclick="openSettingsPanel(); closeUserDotMenu()">
                   <span class="dot-menu-icon">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="3"/>
-                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="3" />
+                      <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                     </svg>
                   </span>
                   <span class="dot-menu-label" id="dot-settings-label">Pengaturan</span>
@@ -450,11 +480,14 @@
                 <div class="dot-menu-divider"></div>
 
                 <!-- Logout -->
-                <button class="dot-menu-item dot-menu-item--danger" role="menuitem" onclick="handleLogout(); closeUserDotMenu()">
+                <button class="dot-menu-item dot-menu-item--danger" role="menuitem"
+                  onclick="handleLogout(); closeUserDotMenu()">
                   <span class="dot-menu-icon">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                      <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
                     </svg>
                   </span>
                   <span class="dot-menu-label" id="dot-logout-label">Keluar</span>
@@ -474,23 +507,29 @@
       <!-- Panel Header (Dynamic with Back Button) -->
       <div class="settings-header">
         <div class="settings-header-left">
-          <button class="settings-back-btn" id="settings-back-btn" onclick="backToSettingsRoot()" style="display:none;" title="Kembali ke Menu Utama">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"/>
+          <button class="settings-back-btn" id="settings-back-btn" onclick="backToSettingsRoot()" style="display:none;"
+            title="Kembali ke Menu Utama">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
             </svg>
             <span id="settings-back-label">Kembali</span>
           </button>
           <div class="settings-title-wrap" id="settings-title-wrap">
-            <svg id="settings-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            <svg id="settings-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
             <span id="settings-title">Pengaturan</span>
           </div>
         </div>
         <button class="settings-close-btn" onclick="closeSettingsPanel()" title="Tutup">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -504,13 +543,19 @@
             <div class="settings-menu-list">
 
               <!-- Menu 1: Tampilan -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-appearance', 'Tampilan', 'Appearance')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-appearance', 'Tampilan', 'Appearance')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-appearance">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -520,21 +565,26 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-appearance">Terang • ID</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 2: Input & Chat -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-input', 'Input & Chat', 'Input & Chat')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-input', 'Input & Chat', 'Input & Chat')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-input">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
-                      <line x1="6" y1="8" x2="6.01" y2="8"/><line x1="10" y1="8" x2="10.01" y2="8"/>
-                      <line x1="14" y1="8" x2="14.01" y2="8"/><line x1="18" y1="8" x2="18.01" y2="8"/>
-                      <line x1="7" y1="16" x2="17" y2="16"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                      <line x1="6" y1="8" x2="6.01" y2="8" />
+                      <line x1="10" y1="8" x2="10.01" y2="8" />
+                      <line x1="14" y1="8" x2="14.01" y2="8" />
+                      <line x1="18" y1="8" x2="18.01" y2="8" />
+                      <line x1="7" y1="16" x2="17" y2="16" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -544,19 +594,22 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-input">Enter • M</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 3: Notifikasi & Suara -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-notif', 'Notifikasi & Suara', 'Notifications & Audio')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-notif', 'Notifikasi & Suara', 'Notifications & Audio')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-notif">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -566,18 +619,24 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-notif">3.5s</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 4: Model & Klinis -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-clinical', 'Model & Klinis', 'Model & Clinical')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-clinical', 'Model & Klinis', 'Model & Clinical')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-clinical">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                      <line x1="9" y1="9" x2="9.01" y2="9" />
+                      <line x1="15" y1="9" x2="15.01" y2="9" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -587,20 +646,24 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-clinical">50 Epochs</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 5: Voice Consultation -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-voice', 'Voice Consultation', 'Voice Consultation')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-voice', 'Voice Consultation', 'Voice Consultation')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-voice">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                      <line x1="12" y1="19" x2="12" y2="23" />
+                      <line x1="8" y1="23" x2="16" y2="23" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -610,18 +673,22 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-voice">2.5s • Auto</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 6: Aksesibilitas -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-a11y', 'Aksesibilitas', 'Accessibility')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-a11y', 'Aksesibilitas', 'Accessibility')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-a11y">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="m4.93 4.93 14.14 14.14" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -631,8 +698,9 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-a11y">Normal</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
@@ -641,9 +709,10 @@
               <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-profile', 'Profil', 'Profile')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-profile">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -653,18 +722,21 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-profile">Hanzz</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 8: Model & Chat -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-chat', 'Model & Chat', 'Model & Chat')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-chat', 'Model & Chat', 'Model & Chat')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-chat">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -674,19 +746,24 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-chat">XGBoost</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
 
               <!-- Menu 9: Data & Penyimpanan -->
-              <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-storage', 'Data & Penyimpanan', 'Data & Storage')">
+              <button class="settings-menu-btn"
+                onclick="openSettingsSubpanel('subpanel-storage', 'Data & Penyimpanan', 'Data & Storage')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-storage">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                      <line x1="12" y1="22.08" x2="12" y2="12" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
@@ -696,8 +773,9 @@
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-storage">Memori</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
@@ -706,19 +784,23 @@
               <button class="settings-menu-btn" onclick="openSettingsSubpanel('subpanel-about', 'Tentang', 'About')">
                 <div class="menu-btn-left">
                   <div class="menu-btn-icon icon-about">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
                     </svg>
                   </div>
                   <div class="menu-btn-text">
                     <div class="menu-btn-title" id="menu-title-about">Tentang</div>
-                <div class="menu-btn-sub" id="menu-sub-about" data-about="app.tagline">Neura AI v2.5.1</div>
+                    <div class="menu-btn-sub" id="menu-sub-about" data-about="app.tagline">Neura AI v2.5.1</div>
                   </div>
                 </div>
                 <div class="menu-btn-right">
                   <span class="menu-btn-badge" id="menu-badge-about" data-about="app.version_label">v2.5.1</span>
-                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+                  <svg class="menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </div>
               </button>
@@ -741,12 +823,28 @@
                     <div class="settings-row-desc" id="stg-theme-desc">Mode tampilan antarmuka</div>
                   </div>
                   <div class="settings-theme-switcher" id="settings-theme-switcher">
-                    <button class="theme-chip theme-chip--light" id="stg-light-btn" onclick="applySettingsTheme('light')" title="Warm Linen">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <button class="theme-chip theme-chip--light" id="stg-light-btn"
+                      onclick="applySettingsTheme('light')" title="Warm Linen">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                      </svg>
                       <span id="stg-light-label">Terang</span>
                     </button>
-                    <button class="theme-chip theme-chip--dark" id="stg-dark-btn" onclick="applySettingsTheme('dark')" title="Obsidian Dark">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <button class="theme-chip theme-chip--dark" id="stg-dark-btn" onclick="applySettingsTheme('dark')"
+                      title="Obsidian Dark">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                      </svg>
                       <span id="stg-dark-label">Gelap</span>
                     </button>
                   </div>
@@ -775,10 +873,12 @@
                 <div class="settings-row">
                   <div class="settings-row-info">
                     <div class="settings-row-label" id="stg-enter-label">Kirim dengan Enter</div>
-                    <div class="settings-row-desc" id="stg-enter-desc">Enter untuk kirim, Shift+Enter untuk baris baru</div>
+                    <div class="settings-row-desc" id="stg-enter-desc">Enter untuk kirim, Shift+Enter untuk baris baru
+                    </div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-enter" onchange="applyToggleSetting('neura_send_on_enter', this.checked)">
+                    <input type="checkbox" id="stg-toggle-enter"
+                      onchange="applyToggleSetting('neura_send_on_enter', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -790,7 +890,8 @@
                     <div class="settings-row-desc" id="stg-draft-desc">Simpan teks belum terkirim saat refresh</div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-draft" onchange="applyToggleSetting('neura_draft_enabled', this.checked)">
+                    <input type="checkbox" id="stg-toggle-draft"
+                      onchange="applyToggleSetting('neura_draft_enabled', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -802,9 +903,12 @@
                     <div class="settings-row-desc" id="stg-font-desc">Kenyamanan membaca pesan konsultasi</div>
                   </div>
                   <div class="settings-segmented-group" id="stg-font-group">
-                    <button type="button" class="segmented-chip" id="stg-font-sm" onclick="applyFontSize('small')">S</button>
-                    <button type="button" class="segmented-chip active" id="stg-font-md" onclick="applyFontSize('medium')">M</button>
-                    <button type="button" class="segmented-chip" id="stg-font-lg" onclick="applyFontSize('large')">L</button>
+                    <button type="button" class="segmented-chip" id="stg-font-sm"
+                      onclick="applyFontSize('small')">S</button>
+                    <button type="button" class="segmented-chip active" id="stg-font-md"
+                      onclick="applyFontSize('medium')">M</button>
+                    <button type="button" class="segmented-chip" id="stg-font-lg"
+                      onclick="applyFontSize('large')">L</button>
                   </div>
                 </div>
               </div>
@@ -822,7 +926,8 @@
                     <div class="settings-row-desc" id="stg-sound-desc">Bunyi lembut saat AI selesai merespons</div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-sound" onchange="applyToggleSetting('neura_sound_enabled', this.checked)">
+                    <input type="checkbox" id="stg-toggle-sound"
+                      onchange="applyToggleSetting('neura_sound_enabled', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -868,7 +973,8 @@
                     <div class="settings-row-desc" id="stg-prob-desc">Tampilkan desimal detail (misal 95.35%)</div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-prob" onchange="applyToggleSetting('neura_detailed_prob', this.checked)">
+                    <input type="checkbox" id="stg-toggle-prob"
+                      onchange="applyToggleSetting('neura_detailed_prob', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -897,10 +1003,12 @@
                 <div class="settings-row">
                   <div class="settings-row-info">
                     <div class="settings-row-label" id="stg-voice-play-label">Putar Suara Otomatis</div>
-                    <div class="settings-row-desc" id="stg-voice-play-desc">Bicarakan respons AI saat konsultasi suara</div>
+                    <div class="settings-row-desc" id="stg-voice-play-desc">Bicarakan respons AI saat konsultasi suara
+                    </div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-voiceplay" onchange="applyToggleSetting('neura_voice_autoplay', this.checked)">
+                    <input type="checkbox" id="stg-toggle-voiceplay"
+                      onchange="applyToggleSetting('neura_voice_autoplay', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -919,7 +1027,8 @@
                     <div class="settings-row-desc" id="stg-motion-desc">Meminimalkan transisi dan denyut visual</div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-motion" onchange="applyToggleSetting('neura_reduce_motion', this.checked)">
+                    <input type="checkbox" id="stg-toggle-motion"
+                      onchange="applyToggleSetting('neura_reduce_motion', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -931,7 +1040,8 @@
                     <div class="settings-row-desc" id="stg-compact-desc">Penyajian bubble chat yang lebih padat</div>
                   </div>
                   <label class="settings-switch">
-                    <input type="checkbox" id="stg-toggle-compact" onchange="applyToggleSetting('neura_compact_mode', this.checked)">
+                    <input type="checkbox" id="stg-toggle-compact"
+                      onchange="applyToggleSetting('neura_compact_mode', this.checked)">
                     <span class="settings-slider"></span>
                   </label>
                 </div>
@@ -950,15 +1060,19 @@
                     <div class="settings-profile-email" id="stg-profile-email">—</div>
                   </div>
                   <div class="settings-profile-card-actions">
-                    <button class="settings-btn-ghost" onclick="openEditProfileModal('info'); closeSettingsPanel()" title="Edit Profil Pengguna">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
+                    <button class="settings-btn-ghost" onclick="openEditProfileModal('info'); closeSettingsPanel()"
+                      title="Edit Profil Pengguna">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="margin-right:4px;">
                         <path d="M12 20h9"></path>
                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                       </svg>
                       <span>Edit Profil</span>
                     </button>
-                    <button class="settings-btn-ghost" id="stg-change-pwd-btn" onclick="openEditProfileModal('security'); closeSettingsPanel()" title="Ganti Kata Sandi">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;">
+                    <button class="settings-btn-ghost" id="stg-change-pwd-btn"
+                      onclick="openEditProfileModal('security'); closeSettingsPanel()" title="Ganti Kata Sandi">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="margin-right:4px;">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                       </svg>
@@ -1015,8 +1129,10 @@
 
                 <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:8px;">
                   <div class="storage-meta-row">
-                    <span id="stg-storage-label" style="font-size:12.5px;font-weight:600;color:var(--text-primary)">Memori Browser</span>
-                    <span id="stg-storage-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">0 KB / 5 MB</span>
+                    <span id="stg-storage-label"
+                      style="font-size:12.5px;font-weight:600;color:var(--text-primary)">Memori Browser</span>
+                    <span id="stg-storage-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">0 KB / 5
+                      MB</span>
                   </div>
                   <div class="storage-bar-base">
                     <div class="storage-bar-fill" id="stg-storage-fill" style="width: 2%"></div>
@@ -1053,7 +1169,8 @@
                 <!-- Hero App Card -->
                 <div class="settings-about-card">
                   <div class="settings-about-logo-wrap">
-                    <img src="/assets/neura_logo.jpg" alt="Neura" class="settings-about-logo" onerror="this.parentElement.style.display='none'">
+                    <img src="/assets/neura_logo.jpg" alt="Neura" class="settings-about-logo"
+                      onerror="this.parentElement.style.display='none'">
                   </div>
                   <div class="settings-about-info">
                     <div class="settings-about-header">
@@ -1065,7 +1182,9 @@
                       <span class="settings-about-divider">&bull;</span>
                       <span class="settings-about-model-tag" data-about="model.name">Alzheimer</span>
                     </div>
-                    <div class="settings-about-desc" id="stg-about-desc" data-about="app.description">Platform kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal dengan akurasi 94.4%.</div>
+                    <div class="settings-about-desc" id="stg-about-desc" data-about="app.description">Platform
+                      kecerdasan buatan klinis untuk evaluasi dini risiko Alzheimer berbasis 32 biomarker multimodal
+                      dengan akurasi 94.4%.</div>
                   </div>
                 </div>
 
@@ -1073,45 +1192,73 @@
                 <div class="settings-about-meta-grid">
                   <div class="settings-about-meta-item">
                     <div class="settings-about-meta-label">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
                       Versi
                     </div>
                     <div class="settings-about-meta-val" data-about="app.version">1.95.0</div>
                   </div>
                   <div class="settings-about-meta-item">
                     <div class="settings-about-meta-label">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
                       Build
                     </div>
                     <div class="settings-about-meta-val" data-about="app.build_date">2026-10-28</div>
                   </div>
                   <div class="settings-about-meta-item">
                     <div class="settings-about-meta-label">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                      </svg>
                       Model AI
                     </div>
                     <div class="settings-about-meta-val" data-about="model.name" title="Alzheimer">Alzheimer</div>
                   </div>
                   <div class="settings-about-meta-item settings-about-meta-item--highlight">
                     <div class="settings-about-meta-label">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                      </svg>
                       Akurasi
                     </div>
-                    <div class="settings-about-meta-val settings-about-meta-val--acc" data-about="model.accuracy">94.4%</div>
+                    <div class="settings-about-meta-val settings-about-meta-val--acc" data-about="model.accuracy">94.4%
+                    </div>
                   </div>
                   <div class="settings-about-meta-item">
                     <div class="settings-about-meta-label">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
                       Dataset
                     </div>
                     <div class="settings-about-meta-val" data-about="model.dataset_size">2,149</div>
                   </div>
                   <div class="settings-about-meta-item">
                     <div class="settings-about-meta-label">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
                       Status
                     </div>
-                    <div class="settings-about-meta-val"><span class="settings-status-indicator"></span><span data-about="app.stage">Beta</span></div>
+                    <div class="settings-about-meta-val"><span class="settings-status-indicator"></span><span
+                        data-about="app.stage">Beta</span></div>
                   </div>
                 </div>
 
@@ -1119,7 +1266,15 @@
                 <div class="settings-about-changelog" id="settings-changelog-list">
                   <div class="settings-about-changelog-title">
                     <div class="settings-about-changelog-title-left">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <line x1="8" y1="6" x2="21" y2="6" />
+                        <line x1="8" y1="12" x2="21" y2="12" />
+                        <line x1="8" y1="18" x2="21" y2="18" />
+                        <line x1="3" y1="6" x2="3.01" y2="6" />
+                        <line x1="3" y1="12" x2="3.01" y2="12" />
+                        <line x1="3" y1="18" x2="3.01" y2="18" />
+                      </svg>
                       <span>Changelog</span>
                     </div>
                     <span class="settings-about-changelog-pill">Pembaruan</span>
@@ -1136,16 +1291,27 @@
 
                 <!-- Quick Action Links -->
                 <div class="settings-about-links">
-                  <a href="#" data-about-href="links.github" class="settings-about-link-chip" onclick="window.NeuraAbout&&NeuraAbout.getValue('links.github').then(u=>{if(u)window.open(u,'_blank')}); return false;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                  <a href="#" data-about-href="links.github" class="settings-about-link-chip"
+                    onclick="window.NeuraAbout&&NeuraAbout.getValue('links.github').then(u=>{if(u)window.open(u,'_blank')}); return false;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
                     <span>GitHub</span>
                   </a>
                   <a href="/app" data-about-href="links.privacy" class="settings-about-link-chip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
                     <span>Kebijakan Privasi</span>
                   </a>
                   <a href="/app" data-about-href="links.terms" class="settings-about-link-chip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
                     <span>Syarat Layanan</span>
                   </a>
                 </div>
@@ -1177,11 +1343,13 @@
 
         <div class="top-nav-right">
           <!-- Button Translate / Language Selector (Capsule / Pill) -->
-          <button class="top-nav-lang-btn" id="app-lang-toggle-btn" title="Ganti Bahasa / Switch Language" onclick="toggleAppLanguage()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          <button class="top-nav-lang-btn" id="app-lang-toggle-btn" title="Ganti Bahasa / Switch Language"
+            onclick="toggleAppLanguage()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
             <span id="app-lang-label">ID</span>
           </button>
@@ -1210,7 +1378,8 @@
             <img src="/assets/neura_logo.jpg" alt="Neura Logo" class="hero-neura-logo"
               onerror="this.style.display='none'" />
             <h1 class="hero-greeting cl-title-display" id="hero-greeting-text">Good evening</h1>
-            <p class="hero-subhead cl-desc-lead" data-i18n="hero_subhead">How can Neura assist you with Alzheimer's disease diagnosis and XGBoost modeling today?</p>
+            <p class="hero-subhead cl-desc-lead" data-i18n="hero_subhead">How can Neura assist you with Alzheimer's
+              disease diagnosis and XGBoost modeling today?</p>
 
             <!-- 4 Action Cards -->
             <div class="hero-cards-grid">
@@ -1223,7 +1392,8 @@
                   </svg>
                   <span data-i18n="card_train_title">Train XGBoost Model</span>
                 </div>
-                <div class="hero-card-desc cl-desc-sm" data-i18n="card_train_desc">Latih gradient boosted decision trees pada dataset Alzheimer's (2.149 data pasien)</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_train_desc">Latih gradient boosted decision trees
+                  pada dataset Alzheimer's (2.149 data pasien)</div>
               </div>
 
               <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/predict')">
@@ -1234,7 +1404,8 @@
                   </svg>
                   <span data-i18n="card_predict_title">Run Alzheimer Diagnosis</span>
                 </div>
-                <div class="hero-card-desc cl-desc-sm" data-i18n="card_predict_desc">Prediksi risiko Alzheimer dari biomarker klinis (MMSE, ADL, Memory Complaints)</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_predict_desc">Prediksi risiko Alzheimer dari
+                  biomarker klinis (MMSE, ADL, Memory Complaints)</div>
               </div>
 
               <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/eval')">
@@ -1245,7 +1416,8 @@
                   </svg>
                   <span data-i18n="card_eval_title">Evaluate Medical Metrics</span>
                 </div>
-                <div class="hero-card-desc cl-desc-sm" data-i18n="card_eval_desc">Uji performa: 95.4% Akurasi, 94.6% Precision, 92.1% Recall &amp; 94.1% ROC-AUC</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_eval_desc">Uji performa: 95.4% Akurasi, 94.6%
+                  Precision, 92.1% Recall &amp; 94.1% ROC-AUC</div>
               </div>
 
               <div class="hero-card cl-card cl-card--hoverable" onclick="submitCommand('/status')">
@@ -1258,7 +1430,8 @@
                   </svg>
                   <span data-i18n="card_status_title">Clinical Model Specs</span>
                 </div>
-                <div class="hero-card-desc cl-desc-sm" data-i18n="card_status_desc">Lihat spesifikasi XGBoost, 32 biomarker klinis, dan bobot feature importance</div>
+                <div class="hero-card-desc cl-desc-sm" data-i18n="card_status_desc">Lihat spesifikasi XGBoost, 32
+                  biomarker klinis, dan bobot feature importance</div>
               </div>
             </div>
           </div>
@@ -1350,9 +1523,11 @@
             <span>Stop Bicara (Spasi)</span>
           </button>
           <button id="voice-send-now-btn" class="voice-send-now-btn" style="display:none;"
-            onclick="window.commitVoiceSpeechNow && window.commitVoiceSpeechNow()" title="Kirim ucapan sekarang tanpa menunggu">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
+            onclick="window.commitVoiceSpeechNow && window.commitVoiceSpeechNow()"
+            title="Kirim ucapan sekarang tanpa menunggu">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
             </svg>
             <span>Kirim Sekarang</span>
           </button>
@@ -1367,7 +1542,11 @@
         <div class="admin-room-header">
           <div class="admin-room-header-left">
             <div class="admin-room-icon admin-room-icon--db">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+              </svg>
             </div>
             <div>
               <h2 class="admin-room-title">Database Viewer</h2>
@@ -1375,12 +1554,20 @@
             </div>
           </div>
           <div class="admin-room-header-actions">
-            <button class="admin-room-action-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()" title="Refresh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <button class="admin-room-action-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()"
+              title="Refresh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
               Refresh
             </button>
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
@@ -1389,8 +1576,13 @@
           <div class="db-sidebar">
             <div class="db-sidebar-header">
               <span>Collections</span>
-              <button class="db-refresh-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()" title="Refresh">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <button class="db-refresh-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()"
+                title="Refresh">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="23 4 23 10 17 10" />
+                  <polyline points="1 20 1 14 7 14" />
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
               </button>
             </div>
             <div class="db-collection-list" id="db-collection-list"></div>
@@ -1400,13 +1592,19 @@
             <div class="db-main-toolbar">
               <span class="db-breadcrumb" id="db-breadcrumb">Pilih collection</span>
               <div class="db-toolbar-actions">
-                <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..." oninput="filterDbDocuments && filterDbDocuments(this.value)">
+                <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..."
+                  oninput="filterDbDocuments && filterDbDocuments(this.value)">
                 <span class="db-doc-count" id="db-doc-count"></span>
               </div>
             </div>
             <div class="db-table-wrap" id="db-table-wrap">
               <div class="db-empty-state">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+                  opacity="0.3">
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                </svg>
                 <p>Pilih collection untuk melihat dokumen</p>
               </div>
             </div>
@@ -1421,7 +1619,11 @@
         <div class="admin-room-header">
           <div class="admin-room-header-left">
             <div class="admin-room-icon admin-room-icon--stats">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg>
             </div>
             <div>
               <h2 class="admin-room-title">Statistik &amp; Analytics</h2>
@@ -1429,56 +1631,102 @@
             </div>
           </div>
           <div class="admin-room-header-actions">
-            <button class="admin-room-action-btn" onclick="loadStatisticsRoom && loadStatisticsRoom()" title="Refresh Data">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <button class="admin-room-action-btn" onclick="loadStatisticsRoom && loadStatisticsRoom()"
+              title="Refresh Data">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
               Refresh
             </button>
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
         <div class="admin-room-body stats-room-body">
           <div class="stats-kpi-row" id="stats-kpi-row">
             <div class="stats-kpi-card">
-              <div class="stats-kpi-icon stats-kpi-icon--users"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-users">—</span><span class="stats-kpi-label">Total Pengguna</span></div>
+              <div class="stats-kpi-icon stats-kpi-icon--users"><svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-users">—</span><span
+                  class="stats-kpi-label">Total Pengguna</span></div>
             </div>
             <div class="stats-kpi-card">
-              <div class="stats-kpi-icon stats-kpi-icon--nakes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-nakes">—</span><span class="stats-kpi-label">Total Nakes</span></div>
+              <div class="stats-kpi-icon stats-kpi-icon--nakes"><svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-nakes">—</span><span
+                  class="stats-kpi-label">Total Nakes</span></div>
             </div>
             <div class="stats-kpi-card">
-              <div class="stats-kpi-icon stats-kpi-icon--consult"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-consult">—</span><span class="stats-kpi-label">Konsultasi</span></div>
+              <div class="stats-kpi-icon stats-kpi-icon--consult"><svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-consult">—</span><span
+                  class="stats-kpi-label">Konsultasi</span></div>
             </div>
             <div class="stats-kpi-card">
-              <div class="stats-kpi-icon stats-kpi-icon--predict"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-predict">—</span><span class="stats-kpi-label">Prediksi ML</span></div>
+              <div class="stats-kpi-icon stats-kpi-icon--predict"><svg width="20" height="20" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg></div>
+              <div class="stats-kpi-data"><span class="stats-kpi-value" id="stat-total-predict">—</span><span
+                  class="stats-kpi-label">Prediksi ML</span></div>
             </div>
           </div>
           <div class="stats-content-grid">
             <div class="stats-chart-card">
-              <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Pengguna</span><span class="stats-chart-period">6 bulan terakhir</span></div>
-              <div class="stats-bar-chart" id="stats-bar-chart"><div class="stats-chart-loading"><div class="db-spinner"></div><span>Memuat...</span></div></div>
+              <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Pengguna</span><span
+                  class="stats-chart-period">6 bulan terakhir</span></div>
+              <div class="stats-bar-chart" id="stats-bar-chart">
+                <div class="stats-chart-loading">
+                  <div class="db-spinner"></div><span>Memuat...</span>
+                </div>
+              </div>
             </div>
             <div class="stats-chart-card">
-              <div class="stats-chart-header"><span class="stats-chart-title">Distribusi Role</span><span class="stats-chart-period">Semua pengguna</span></div>
+              <div class="stats-chart-header"><span class="stats-chart-title">Distribusi Role</span><span
+                  class="stats-chart-period">Semua pengguna</span></div>
               <div class="stats-donut-wrap">
                 <svg class="stats-donut-svg" id="stats-donut-svg" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border-subtle)" stroke-width="16"/>
-                  <circle id="donut-users-arc" cx="60" cy="60" r="48" fill="none" stroke="#6366f1" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4"/>
-                  <circle id="donut-nakes-arc" cx="60" cy="60" r="48" fill="none" stroke="#10b981" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4"/>
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border-subtle)" stroke-width="16" />
+                  <circle id="donut-users-arc" cx="60" cy="60" r="48" fill="none" stroke="#6366f1" stroke-width="16"
+                    stroke-dasharray="0 301.6" stroke-dashoffset="75.4" />
+                  <circle id="donut-nakes-arc" cx="60" cy="60" r="48" fill="none" stroke="#10b981" stroke-width="16"
+                    stroke-dasharray="0 301.6" stroke-dashoffset="75.4" />
                 </svg>
                 <div class="stats-donut-legend" id="stats-donut-legend">
-                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#6366f1"></span>Pasien</div>
-                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#10b981"></span>Nakes</div>
+                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#6366f1"></span>Pasien
+                  </div>
+                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#10b981"></span>Nakes
+                  </div>
                 </div>
               </div>
             </div>
             <div class="stats-table-card">
-              <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Terbaru</span><button class="stats-view-all-btn" onclick="switchAdminRoom('database'); setTimeout(()=>loadDbCollection&&loadDbCollection('users'),300)">Lihat Semua →</button></div>
-              <div class="stats-recent-table" id="stats-recent-table"><div class="stats-chart-loading"><div class="db-spinner"></div><span>Memuat...</span></div></div>
+              <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Terbaru</span><button
+                  class="stats-view-all-btn"
+                  onclick="switchAdminRoom('database'); setTimeout(()=>loadDbCollection&&loadDbCollection('users'),300)">Lihat
+                  Semua →</button></div>
+              <div class="stats-recent-table" id="stats-recent-table">
+                <div class="stats-chart-loading">
+                  <div class="db-spinner"></div><span>Memuat...</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1492,45 +1740,80 @@
         <div class="explorer-titlebar">
           <div class="explorer-titlebar-left">
             <div class="explorer-nav-btns">
-              <button class="explorer-nav-btn" id="explorer-back-btn" onclick="explorerGoBack && explorerGoBack()" title="Back" disabled>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              <button class="explorer-nav-btn" id="explorer-back-btn" onclick="explorerGoBack && explorerGoBack()"
+                title="Back" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
               </button>
-              <button class="explorer-nav-btn" id="explorer-fwd-btn" onclick="explorerGoForward && explorerGoForward()" title="Forward" disabled>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              <button class="explorer-nav-btn" id="explorer-fwd-btn" onclick="explorerGoForward && explorerGoForward()"
+                title="Forward" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </button>
               <button class="explorer-nav-btn" onclick="explorerGoUp && explorerGoUp()" title="Up">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
               </button>
             </div>
             <div class="explorer-address-bar">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              </svg>
               <span class="explorer-address-text" id="explorer-address">Neura Project</span>
             </div>
           </div>
           <div class="explorer-titlebar-right">
             <div class="explorer-search-wrap">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" class="explorer-search" id="explorer-search" placeholder="Cari di folder ini..." oninput="explorerSearch && explorerSearch(this.value)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type="text" class="explorer-search" id="explorer-search" placeholder="Cari di folder ini..."
+                oninput="explorerSearch && explorerSearch(this.value)">
             </div>
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
         <!-- Toolbar -->
         <div class="explorer-toolbar">
-          <button class="explorer-toolbar-btn" onclick="explorerViewMode && explorerViewMode('grid')" id="explorer-btn-grid">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Grid</span>
+          <button class="explorer-toolbar-btn" onclick="explorerViewMode && explorerViewMode('grid')"
+            id="explorer-btn-grid">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg><span>Grid</span>
           </button>
-          <button class="explorer-toolbar-btn active" onclick="explorerViewMode && explorerViewMode('list')" id="explorer-btn-list">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>List</span>
+          <button class="explorer-toolbar-btn active" onclick="explorerViewMode && explorerViewMode('list')"
+            id="explorer-btn-list">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg><span>List</span>
           </button>
           <div class="explorer-toolbar-sep"></div>
           <button class="explorer-toolbar-btn" onclick="explorerExpandAll && explorerExpandAll()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg><span>Expand All</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg><span>Expand All</span>
           </button>
           <button class="explorer-toolbar-btn" onclick="explorerCollapseAll && explorerCollapseAll()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg><span>Collapse</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="18 15 12 9 6 15" />
+            </svg><span>Collapse</span>
           </button>
           <div class="explorer-toolbar-sep"></div>
           <span class="explorer-item-count" id="explorer-item-count">0 items</span>
@@ -1559,8 +1842,7 @@
       <div class="floating-input-container">
         <div class="glow-ring" id="input-glow-ring">
           <div class="input-box-wrapper">
-            <textarea id="chat-input-textarea" rows="1"
-              placeholder="Write a message..."
+            <textarea id="chat-input-textarea" rows="1" placeholder="Write a message..."
               onkeydown="handleTextareaKey(event)" oninput="handleTextareaInput(this)"></textarea>
 
             <div class="input-bottom-bar">
@@ -1568,8 +1850,8 @@
               <div class="input-actions-left">
                 <button class="ib-icon-btn" id="input-attach-btn" title="Perintah &amp; Aksi"
                   onclick="toggleQuickMenu(event)">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
@@ -1577,47 +1859,58 @@
 
                 <!-- Quick-command popup -->
                 <div class="quick-menu cl-dropdown-menu" id="quick-menu" style="display:none;">
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/status');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/status');closeQuickMenu()">
                     <span>Check Status</span>
                     <span class="qm-tag cl-code">/status</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/profile');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/profile');closeQuickMenu()">
                     <span>Data Diri Pasien</span>
                     <span class="qm-tag cl-code">/profile</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/predict');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/predict');closeQuickMenu()">
                     <span>Run Prediction</span>
                     <span class="qm-tag cl-code">/predict</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/train 5');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/train 5');closeQuickMenu()">
                     <span>Train 5 Epochs</span>
                     <span class="qm-tag cl-code">/train 5</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/eval');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/eval');closeQuickMenu()">
                     <span>Evaluate Model</span>
                     <span class="qm-tag cl-code">/eval</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/progress');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/progress');closeQuickMenu()">
                     <span>Live Progress</span>
                     <span class="qm-tag cl-code">/progress</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/help');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/help');closeQuickMenu()">
                     <span>Command List</span>
                     <span class="qm-tag cl-code">/help</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="if(window.openVoiceChat)window.openVoiceChat();closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="if(window.openVoiceChat)window.openVoiceChat();closeQuickMenu()">
                     <span>Voice Room</span>
                     <span class="qm-tag cl-code">/voice</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/konsul');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/konsul');closeQuickMenu()">
                     <span>Konsultasi Klinis</span>
                     <span class="qm-tag cl-code">/konsul</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/dokumen');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/dokumen');closeQuickMenu()">
                     <span>Dokumen &amp; Kode Nakes</span>
                     <span class="qm-tag cl-code">/dokumen</span>
                   </button>
-                  <button type="button" class="qm-item cl-dropdown-item" onclick="submitCommand('/intro');closeQuickMenu()">
+                  <button type="button" class="qm-item cl-dropdown-item"
+                    onclick="submitCommand('/intro');closeQuickMenu()">
                     <span>Pengenalan Neura</span>
                     <span class="qm-tag cl-code">/intro</span>
                   </button>
@@ -1629,40 +1922,46 @@
                 <div id="chat-voice-status-banner" class="chat-voice-status-banner" style="display:none;">
                   <span class="chat-voice-wave-dot"></span>
                   <span id="chat-voice-status-text">Mendengarkan...</span>
-                  <button type="button" class="chat-voice-cancel-btn" onclick="cancelChatVoiceInput(event)" title="Batalkan">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <button type="button" class="chat-voice-cancel-btn" onclick="cancelChatVoiceInput(event)"
+                    title="Batalkan">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
                   </button>
                 </div>
 
-                <span class="ib-model-label" id="ib-model-label" title="Model Neura aktif">Neura <span class="ib-model-tier">Clinical</span></span>
+                <span class="ib-model-label" id="ib-model-label" title="Model Neura aktif">Neura <span
+                    class="ib-model-tier">Clinical</span></span>
 
-                <button class="send-icon-btn is-voice" id="send-msg-btn"
-                  title="Bicara atau kirim pesan" onclick="handleSendClick()">
-                  <svg class="btn-icon-mic" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                    <line x1="12" y1="19" x2="12" y2="23"/>
-                    <line x1="8" y1="23" x2="16" y2="23"/>
+                <button class="send-icon-btn is-voice" id="send-msg-btn" title="Bicara atau kirim pesan"
+                  onclick="handleSendClick()">
+                  <svg class="btn-icon-mic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
                   </svg>
                   <svg class="btn-icon-send" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
                     style="display:none;">
-                    <line x1="12" y1="19" x2="12" y2="5"/>
-                    <polyline points="5 12 12 5 19 12"/>
+                    <line x1="12" y1="19" x2="12" y2="5" />
+                    <polyline points="5 12 12 5 19 12" />
                   </svg>
                 </button>
 
                 <button class="ib-icon-btn ib-waveform-btn" title="Voice Room"
                   onclick="if(window.openVoiceChat)window.openVoiceChat()">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="2"  y1="12" x2="2"  y2="12"/>
-                    <line x1="6"  y1="8"  x2="6"  y2="16"/>
-                    <line x1="10" y1="5"  x2="10" y2="19"/>
-                    <line x1="14" y1="8"  x2="14" y2="16"/>
-                    <line x1="18" y1="10" x2="18" y2="14"/>
-                    <line x1="22" y1="12" x2="22" y2="12"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="2" y1="12" x2="2" y2="12" />
+                    <line x1="6" y1="8" x2="6" y2="16" />
+                    <line x1="10" y1="5" x2="10" y2="19" />
+                    <line x1="14" y1="8" x2="14" y2="16" />
+                    <line x1="18" y1="10" x2="18" y2="14" />
+                    <line x1="22" y1="12" x2="22" y2="12" />
                   </svg>
                 </button>
               </div>
@@ -1675,18 +1974,21 @@
         </div>
       </div>
 
-    
-            <!-- ============================================================ -->
+
+      <!-- ============================================================ -->
       <!-- ADMIN ROOM: Data Tenaga Kesehatan (Nakes)                    -->
       <!-- ============================================================ -->
       <div class="admin-room" id="admin-room-nakes" style="display: none;" aria-hidden="true">
         <div class="admin-room-header">
           <div class="admin-room-header-left">
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
             <div class="admin-room-icon admin-room-icon--nakes">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -1699,264 +2001,297 @@
             </div>
           </div>
           <div class="admin-room-header-actions">
-            <button class="admin-room-action-btn" onclick="syncAllNakesToFirestore(true)" title="Sinkronkan Seluruh Data Nakes & Admin ke Cloud Firestore">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+            <button class="admin-room-action-btn" onclick="syncAllNakesToFirestore(true)"
+              title="Sinkronkan Seluruh Data Nakes & Admin ke Cloud Firestore">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+              </svg>
               <span>Sync Firestore</span>
             </button>
             <button class="admin-room-action-btn" onclick="fetchAndRenderNakesTable()" title="Muat Ulang Data">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
               <span>Refresh</span>
             </button>
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Tutup Room">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
 
         </div>
 
         <div class="nakes-admin-tabs-bar">
-        <div class="nakes-tabs-left">
-          <button class="nakes-tab-btn active" id="nakes-tab-btn-table" onclick="switchNakesAdminView('table')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-              <path d="M3 9h18M3 15h18M9 3v18"></path>
-            </svg>
-            <span>Tabel User Nakes</span>
-            <span class="nakes-counter-badge" id="nakes-total-counter">0</span>
-          </button>
-          <button class="nakes-tab-btn" id="nakes-tab-btn-form" onclick="switchNakesAdminView('form')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>Tambah Data Nakes</span>
-          </button>
-        </div>
-        <div class="nakes-tabs-right">
-          <button class="nakes-primary-action-btn" id="nakes-quick-add-btn" onclick="switchNakesAdminView('form')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>Tambah Nakes Baru</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- VIEW 1: TABEL USER NAKES -->
-      <div class="nakes-admin-view-panel" id="nakes-view-table" style="display:block;">
-        <!-- Filter and Search Toolbar -->
-        <div class="nakes-table-toolbar">
-          <div class="nakes-search-wrapper">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="nakes-search-input" placeholder="Cari nama nakes, nomor STR, faskes, atau email..." oninput="handleNakesTableSearch()">
-          </div>
-          <div class="nakes-filter-wrapper">
-            <select id="nakes-filter-profession" onchange="handleNakesTableSearch()">
-              <option value="">Semua Spesialisasi</option>
-              <option value="Neurologi">Spesialis Neurologi (Sp.N)</option>
-              <option value="Psikiatri">Spesialis Kejiwaan (Sp.KJ)</option>
-              <option value="Dokter Umum">Dokter Umum</option>
-              <option value="Perawat">Perawat / Ners</option>
-              <option value="Psikolog">Psikolog Klinis</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Table Responsive Container -->
-        <div class="nakes-table-responsive-box">
-          <table class="nakes-admin-table" id="nakes-admin-table">
-            <thead>
-              <tr>
-                <th style="width:40px;">No</th>
-                <th>Tenaga Kesehatan</th>
-                <th>Profesi / Spesialisasi</th>
-                <th>STR &amp; SIP</th>
-                <th>Instansi / Faskes</th>
-                <th>Email Asli</th>
-                <th>Email Nakes (@neura.ns.id)</th>
-                <th style="width:105px;">Kata Sandi</th>
-                <th>Status</th>
-                <th style="width:70px;text-align:center;">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="nakes-table-tbody">
-              <!-- Rendered via JavaScript -->
-            </tbody>
-          </table>
-          <div class="nakes-empty-state" id="nakes-table-empty" style="display:none;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            <p>Tidak ada data nakes yang sesuai dengan kriteria pencarian.</p>
-            <button class="nakes-inline-btn" onclick="switchNakesAdminView('form')">Tambah Data Nakes Baru</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- VIEW 2: FORM ISI DATA NAKES PROFESIONAL -->
-      <div class="nakes-admin-view-panel" id="nakes-view-form" style="display:none;">
-        <div class="nakes-form-intro-banner">
-          <div class="nakes-banner-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-          </div>
-          <div>
-            <strong>Registrasi Nakes Profesional &amp; Auto Domain Generator:</strong>
-            <p style="margin:2px 0 0 0;font-size:12px;opacity:0.9;">
-              Masukkan data profesional tenaga kesehatan dan email asli pribadi. Sistem akan secara otomatis meng-generate email resmi berdomain <strong>@neura.ns.id</strong> dan kata sandi login otomatis format <strong>nks{tahun}{urutan}</strong> (contoh: <strong>nks2026004</strong>).
-            </p>
-          </div>
-        </div>
-
-        <form id="nakes-create-form" onsubmit="handleNakesFormSubmit(event)">
-          <div class="nakes-form-grid">
-            <!-- Nama Lengkap & Gelar -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-name">Nama Lengkap &amp; Gelar Medis <span class="nakes-required">*</span></label>
-              <input type="text" id="nakes-input-name" placeholder="Contoh: dr. Citra Anindita, Sp.N" required oninput="handleNakesNameOrEmailInput()">
-              <span class="nakes-field-hint">Sertakan gelar depan dan spesialisasi resmi (contoh: dr. ... , Sp.N).</span>
-            </div>
-
-            <!-- Profesi / Spesialisasi -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-profession">Profesi / Spesialisasi Medis <span class="nakes-required">*</span></label>
-              <select id="nakes-input-profession" required>
-                <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi / Saraf (Sp.N)</option>
-                <option value="Dokter Spesialis Kedokteran Jiwa (Sp.KJ)">Dokter Spesialis Kedokteran Jiwa / Psikiatri (Sp.KJ)</option>
-                <option value="Dokter Spesialis Geriatri (Sp.PD-KGer)">Dokter Spesialis Geriatri / Penyakit Dalam (Sp.PD-KGer)</option>
-                <option value="Dokter Umum Konsultan">Dokter Umum (Konsultan Klinis Neura)</option>
-                <option value="Perawat Geriatri Klinis (Ners)">Perawat Geriatri Klinis (Ners / S.Kep)</option>
-                <option value="Psikolog Klinis Neuropsikologi">Psikolog Klinis / Neuropsikolog</option>
-                <option value="Dokter Spesialis Radiologi (Sp.Rad)">Dokter Spesialis Radiologi (Sp.Rad)</option>
-                <option value="Tenaga Medis Lainnya">Tenaga Medis Lainnya</option>
-              </select>
-            </div>
-
-            <!-- Nomor STR -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-str">Nomor STR (Surat Tanda Registrasi) <span class="nakes-required">*</span></label>
-              <input type="text" id="nakes-input-str" placeholder="Contoh: 31.2.1.100.1.20.123456" required>
-              <span class="nakes-field-hint">16 digit nomor STR terverifikasi Konsil Kedokteran / Kemenkes.</span>
-            </div>
-
-            <!-- Nomor SIP -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-sip">Nomor SIP (Surat Izin Praktik) <span class="nakes-required">*</span></label>
-              <input type="text" id="nakes-input-sip" placeholder="Contoh: 503/SIP.DS/042/Dinkes/2024" required>
-              <span class="nakes-field-hint">Nomor registrasi izin praktik aktif pada fasilitas kesehatan.</span>
-            </div>
-
-            <!-- Instansi / Faskes -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-institution">Fasilitas Kesehatan / Instansi <span class="nakes-required">*</span></label>
-              <input type="text" id="nakes-input-institution" placeholder="Contoh: RSUP Dr. Sardjito Yogyakarta" required>
-            </div>
-
-            <!-- Nomor HP / WhatsApp -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-phone">Nomor Telepon / WhatsApp Profesional</label>
-              <input type="tel" id="nakes-input-phone" placeholder="Contoh: 0812-2334-4556">
-            </div>
-
-            <!-- EMAIL ASLI PRIBADI (Pemicu Auto-Generate) -->
-            <div class="nakes-form-field nakes-field-highlight">
-              <label for="nakes-input-real-email">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-                Email Asli / Pribadi Nakes <span class="nakes-required">*</span>
-              </label>
-              <input type="email" id="nakes-input-real-email" placeholder="Contoh: citra.anindita92@gmail.com" required oninput="handleNakesNameOrEmailInput()">
-              <span class="nakes-field-hint" style="color:var(--accent-terracotta);font-weight:600;">
-                ⚡ Ketik email asli di atas untuk auto-generate email nakes resmi berdomain @neura.ns.id.
-              </span>
-            </div>
-
-            <!-- EMAIL NAKES AUTO GENERATE (@neura.ns.id) -->
-            <div class="nakes-form-field nakes-field-generated">
-              <label for="nakes-input-domain-user">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                  <line x1="8" y1="21" x2="16" y2="21"></line>
-                  <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
-                Email Resmi Nakes (Auto-Generated @neura.ns.id) <span class="nakes-required">*</span>
-              </label>
-              <div class="nakes-domain-input-box">
-                <input type="text" id="nakes-input-domain-user" placeholder="username" required>
-                <span class="nakes-domain-suffix">@neura.ns.id</span>
-              </div>
-              <div class="nakes-auto-generated-preview" id="nakes-email-preview">
-                <span class="preview-dot"></span>
-                <span>Alamat Akun Resmi: <strong id="nakes-preview-text">... @neura.ns.id</strong></span>
-              </div>
-            </div>
-
-            <!-- Password Akun Nakes (Auto: nks{tahun}{urutan}) -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-password">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                Kata Sandi Login (Auto: nks{tahun}{urutan}) <span class="nakes-required">*</span>
-              </label>
-              <div class="nakes-password-input-group">
-                <input type="text" id="nakes-input-password" value="" placeholder="Kosongkan = auto-generate (contoh: nks2026004)">
-                <button type="button" class="nakes-pwd-badge-btn" onclick="document.getElementById('nakes-input-password').value=''" title="Biarkan kosong untuk auto-generate">Auto-Generate</button>
-              </div>
-              <span class="nakes-field-hint">Kosongkan untuk auto-generate format <strong>nks{tahun}{urutan}</strong> (contoh: <strong>nks2026004</strong>). Nakes dapat mengubah kata sandi setelah login melalui menu Edit Profil.</span>
-            </div>
-
-            <!-- Status Verifikasi -->
-            <div class="nakes-form-field">
-              <label for="nakes-input-status">Status Verifikasi Sistem</label>
-              <select id="nakes-input-status">
-                <option value="Terverifikasi KKI">Terverifikasi KKI (Konsil Kedokteran Indonesia)</option>
-                <option value="Terverifikasi Kemenkes">Terverifikasi Kemenkes (SatuSehat)</option>
-                <option value="Aktif Praktik">Aktif Praktik</option>
-                <option value="Menunggu Validasi SISDMK">Menunggu Validasi SISDMK</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Form Actions Footer -->
-          <div class="nakes-form-actions-footer">
-            <button type="button" class="nakes-btn-secondary" onclick="switchNakesAdminView('table')">
-              Batal / Kembali ke Tabel User
-            </button>
-            <button type="submit" class="nakes-btn-primary" id="nakes-submit-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"></polyline>
+          <div class="nakes-tabs-left">
+            <button class="nakes-tab-btn active" id="nakes-tab-btn-table" onclick="switchNakesAdminView('table')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M3 9h18M3 15h18M9 3v18"></path>
               </svg>
-              <span>Simpan &amp; Daftarkan Data Nakes</span>
+              <span>Tabel User Nakes</span>
+              <span class="nakes-counter-badge" id="nakes-total-counter">0</span>
+            </button>
+            <button class="nakes-tab-btn" id="nakes-tab-btn-form" onclick="switchNakesAdminView('form')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Tambah Data Nakes</span>
             </button>
           </div>
-        </form>
-      </div>
+          <div class="nakes-tabs-right">
+            <button class="nakes-primary-action-btn" id="nakes-quick-add-btn" onclick="switchNakesAdminView('form')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Tambah Nakes Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEW 1: TABEL USER NAKES -->
+        <div class="nakes-admin-view-panel" id="nakes-view-table" style="display:block;">
+          <!-- Filter and Search Toolbar -->
+          <div class="nakes-table-toolbar">
+            <div class="nakes-search-wrapper">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="nakes-search-input" placeholder="Cari nama nakes, nomor STR, faskes, atau email..."
+                oninput="handleNakesTableSearch()">
+            </div>
+            <div class="nakes-filter-wrapper">
+              <select id="nakes-filter-profession" onchange="handleNakesTableSearch()">
+                <option value="">Semua Spesialisasi</option>
+                <option value="Neurologi">Spesialis Neurologi (Sp.N)</option>
+                <option value="Psikiatri">Spesialis Kejiwaan (Sp.KJ)</option>
+                <option value="Dokter Umum">Dokter Umum</option>
+                <option value="Perawat">Perawat / Ners</option>
+                <option value="Psikolog">Psikolog Klinis</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table Responsive Container -->
+          <div class="nakes-table-responsive-box">
+            <table class="nakes-admin-table" id="nakes-admin-table">
+              <thead>
+                <tr>
+                  <th style="width:40px;">No</th>
+                  <th>Tenaga Kesehatan</th>
+                  <th>Profesi / Spesialisasi</th>
+                  <th>STR &amp; SIP</th>
+                  <th>Instansi / Faskes</th>
+                  <th>Email Asli</th>
+                  <th>Email Nakes (@neura.ns.id)</th>
+                  <th style="width:105px;">Kata Sandi</th>
+                  <th>Status</th>
+                  <th style="width:70px;text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="nakes-table-tbody">
+                <!-- Rendered via JavaScript -->
+              </tbody>
+            </table>
+            <div class="nakes-empty-state" id="nakes-table-empty" style="display:none;">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <p>Tidak ada data nakes yang sesuai dengan kriteria pencarian.</p>
+              <button class="nakes-inline-btn" onclick="switchNakesAdminView('form')">Tambah Data Nakes Baru</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: FORM ISI DATA NAKES PROFESIONAL -->
+        <div class="nakes-admin-view-panel" id="nakes-view-form" style="display:none;">
+          <div class="nakes-form-intro-banner">
+            <div class="nakes-banner-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <div>
+              <strong>Registrasi Nakes Profesional &amp; Auto Domain Generator:</strong>
+              <p style="margin:2px 0 0 0;font-size:12px;opacity:0.9;">
+                Masukkan data profesional tenaga kesehatan dan email asli pribadi. Sistem akan secara otomatis
+                meng-generate email resmi berdomain <strong>@neura.ns.id</strong> dan kata sandi login otomatis format
+                <strong>nks{tahun}{urutan}</strong> (contoh: <strong>nks2026004</strong>).
+              </p>
+            </div>
+          </div>
+
+          <form id="nakes-create-form" onsubmit="handleNakesFormSubmit(event)">
+            <div class="nakes-form-grid">
+              <!-- Nama Lengkap & Gelar -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-name">Nama Lengkap &amp; Gelar Medis <span
+                    class="nakes-required">*</span></label>
+                <input type="text" id="nakes-input-name" placeholder="Contoh: dr. Citra Anindita, Sp.N" required
+                  oninput="handleNakesNameOrEmailInput()">
+                <span class="nakes-field-hint">Sertakan gelar depan dan spesialisasi resmi (contoh: dr. ... ,
+                  Sp.N).</span>
+              </div>
+
+              <!-- Profesi / Spesialisasi -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-profession">Profesi / Spesialisasi Medis <span
+                    class="nakes-required">*</span></label>
+                <select id="nakes-input-profession" required>
+                  <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi / Saraf (Sp.N)</option>
+                  <option value="Dokter Spesialis Kedokteran Jiwa (Sp.KJ)">Dokter Spesialis Kedokteran Jiwa / Psikiatri
+                    (Sp.KJ)</option>
+                  <option value="Dokter Spesialis Geriatri (Sp.PD-KGer)">Dokter Spesialis Geriatri / Penyakit Dalam
+                    (Sp.PD-KGer)</option>
+                  <option value="Dokter Umum Konsultan">Dokter Umum (Konsultan Klinis Neura)</option>
+                  <option value="Perawat Geriatri Klinis (Ners)">Perawat Geriatri Klinis (Ners / S.Kep)</option>
+                  <option value="Psikolog Klinis Neuropsikologi">Psikolog Klinis / Neuropsikolog</option>
+                  <option value="Dokter Spesialis Radiologi (Sp.Rad)">Dokter Spesialis Radiologi (Sp.Rad)</option>
+                  <option value="Tenaga Medis Lainnya">Tenaga Medis Lainnya</option>
+                </select>
+              </div>
+
+              <!-- Nomor STR -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-str">Nomor STR (Surat Tanda Registrasi) <span
+                    class="nakes-required">*</span></label>
+                <input type="text" id="nakes-input-str" placeholder="Contoh: 31.2.1.100.1.20.123456" required>
+                <span class="nakes-field-hint">16 digit nomor STR terverifikasi Konsil Kedokteran / Kemenkes.</span>
+              </div>
+
+              <!-- Nomor SIP -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-sip">Nomor SIP (Surat Izin Praktik) <span
+                    class="nakes-required">*</span></label>
+                <input type="text" id="nakes-input-sip" placeholder="Contoh: 503/SIP.DS/042/Dinkes/2024" required>
+                <span class="nakes-field-hint">Nomor registrasi izin praktik aktif pada fasilitas kesehatan.</span>
+              </div>
+
+              <!-- Instansi / Faskes -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-institution">Fasilitas Kesehatan / Instansi <span
+                    class="nakes-required">*</span></label>
+                <input type="text" id="nakes-input-institution" placeholder="Contoh: RSUP Dr. Sardjito Yogyakarta"
+                  required>
+              </div>
+
+              <!-- Nomor HP / WhatsApp -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-phone">Nomor Telepon / WhatsApp Profesional</label>
+                <input type="tel" id="nakes-input-phone" placeholder="Contoh: 0812-2334-4556">
+              </div>
+
+              <!-- EMAIL ASLI PRIBADI (Pemicu Auto-Generate) -->
+              <div class="nakes-form-field nakes-field-highlight">
+                <label for="nakes-input-real-email">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  Email Asli / Pribadi Nakes <span class="nakes-required">*</span>
+                </label>
+                <input type="email" id="nakes-input-real-email" placeholder="Contoh: citra.anindita92@gmail.com"
+                  required oninput="handleNakesNameOrEmailInput()">
+                <span class="nakes-field-hint" style="color:var(--accent-terracotta);font-weight:600;">
+                  ⚡ Ketik email asli di atas untuk auto-generate email nakes resmi berdomain @neura.ns.id.
+                </span>
+              </div>
+
+              <!-- EMAIL NAKES AUTO GENERATE (@neura.ns.id) -->
+              <div class="nakes-form-field nakes-field-generated">
+                <label for="nakes-input-domain-user">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                  Email Resmi Nakes (Auto-Generated @neura.ns.id) <span class="nakes-required">*</span>
+                </label>
+                <div class="nakes-domain-input-box">
+                  <input type="text" id="nakes-input-domain-user" placeholder="username" required>
+                  <span class="nakes-domain-suffix">@neura.ns.id</span>
+                </div>
+                <div class="nakes-auto-generated-preview" id="nakes-email-preview">
+                  <span class="preview-dot"></span>
+                  <span>Alamat Akun Resmi: <strong id="nakes-preview-text">... @neura.ns.id</strong></span>
+                </div>
+              </div>
+
+              <!-- Password Akun Nakes (Auto: nks{tahun}{urutan}) -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-password">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  Kata Sandi Login (Auto: nks{tahun}{urutan}) <span class="nakes-required">*</span>
+                </label>
+                <div class="nakes-password-input-group">
+                  <input type="text" id="nakes-input-password" value=""
+                    placeholder="Kosongkan = auto-generate (contoh: nks2026004)">
+                  <button type="button" class="nakes-pwd-badge-btn"
+                    onclick="document.getElementById('nakes-input-password').value=''"
+                    title="Biarkan kosong untuk auto-generate">Auto-Generate</button>
+                </div>
+                <span class="nakes-field-hint">Kosongkan untuk auto-generate format <strong>nks{tahun}{urutan}</strong>
+                  (contoh: <strong>nks2026004</strong>). Nakes dapat mengubah kata sandi setelah login melalui menu Edit
+                  Profil.</span>
+              </div>
+
+              <!-- Status Verifikasi -->
+              <div class="nakes-form-field">
+                <label for="nakes-input-status">Status Verifikasi Sistem</label>
+                <select id="nakes-input-status">
+                  <option value="Terverifikasi KKI">Terverifikasi KKI (Konsil Kedokteran Indonesia)</option>
+                  <option value="Terverifikasi Kemenkes">Terverifikasi Kemenkes (SatuSehat)</option>
+                  <option value="Aktif Praktik">Aktif Praktik</option>
+                  <option value="Menunggu Validasi SISDMK">Menunggu Validasi SISDMK</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Form Actions Footer -->
+            <div class="nakes-form-actions-footer">
+              <button type="button" class="nakes-btn-secondary" onclick="switchNakesAdminView('table')">
+                Batal / Kembali ke Tabel User
+              </button>
+              <button type="submit" class="nakes-btn-primary" id="nakes-submit-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Simpan &amp; Daftarkan Data Nakes</span>
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
-<!-- ============================================================ -->
+      <!-- ============================================================ -->
       <!-- ADMIN ROOM: Database & Firestore Viewer                     -->
       <!-- ============================================================ -->
       <div class="admin-room" id="admin-room-database" style="display: none;" aria-hidden="true">
         <div class="admin-room-header">
           <div class="admin-room-header-left">
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
             <div class="admin-room-icon admin-room-icon--db">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
               </svg>
             </div>
             <div>
@@ -1966,11 +2301,17 @@
           </div>
           <div class="admin-room-header-actions">
             <button class="admin-room-action-btn" onclick="refreshDatabaseCollections()" title="Muat Ulang Koleksi">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
               <span>Refresh</span>
             </button>
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Tutup Room">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
@@ -1981,7 +2322,10 @@
             <div class="db-sidebar-header">
               <span>Collections</span>
               <button class="db-refresh-btn" onclick="refreshDatabaseCollections()" title="Refresh">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10" />
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                </svg>
               </button>
             </div>
             <div class="db-collection-list" id="db-collection-list">
@@ -2002,13 +2346,21 @@
                   <span class="db-doc-count" id="db-doc-count">0 dokumen</span>
                 </div>
                 <div class="db-search-wrap">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..." oninput="filterDatabaseDocs(this.value)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..."
+                    oninput="filterDatabaseDocs(this.value)">
                 </div>
               </div>
               <div class="db-docs-list" id="db-docs-list">
                 <div class="db-empty-state">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                  </svg>
                   <p>Pilih collection dari panel kiri untuk melihat data.</p>
                 </div>
               </div>
@@ -2021,7 +2373,10 @@
                   <span class="db-detail-label">Document ID:</span>
                   <code class="db-detail-id" id="db-detail-doc-id">-</code>
                   <button class="db-copy-btn" onclick="copyActiveDocJson()" title="Salin JSON">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -2042,11 +2397,16 @@
         <div class="admin-room-header">
           <div class="admin-room-header-left">
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
             <div class="admin-room-icon admin-room-icon--stats">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
               </svg>
             </div>
             <div>
@@ -2061,11 +2421,17 @@
               <button class="stats-tab-btn" onclick="filterStatPeriod('week')">7 Hari</button>
             </div>
             <button class="admin-room-action-btn" onclick="loadStatisticsRoom()" title="Muat Ulang Data">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
               <span>Refresh</span>
             </button>
             <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Tutup Room">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
@@ -2077,18 +2443,26 @@
               <div class="stat-kpi-top">
                 <span class="stat-kpi-label">Total Pengguna</span>
                 <div class="stat-kpi-icon stat-icon--users">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
                 </div>
               </div>
               <div class="stat-kpi-val" id="stat-val-users">-</div>
-              <div class="stat-kpi-footer"><span class="stat-trend-up" id="stat-trend-users">Aktif terdaftar</span></div>
+              <div class="stat-kpi-footer"><span class="stat-trend-up" id="stat-trend-users">Aktif terdaftar</span>
+              </div>
             </div>
 
             <div class="stat-kpi-card" onclick="switchToDbCollection('nakes')">
               <div class="stat-kpi-top">
                 <span class="stat-kpi-label">Tenaga Medis (Nakes)</span>
                 <div class="stat-kpi-icon stat-icon--nakes">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  </svg>
                 </div>
               </div>
               <div class="stat-kpi-val" id="stat-val-nakes">-</div>
@@ -2099,7 +2473,9 @@
               <div class="stat-kpi-top">
                 <span class="stat-kpi-label">Konsultasi Selesai</span>
                 <div class="stat-kpi-icon stat-icon--consults">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
                 </div>
               </div>
               <div class="stat-kpi-val" id="stat-val-consults">-</div>
@@ -2110,7 +2486,10 @@
               <div class="stat-kpi-top">
                 <span class="stat-kpi-label">Skrining Alzheimer</span>
                 <div class="stat-kpi-icon stat-icon--predictions">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
                 </div>
               </div>
               <div class="stat-kpi-val" id="stat-val-predictions">-</div>
@@ -2142,13 +2521,18 @@
               </div>
               <div class="stats-donut-wrap">
                 <svg class="stats-donut-svg" id="stats-donut-svg" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border-subtle)" stroke-width="16"/>
-                  <circle id="donut-users-arc" cx="60" cy="60" r="48" fill="none" stroke="var(--accent-terracotta, #e07a5f)" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4" stroke-linecap="butt"/>
-                  <circle id="donut-nakes-arc" cx="60" cy="60" r="48" fill="none" stroke="#2a9d8f" stroke-width="16" stroke-dasharray="0 301.6" stroke-dashoffset="75.4" stroke-linecap="butt"/>
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border-subtle)" stroke-width="16" />
+                  <circle id="donut-users-arc" cx="60" cy="60" r="48" fill="none"
+                    stroke="var(--accent-terracotta, #e07a5f)" stroke-width="16" stroke-dasharray="0 301.6"
+                    stroke-dashoffset="75.4" stroke-linecap="butt" />
+                  <circle id="donut-nakes-arc" cx="60" cy="60" r="48" fill="none" stroke="#2a9d8f" stroke-width="16"
+                    stroke-dasharray="0 301.6" stroke-dashoffset="75.4" stroke-linecap="butt" />
                 </svg>
                 <div class="stats-donut-legend" id="stats-donut-legend">
-                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:var(--accent-terracotta, #e07a5f)"></span>Pasien</div>
-                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#2a9d8f"></span>Nakes</div>
+                  <div class="stats-legend-item"><span class="stats-legend-dot"
+                      style="background:var(--accent-terracotta, #e07a5f)"></span>Pasien</div>
+                  <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#2a9d8f"></span>Nakes
+                  </div>
                 </div>
               </div>
             </div>
@@ -2160,7 +2544,9 @@
                 <button class="stats-view-all-btn" onclick="switchToDbCollection('users')">Lihat Semua &rarr;</button>
               </div>
               <div class="stats-recent-table" id="stats-recent-table">
-                <div class="stats-chart-loading"><div class="db-spinner"></div><span>Memuat...</span></div>
+                <div class="stats-chart-loading">
+                  <div class="db-spinner"></div><span>Memuat...</span>
+                </div>
               </div>
             </div>
           </div>
@@ -2174,53 +2560,90 @@
         <!-- Title Bar (Windows 11 style) -->
         <div class="explorer-titlebar">
           <div class="explorer-titlebar-left">
-            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat" style="margin-right:4px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat"
+              style="margin-right:4px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
             <div class="explorer-nav-btns">
               <button class="explorer-nav-btn" id="explorer-back-btn" onclick="explorerGoBack()" title="Back" disabled>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
               </button>
-              <button class="explorer-nav-btn" id="explorer-fwd-btn" onclick="explorerGoForward()" title="Forward" disabled>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              <button class="explorer-nav-btn" id="explorer-fwd-btn" onclick="explorerGoForward()" title="Forward"
+                disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </button>
               <button class="explorer-nav-btn" onclick="explorerGoUp()" title="Up">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
               </button>
             </div>
             <div class="explorer-address-bar">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              </svg>
               <span class="explorer-address-text" id="explorer-address">Neura Project</span>
             </div>
           </div>
           <div class="explorer-titlebar-right">
             <div class="explorer-search-wrap">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" class="explorer-search" id="explorer-search" placeholder="Cari di folder ini..." oninput="explorerSearch(this.value)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type="text" class="explorer-search" id="explorer-search" placeholder="Cari di folder ini..."
+                oninput="explorerSearch(this.value)">
             </div>
             <button class="admin-panel-close-btn" onclick="switchAdminRoom('chat')" title="Tutup">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
 
         <!-- Toolbar (Ribbon-lite) -->
         <div class="explorer-toolbar">
-          <button class="explorer-toolbar-btn" onclick="explorerViewMode('grid')" id="explorer-btn-grid" title="Grid view">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <button class="explorer-toolbar-btn" onclick="explorerViewMode('grid')" id="explorer-btn-grid"
+            title="Grid view">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
             <span>Grid</span>
           </button>
-          <button class="explorer-toolbar-btn active" onclick="explorerViewMode('list')" id="explorer-btn-list" title="List view">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <button class="explorer-toolbar-btn active" onclick="explorerViewMode('list')" id="explorer-btn-list"
+            title="List view">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
             <span>List</span>
           </button>
           <div class="explorer-toolbar-sep"></div>
           <button class="explorer-toolbar-btn" onclick="explorerExpandAll()" title="Expand all">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
             <span>Expand All</span>
           </button>
           <button class="explorer-toolbar-btn" onclick="explorerCollapseAll()" title="Collapse all">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
             <span>Collapse</span>
           </button>
           <div class="explorer-toolbar-sep"></div>
@@ -2335,7 +2758,9 @@
             </svg>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-terracotta)">Portal Integrasi Klinis Nakes</div>
+            <div
+              style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-terracotta)">
+              Portal Integrasi Klinis Nakes</div>
             <span class="modal-title" style="font-size:16px;">Pratinjau Rekam Medis &amp; Validasi Nakes</span>
           </div>
         </div>
@@ -2354,17 +2779,21 @@
   </div>
 
   <!-- Modal Validasi Konsultasi Klinis Nakes -->
-  <div class="modal-overlay" id="consultation-validation-modal" onclick="closeConsultationValidationModalOnBackdrop(event)">
+  <div class="modal-overlay" id="consultation-validation-modal"
+    onclick="closeConsultationValidationModalOnBackdrop(event)">
     <div class="claude-modal nakes-validation-modal-box">
       <div class="modal-header">
         <div style="display:flex;align-items:center;gap:10px">
-          <div class="nakes-modal-badge-icon" style="background:rgba(50,205,100,0.12);color:var(--accent-green);border-color:rgba(50,205,100,0.25)">
+          <div class="nakes-modal-badge-icon"
+            style="background:rgba(50,205,100,0.12);color:var(--accent-green);border-color:rgba(50,205,100,0.25)">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-green)">Verifikasi &amp; Sahkan Rekam Medis</div>
+            <div
+              style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-green)">
+              Verifikasi &amp; Sahkan Rekam Medis</div>
             <span class="modal-title" style="font-size:16px;">Validasi Klinis Konsultasi Pasien</span>
           </div>
         </div>
@@ -2387,8 +2816,10 @@
     <div class="claude-modal profile-edit-modal-container" style="max-width:650px;">
       <div class="modal-header profile-edit-header">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div class="profile-edit-header-badge" style="background:rgba(217,119,87,0.15);color:var(--accent-terracotta,#D97757);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="profile-edit-header-badge"
+            style="background:rgba(217,119,87,0.15);color:var(--accent-terracotta,#D97757);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
@@ -2397,7 +2828,8 @@
             <div class="profile-edit-subtitle-tag">
               <span>ADMINISTRATOR</span> &bull; <span id="edit-nakes-modal-id-badge">NKS-XXXX-XXX</span>
             </div>
-            <h3 class="modal-title" style="font-size:17px;margin:0;font-weight:700;">Edit Data Nakes &amp; Kata Sandi</h3>
+            <h3 class="modal-title" style="font-size:17px;margin:0;font-weight:700;">Edit Data Nakes &amp; Kata Sandi
+            </h3>
           </div>
         </div>
         <button class="modal-close-btn" onclick="closeEditNakesAdminModal()" title="Tutup Modal">
@@ -2411,7 +2843,7 @@
       <div class="profile-edit-tab-content" style="display:block;padding:20px;">
         <form id="edit-nakes-admin-form" onsubmit="handleEditNakesAdminSubmit(event)">
           <input type="hidden" id="edit-nakes-hidden-id">
-          
+
           <div class="nakes-form-grid" style="gap:14px;">
             <!-- Nama Lengkap & Gelar -->
             <div class="nakes-form-field">
@@ -2424,7 +2856,8 @@
               <label for="edit-nakes-profession">Profesi / Spesialisasi Klinis</label>
               <select id="edit-nakes-profession">
                 <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi (Sp.N)</option>
-                <option value="Dokter Spesialis Kedokteran Jiwa (Sp.KJ)">Dokter Spesialis Kedokteran Jiwa (Sp.KJ)</option>
+                <option value="Dokter Spesialis Kedokteran Jiwa (Sp.KJ)">Dokter Spesialis Kedokteran Jiwa (Sp.KJ)
+                </option>
                 <option value="Dokter Umum (Pemeriksa Klinis)">Dokter Umum (Pemeriksa Klinis)</option>
                 <option value="Perawat Geriatri Klinis (Ners)">Perawat Geriatri Klinis (Ners)</option>
                 <option value="Psikolog Klinis Neuropsikologi">Psikolog Klinis Neuropsikologi</option>
@@ -2471,8 +2904,10 @@
             <div class="nakes-form-field">
               <label for="edit-nakes-password">Kata Sandi Login Nakes <span class="nakes-required">*</span></label>
               <div style="display:flex;gap:6px;">
-                <input type="text" id="edit-nakes-password" required minlength="6" placeholder="Contoh: nks2026001" style="font-family:monospace;">
-                <button type="button" class="profile-btn-secondary" onclick="generateRandomNakesPwd()" style="white-space:nowrap;padding:0 10px;font-size:11px;" title="Reset ke sandi acak">
+                <input type="text" id="edit-nakes-password" required minlength="6" placeholder="Contoh: nks2026001"
+                  style="font-family:monospace;">
+                <button type="button" class="profile-btn-secondary" onclick="generateRandomNakesPwd()"
+                  style="white-space:nowrap;padding:0 10px;font-size:11px;" title="Reset ke sandi acak">
                   Reset Sandi
                 </button>
               </div>
@@ -2519,19 +2954,24 @@
         <!-- Absolute Top Bar: Nav Tabs (Profile, Update, Keamanan) & Close Button -->
         <div class="profile-banner-top-overlay">
           <div class="profile-banner-nav-tabs">
-            <button type="button" class="profile-banner-tab active" id="tab-nav-profile" onclick="switchEditProfileTab('profile')" title="Lihat Profil">
+            <button type="button" class="profile-banner-tab active" id="tab-nav-profile"
+              onclick="switchEditProfileTab('profile')" title="Lihat Profil">
               <span>Profile</span>
             </button>
-            <button type="button" class="profile-banner-tab" id="tab-nav-update" onclick="switchEditProfileTab('update')" title="Perbarui Data">
+            <button type="button" class="profile-banner-tab" id="tab-nav-update"
+              onclick="switchEditProfileTab('update')" title="Perbarui Data">
               <span>Update</span>
             </button>
-            <button type="button" class="profile-banner-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')" title="Keamanan Sandi">
+            <button type="button" class="profile-banner-tab" id="tab-nav-security"
+              onclick="switchEditProfileTab('security')" title="Keamanan Sandi">
               <span>Keamanan</span>
             </button>
           </div>
 
-          <button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()"
+            title="Tutup Modal">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -2539,10 +2979,12 @@
         </div>
 
         <!-- Floating Avatar (overlapping banner bottom edge) -->
-        <div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
+        <div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()"
+          title="Klik untuk mengubah foto profil">
           <div class="profile-floating-avatar-circle" id="edit-avatar-preview">H</div>
           <div class="profile-avatar-camera-mini" title="Ubah Foto">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
               <circle cx="12" cy="13" r="4"></circle>
             </svg>
@@ -2551,26 +2993,35 @@
 
         <!-- Banner Action Controls (Google Pill + Circle Actions) -->
         <div class="profile-banner-action-controls">
-          <button type="button" class="profile-banner-pill-btn" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()" title="Sinkronkan foto profil dari akun Google">
+          <button type="button" class="profile-banner-pill-btn" id="btn-sync-google-avatar"
+            onclick="syncAvatarFromGoogle()" title="Sinkronkan foto profil dari akun Google">
             <svg width="13" height="13" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z"/>
+              <path fill="#4285F4"
+                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z" />
+              <path fill="#34A853"
+                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z" />
+              <path fill="#FBBC05"
+                d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z" />
+              <path fill="#EA4335"
+                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z" />
             </svg>
             <span>Google Acc...</span>
           </button>
 
-          <button type="button" class="profile-banner-circle-btn" onclick="triggerAvatarUpload()" title="Unggah foto baru dari perangkat">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" class="profile-banner-circle-btn" onclick="triggerAvatarUpload()"
+            title="Unggah foto baru dari perangkat">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="17 8 12 3 7 8"></polyline>
               <line x1="12" y1="3" x2="12" y2="15"></line>
             </svg>
           </button>
 
-          <button type="button" class="profile-banner-circle-btn btn-delete-circle" id="btn-remove-avatar" onclick="handleRemoveAvatar()" title="Hapus foto profil">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" class="profile-banner-circle-btn btn-delete-circle" id="btn-remove-avatar"
+            onclick="handleRemoveAvatar()" title="Hapus foto profil">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 6h18"></path>
               <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
               <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
@@ -2579,7 +3030,8 @@
         </div>
       </div>
 
-      <input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="handleAvatarFileSelected(event)">
+      <input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;"
+        onchange="handleAvatarFileSelected(event)">
 
       <!-- User Identification Header (Name & @handle) -->
       <div class="profile-hero-user-header">
@@ -2592,7 +3044,8 @@
       <!-- ============================================================ -->
       <div class="profile-view-panel" id="panel-profile-view" style="display:block;">
         <p class="profile-preview-bio-text" id="preview-profile-bio">
-          Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzbheimer berbasis 32 biomarker multimodal, dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis
+          Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzbheimer berbasis 32 biomarker multimodal,
+          dengan akurasi 95,2% yang telah divalidasi pada 430 rekam medis
         </p>
       </div>
 
@@ -2605,31 +3058,36 @@
             <!-- Nama Lengkap -->
             <div class="profile-form-pill-group">
               <label class="profile-pill-label" for="edit-profile-input-name">Nama Lengkap</label>
-              <input type="text" class="profile-pill-input" id="edit-profile-input-name" placeholder="Nama Lengkap" required oninput="handleEditProfileNameChange()">
+              <input type="text" class="profile-pill-input" id="edit-profile-input-name" placeholder="Nama Lengkap"
+                required oninput="handleEditProfileNameChange()">
             </div>
 
             <!-- Email Terdaftar (Readonly) -->
             <div class="profile-form-pill-group">
               <label class="profile-pill-label" for="edit-profile-input-email">Alamat Email</label>
-              <input type="email" class="profile-pill-input input-readonly" id="edit-profile-input-email" readonly placeholder="Alamat Email">
+              <input type="email" class="profile-pill-input input-readonly" id="edit-profile-input-email" readonly
+                placeholder="Alamat Email">
             </div>
 
             <!-- Instansi / RS -->
             <div class="profile-form-pill-group">
               <label class="profile-pill-label" for="edit-profile-input-institution">Instansi / Organisasi</label>
-              <input type="text" class="profile-pill-input" id="edit-profile-input-institution" placeholder="Instansi / Rumah Sakit">
+              <input type="text" class="profile-pill-input" id="edit-profile-input-institution"
+                placeholder="Instansi / Rumah Sakit">
             </div>
 
             <!-- Nomor Telepon -->
             <div class="profile-form-pill-group">
               <label class="profile-pill-label" for="edit-profile-input-phone">Nomor Telepon</label>
-              <input type="tel" class="profile-pill-input" id="edit-profile-input-phone" placeholder="Nomor Telepon / WhatsApp">
+              <input type="tel" class="profile-pill-input" id="edit-profile-input-phone"
+                placeholder="Nomor Telepon / WhatsApp">
             </div>
 
             <!-- Bio Singkat (Full width) -->
             <div class="profile-form-pill-group full-width">
               <label class="profile-pill-label" for="edit-profile-input-bio">Bio Singkat / Minat Klinis</label>
-              <textarea class="profile-pill-textarea" id="edit-profile-input-bio" rows="2" placeholder="Tuliskan catatan peran klinis atau bio profil Anda..."></textarea>
+              <textarea class="profile-pill-textarea" id="edit-profile-input-bio" rows="2"
+                placeholder="Tuliskan catatan peran klinis atau bio profil Anda..."></textarea>
             </div>
           </div>
 
@@ -2638,7 +3096,8 @@
               Batal
             </button>
             <button type="submit" class="profile-action-btn-solid" id="btn-save-profile">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
               <span>Simpan Perubahan</span>
@@ -2654,7 +3113,7 @@
         <form id="form-edit-password" onsubmit="handleUpdatePassword(event)">
           <div class="profile-security-banner-clean">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <div>
               <span>Gunakan minimal 6 karakter kombinasi huruf besar, kecil, dan angka.</span>
@@ -2665,9 +3124,14 @@
             <div class="profile-form-pill-group full-width">
               <label class="profile-pill-label" for="input-old-password">Kata Sandi Saat Ini</label>
               <div class="profile-pill-password-wrap">
-                <input type="password" class="profile-pill-input" id="input-old-password" placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
-                <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-old-password', this)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <input type="password" class="profile-pill-input" id="input-old-password"
+                  placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
+                <button type="button" class="profile-pill-eye"
+                  onclick="togglePasswordVisibility('input-old-password', this)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -2675,9 +3139,15 @@
             <div class="profile-form-pill-group">
               <label class="profile-pill-label" for="input-new-password">Kata Sandi Baru</label>
               <div class="profile-pill-password-wrap">
-                <input type="password" class="profile-pill-input" id="input-new-password" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password" oninput="handlePasswordStrengthInput(this.value)">
-                <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-new-password', this)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <input type="password" class="profile-pill-input" id="input-new-password"
+                  placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password"
+                  oninput="handlePasswordStrengthInput(this.value)">
+                <button type="button" class="profile-pill-eye"
+                  onclick="togglePasswordVisibility('input-new-password', this)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -2685,9 +3155,14 @@
             <div class="profile-form-pill-group">
               <label class="profile-pill-label" for="input-confirm-password">Konfirmasi Kata Sandi Baru</label>
               <div class="profile-pill-password-wrap">
-                <input type="password" class="profile-pill-input" id="input-confirm-password" placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
-                <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-confirm-password', this)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <input type="password" class="profile-pill-input" id="input-confirm-password"
+                  placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+                <button type="button" class="profile-pill-eye"
+                  onclick="togglePasswordVisibility('input-confirm-password', this)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -2767,6 +3242,285 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
   <script src="/js/auth-guard.js?v=3"></script>
+
+</body>
+
+</html> </button>
+<button type="button" class="profile-banner-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')"
+  title="Keamanan Sandi">
+  <span>Keamanan</span>
+</button>
+</div>
+
+<button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+    stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+</button>
+</div>
+
+<!-- Floating Avatar (overlapping banner bottom edge) -->
+<div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
+  <div class="profile-floating-avatar-circle" id="edit-avatar-preview">H</div>
+  <div class="profile-avatar-camera-mini" title="Ubah Foto">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+      <circle cx="12" cy="13" r="4"></circle>
+    </svg>
+  </div>
+</div>
+
+<!-- Banner Action Controls (Google Pill + Circle Actions) -->
+<div class="profile-banner-action-controls">
+  <button type="button" class="profile-banner-pill-btn" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()"
+    title="Sinkronkan foto profil dari akun Google">
+    <svg width="13" height="13" viewBox="0 0 24 24">
+      <path fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z" />
+      <path fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z" />
+      <path fill="#FBBC05"
+        d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z" />
+      <path fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z" />
+    </svg>
+    <span>Google Acc...</span>
+  </button>
+
+  <button type="button" class="profile-banner-circle-btn" onclick="triggerAvatarUpload()"
+    title="Unggah foto baru dari perangkat">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="17 8 12 3 7 8"></polyline>
+      <line x1="12" y1="3" x2="12" y2="15"></line>
+    </svg>
+  </button>
+
+  <button type="button" class="profile-banner-circle-btn btn-delete-circle" id="btn-remove-avatar"
+    onclick="handleRemoveAvatar()" title="Hapus foto profil">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"></path>
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+    </svg>
+  </button>
+</div>
+</div>
+
+<input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;"
+  onchange="handleAvatarFileSelected(event)">
+
+<!-- User Identification Header (Name & @handle) -->
+<div class="profile-hero-user-header">
+  <h3 class="profile-hero-user-name" id="edit-avatar-name-display">HanzzSama</h3>
+  <div class="profile-hero-user-handle" id="edit-avatar-role-badge">@user</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL 1: PROFILE PREVIEW (Desain 1:1 seperti gambar atas) -->
+<!-- ============================================================ -->
+<div class="profile-view-panel" id="panel-profile-view" style="display:block;">
+  <p class="profile-preview-bio-text" id="preview-profile-bio">
+    Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzbheimer berbasis 32 biomarker multimodal, dengan
+    akurasi 95,2% yang telah divalidasi pada 430 rekam medis
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL 2: UPDATE FORM (Desain seperti gambar bawah) -->
+<!-- ============================================================ -->
+<div class="profile-view-panel" id="panel-profile-update" style="display:none;">
+  <form id="form-edit-profile" onsubmit="handleSaveProfile(event)">
+    <div class="profile-update-form-grid">
+      <!-- Nama Lengkap -->
+      <div class="profile-form-pill-group">
+        <label class="profile-pill-label" for="edit-profile-input-name">Nama Lengkap</label>
+        <input type="text" class="profile-pill-input" id="edit-profile-input-name" placeholder="Nama Lengkap" required
+          oninput="handleEditProfileNameChange()">
+      </div>
+
+      <!-- Email Terdaftar (Readonly) -->
+      <div class="profile-form-pill-group">
+        <label class="profile-pill-label" for="edit-profile-input-email">Alamat Email</label>
+        <input type="email" class="profile-pill-input input-readonly" id="edit-profile-input-email" readonly
+          placeholder="Alamat Email">
+      </div>
+
+      <!-- Instansi / RS -->
+      <div class="profile-form-pill-group">
+        <label class="profile-pill-label" for="edit-profile-input-institution">Instansi / Organisasi</label>
+        <input type="text" class="profile-pill-input" id="edit-profile-input-institution"
+          placeholder="Instansi / Rumah Sakit">
+      </div>
+
+      <!-- Nomor Telepon -->
+      <div class="profile-form-pill-group">
+        <label class="profile-pill-label" for="edit-profile-input-phone">Nomor Telepon</label>
+        <input type="tel" class="profile-pill-input" id="edit-profile-input-phone"
+          placeholder="Nomor Telepon / WhatsApp">
+      </div>
+
+      <!-- Bio Singkat (Full width) -->
+      <div class="profile-form-pill-group full-width">
+        <label class="profile-pill-label" for="edit-profile-input-bio">Bio Singkat / Minat Klinis</label>
+        <textarea class="profile-pill-textarea" id="edit-profile-input-bio" rows="2"
+          placeholder="Tuliskan catatan peran klinis atau bio profil Anda..."></textarea>
+      </div>
+    </div>
+
+    <div class="profile-update-actions-footer">
+      <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
+        Batal
+      </button>
+      <button type="submit" class="profile-action-btn-solid" id="btn-save-profile">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Simpan Perubahan</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL 3: SECURITY / GANTI PASSWORD -->
+<!-- ============================================================ -->
+<div class="profile-view-panel" id="panel-edit-profile-security" style="display:none;">
+  <form id="form-edit-password" onsubmit="handleUpdatePassword(event)">
+    <div class="profile-security-banner-clean">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+      <div>
+        <span>Gunakan minimal 6 karakter kombinasi huruf besar, kecil, dan angka.</span>
+      </div>
+    </div>
+
+    <div class="profile-update-form-grid" style="margin-top:14px;">
+      <div class="profile-form-pill-group full-width">
+        <label class="profile-pill-label" for="input-old-password">Kata Sandi Saat Ini</label>
+        <div class="profile-pill-password-wrap">
+          <input type="password" class="profile-pill-input" id="input-old-password"
+            placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
+          <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-old-password', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-form-pill-group">
+        <label class="profile-pill-label" for="input-new-password">Kata Sandi Baru</label>
+        <div class="profile-pill-password-wrap">
+          <input type="password" class="profile-pill-input" id="input-new-password" placeholder="Minimal 6 karakter"
+            required minlength="6" autocomplete="new-password" oninput="handlePasswordStrengthInput(this.value)">
+          <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-new-password', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-form-pill-group">
+        <label class="profile-pill-label" for="input-confirm-password">Konfirmasi Kata Sandi Baru</label>
+        <div class="profile-pill-password-wrap">
+          <input type="password" class="profile-pill-input" id="input-confirm-password"
+            placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+          <button type="button" class="profile-pill-eye"
+            onclick="togglePasswordVisibility('input-confirm-password', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Strength Meter -->
+    <div class="password-strength-container" id="pwd-strength-container" style="margin-top:10px;">
+      <div class="password-strength-bar">
+        <div class="password-strength-fill" id="pwd-strength-fill"></div>
+      </div>
+      <div class="password-strength-label" id="pwd-strength-label">Kekuatan Sandi: —</div>
+    </div>
+
+    <div class="profile-update-actions-footer">
+      <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
+        Batal
+      </button>
+      <button type="submit" class="profile-action-btn-solid" id="btn-save-password">
+        <span>Perbarui Kata Sandi</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+</div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- Toast Container -->
+<div class="toast-box" id="toast-box"></div>
+
+<!-- External JavaScript -->
+<script src="/js/qrcode.min.js"></script>
+<script src="/js/about_app.js?v=1"></script>
+<script src="/js/dynamic-island.js?v=60"></script>
+<!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
+<script src="/js/app-core.js?v=7.0"></script>
+<script src="/js/app-translations.js?v=7.0"></script>
+<script src="/js/app-ui.js?v=7.0"></script>
+<script src="/js/app-auth.js?v=7.1"></script>
+<script src="/js/app-settings.js?v=7.5"></script>
+<script src="/js/app-voice-input.js?v=7.0"></script>
+<script src="/js/app-ml-commands.js?v=7.0"></script>
+<script src="/js/app-chat.js?v=7.0"></script>
+
+<!-- Neura Modular Architecture: 2. Role User (Pasien) -->
+<script src="/js/app-user-profile.js?v=7.0"></script>
+<script src="/js/app-user-predict.js?v=7.0"></script>
+<script src="/js/app-user-consultation.js?v=7.0"></script>
+<script src="/js/app-user-voice.js?v=7.0"></script>
+<script src="/js/app-user-history.js?v=7.0"></script>
+<script src="/js/app-user.js?v=7.0"></script>
+
+<!-- Neura Modular Architecture: 3. Role Nakes (Tenaga Kesehatan) -->
+<script src="/js/app-nakes-auth.js?v=7.0"></script>
+<script src="/js/app-nakes-lookup.js?v=7.0"></script>
+<script src="/js/app-nakes-validate.js?v=7.0"></script>
+<script src="/js/app-nakes-patient.js?v=7.0"></script>
+<script src="/js/app-nakes-history.js?v=7.0"></script>
+<script src="/js/app-nakes.js?v=7.0"></script>
+
+<!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
+<script src="/js/app-admin-auth.js?v=7.0"></script>
+<script src="/js/app-admin-nakes.js?v=7.0"></script>
+<script src="/js/app-admin-ml.js?v=7.0"></script>
+<script src="/js/app-admin-history.js?v=7.0"></script>
+<script src="/js/app-admin.js?v=7.0"></script>
+<script src="/js/app-admin-panels.js?v=1.0"></script>
+
+<script src="/js/voice-consultation.js?v=64"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+
+<!-- Firebase Authentication & Workspace Security Guard -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js?v=2"></script>
+<script src="/js/auth-guard.js?v=3"></script>
 
 </body>
 
