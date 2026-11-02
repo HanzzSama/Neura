@@ -108,100 +108,22 @@
         </div>
       </div>
 
-      <!-- Expanded Dropdown State (Hover with smooth drop) -->
-      <div class="island-expanded">
-        <div class="island-expanded-header">
-          <div class="island-header-left">
-            <div class="island-logo-mini">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
-              </svg>
-            </div>
-            <div>
-              <div class="island-model-name">Neura Clinical AI</div>
-              <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
-            </div>
-          </div>
-          <div class="island-header-right">
-            <div class="island-user-badge" id="island-user-badge" title="Status Pengguna">
-              <span class="island-user-dot"></span>
-              <span class="island-user-name" id="island-user-name">Guest</span>
-            </div>
-            <span class="island-badge-live">Live 3.x</span>
-          </div>
+      <!-- Bot Pet Expanded Panel (Message removed, centered bot + mood) -->
+      <div class="island-bot-panel" id="island-bot-panel">
+        <div class="bot-face-large" id="bot-face-large">
+          <svg width="86" height="64" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" class="bot-face-svg" id="bot-face-large-svg">
+            <path id="bot-head-body" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF"/>
+            <g class="bot-eyes-wrapper" id="bot-eyes-wrapper">
+              <g class="bot-eyes-track" id="bot-eyes-track">
+                <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000"/>
+                <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000"/>
+              </g>
+            </g>
+          </svg>
         </div>
-
-        <!-- 4-Column Clinical Metrics Row -->
-        <div class="island-metrics-row">
-          <div class="island-stat-box stat-default">
-            <span class="island-stat-num" id="island-stat-features">32</span>
-            <span class="island-stat-lbl">Biomarkers</span>
-          </div>
-          <div class="island-stat-box stat-purple">
-            <span class="island-stat-num" id="island-stat-classes">2</span>
-            <span class="island-stat-lbl">Classes (0/1)</span>
-          </div>
-          <div class="island-stat-box stat-green" id="island-stat-box-status">
-            <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
-            <span class="island-stat-lbl">Accuracy</span>
-          </div>
-          <div class="island-stat-box stat-cyan" id="island-stat-box-intents">
-            <span class="island-stat-num" id="island-stat-intents" style="color:#38bdf8">241</span>
-            <span class="island-stat-lbl">Intents</span>
-          </div>
-        </div>
-
-        <!-- Quick Action Buttons -->
-        <div class="island-quick-actions">
-          <button class="island-btn btn-purple" onclick="globalIslandAction('/predict')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" />
-            </svg>
-            <span>Diagnose</span>
-          </button>
-          <button class="island-btn btn-cyan" onclick="globalIslandAction('voice')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-            </svg>
-            <span>Voice AI</span>
-          </button>
-          <button class="island-btn btn-orange" onclick="submitCommand('/train 50')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z" />
-            </svg>
-            <span>Train</span>
-          </button>
-          <button class="island-btn btn-green" onclick="submitCommand('/eval')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z" />
-            </svg>
-            <span>Metrics</span>
-          </button>
-          <button class="island-btn btn-default" onclick="openModelModal()">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-            <span>Specs</span>
-          </button>
-        </div>
-
-        <!-- Quick Clinical Suggestions Row -->
-        <div class="island-prompts-row">
-          <span class="island-prompts-label">Quick Consult:</span>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('perbedaan pikun biasa vs alzheimer')">Beda
-            Pikun</button>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('berapa skor normal tes mmse')">Skor
-            MMSE</button>
-          <button class="island-prompt-pill" onclick="triggerIslandPrompt('apa itu diet mind untuk alzheimer')">Diet
-            MIND</button>
-          <button class="island-prompt-pill"
-            onclick="triggerIslandPrompt('bagaimana cara merawat penderita alzheimer')">Caregiver</button>
+        <div class="bot-mood-row" id="bot-mood-row">
+          <span class="bot-mood-dot mood-happy" id="bot-mood-dot"></span>
+          <span class="bot-mood-label" id="bot-mood-label">Happy</span>
         </div>
       </div>
     </div>

@@ -1,6 +1,17 @@
 /**
- * Global Dynamic Island Manager
- * Works across all pages (welcome.html, index.html, etc.)
+ * Global Dynamic Island — Bot Pet
+ * ================================
+ * Compact ceiling-mounted notch with interactive pixel bot pet.
+ * Reacts to app states: ready, thinking, generating, training,
+ * predicting, evaluating, idle, voice-speaking, voice-listening, voice-stopped.
+ *
+ * Preserved public API (no breaking changes to callers):
+ *   window.setDynamicIslandState(state, options)
+ *   window.startIslandTimer()
+ *   window.stopIslandTimer(keepVisibleMs)
+ *   window.handleIslandClick()
+ *   window.triggerIslandPrompt(query)
+ *   window.globalIslandAction(action)
  */
 
 (function () {
@@ -10,143 +21,527 @@
   let islandStartTime = null;
   let currentIslandState = 'ready';
 
-  // 1. Inject Dynamic Island HTML if not already in DOM
-  function ensureDynamicIslandDOM() {
-    if (document.getElementById('dynamic-island')) return;
+  // ─── Bot Pet Config ────────────────────────────────────────────────────────
+  const BOT_MOODS = {
+    ready:           { speech: 'Halo! Mau bertanya?',             mood: 'Happy',     moodClass: 'mood-happy' },
+    thinking:        { speech: 'Hmm, sebentar ya...',             mood: 'Thinking',  moodClass: 'mood-thinking' },
+    generating:      { speech: 'Sedang merangkai jawaban...',     mood: 'Focused',   moodClass: 'mood-thinking' },
+    training:        { speech: 'Training model, mohon tunggu!',   mood: 'Working',   moodClass: 'mood-working' },
+    predicting:      { speech: 'Menganalisis biomarker...',       mood: 'Analyzing', moodClass: 'mood-thinking' },
+    evaluating:      { speech: 'Menghitung metrik akurasi...',    mood: 'Busy',      moodClass: 'mood-working' },
+    idle:            { speech: 'Zzz… ketuk aku!',                mood: 'Sleepy',    moodClass: 'mood-idle' },
+    'voice-speaking':{ speech: 'Sedang berbicara...',            mood: 'Talking',   moodClass: 'mood-speaking' },
+    'voice-listening':{ speech: 'Saya dengar kamu...',           mood: 'Listening', moodClass: 'mood-listening' },
+    'voice-stopped': { speech: 'Suara dihentikan.',              mood: 'Silent',    moodClass: 'mood-idle' },
+  };
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'dynamic-island-wrapper';
-    wrapper.innerHTML = `
-      <div class="dynamic-island theme-green" id="dynamic-island">
-        <!-- Compact Notch State -->
-        <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
-          <span class="island-notch-sub" id="island-sub-text">Alzheimer • 32 Bio</span>
-          <div class="island-notch-main-row">
-            <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
-              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
-                <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
-                <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
-                <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
-                <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
-                <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
-                <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
-                <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
-                <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
-                <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
-              </svg>
-            </div>
-            <!-- Live Voice Soundwave visualizer bars -->
-            <div class="island-soundwave" id="island-soundwave" style="display:none" title="Voice AI Active">
-              <span class="soundwave-bar bar-1"></span>
-              <span class="soundwave-bar bar-2"></span>
-              <span class="soundwave-bar bar-3"></span>
-              <span class="soundwave-bar bar-4"></span>
-              <span class="soundwave-bar bar-5"></span>
-            </div>
-            <span class="island-notch-main" id="island-main-text">Ready</span>
-            <!-- Inline notch stop button for live voice barge-in -->
-            <button class="island-notch-stop-btn" id="island-notch-stop-btn" style="display:none" onclick="event.stopPropagation(); if(window.interruptVoiceSpeaking){window.interruptVoiceSpeaking('island_notch_click');}" title="Hentikan Suara Neura">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="5" y="5" width="14" height="14" rx="2" />
-              </svg>
-            </button>
-            <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
-          </div>
-        </div>
-
-        <!-- Expanded Dropdown State -->
-        <div class="island-expanded">
-          <div class="island-expanded-header">
-            <div class="island-header-left">
-              <div class="island-logo-mini">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
-                </svg>
-              </div>
-              <div>
-                <div class="island-model-name" id="island-model-name">Neura AI Clinical Hub</div>
-                <div class="island-model-sub" id="island-env-tag">XGBoost Classifier &bull; 32 Biomarkers</div>
-              </div>
-            </div>
-            <div class="island-header-right">
-              <span class="island-user-badge" id="island-user-badge">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span id="island-user-name">Guest</span>
-              </span>
-              <span class="island-badge-live" id="island-badge-live">Live XGBoost 3.x</span>
-            </div>
-          </div>
-
-          <div class="island-metrics-row">
-            <div class="island-stat-box stat-default">
-              <span class="island-stat-num" id="island-stat-features">32</span>
-              <span class="island-stat-lbl">Biomarkers</span>
-            </div>
-            <div class="island-stat-box stat-purple">
-              <span class="island-stat-num" id="island-stat-classes">2</span>
-              <span class="island-stat-lbl">Classes (0/1)</span>
-            </div>
-            <div class="island-stat-box stat-cyan" id="island-stat-box-intents">
-              <span class="island-stat-num" id="island-stat-intents" style="color:#06b6d4">241</span>
-              <span class="island-stat-lbl">Clinical Intents</span>
-            </div>
-            <div class="island-stat-box stat-green" id="island-stat-box-status">
-              <span class="island-stat-num" id="island-stat-status" style="color:#22c55e">95.4%</span>
-              <span class="island-stat-lbl">Accuracy</span>
-            </div>
-          </div>
-
-          <div class="island-quick-actions">
-            <button class="island-btn btn-orange" onclick="globalIslandAction('/train 50')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2v-2h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H6V5zm12 0h-2v2h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1v2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM8 11h8v2H8z"/>
-              </svg>
-              <span>Train</span>
-            </button>
-            <button class="island-btn btn-purple" onclick="globalIslandAction('/predict')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"/>
-              </svg>
-              <span>Diagnose</span>
-            </button>
-            <button class="island-btn btn-cyan" onclick="globalIslandAction('voice')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-              </svg>
-              <span>Voice AI</span>
-            </button>
-            <button class="island-btn btn-green" onclick="globalIslandAction('/eval')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H4V3a1 1 0 0 0-1-1zm5 14h2a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1zm5 0h2a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1z"/>
-              </svg>
-              <span>Metrics</span>
-            </button>
-            <button class="island-btn btn-default" onclick="globalIslandAction('specs')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-              </svg>
-              <span>Specs</span>
-            </button>
-          </div>
-
-          <div class="island-prompts-row">
-            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Apa perbedaan pikun biasa dan alzheimer?')">🧠 Beda Pikun</button>
-            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Bagaimana interpretasi skor tes MMSE?')">📋 Skor MMSE</button>
-            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Bagaimana pola diet MIND untuk pencegahan?')">🥗 Diet MIND</button>
-            <button class="island-prompt-pill" onclick="triggerIslandPrompt('Bagaimana tips merawat lansia dengan demensia?')">🛡️ Caregiver</button>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(wrapper);
+  // SVG faces (compact 20px pixel art)
+  function getBotFaceSVG(state) {
+    const faces = {
+      ready:           `<circle cx="7" cy="9" r="2.2" fill="#4ade80"/>
+                        <circle cx="17" cy="9" r="2.2" fill="#4ade80"/>
+                        <path d="M7 15 Q12 19 17 15" stroke="#4ade80" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+      thinking:        `<circle cx="7" cy="9" r="1.8" fill="#fb923c" opacity="0.5"/>
+                        <circle cx="7" cy="9" r="1" fill="#fb923c"/>
+                        <circle cx="17" cy="9" r="1.8" fill="#fb923c" opacity="0.5"/>
+                        <circle cx="17" cy="9" r="1" fill="#fb923c"/>
+                        <path d="M9 15 Q12 14 15 15" stroke="#fb923c" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+      generating:      `<circle cx="7" cy="9" r="2.2" fill="#fb923c"/>
+                        <circle cx="7" cy="9" r="0.9" fill="#000" opacity="0.6"/>
+                        <circle cx="17" cy="9" r="2.2" fill="#fb923c"/>
+                        <circle cx="17" cy="9" r="0.9" fill="#000" opacity="0.6"/>
+                        <path d="M9 15 Q12 14 15 15" stroke="#fb923c" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+      training:        `<rect x="4.5" y="7" width="4" height="4" rx="1" fill="#f59e0b"/>
+                        <rect x="15.5" y="7" width="4" height="4" rx="1" fill="#f59e0b"/>
+                        <path d="M8 16 Q12 13 16 16" stroke="#f59e0b" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+      predicting:      `<circle cx="7" cy="9" r="2.5" fill="#c084fc"/>
+                        <circle cx="7" cy="9" r="1.2" fill="#000" opacity="0.5"/>
+                        <circle cx="17" cy="9" r="2.5" fill="#c084fc"/>
+                        <circle cx="17" cy="9" r="1.2" fill="#000" opacity="0.5"/>
+                        <path d="M8 16 Q12 19 16 16" stroke="#c084fc" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+      evaluating:      `<rect x="4.5" y="6.5" width="5" height="5" rx="2.5" fill="#4ade80"/>
+                        <rect x="14.5" y="6.5" width="5" height="5" rx="2.5" fill="#4ade80"/>
+                        <path d="M8 15 Q12 18 16 15" stroke="#4ade80" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+      idle:            `<path d="M5 9.5 Q7 9 9 9.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                        <path d="M15 9.5 Q17 9 19 9.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                        <path d="M9 15.5 Q12 15 15 15.5" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,
+      'voice-speaking':`<circle cx="7" cy="9" r="2.5" fill="#fb923c"/>
+                        <circle cx="17" cy="9" r="2.5" fill="#fb923c"/>
+                        <ellipse cx="12" cy="16" rx="4" ry="2.5" fill="#fb923c" opacity="0.8"/>`,
+      'voice-listening':`<circle cx="7" cy="9" r="3" fill="#38bdf8"/>
+                         <circle cx="7" cy="9" r="1.2" fill="#000" opacity="0.5"/>
+                         <circle cx="17" cy="9" r="3" fill="#38bdf8"/>
+                         <circle cx="17" cy="9" r="1.2" fill="#000" opacity="0.5"/>
+                         <path d="M8 15 Q12 19 16 15" stroke="#38bdf8" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+      'voice-stopped': `<path d="M5 9.5 Q7 9 9 9.5" stroke="#f87171" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                        <path d="M15 9.5 Q17 9 19 9.5" stroke="#f87171" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                        <path d="M9 16 Q12 14.5 15 16" stroke="#f87171" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,
+    };
+    return faces[state] || faces.ready;
   }
 
-  // 2. Formatting & Timers
+  // Large bot face for expanded panel (like Image 2: cute white mochi / pebble bot)
+  function getBotFaceLargeSVG(state) {
+    let eyesHtml = '';
+    switch (state) {
+      case 'thinking':
+      case 'generating':
+      case 'predicting':
+        eyesHtml = `
+          <ellipse cx="31" cy="40" rx="5.5" ry="7.5" transform="rotate(-4 31 40)" fill="#000000"/>
+          <ellipse cx="65" cy="40" rx="5.5" ry="7.5" transform="rotate(-4 65 40)" fill="#000000"/>
+        `;
+        break;
+      case 'training':
+        eyesHtml = `
+          <path d="M 27 45 Q 33 38 39 45" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          <path d="M 61 45 Q 67 38 73 45" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+        `;
+        break;
+      case 'idle':
+        eyesHtml = `
+          <path d="M 27 42 Q 33 47 39 42" stroke="#000000" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+          <path d="M 61 42 Q 67 47 73 42" stroke="#000000" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        `;
+        break;
+      case 'voice-speaking':
+        eyesHtml = `
+          <path d="M 27 43 Q 33 37 39 43" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          <path d="M 61 43 Q 67 37 73 43" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="50" cy="53" rx="3.5" ry="4.5" fill="#000000"/>
+        `;
+        break;
+      case 'voice-listening':
+        eyesHtml = `
+          <ellipse cx="33" cy="43" rx="6.5" ry="9" transform="rotate(4 33 43)" fill="#000000"/>
+          <circle cx="35" cy="41" r="2.2" fill="#FFFFFF"/>
+          <ellipse cx="67" cy="43" rx="6.5" ry="9" transform="rotate(-4 67 43)" fill="#000000"/>
+          <circle cx="69" cy="41" r="2.2" fill="#FFFFFF"/>
+        `;
+        break;
+      case 'voice-stopped':
+        eyesHtml = `
+          <circle cx="33" cy="44" r="5" fill="#000000"/>
+          <circle cx="67" cy="44" r="5" fill="#000000"/>
+        `;
+        break;
+      case 'ready':
+      case 'evaluating':
+      default:
+        // Default Image 2: cute solid white mochi head with wide slightly-tilted black oval eyes
+        eyesHtml = `
+          <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000"/>
+          <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000"/>
+        `;
+        break;
+    }
+
+    return `<svg width="86" height="64" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" class="bot-face-svg" id="bot-face-large-svg">
+      <!-- White Mochi Head Body (Exact match to Image 2) -->
+      <path id="bot-head-body" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF"/>
+      <!-- Eyes Group with Blink & Tracking Layers -->
+      <g class="bot-eyes-wrapper" id="bot-eyes-wrapper">
+        <g class="bot-eyes-track" id="bot-eyes-track">
+          ${eyesHtml}
+        </g>
+      </g>
+    </svg>`;
+  }
+
+  // ─── Inject DOM ────────────────────────────────────────────────────────────
+  function ensureDynamicIslandDOM() {
+    let island = document.getElementById('dynamic-island');
+    if (!island) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'dynamic-island-wrapper';
+      wrapper.innerHTML = `
+        <div class="dynamic-island theme-green" id="dynamic-island">
+          <!-- Compact Notch State -->
+          <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
+            <span class="island-notch-sub" id="island-sub-text">Alzheimer • 32 Bio</span>
+            <div class="island-notch-main-row">
+              <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
+                  <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
+                  <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
+                  <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
+                  <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
+                  <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
+                  <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
+                  <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
+                  <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
+                  <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
+                </svg>
+              </div>
+              <!-- Live Voice Soundwave visualizer bars -->
+              <div class="island-soundwave" id="island-soundwave" style="display:none" title="Voice AI Active">
+                <span class="soundwave-bar bar-1"></span>
+                <span class="soundwave-bar bar-2"></span>
+                <span class="soundwave-bar bar-3"></span>
+                <span class="soundwave-bar bar-4"></span>
+                <span class="soundwave-bar bar-5"></span>
+              </div>
+              <span class="island-notch-main" id="island-main-text">Ready</span>
+              <!-- Inline notch stop button for live voice barge-in -->
+              <button class="island-notch-stop-btn" id="island-notch-stop-btn" style="display:none"
+                onclick="event.stopPropagation(); if(window.interruptVoiceSpeaking){window.interruptVoiceSpeaking('island_notch_click');}"
+                title="Hentikan Suara Neura">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="5" y="5" width="14" height="14" rx="2" />
+                </svg>
+              </button>
+              <span class="island-notch-timer" id="island-timer" style="display:none">00:00</span>
+            </div>
+          </div>
+
+          <!-- Bot Pet Expanded Panel (Message removed, centered bot + mood) -->
+          <div class="island-bot-panel" id="island-bot-panel">
+            <div class="bot-face-large" id="bot-face-large">
+              ${getBotFaceLargeSVG('ready')}
+            </div>
+            <div class="bot-mood-row" id="bot-mood-row">
+              <span class="bot-mood-dot mood-happy" id="bot-mood-dot"></span>
+              <span class="bot-mood-label" id="bot-mood-label">Happy</span>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(wrapper);
+      island = document.getElementById('dynamic-island');
+    } else {
+      // Clean up legacy expanded dropdown or old speech bubble if present
+      const oldExpanded = island.querySelector('.island-expanded');
+      if (oldExpanded) oldExpanded.remove();
+      const oldSpeech = island.querySelector('#bot-speech');
+      if (oldSpeech) oldSpeech.remove();
+
+      // Ensure bot pet panel exists with new centered layout
+      if (!document.getElementById('island-bot-panel')) {
+        const botPanel = document.createElement('div');
+        botPanel.className = 'island-bot-panel';
+        botPanel.id = 'island-bot-panel';
+        botPanel.innerHTML = `
+          <div class="bot-face-large" id="bot-face-large">
+            ${getBotFaceLargeSVG('ready')}
+          </div>
+          <div class="bot-mood-row" id="bot-mood-row">
+            <span class="bot-mood-dot mood-happy" id="bot-mood-dot"></span>
+            <span class="bot-mood-label" id="bot-mood-label">Happy</span>
+          </div>
+        `;
+        island.appendChild(botPanel);
+      } else {
+        // Refresh face with Image 2 design
+        const faceContainer = document.getElementById('bot-face-large');
+        if (faceContainer) faceContainer.innerHTML = getBotFaceLargeSVG('ready');
+      }
+    }
+
+    // Setup interactions
+    _setupBotInteractions();
+  }
+
+  // ─── Living Bot Interactions (Random Gaze Engine, Blinking & Physics) ─────
+  let _botInteractionsInitialized = false;
+  let _danceClickCount = 0;
+  let _danceTimer = null;
+  let _petTimeout = null;
+  let _blinkTimer = null;
+  let _gazeTimer = null;
+  let _lastMouseMoveTime = 0;
+  let _trackingRaf = null;
+  let _isPetting = false;
+  let _isHoveringIsland = false;
+  let _collapseTimer = null;
+  const COLLAPSE_DELAY_MS = 550; // Delay sembunyi saat non-hover (550ms)
+
+  // Natural Gaze Poses ("Menoleh" arah acak dengan gerakan kepala & mata yang selaras)
+  const GAZE_POSES = [
+    { name: 'left',        eyeX: -6.5, eyeY:  0.0, headRot: -5.0, headX: -2.8, headY:  0.0 },
+    { name: 'right',       eyeX:  6.5, eyeY:  0.0, headRot:  5.0, headX:  2.8, headY:  0.0 },
+    { name: 'up-left',     eyeX: -5.0, eyeY: -4.5, headRot: -3.8, headX: -2.0, headY: -1.2 },
+    { name: 'up-right',    eyeX:  5.0, eyeY: -4.5, headRot:  3.8, headX:  2.0, headY: -1.2 },
+    { name: 'down',        eyeX:  0.0, eyeY:  5.0, headRot:  0.0, headX:  0.0, headY:  1.8 },
+    { name: 'down-left',   eyeX: -4.8, eyeY:  3.8, headRot: -2.8, headX: -1.4, headY:  1.2 },
+    { name: 'down-right',  eyeX:  4.8, eyeY:  3.8, headRot:  2.8, headX:  1.4, headY:  1.2 },
+    { name: 'center',      eyeX:  0.0, eyeY:  0.0, headRot:  0.0, headX:  0.0, headY:  0.0 }
+  ];
+
+  function _setupBotInteractions() {
+    if (_botInteractionsInitialized) return;
+    _botInteractionsInitialized = true;
+
+    const island = document.getElementById('dynamic-island');
+    if (!island) return;
+
+    // Hover delay: smooth expansion with delay on leave
+    island.addEventListener('mouseenter', () => {
+      _isHoveringIsland = true;
+      clearTimeout(_collapseTimer);
+      island.classList.add('is-expanded');
+    });
+
+    island.addEventListener('mouseleave', () => {
+      _isHoveringIsland = false;
+      clearTimeout(_collapseTimer);
+      _collapseTimer = setTimeout(() => {
+        if (!_isHoveringIsland) {
+          island.classList.remove('is-expanded');
+        }
+      }, COLLAPSE_DELAY_MS);
+    });
+
+    // Click on island / pet
+    island.addEventListener('click', function (e) {
+      if (e.target.closest('#island-notch-stop-btn')) return;
+
+      _danceClickCount++;
+      clearTimeout(_danceTimer);
+      _danceTimer = setTimeout(() => { _danceClickCount = 0; }, 400);
+
+      if (_danceClickCount >= 3) {
+        _danceClickCount = 0;
+        _triggerDance();
+        return;
+      }
+      _triggerPetInteraction();
+    });
+
+    // 1. Mouse Tracking: Bot eyes follow cursor smoothly
+    window.addEventListener('mousemove', _onMouseMove, { passive: true });
+
+    // 2. Start Living Autonomous Behaviors (Random Gazing, Blinking & Double-Takes)
+    _startIdleBehaviors();
+  }
+
+  function _onMouseMove(e) {
+    _lastMouseMoveTime = Date.now();
+    if (_isPetting) return;
+
+    if (_trackingRaf) cancelAnimationFrame(_trackingRaf);
+    _trackingRaf = requestAnimationFrame(() => {
+      _updateEyeTracking(e.clientX, e.clientY);
+    });
+  }
+
+  function _updateEyeTracking(targetX, targetY) {
+    const trackEl = document.getElementById('bot-eyes-track');
+    const faceEl = document.getElementById('bot-face-large');
+    const headBody = document.getElementById('bot-head-body');
+    if (!trackEl || !faceEl) return;
+
+    const rect = faceEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return; // collapsed/hidden
+
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const deltaX = targetX - centerX;
+    const deltaY = targetY - centerY;
+    const distance = Math.hypot(deltaX, deltaY);
+
+    if (distance === 0) {
+      trackEl.style.transform = 'translate(0px, 0px)';
+      if (headBody) headBody.style.transform = 'translate(0px, 0px) rotate(0deg)';
+      return;
+    }
+
+    // Displacement limit: ±5.8px horizontal, ±4.2px vertical
+    const maxRadius = 380;
+    const factor = Math.min(distance / maxRadius, 1);
+    const offsetX = (deltaX / distance) * factor * 5.8;
+    const offsetY = (deltaY / distance) * factor * 4.2;
+
+    trackEl.style.transform = `translate(${offsetX.toFixed(2)}px, ${offsetY.toFixed(2)}px)`;
+
+    // Organic subtle head tilt & turn towards mouse pointer (±3.5 deg)
+    if (headBody) {
+      const tiltAngle = (deltaX / distance) * factor * 3.5;
+      const headShiftX = (deltaX / distance) * factor * 1.8;
+      headBody.style.transform = `translate(${headShiftX.toFixed(2)}px, 0px) rotate(${tiltAngle.toFixed(2)}deg)`;
+    }
+  }
+
+  // ─── Autonomous Random Gaze & Blinking Engine ───────────────────────────────
+  function _startIdleBehaviors() {
+    _scheduleNextBlink();
+    _scheduleNextGaze();
+  }
+
+  function _applyGazePose(pose) {
+    if (_isPetting) return;
+    const trackEl = document.getElementById('bot-eyes-track');
+    const headBody = document.getElementById('bot-head-body');
+    if (!trackEl || !headBody) return;
+
+    trackEl.style.transform = `translate(${pose.eyeX.toFixed(1)}px, ${pose.eyeY.toFixed(1)}px)`;
+    headBody.style.transform = `translate(${pose.headX.toFixed(1)}px, ${pose.headY.toFixed(1)}px) rotate(${pose.headRot.toFixed(1)}deg)`;
+  }
+
+  function _scheduleNextGaze() {
+    clearTimeout(_gazeTimer);
+    // Realistis & hidup: menoleh secara berkala setiap 1.5s - 3.2s
+    const delay = Math.random() * 1700 + 1500;
+
+    _gazeTimer = setTimeout(() => {
+      const timeSinceMouse = Date.now() - _lastMouseMoveTime;
+      // Aktifkan menoleh random saat kursor tidak bergerak > 700ms
+      if (timeSinceMouse > 700 && !_isPetting) {
+        _performRandomGlance();
+      }
+      _scheduleNextGaze();
+    }, delay);
+  }
+
+  function _performRandomGlance() {
+    // 35% kemungkinan kedipan mikro tepat saat menoleh (saccadic blink)
+    if (Math.random() < 0.35) {
+      _triggerMicroBlink();
+    }
+
+    // 15% kemungkinan aksi "Double-Take" (menoleh ke satu sisi, lalu cepat melirik ke sisi lain)
+    if (Math.random() < 0.15) {
+      _performDoubleTake();
+      return;
+    }
+
+    // Pilih pose acak
+    const pose = GAZE_POSES[Math.floor(Math.random() * GAZE_POSES.length)];
+    _applyGazePose(pose);
+
+    // Tahan tatapan selama 750ms - 1500ms agar ekspresi menoleh terlihat jelas
+    const holdDuration = Math.random() * 750 + 750;
+    setTimeout(() => {
+      const timeSinceMouse = Date.now() - _lastMouseMoveTime;
+      if (timeSinceMouse > 700 && !_isPetting) {
+        // 45% kemungkinan kembali menatap lurus ke depan
+        if (Math.random() < 0.45 && pose.name !== 'center') {
+          _applyGazePose(GAZE_POSES[GAZE_POSES.length - 1]);
+        }
+      }
+    }, holdDuration);
+  }
+
+  function _performDoubleTake() {
+    const leftPose = GAZE_POSES[0];   // left
+    const rightPose = GAZE_POSES[1];  // right
+    const centerPose = GAZE_POSES[GAZE_POSES.length - 1]; // center
+
+    _applyGazePose(leftPose);
+    setTimeout(() => {
+      if (!_isPetting) {
+        _triggerMicroBlink();
+        _applyGazePose(rightPose);
+        setTimeout(() => {
+          if (!_isPetting) _applyGazePose(centerPose);
+        }, 550);
+      }
+    }, 380);
+  }
+
+  function _triggerMicroBlink() {
+    const eyesWrap = document.getElementById('bot-eyes-wrapper');
+    if (!eyesWrap) return;
+    eyesWrap.classList.add('is-blinking');
+    setTimeout(() => eyesWrap.classList.remove('is-blinking'), 85);
+  }
+
+  function _scheduleNextBlink() {
+    clearTimeout(_blinkTimer);
+    // Kedipan alami spontan setiap 2.0s - 4.2s
+    const delay = Math.random() * 2200 + 2000;
+    _blinkTimer = setTimeout(() => {
+      _triggerOrganicBlink(() => {
+        _scheduleNextBlink();
+      });
+    }, delay);
+  }
+
+  function _triggerOrganicBlink(onComplete) {
+    const eyesWrap = document.getElementById('bot-eyes-wrapper');
+    if (!eyesWrap) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    const isDoubleBlink = Math.random() < 0.28;
+
+    eyesWrap.classList.add('is-blinking');
+    setTimeout(() => {
+      eyesWrap.classList.remove('is-blinking');
+      if (isDoubleBlink) {
+        setTimeout(() => {
+          eyesWrap.classList.add('is-blinking');
+          setTimeout(() => {
+            eyesWrap.classList.remove('is-blinking');
+            if (onComplete) onComplete();
+          }, 90);
+        }, 110);
+      } else {
+        if (onComplete) onComplete();
+      }
+    }, 110);
+  }
+
+  // Petting interaction on Click: soft squish bounce + happy curved eyes
+  function _triggerPetInteraction() {
+    const faceEl = document.getElementById('bot-face-large');
+    const eyesTrack = document.getElementById('bot-eyes-track');
+    if (!faceEl) return;
+
+    _isPetting = true;
+
+    // Elastic jelly squish on pet
+    faceEl.classList.remove('bot-squish', 'bot-dance');
+    void faceEl.offsetWidth; // reflow
+    faceEl.classList.add('bot-squish');
+
+    // Switch eyes to cheerful squint curves ^ ^
+    if (eyesTrack) {
+      clearTimeout(_petTimeout);
+      eyesTrack.innerHTML = `
+        <path d="M 27 44 Q 33 37 39 44" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+        <path d="M 61 44 Q 67 37 73 44" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      `;
+      _petTimeout = setTimeout(() => {
+        _isPetting = false;
+        const current = window.dynamicIslandState || 'ready';
+        _updateBotPet(current);
+      }, 700);
+    } else {
+      setTimeout(() => { _isPetting = false; }, 700);
+    }
+  }
+
+  function _triggerDance() {
+    const pet = document.getElementById('bot-face-large');
+    if (!pet) return;
+    pet.classList.remove('bot-dance', 'bot-squish');
+    void pet.offsetWidth; // reflow
+    pet.classList.add('bot-dance');
+    setTimeout(() => pet.classList.remove('bot-dance'), 700);
+  }
+
+  // ─── Update Bot Pet UI ─────────────────────────────────────────────────────
+  function _updateBotPet(state) {
+    const cfg = BOT_MOODS[state] || BOT_MOODS.ready;
+
+    // Update large face SVG
+    const faceEl = document.getElementById('bot-face-large');
+    if (faceEl) faceEl.innerHTML = getBotFaceLargeSVG(state);
+
+    // Mood dot & label
+    const moodDot = document.getElementById('bot-mood-dot');
+    const moodLabel = document.getElementById('bot-mood-label');
+    if (moodDot) {
+      moodDot.className = 'bot-mood-dot ' + cfg.moodClass;
+    }
+    if (moodLabel) {
+      moodLabel.textContent = cfg.mood;
+    }
+  }
+
+  // ─── Timer ────────────────────────────────────────────────────────────────
   function formatElapsedTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -188,7 +583,7 @@
     }
   };
 
-  // 3. State Setter
+  // ─── State Setter ──────────────────────────────────────────────────────────
   window.setDynamicIslandState = function (state, options = {}) {
     currentIslandState = state;
     const island = document.getElementById('dynamic-island');
@@ -251,7 +646,7 @@
 
       case 'generating':
         island.classList.add('theme-orange', 'is-thinking');
-        subEl.textContent = options.sub || 'Synthesizing • Alzheimer';
+        subEl.textContent = options.sub || 'Synthesizing \u2022 Alzheimer';
         mainEl.textContent = options.main || 'Generating';
         break;
 
@@ -286,14 +681,17 @@
       case 'ready':
       default:
         island.classList.add('theme-green', 'is-ready');
-        subEl.textContent = options.sub || 'Alzheimer • 32 Biomarkers';
+        subEl.textContent = options.sub || 'Alzheimer \u2022 32 Biomarkers';
         mainEl.textContent = options.main || 'Ready';
         window.stopIslandTimer(options.keepTimer ? 3500 : 0);
         break;
     }
+
+    // Update bot pet expression
+    _updateBotPet(state);
   };
 
-  // 4. Action Handlers (Universal)
+  // ─── Action Handlers ───────────────────────────────────────────────────────
   window.handleIslandClick = function () {
     if (window.openModelModal) {
       window.openModelModal();
@@ -332,7 +730,6 @@
         window.submitCommand(action);
       }
     } else {
-      // If we are on welcome.html or external page, navigate to /app with action
       if (action === 'specs') {
         window.location.href = '/app';
       } else {
@@ -342,7 +739,7 @@
     }
   };
 
-  // Helper to format long user names cleanly (e.g. "Muhammad Khoir Luqman" -> "Muhammad K.")
+  // ─── Name Formatter ────────────────────────────────────────────────────────
   function formatDisplayName(name, maxLen = 14) {
     if (!name) return 'Guest';
     const trimmed = String(name).trim();
@@ -356,83 +753,19 @@
     return trimmed.slice(0, maxLen - 1) + '…';
   }
 
-  // 5. Background Poller for Live Model Sync
+  // ─── Background Status Poller ──────────────────────────────────────────────
   async function syncStatus() {
     try {
-      // Sync user badge from localStorage
-      const userBadgeEl = document.getElementById('island-user-name');
-      if (userBadgeEl) {
-        try {
-          const rawUser = localStorage.getItem('neura_auth_user');
-          if (rawUser) {
-            const parsed = JSON.parse(rawUser);
-            const name = parsed.name || parsed.username || parsed.email || 'Dr. Hanzz';
-            userBadgeEl.textContent = formatDisplayName(name, 12);
-            userBadgeEl.title = name;
-          } else {
-            userBadgeEl.textContent = 'Guest';
-            userBadgeEl.title = 'Guest';
-          }
-        } catch (_) {
-          userBadgeEl.textContent = 'Dr. Hanzz';
-        }
-      }
-
       const res = await fetch('/api/status');
       if (!res.ok) return;
       const data = await res.json();
 
-      const islandStat = document.getElementById('island-stat-status');
-      const islandStatBox = document.getElementById('island-stat-box-status');
-      const islandEnv = document.getElementById('island-env-tag');
-      const islandStatFeatures = document.getElementById('island-stat-features');
-      const islandStatIntents = document.getElementById('island-stat-intents');
-
-      if (islandStatFeatures && data.features_count) {
-        islandStatFeatures.textContent = data.features_count;
-      }
-      if (islandStatIntents && data.intents_count) {
-        islandStatIntents.textContent = data.intents_count;
-      }
-
-      if (islandStat) {
-        if (data.training_running) {
-          islandStat.textContent = 'Training';
-          islandStat.style.color = '#f59e0b';
-        } else if (data.model_ready && data.metrics && data.metrics.accuracy) {
-          islandStat.textContent = (data.metrics.accuracy * 100).toFixed(1) + '%';
-          islandStat.style.color = '#4ade80';
-        } else if (data.model_ready) {
-          islandStat.textContent = 'Ready';
-          islandStat.style.color = '#4ade80';
-        } else {
-          islandStat.textContent = 'N/A';
-          islandStat.style.color = '#f87171';
-        }
-      }
-
-      if (islandStatBox) {
-        islandStatBox.classList.remove('stat-green', 'stat-orange', 'stat-default');
-        islandStatBox.classList.add(data.training_running ? 'stat-orange' : data.model_ready ? 'stat-green' : 'stat-default');
-      }
-
-      if (islandEnv) {
-        // Normalize model names: strip redundant suffixes, shorten for display
-        let mName = (data.model_name || 'Alzheimer').replace(/xgboost/gi, '').replace(/[-_]+/g, ' ').trim();
-        if (!mName) mName = 'Alzheimer';
-        // Capitalize first letter
-        mName = mName.charAt(0).toUpperCase() + mName.slice(1);
-        const eName = data.environment || 'development';
-        const shortEnv = eName === 'development' ? 'dev' : eName.slice(0, 4);
-        const shortM = mName.length > 12 ? mName.slice(0, 11) + '…' : mName;
-        islandEnv.textContent = `${shortM} • ${shortEnv}`;
-        islandEnv.title = `${mName} • ${eName}`;
-      }
-
-      // Do not override voice states while active
-      if (currentIslandState === 'voice-speaking' || currentIslandState === 'voice-listening' || currentIslandState === 'voice-stopped') {
-        return;
-      }
+      // Don't override active voice states
+      if (
+        currentIslandState === 'voice-speaking' ||
+        currentIslandState === 'voice-listening' ||
+        currentIslandState === 'voice-stopped'
+      ) return;
 
       if (currentIslandState === 'ready' || currentIslandState === 'idle') {
         if (data.training_running) {
@@ -440,18 +773,45 @@
         } else {
           const subEl = document.getElementById('island-sub-text');
           const mainEl = document.getElementById('island-main-text');
-          if (subEl) subEl.textContent = data.model_ready ? 'Alzheimer • 32 Bio' : 'No Checkpoint';
+          if (subEl) subEl.textContent = data.model_ready ? 'Alzheimer \u2022 32 Bio' : 'No Checkpoint';
           if (mainEl) mainEl.textContent = data.model_ready ? 'Ready' : 'Idle';
         }
       }
     } catch (_) {}
   }
 
-  // 6. Initialize on DOM Ready
+  // ─── Initial Welcome Greeting on Load / Refresh ────────────────────────────
+  function _showInitialWelcomeGreeting() {
+    const island = document.getElementById('dynamic-island');
+    if (!island) return;
+
+    // Tunggu sebentar (400ms) agar transisi render halaman selesai
+    setTimeout(() => {
+      // Munculkan panel pet saat baru refresh / buka halaman
+      island.classList.add('is-expanded');
+
+      // Lakukan interaksi menyapa ceria (squish elastis & senyum ^ ^)
+      setTimeout(() => {
+        _triggerPetInteraction();
+      }, 400);
+
+      // Tampilkan sebentar (~2.4 detik), lalu sembunyikan kembali sebagai default
+      setTimeout(() => {
+        if (!_isHoveringIsland) {
+          island.classList.remove('is-expanded');
+        }
+      }, 2500);
+    }, 400);
+  }
+
+  // ─── Init ──────────────────────────────────────────────────────────────────
   function init() {
     ensureDynamicIslandDOM();
     syncStatus();
-    setInterval(syncStatus, 5000);
+    setInterval(syncStatus, 8000);
+
+    // Tampilkan sebentar pet saat baru refresh lalu sembunyikan sebagai default
+    _showInitialWelcomeGreeting();
 
     // Check for pending action in sessionStorage on /app
     if (typeof window.submitCommand === 'function') {
