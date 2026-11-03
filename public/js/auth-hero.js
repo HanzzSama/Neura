@@ -765,6 +765,12 @@
       alertText.textContent = msg;
     }
     alertBox.className = 'auth-alert ' + (isError ? 'is-error' : 'is-success');
+    var icon = alertBox.querySelector('.auth-alert-icon');
+    if (icon) {
+      icon.innerHTML = isError
+        ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
+        : '<circle cx="12" cy="12" r="10"/><polyline points="16 9 10 15 8 13"/>';
+    }
     alertBox.style.display = 'flex';
   }
 
@@ -1092,6 +1098,7 @@
     if (loginForgotBtn) {
       loginForgotBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         var emailInput = document.getElementById('login-email');
         var email = emailInput ? emailInput.value.trim() : '';
         if (!email) {
@@ -1099,36 +1106,90 @@
           if (emailInput) emailInput.focus();
           return;
         }
+
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+          showAlert('Format email tidak valid. Harap periksa kembali alamat email Anda.', true);
+          if (emailInput) emailInput.focus();
+          return;
+        }
+
         var fb = window.NeuraFirebase;
-        var auth = fb ? fb.getAuth() : null;
-        if (auth && fb.isConfigured()) {
-          auth.sendPasswordResetEmail(email)
-            .then(function () {
-              showAlert('Tautan pemulihan kata sandi telah dikirimkan ke ' + email, false);
-            })
-            .catch(function (err) {
-              showAlert(translateFirebaseError(err), true);
-            });
+        var originalBtnText = loginForgotBtn.textContent;
+        loginForgotBtn.textContent = 'Mengirim...';
+        loginForgotBtn.disabled = true;
+
+        var executeReset = function (authInstance) {
+          if (authInstance) {
+            return authInstance.sendPasswordResetEmail(email)
+              .then(function () {
+                showAlert('Tautan pemulihan kata sandi telah dikirimkan ke <strong>' + email + '</strong>. Silakan periksa kotak masuk atau spam email Anda.', false, true);
+              })
+              .catch(function (err) {
+                if (err && (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential')) {
+                  showAlert('Email <strong>' + email + '</strong> belum terdaftar dalam sistem klinis Neura.', true, true);
+                } else {
+                  showAlert(translateFirebaseError(err), true);
+                }
+              });
+          } else {
+            showAlert('Mode Demo: Simulasi tautan pemulihan kata sandi telah disiapkan untuk ' + email, false);
+            return Promise.resolve();
+          }
+        };
+
+        if (fb && typeof fb.init === 'function') {
+          fb.init().then(function (res) {
+            var authInstance = (res && res.auth) || (fb.getAuth ? fb.getAuth() : null);
+            return executeReset(authInstance);
+          }).catch(function (err) {
+            showAlert(translateFirebaseError(err), true);
+          }).finally(function () {
+            loginForgotBtn.textContent = originalBtnText;
+            loginForgotBtn.disabled = false;
+          });
         } else {
-          showAlert('Tautan reset demo telah disimulasikan untuk ' + email, false);
+          var authInstance = fb && fb.getAuth ? fb.getAuth() : null;
+          executeReset(authInstance).finally(function () {
+            loginForgotBtn.textContent = originalBtnText;
+            loginForgotBtn.disabled = false;
+          });
         }
       });
     }
 
     // 7. Password visibility toggles
-    document.querySelectorAll('.auth-eye-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var targetId = btn.getAttribute('data-target');
-        var input = document.getElementById(targetId);
-        if (!input) return;
-        var isPass = input.type === 'password';
-        input.type = isPass ? 'text' : 'password';
+    function togglePasswordVisibility(btn) {
+      if (!btn) return;
+      var targetId = btn.getAttribute('data-target');
+      var input = document.getElementById(targetId);
+      if (!input) return;
+      var isPass = input.type === 'password';
+      input.type = isPass ? 'text' : 'password';
 
-        // Swap icon
-        btn.innerHTML = isPass
-          ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
-          : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+      btn.setAttribute('aria-label', isPass ? 'Sembunyikan kata sandi' : 'Lihat kata sandi');
+      btn.innerHTML = isPass
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+      try { input.focus(); } catch (err) {}
+    }
+
+    document.querySelectorAll('.auth-eye-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        togglePasswordVisibility(btn);
       });
+    });
+
+    document.addEventListener('click', function (e) {
+      var eyeBtn = e.target.closest ? e.target.closest('.auth-eye-btn') : null;
+      if (eyeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        togglePasswordVisibility(eyeBtn);
+      }
     });
 
     // 8. Google Authentication (Validasi Ketat: Masuk vs Registrasi)

@@ -3392,6 +3392,151 @@ a {
 }
 
 /* --------------------------------------------------------------------------
+   NeuraPet Preview Card (Dynamic Island Bot Face Duplicate)
+   -------------------------------------------------------------------------- */
+.neurapet-preview-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.neurapet-inner {
+  gap: 0 !important;
+  max-width: 100% !important;
+  width: 100%;
+  height: 100%;
+}
+
+.neurapet-preview-visual {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 48px 48px 16px;
+  gap: 14px;
+}
+
+/* ── NeuraPet Demo Face (mirrors .bot-face-large from dynamic-island.css) ── */
+.neurapet-demo-face {
+  width: 180px;
+  height: 134px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  animation: neurapet-demo-breathe 3.4s infinite ease-in-out;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.neurapet-demo-face:hover {
+  transform: scale(1.08);
+}
+
+.neurapet-demo-svg {
+  width: 180px;
+  height: 134px;
+  overflow: visible;
+  filter: drop-shadow(0 6px 24px rgba(255, 255, 255, 0.14))
+          drop-shadow(0 3px 12px rgba(0, 0, 0, 0.6));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* Eye blink + track */
+.neurapet-demo-eyes-wrapper {
+  transform-origin: 50px 44px;
+  transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.neurapet-demo-eyes-wrapper.is-blinking {
+  transform: scaleY(0.06);
+  transition: transform 0.07s ease-in;
+}
+
+.neurapet-demo-eyes-track {
+  transition: transform 0.22s cubic-bezier(0.34, 1.25, 0.64, 1);
+  will-change: transform;
+}
+
+#neurapet-demo-head {
+  transform-origin: 50px 39px;
+  transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+  will-change: transform;
+}
+
+/* Breathing */
+@keyframes neurapet-demo-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  35%      { transform: scale(1.03, 0.98); }
+  70%      { transform: scale(0.98, 1.02); }
+}
+
+/* Squish on click */
+.neurapet-demo-face.neurapet-squish {
+  animation: neurapet-demo-squish 0.68s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+@keyframes neurapet-demo-squish {
+  0%   { transform: scale(1, 1); }
+  22%  { transform: scale(1.18, 0.80); }
+  48%  { transform: scale(0.92, 1.12); }
+  72%  { transform: scale(1.04, 0.96); }
+  100% { transform: scale(1, 1); }
+}
+
+/* Mood pill */
+.neurapet-demo-mood {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 4px 12px 4px 9px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.neurapet-demo-mood-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+  animation: neurapet-mood-pulse 2s infinite ease-in-out;
+}
+
+@keyframes neurapet-mood-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.3); opacity: 0.75; }
+}
+
+.neurapet-demo-mood-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.neurapet-preview-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 32px 36px;
+  width: 100%;
+}
+
+.neurapet-preview-footer .sdk-banner-title {
+  font-size: 32px;
+}
+
+/* --------------------------------------------------------------------------
    Card 4: Antigravity CLI Preview (Space Stars + Split Terminal Window)
    -------------------------------------------------------------------------- */
 .cli-card-preview {
@@ -4661,6 +4806,24 @@ a {
     height: auto;
     min-height: 440px;
     border-radius: 28px;
+  }
+
+  .neurapet-preview-visual {
+    padding: 28px 32px 12px;
+  }
+
+  .neurapet-demo-face {
+    width: 140px;
+    height: 104px;
+  }
+
+  .neurapet-demo-svg {
+    width: 140px;
+    height: 104px;
+  }
+
+  .neurapet-preview-footer .sdk-banner-title {
+    font-size: 24px;
   }
 
   .pipeline-card-preview {

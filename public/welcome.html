@@ -17,7 +17,7 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=49">
+  <link rel="stylesheet" href="/css/welcome.css?v=52">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=63">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=43">
@@ -1542,33 +1542,39 @@
       </div>
     </div>
 
-    <!-- 3. Neura Clinical Python SDK -->
+    <!-- 3. NeuraPet Interactive AI Companion -->
     <div class="product-row">
       <div class="product-info">
-        <h2 class="product-title" data-i18n="sdk_title">Neura Clinical Python SDK</h2>
+        <h2 class="product-title" data-i18n="sdk_title">NeuraPet</h2>
         <p class="product-description" data-i18n="sdk_desc">
-          Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR)
-          rumah sakit dengan mudah melalui API Python yang ringkas dan aman.
+          Teman AI interaktif yang hidup di Dynamic Island halaman antarmuka Neura. NeuraPet merespons gerakan kursor,
+          berkedip secara alami, menoleh ke arah tetikus, dan bereaksi saat disentuh — menghadirkan pengalaman klinis
+          yang personal dan menyenangkan.
         </p>
       </div>
-      <div class="sdk-card-preview">
+      <div class="sdk-card-preview neurapet-preview-card">
         <div class="sdk-glow-orb"></div>
-        <div class="sdk-card-inner">
-          <div class="sdk-banner-title">Neura Clinical SDK</div>
-          <div class="sdk-code-window">
-            <div class="sdk-code-header">
-              <span class="python-dot"></span>
-              <span>clinical_inference.py</span>
+        <div class="sdk-card-inner neurapet-inner">
+          <div class="neurapet-preview-visual">
+            <!-- NeuraPet Face — Duplicated from Dynamic Island (app page) -->
+            <div class="neurapet-demo-face" id="neurapet-demo-face">
+              <svg width="180" height="134" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" class="neurapet-demo-svg" id="neurapet-demo-svg">
+                <path id="neurapet-demo-head" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF"/>
+                <g class="neurapet-demo-eyes-wrapper" id="neurapet-demo-eyes-wrapper">
+                  <g class="neurapet-demo-eyes-track" id="neurapet-demo-eyes-track">
+                    <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000"/>
+                    <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000"/>
+                  </g>
+                </g>
+              </svg>
             </div>
-            <pre class="sdk-code-body"><code><span class="sdk-kw">from</span> neura.clinical <span class="sdk-kw">import</span> Alzheimer, Cohort
 
-model = Alzheimer.load(<span class="sdk-str">"xgboost_alzheimers.json"</span>)
-cohort = Cohort.from_csv(<span class="sdk-str">"./patient_cohort_430.csv"</span>)
-diagnosis = model.predict(cohort.patient(<span class="sdk-str">"P-104"</span>))
-print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></code></pre>
           </div>
-          <div class="sdk-code-badge">
-            <span class="pip-icon">$</span> pip install neura-clinical-ai
+          <div class="neurapet-preview-footer">
+            <div class="sdk-banner-title">NeuraPet · Dynamic Island</div>
+            <div class="sdk-code-badge">
+              <span class="pip-icon">✦</span> Hover to interact · Click to pet
+            </div>
           </div>
         </div>
       </div>
@@ -2023,7 +2029,7 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="/js/about_app.js?v=1"></script>
   <script src="/js/smooth-scroll.js?v=45"></script>
   <script src="/js/dynamic-island.js?v=60"></script>
-  <script src="/js/welcome.js?v=49"></script>
+  <script src="/js/welcome.js?v=50"></script>
   <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
   <script src="/js/voice-consultation.js?v=64"></script>
 
@@ -2032,7 +2038,56 @@ print(diagnosis.summary()) <span class="sdk-comment"># Risk: 94.4% MCI</span></c
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-hero.js?v=58"></script>
+  <script src="/js/auth-hero.js?v=59"></script>
+
+  <!-- NeuraPet Welcome Preview Interactions (eye tracking, blink, squish) -->
+  <script>
+  (function() {
+    const face = document.getElementById('neurapet-demo-face');
+    const eyesTrack = document.getElementById('neurapet-demo-eyes-track');
+    const eyesWrap = document.getElementById('neurapet-demo-eyes-wrapper');
+    const head = document.getElementById('neurapet-demo-head');
+    if (!face || !eyesTrack || !eyesWrap || !head) return;
+
+    /* ── Eye Gaze Tracking ── */
+    const MAX_EYE = 5.8, MAX_HEAD = 2.2;
+    document.addEventListener('mousemove', function(e) {
+      const r = face.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / (window.innerWidth / 2);
+      const dy = (e.clientY - cy) / (window.innerHeight / 2);
+      const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+      eyesTrack.style.transform = 'translate(' + clamp(dx * MAX_EYE, MAX_EYE) + 'px,' + clamp(dy * MAX_EYE, MAX_EYE) + 'px)';
+      head.style.transform = 'rotate(' + clamp(dx * MAX_HEAD, MAX_HEAD) + 'deg)';
+    });
+
+    /* ── Periodic Blink ── */
+    function blink() {
+      eyesWrap.classList.add('is-blinking');
+      setTimeout(function() { eyesWrap.classList.remove('is-blinking'); }, 120);
+      // occasional double-blink
+      if (Math.random() < 0.28) {
+        setTimeout(function() {
+          eyesWrap.classList.add('is-blinking');
+          setTimeout(function() { eyesWrap.classList.remove('is-blinking'); }, 100);
+        }, 220);
+      }
+    }
+    function scheduleBlink() {
+      var delay = 2000 + Math.random() * 2200;
+      setTimeout(function() { blink(); scheduleBlink(); }, delay);
+    }
+    scheduleBlink();
+
+    /* ── Squish on Click ── */
+    face.addEventListener('click', function() {
+      face.classList.remove('neurapet-squish');
+      void face.offsetWidth; // reflow
+      face.classList.add('neurapet-squish');
+      setTimeout(function() { face.classList.remove('neurapet-squish'); }, 700);
+    });
+  })();
+  </script>
 </body>
 
 </html>

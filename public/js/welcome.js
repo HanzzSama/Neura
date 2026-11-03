@@ -217,9 +217,9 @@
       sec_feat3_title: 'Cryptographic SHA-256 Checksum',
       sec_feat3_desc: 'Validasi integritas dataset 32 biomarker secara tamper-proof',
 
-      // Product 3: Python SDK
-      sdk_title: 'Neura Clinical Python SDK',
-      sdk_desc: 'Integrasikan pipeline deteksi Alzheimer berbasis XGBoost ke dalam sistem rekam medis elektronik (EHR/EMR) rumah sakit dengan mudah melalui API Python yang ringkas dan aman.',
+      // Product 3: NeuraPet
+      sdk_title: 'NeuraPet',
+      sdk_desc: 'Teman AI interaktif yang hidup di Dynamic Island antarmuka Neura. NeuraPet merespons gerakan kursor secara real-time, berkedip alami, menoleh acak layaknya makhluk hidup, dan bereaksi elastis saat disentuh — menghadirkan nuansa klinis yang personal dan menyenangkan.',
 
       // Product 4: CLI
       cli_title: 'Neura Specification',
@@ -316,9 +316,9 @@
       sec_feat3_title: 'Cryptographic SHA-256 Checksum',
       sec_feat3_desc: 'Tamper-proof dataset integrity validation across all 32 clinical biomarkers',
 
-      // Product 3: Python SDK
-      sdk_title: 'Neura Clinical Python SDK',
-      sdk_desc: "Integrate our XGBoost Alzheimer's detection pipeline seamlessly into hospital Electronic Health Record (EHR/EMR) systems with minimal, secure Python code.",
+      // Product 3: NeuraPet
+      sdk_title: 'NeuraPet',
+      sdk_desc: 'An interactive AI companion living inside the Neura Dynamic Island. NeuraPet tracks your cursor in real-time, blinks naturally, performs random saccadic glances like a living creature, and reacts with elastic squish animations when clicked — adding a personal and delightful touch to the clinical experience.',
 
       // Product 4: CLI
       cli_title: 'Neura Specifications',
