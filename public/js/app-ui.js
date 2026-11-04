@@ -288,129 +288,22 @@ function updateUIModelStatus(data) {
 }
 
 // --------------------------------------------------------------------------
-// Dynamic Island Interactive State & Timer Manager
+// Dynamic Island Click Handler (Core state handled exclusively by dynamic-island.js)
 // --------------------------------------------------------------------------
-let islandTimerInterval = null;
-let islandStartTime = null;
-let currentIslandState = 'ready';
-window.currentIslandState = currentIslandState;
-
-function formatElapsedTime(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  const tenths = Math.floor((ms % 1000) / 100);
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${tenths}`;
-}
-
-function startIslandTimer() {
-  stopIslandTimer(0);
-  islandStartTime = Date.now();
-  const timerEl = document.getElementById('island-timer');
-  if (timerEl) {
-    timerEl.style.display = 'inline-block';
-    timerEl.textContent = '00:00.0';
-  }
-  islandTimerInterval = setInterval(() => {
-    if (!islandStartTime) return;
-    const elapsed = Date.now() - islandStartTime;
-    if (timerEl) timerEl.textContent = formatElapsedTime(elapsed);
-  }, 100);
-}
-
-function stopIslandTimer(keepVisibleMs = 3500) {
-  if (islandTimerInterval) {
-    clearInterval(islandTimerInterval);
-    islandTimerInterval = null;
-  }
-  const timerEl = document.getElementById('island-timer');
-  if (!timerEl) return;
-  if (keepVisibleMs > 0) {
-    setTimeout(() => {
-      if (currentIslandState === 'ready') {
-        timerEl.style.display = 'none';
-      }
-    }, keepVisibleMs);
-  } else {
-    timerEl.style.display = 'none';
-  }
-}
-
-function setDynamicIslandState(state, options = {}) {
-  currentIslandState = state;
-  window.currentIslandState = state;
-  const island = document.getElementById('dynamic-island');
-  const subEl = document.getElementById('island-sub-text');
-  const mainEl = document.getElementById('island-main-text');
-
-  if (!island || !subEl || !mainEl) return;
-
-  island.classList.remove(
-    'theme-orange', 'theme-purple', 'theme-green', 'theme-default',
-    'is-thinking', 'is-training', 'is-ready'
-  );
-
-  switch (state) {
-    case 'thinking':
-      island.classList.add('theme-orange', 'is-thinking');
-      subEl.textContent = options.sub || 'Matching clinical intent \u2022 chat_dataset.py';
-      mainEl.textContent = options.main || 'Thinking';
-      startIslandTimer();
-      break;
-
-    case 'generating':
-      island.classList.add('theme-orange', 'is-thinking');
-      subEl.textContent = options.sub || 'Synthesizing response \u2022 Alzheimer';
-      mainEl.textContent = options.main || 'Generating';
-      break;
-
-    case 'training':
-      island.classList.add('theme-orange', 'is-training');
-      subEl.textContent = options.sub || 'Training XGBoost \u2022 Gradient Boosted Trees';
-      mainEl.textContent = options.main || 'Training...';
-      if (!islandTimerInterval) startIslandTimer();
-      break;
-
-    case 'predicting':
-      island.classList.add('theme-purple', 'is-thinking');
-      subEl.textContent = options.sub || 'Evaluating 32 Biomarkers \u2022 Clinical Inference';
-      mainEl.textContent = options.main || 'Diagnosing';
-      startIslandTimer();
-      break;
-
-    case 'evaluating':
-      island.classList.add('theme-green', 'is-thinking');
-      subEl.textContent = options.sub || 'Evaluating test metrics \u2022 430 patient records';
-      mainEl.textContent = options.main || 'Evaluating';
-      startIslandTimer();
-      break;
-
-    case 'idle':
-      island.classList.add('theme-default');
-      subEl.textContent = options.sub || "Alzheimer's AI \u2022 Standby";
-      mainEl.textContent = options.main || 'Idle';
-      stopIslandTimer(options.keepTimer ? 3500 : 0);
-      break;
-
-    case 'ready':
-    default:
-      island.classList.add('theme-green', 'is-ready');
-      subEl.textContent = options.sub || "Alzheimer's AI \u2022 32 Clinical Biomarkers";
-      mainEl.textContent = options.main || 'Ready';
-      stopIslandTimer(options.keepTimer ? 3500 : 0);
-      break;
-  }
-}
-
 function handleIslandClick() {
-  if (currentIslandState === 'training') {
+  const currentState = (typeof window.getCurrentIslandState === 'function')
+    ? window.getCurrentIslandState()
+    : 'ready';
+  if (currentState === 'training') {
     const prog = document.getElementById('live-progress-container');
     if (prog) {
       prog.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
   }
-  openModelModal();
+  if (typeof openModelModal === 'function') {
+    openModelModal();
+  }
 }
 
 function openModelModal() {

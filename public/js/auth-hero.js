@@ -486,15 +486,8 @@
 
     startAdminOtpTimer(300);
 
-    // Jika dev_otp disediakan (misal SMTP dev/offline), beri tahu admin di UI
-    if (devOtp) {
-      showAlert(
-        '<strong>Mode Verifikasi Admin</strong><br>' +
-        'Kode OTP terkirim ke email Anda. (Dev OTP: <strong style="font-size:15px;letter-spacing:1px;color:#dc2626;">' + devOtp + '</strong>)',
-        false,
-        true
-      );
-    }
+    // Sembunyikan alert dev_otp agar OTP strictly dikirim via email admin terdaftar
+    hideAlert();
   }
 
   function initAdminOtpDigitInputs() {
@@ -710,10 +703,7 @@
           if (adminOtpDigits[0]) adminOtpDigits[0].focus();
         }
         var msg = data.message || 'Kode OTP baru telah dikirimkan ke email terhubung.';
-        if (data.dev_otp) {
-          msg += '<br>Dev OTP: <strong style="font-size:15px;color:#dc2626;">' + data.dev_otp + '</strong>';
-        }
-        showAlert(msg, false, Boolean(data.dev_otp));
+        showAlert(msg, false);
       } else {
         showAlert(data.error || 'Gagal mengirim ulang OTP.', true);
       }

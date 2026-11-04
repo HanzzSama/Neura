@@ -773,17 +773,21 @@ a {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  height: 100vh;
-  min-height: 100vh;
+  align-items: center;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  min-height: calc(100vh - 84px);
+  padding: 24px 28px;
+  box-sizing: border-box;
   background: var(--color-bg);
-  overflow: hidden;
 }
 
 /* ---------- Left Column ---------- */
 .hero-left {
   display: flex;
   align-items: center;
-  padding: 48px 56px 48px 72px;
+  padding: 32px 32px 32px 0;
 }
 
 .hero-left-inner {
@@ -893,26 +897,25 @@ a {
   text-transform: uppercase;
 }
 
-/* ---------- Right Column: Dark Panel ---------- */
+/* ---------- Right Column: Brain Visual ---------- */
 .hero-right {
   position: relative;
-  background: var(--color-bg);
-  overflow: hidden;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 48px;
+  padding: 24px 0 24px 24px;
 }
 
 .hero-brain-img {
-  width: auto;
-  max-width: 100%;
+  width: 100%;
+  max-width: 580px;
   height: auto;
-  max-height: min(42em, calc(100vh - 160px));
-  aspect-ratio: 1 / 1;
+  max-height: min(38em, calc(100vh - 180px));
+  aspect-ratio: 2048 / 1529;
   object-fit: contain;
   display: block;
-  margin: auto;
+  margin: 0 auto;
   transform: scale(var(--hero-img-scale, 1)) translateY(var(--hero-img-ty, 0px));
   opacity: var(--hero-img-opacity, 1);
   transform-origin: center center;

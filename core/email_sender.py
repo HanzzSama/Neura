@@ -28,7 +28,7 @@ def _get_smtp_config():
         "password": os.getenv("SMTP_PASSWORD", "").strip(),
         "sender_name": os.getenv("SENDER_NAME", "Neura AI").strip(),
         "host": os.getenv("SMTP_HOST", "smtp.gmail.com"),
-        "port": int(os.getenv("SMTP_PORT", "587")),
+        "port": int(os.getenv("SMTP_PORT", "465")),
     }
 
 
@@ -38,16 +38,27 @@ def is_smtp_configured():
 
 
 def _create_smtp_connection(cfg):
-    """Membuat koneksi SMTP yang mendukung SSL (465) maupun STARTTLS (587)."""
-    if cfg["port"] == 465:
-        server = smtplib.SMTP_SSL(cfg["host"], cfg["port"], timeout=15)
-    else:
-        server = smtplib.SMTP(cfg["host"], cfg["port"], timeout=15)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-    server.login(cfg["email"], cfg["password"])
-    return server
+    """Membuat koneksi SMTP yang mendukung SSL (465) maupun STARTTLS (587) dengan auto-fallback."""
+    host = cfg.get("host", "smtp.gmail.com")
+    port = int(cfg.get("port", 465))
+
+    try:
+        if port == 465:
+            server = smtplib.SMTP_SSL(host, port, timeout=15)
+        else:
+            server = smtplib.SMTP(host, port, timeout=12)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+        server.login(cfg["email"], cfg["password"])
+        return server
+    except Exception as exc:
+        if port != 465:
+            logger.warning(f"[Neura Email] Koneksi ke {host}:{port} gagal ({exc}). Fallback ke port 465 SSL...")
+            server = smtplib.SMTP_SSL(host, 465, timeout=15)
+            server.login(cfg["email"], cfg["password"])
+            return server
+        raise
 
 
 def send_verification_email(to_email: str, display_name: str, verify_link: str, firebase_sent: bool = False) -> dict:

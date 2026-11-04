@@ -1422,6 +1422,9 @@ body {
 /* User Message â€” Rounded warm bubble on the right */
 .message-row.user {
   justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
 .user-bubble {
@@ -1436,32 +1439,43 @@ body {
   white-space: pre-wrap;
 }
 
-.user-bubble.user-bubble-pending {
-  border: 1px dashed rgba(217, 119, 87, 0.45);
-  position: relative;
-  opacity: 0.94;
-  box-shadow: 0 2px 8px rgba(217, 119, 87, 0.08);
-}
-
+/* Standalone Card Menunggu Antrean (Terpisah dari Card Pesan) */
+.msg-pending-card,
 .msg-pending-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5.5px;
-  margin-top: 7px;
-  padding: 3px 9px;
-  border-radius: 12px;
+  gap: 6.5px;
+  padding: 5px 12px;
+  border-radius: 9999px;
   background: rgba(217, 119, 87, 0.12);
+  border: 1px solid rgba(217, 119, 87, 0.28);
   color: var(--accent-terracotta, #D97757);
   font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.015em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: opacity 0.25s ease, transform 0.25s ease;
   user-select: none;
+  animation: pending-card-fadein 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+[data-theme="dark"] .msg-pending-card,
 [data-theme="dark"] .msg-pending-badge {
-  background: rgba(217, 119, 87, 0.2);
+  background: rgba(46, 44, 40, 0.9);
+  border: 1px solid rgba(217, 119, 87, 0.35);
   color: #F09A7D;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes pending-card-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .msg-pending-badge svg.spin-icon {
@@ -1534,15 +1548,20 @@ body {
 .assistant-prose {
   width: 100%;
   font-size: 14.5px;
-  line-height: 1.68;
+  line-height: 1.72;
   color: var(--text-primary);
   word-break: break-word;
+  letter-spacing: -0.005em;
 }
 
 .assistant-prose p {
-  margin-bottom: 12px;
-  line-height: 1.65;
-  color: var(--text-secondary);
+  margin-bottom: 14px;
+  line-height: 1.72;
+  color: #cfccc2;
+}
+
+:root[data-theme="light"] .assistant-prose p {
+  color: #374151;
 }
 
 .assistant-prose p:last-child {
@@ -1550,13 +1569,19 @@ body {
 }
 
 .assistant-prose strong {
-  color: var(--text-primary);
+  color: #ffffff;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+:root[data-theme="light"] .assistant-prose strong {
+  color: #111827;
   font-weight: 650;
 }
 
 .assistant-prose em {
   font-style: italic;
-  color: var(--text-primary);
+  color: inherit;
 }
 
 /* Headings within Assistant Prose */
@@ -1612,65 +1637,83 @@ body {
 }
 
 /* Modular Ordered & Unordered Lists in Prose */
-.assistant-prose ul {
+.assistant-prose ul,
+.assistant-prose .neura-unordered-list {
   list-style: none;
   padding-left: 0;
-  margin: 10px 0 14px 0;
+  margin: 14px 0 16px 0;
 }
 
-.assistant-prose ul li {
+.assistant-prose ul li,
+.assistant-prose .neura-unordered-list li {
   position: relative;
-  padding-left: 20px;
-  margin-bottom: 8px;
-  font-size: 13.5px;
-  line-height: 1.58;
-  color: var(--text-secondary);
+  padding-left: 22px;
+  margin-bottom: 11px;
+  font-size: 14px;
+  line-height: 1.68;
+  color: #cfccc2;
 }
 
-.assistant-prose ul li:last-child {
+:root[data-theme="light"] .assistant-prose ul li,
+:root[data-theme="light"] .assistant-prose .neura-unordered-list li {
+  color: #374151;
+}
+
+.assistant-prose ul li:last-child,
+.assistant-prose .neura-unordered-list li:last-child {
   margin-bottom: 0;
 }
 
-.assistant-prose ul li::before {
+.assistant-prose ul li::before,
+.assistant-prose .neura-unordered-list li::before {
   content: '';
   position: absolute;
-  left: 5px;
+  left: 6px;
   top: 9px;
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--accent-terracotta, #e07a5f);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-.assistant-prose ol {
+.assistant-prose ol,
+.assistant-prose .neura-ordered-list {
   list-style: none;
   counter-reset: prose-ol-counter;
   padding-left: 0;
-  margin: 10px 0 14px 0;
+  margin: 14px 0 16px 0;
 }
 
-.assistant-prose ol li {
+.assistant-prose ol li,
+.assistant-prose .neura-ordered-list li {
   counter-increment: prose-ol-counter;
   position: relative;
-  padding-left: 26px;
-  margin-bottom: 8px;
-  font-size: 13.5px;
-  line-height: 1.58;
-  color: var(--text-secondary);
+  padding-left: 28px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.68;
+  color: #cfccc2;
 }
 
-.assistant-prose ol li:last-child {
+:root[data-theme="light"] .assistant-prose ol li,
+:root[data-theme="light"] .assistant-prose .neura-ordered-list li {
+  color: #374151;
+}
+
+.assistant-prose ol li:last-child,
+.assistant-prose .neura-ordered-list li:last-child {
   margin-bottom: 0;
 }
 
-.assistant-prose ol li::before {
+.assistant-prose ol li::before,
+.assistant-prose .neura-ordered-list li::before {
   content: counter(prose-ol-counter) ".";
   position: absolute;
   left: 2px;
   top: 0;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--accent-terracotta, #e07a5f);
 }
@@ -2768,14 +2811,64 @@ body {
   flex-shrink: 0;
 }
 
-/* Model Label ("Neura Clinical") */
+/* Model Switcher Component ("Neura Clinical" / "Neura LLM") */
+.ib-model-switcher-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ib-model-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 10px 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.ib-model-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="light"] .ib-model-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.ib-model-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  flex-shrink: 0;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.ib-model-status-dot.dot-llm {
+  background: #38bdf8;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+}
+
+.ib-model-status-dot.dot-offline {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
 .ib-model-label {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
   user-select: none;
-  cursor: default;
+  cursor: pointer;
   letter-spacing: -0.01em;
 }
 
@@ -2791,6 +2884,122 @@ body {
 
 :root[data-theme="dark"] .ib-model-tier {
   color: #82807a;
+}
+
+.ib-model-chevron {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.ib-model-switcher-wrapper.is-open .ib-model-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Model Switcher Dropdown (Matches Quick Menu Style - Gambar 2) */
+.ib-model-dropdown {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  min-width: 235px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: qm-appear 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="dark"] .ib-model-dropdown {
+  background: #1c1b18;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+}
+
+.ib-model-dropdown .qm-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  user-select: none;
+  gap: 16px;
+}
+
+:root[data-theme="dark"] .ib-model-dropdown .qm-item {
+  color: #b3b0a6;
+}
+
+.ib-model-dropdown .qm-item:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .ib-model-dropdown .qm-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.ib-model-dropdown .qm-item.active {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+:root[data-theme="light"] .ib-model-dropdown .qm-item.active {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ib-model-dropdown .qm-name {
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.ib-model-dropdown .qm-tag {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  background-color: rgba(217, 119, 87, 0.12);
+  color: var(--accent-terracotta);
+  border: 1px solid rgba(217, 119, 87, 0.18);
+  padding: 2.5px 8px;
+  border-radius: 5px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+:root[data-theme="dark"] .ib-model-dropdown .qm-tag {
+  background-color: rgba(217, 119, 87, 0.18);
+  color: #E07A5F;
+  border-color: rgba(217, 119, 87, 0.28);
+}
+
+.ib-model-dropdown .qm-item:hover .qm-tag,
+.ib-model-dropdown .qm-item.active .qm-tag {
+  background-color: rgba(217, 119, 87, 0.22);
+  color: var(--accent-terracotta-hover);
+  border-color: rgba(217, 119, 87, 0.35);
 }
 
 /* Send / Voice Button Base */

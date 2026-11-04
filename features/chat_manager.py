@@ -108,8 +108,8 @@ class ChatDatasetManager:
                                 {"role": "assistant", "content": response}
                             ]
                         })
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[Neura ChatManager Error] LLM generation failed: {e}")
 
         return data
 
@@ -177,7 +177,7 @@ class ChatDatasetManager:
         res = self.find_consultation_response(user_message, user_name=user_name)
         return res.get("reply") if res and res.get("matched") else None
 
-    def find_consultation_response(self, user_message: str, user_name: str = "") -> Dict[str, Any]:
+    def find_consultation_response(self, user_message: str, user_name: str = "", mode: str = "auto") -> Dict[str, Any]:
         """
         Menganalisis pesan pengguna dan mengembalikan respons konsultasi terstruktur
         beserta kategori, topik, dan saran pertanyaan lanjutan (suggestions).
@@ -194,6 +194,12 @@ class ChatDatasetManager:
             "pun", "juga", "nah", "dong", "sih", "kan", "loh", "deh", "tentang", "mengenai",
             "hari", "ini", "hari ini", "sekarang", "buat", "bikin"
         }
+
+        name_display = user_name.strip() if user_name and user_name.strip() else "Hanzz"
+
+        # Jika mode=llm, langsung ke LLM tanpa dataset matching
+        if mode == "llm":
+            return self._generate_llm_only_response(user_message, tokens, user_name=name_display)
 
         best_match = None
         best_score = 0
@@ -279,10 +285,10 @@ class ChatDatasetManager:
         # ---------------------------------------------------------------------
         # Fallback jika di luar dataset percakapan
         # ---------------------------------------------------------------------
-        fallback = self._generate_contextual_consultation(cleaned, tokens, user_name=name_display)
+        fallback = self._generate_contextual_consultation(cleaned, tokens, user_name=name_display, mode=mode)
         return fallback
 
-    def _generate_contextual_consultation(self, text: str, tokens: List[str], user_name: str = "") -> Dict[str, Any]:
+    def _generate_contextual_consultation(self, text: str, tokens: List[str], user_name: str = "", mode: str = "auto") -> Dict[str, Any]:
         """Menghasilkan pesan fallback jika prompt di luar dataset percakapan."""
 
         name_display = user_name.strip() if user_name and user_name.strip() else "Hanzz"
@@ -337,7 +343,33 @@ class ChatDatasetManager:
                 ]
             }
 
-        # 3. Fallback di Luar Dataset Percakapan (Out-of-Scope)
+        # 3. Integrasi model LLM Lokal (Llama 3.2 1B Instruct GGUF)
+        # Menjawab pertanyaan pengguna yang tidak tercakup dalam dataset aturan secara cerdas & empatik
+        # Jika mode=dataset, skip LLM dan langsung ke fallback statis
+        if mode != "dataset":
+            try:
+                from .gguf_bridge import is_gguf_ready, generate_gguf_response
+                if is_gguf_ready():
+                    llm_reply = generate_gguf_response(text, user_name=name_display)
+                    if llm_reply and len(llm_reply.strip()) > 10:
+                        return {
+                            "matched": True,
+                            "reply": llm_reply,
+                            "responses": [llm_reply],
+                            "category": "konsultasi_llm",
+                            "topic": "Neura Llama-3.2 LLM",
+                            "source": "gguf_llm",
+                            "suggestions": [
+                                "Apa perbedaan pikun biasa vs Alzheimer?",
+                                "Bagaimana cara menjaga kesehatan daya ingat?",
+                                "Simulasikan data skrining /predict"
+                            ],
+                            "score": 90,
+                        }
+            except Exception:
+                pass
+
+        # 4. Fallback di Luar Dataset Percakapan (Out-of-Scope)
         # Ambil daftar array jawaban dari intent fallback/di_luar_dataset dengan mengganti <<nama>> = nama user
         fallback_responses = self.get_fallback_responses(user_name=name_display)
         selected_reply = random.choice(fallback_responses) if fallback_responses else f"Mohon maaf tidak bisa menjawab sesuai pertanyaan {name_display}."
@@ -355,6 +387,54 @@ class ChatDatasetManager:
                 "Jalankan diagnosis /predict"
             ]
         }
+
+    def _generate_llm_only_response(self, text: str, tokens: List[str], user_name: str = "") -> Dict[str, Any]:
+        """Langsung menggunakan LLM tanpa dataset matching (mode=llm)."""
+        name_display = user_name.strip() if user_name and user_name.strip() else "Hanzz"
+        try:
+            from .gguf_bridge import is_gguf_ready, generate_gguf_response
+            if is_gguf_ready():
+                llm_reply = generate_gguf_response(text, user_name=name_display)
+                if llm_reply and len(llm_reply.strip()) > 10:
+                    return {
+                        "matched": True,
+                        "reply": llm_reply,
+                        "responses": [llm_reply],
+                        "category": "konsultasi_llm",
+                        "topic": "Neura Llama-3.2 LLM",
+                        "source": "gguf_llm",
+                        "suggestions": [
+                            "Apa perbedaan pikun biasa vs Alzheimer?",
+                            "Bagaimana cara menjaga kesehatan daya ingat?",
+                            "Simulasikan data skrining /predict"
+                        ],
+                        "score": 90,
+                    }
+        except Exception:
+            pass
+
+        # Fallback jika LLM tidak siap
+        return {
+            "matched": False,
+            "reply": f"Model LLM belum siap, {name_display}. Model sedang dimuat atau belum tersedia. Silakan coba lagi nanti atau gunakan mode Dataset.",
+            "responses": [f"Model LLM belum siap, {name_display}. Model sedang dimuat atau belum tersedia."],
+            "category": "konsultasi_llm",
+            "topic": "LLM Tidak Tersedia",
+            "source": "gguf_llm",
+            "suggestions": [
+                "Saya ingin konsultasi daya ingat",
+                "Apa saja gejala awal Alzheimer?",
+                "Simulasikan data skrining /predict"
+            ]
+        }
+
+    def generate_llm_response(self, user_message: str, user_name: str = "") -> Optional[str]:
+        """Menghasilkan respons teks langsung menggunakan model GGUF LLM."""
+        try:
+            from .gguf_bridge import generate_gguf_response
+            return generate_gguf_response(user_message, user_name=user_name)
+        except Exception:
+            return None
 
     def get_statistics(self) -> Dict[str, Any]:
         """Menghitung metrik dan statistik dataset."""

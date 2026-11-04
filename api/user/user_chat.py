@@ -67,7 +67,9 @@ def api_chat_message():
             return jsonify({"error": "Empty message"}), 400
 
         mgr = ChatDatasetManager()
-        res = mgr.find_consultation_response(message, user_name=user_name)
+        # Mode: "auto" (dataset → LLM → fallback), "dataset" (hanya dataset), "llm" (hanya LLM)
+        mode = (body.get("model") or body.get("mode") or "auto").strip().lower()
+        res = mgr.find_consultation_response(message, user_name=user_name, mode=mode)
 
         return jsonify({
             "matched": res.get("matched", False),
@@ -75,8 +77,19 @@ def api_chat_message():
             "responses": res.get("responses", [res.get("reply", "")]),
             "category": res.get("category", "konsultasi_skrining"),
             "topic": res.get("topic", "Konsultasi Neura AI"),
+            "source": res.get("source", "dataset"),
             "suggestions": res.get("suggestions", []),
         })
     except Exception as e:
         logger.error(f"Error in api_chat_message: {traceback.format_exc()}")
         return jsonify({"error": str(e)}), 500
+
+
+@user_chat_bp.route("/features/llm-status", methods=["GET"])
+def api_llm_status():
+    try:
+        from features.gguf_bridge import get_llm_status
+        return jsonify(get_llm_status())
+    except Exception as e:
+        logger.error(f"Error in api_llm_status: {traceback.format_exc()}")
+        return jsonify({"ready": False, "error": str(e)}), 500

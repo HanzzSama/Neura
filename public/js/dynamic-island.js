@@ -20,14 +20,31 @@
   let islandTimerInterval = null;
   let islandStartTime = null;
   let currentIslandState = 'ready';
+  window.currentIslandState = 'ready';
+  function getDefaultReadySubText() {
+    try {
+      const curModel = localStorage.getItem('neura_chat_model') || (window.neuraChatModel || 'dataset');
+      if (curModel === 'llm') {
+        return 'Llama 3.2 1B • Generative AI';
+      }
+    } catch (e) {}
+    return 'XGBoost • 32 Biomarkers';
+  }
+  window.getDefaultReadySubText = getDefaultReadySubText;
+
 
   // ─── Bot Pet Config ────────────────────────────────────────────────────────
   const BOT_MOODS = {
-    ready:           { speech: 'Halo! Mau bertanya?',             mood: 'Happy',     moodClass: 'mood-happy' },
-    thinking:        { speech: 'Hmm, sebentar ya...',             mood: 'Thinking',  moodClass: 'mood-thinking' },
-    generating:      { speech: 'Sedang merangkai jawaban...',     mood: 'Focused',   moodClass: 'mood-thinking' },
-    training:        { speech: 'Training model, mohon tunggu!',   mood: 'Working',   moodClass: 'mood-working' },
-    predicting:      { speech: 'Menganalisis biomarker...',       mood: 'Analyzing', moodClass: 'mood-thinking' },
+    ready:           { speech: 'Halo! Siap mengevaluasi rekam medis.', mood: 'Ready',      moodClass: 'mood-happy' },
+    intake:          { speech: 'Mencatat data klinis pasien...',       mood: 'Intake',     moodClass: 'mood-intake' },
+    predicting:      { speech: 'Mengevaluasi 32 biomarker klinis...', mood: 'Diagnosing', moodClass: 'mood-predicting' },
+    xgboost:         { speech: 'Menelusuri pohon keputusan model...',  mood: 'Computing',  moodClass: 'mood-xgboost' },
+    training:        { speech: 'Training model XGBoost...',           mood: 'Training',   moodClass: 'mood-working' },
+    generating:      { speech: 'Menyusun laporan hasil diagnosis...', mood: 'Generating', moodClass: 'mood-thinking' },
+    validating:      { speech: 'Memverifikasi checksum data...',      mood: 'Verifying',  moodClass: 'mood-validating' },
+    success:         { speech: 'Analisis klinis selesai tervalidasi!',mood: 'Completed',  moodClass: 'mood-happy' },
+    warning:         { speech: 'Biomarker berisiko tinggi terdeteksi.',mood: 'Attention',  moodClass: 'mood-warning' },
+    thinking:        { speech: 'Hmm, sebentar ya...',             mood: 'Thinking',   moodClass: 'mood-thinking' },
     evaluating:      { speech: 'Menghitung metrik akurasi...',    mood: 'Busy',      moodClass: 'mood-working' },
     idle:            { speech: 'Zzz… ketuk aku!',                mood: 'Sleepy',    moodClass: 'mood-idle' },
     'voice-speaking':{ speech: 'Sedang berbicara...',            mood: 'Talking',   moodClass: 'mood-speaking' },
@@ -84,6 +101,37 @@
   function getBotFaceLargeSVG(state) {
     let eyesHtml = '';
     switch (state) {
+      case 'intake':
+        // Melirik ke bawah mencatat data formulir
+        eyesHtml = `
+          <ellipse cx="33" cy="47" rx="5.5" ry="7.5" transform="rotate(2 33 47)" fill="#000000"/>
+          <ellipse cx="67" cy="47" rx="5.5" ry="7.5" transform="rotate(-2 67 47)" fill="#000000"/>
+        `;
+        break;
+      case 'xgboost':
+      case 'validating':
+        // Mata tajam menyipit analitis
+        eyesHtml = `
+          <ellipse cx="32" cy="42" rx="6" ry="6.5" transform="rotate(-6 32 42)" fill="#000000"/>
+          <ellipse cx="68" cy="42" rx="6" ry="6.5" transform="rotate(6 68 42)" fill="#000000"/>
+        `;
+        break;
+      case 'success':
+        // Mata melengkung bahagia tersenyum ^ ^
+        eyesHtml = `
+          <path d="M 27 45 Q 33 37 39 45" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          <path d="M 61 45 Q 67 37 73 45" stroke="#000000" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+        `;
+        break;
+      case 'warning':
+        // Mata membulat waspada
+        eyesHtml = `
+          <ellipse cx="33" cy="43" rx="7" ry="8.5" fill="#000000"/>
+          <ellipse cx="67" cy="43" rx="7" ry="8.5" fill="#000000"/>
+          <circle cx="35" cy="41" r="2.2" fill="#FFFFFF"/>
+          <circle cx="69" cy="41" r="2.2" fill="#FFFFFF"/>
+        `;
+        break;
       case 'thinking':
       case 'generating':
       case 'predicting':
@@ -155,10 +203,10 @@
       const wrapper = document.createElement('div');
       wrapper.className = 'dynamic-island-wrapper';
       wrapper.innerHTML = `
-        <div class="dynamic-island theme-green" id="dynamic-island">
+        <div class="dynamic-island theme-green state-ready is-ready" id="dynamic-island">
           <!-- Compact Notch State -->
           <div class="island-notch-compact" id="island-compact-trigger" onclick="handleIslandClick()">
-            <span class="island-notch-sub" id="island-sub-text">Alzheimer • 32 Bio</span>
+            <span class="island-notch-sub" id="island-sub-text">XGBoost • 32 Biomarkers</span>
             <div class="island-notch-main-row">
               <div class="island-pixel-loader" id="island-pixel-loader" title="Neura AI Processing">
                 <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
@@ -194,15 +242,31 @@
             </div>
           </div>
 
-          <!-- Bot Pet Expanded Panel (Message removed, centered bot + mood) -->
+          <!-- Bot Pet Expanded Panel (Status indicator matching compact notch) -->
           <div class="island-bot-panel" id="island-bot-panel">
             <div class="bot-face-large" id="bot-face-large">
               ${getBotFaceLargeSVG('ready')}
             </div>
-            <div class="bot-mood-row" id="bot-mood-row">
-              <span class="bot-mood-dot mood-happy" id="bot-mood-dot"></span>
-              <span class="bot-mood-label" id="bot-mood-label">Happy</span>
+            <div class="island-pet-status" id="island-pet-status">
+              <span class="island-pet-sub" id="island-pet-sub">XGBoost &bull; 32 Biomarkers</span>
+              <div class="island-pet-main-row">
+                <div class="island-pixel-loader island-pet-pixel-loader" id="island-pet-pixel-loader" title="Neura AI Processing">
+                  <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
+                    <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
+                    <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
+                    <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
+                    <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
+                    <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
+                    <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
+                    <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
+                    <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
+                    <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
+                  </svg>
+                </div>
+                <span class="island-pet-main" id="island-pet-main">Ready</span>
+              </div>
             </div>
+            <div class="island-capsule-content" id="island-capsule-content"></div>
           </div>
         </div>
       `;
@@ -224,10 +288,26 @@
           <div class="bot-face-large" id="bot-face-large">
             ${getBotFaceLargeSVG('ready')}
           </div>
-          <div class="bot-mood-row" id="bot-mood-row">
-            <span class="bot-mood-dot mood-happy" id="bot-mood-dot"></span>
-            <span class="bot-mood-label" id="bot-mood-label">Happy</span>
+          <div class="island-pet-status" id="island-pet-status">
+            <span class="island-pet-sub" id="island-pet-sub">XGBoost &bull; 32 Biomarkers</span>
+            <div class="island-pet-main-row">
+              <div class="island-pixel-loader island-pet-pixel-loader" id="island-pet-pixel-loader" title="Neura AI Processing">
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
+                  <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
+                  <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
+                  <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
+                  <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
+                  <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
+                  <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
+                  <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
+                  <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
+                  <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
+                </svg>
+              </div>
+              <span class="island-pet-main" id="island-pet-main">Ready</span>
+            </div>
           </div>
+          <div class="island-capsule-content" id="island-capsule-content"></div>
         `;
         island.appendChild(botPanel);
       } else {
@@ -267,6 +347,38 @@
     { name: 'center',      eyeX:  0.0, eyeY:  0.0, headRot:  0.0, headX:  0.0, headY:  0.0 }
   ];
 
+  let _isFloatingCapsule = false;
+
+  function _toggleFloatingCapsule(forceState) {
+    const island = document.getElementById('dynamic-island');
+    const wrapper = document.querySelector('.dynamic-island-wrapper');
+    if (!island) return;
+
+    if (typeof forceState === 'boolean') {
+      _isFloatingCapsule = forceState;
+    } else {
+      _isFloatingCapsule = !_isFloatingCapsule;
+    }
+
+    if (_isFloatingCapsule) {
+      island.classList.add('is-floating-capsule');
+      island.classList.add('is-expanded');
+      if (wrapper) wrapper.classList.add('wrapper-floating');
+      // Berikan reaksi squish lembut menyapa saat kapsul mengambang aktif
+      setTimeout(() => {
+        _triggerPetInteraction();
+      }, 150);
+    } else {
+      island.classList.remove('is-floating-capsule');
+      if (wrapper) wrapper.classList.remove('wrapper-floating');
+      if (!_isHoveringIsland && !_isFloatingCapsule) {
+        island.classList.remove('is-expanded');
+      }
+    }
+  }
+
+  window.toggleDynamicIslandFloating = _toggleFloatingCapsule;
+
   function _setupBotInteractions() {
     if (_botInteractionsInitialized) return;
     _botInteractionsInitialized = true;
@@ -292,6 +404,14 @@
     });
 
     // Click on island / pet
+    // Klik 2x (double-click) saat hover untuk mengubah menjadi kapsul mengambang (detached floating pill)
+    island.addEventListener('dblclick', function (e) {
+      if (e.target.closest('#island-notch-stop-btn')) return;
+      e.stopPropagation();
+      e.preventDefault();
+      _toggleFloatingCapsule();
+    });
+
     island.addEventListener('click', function (e) {
       if (e.target.closest('#island-notch-stop-btn')) return;
 
@@ -586,20 +706,33 @@
   // ─── State Setter ──────────────────────────────────────────────────────────
   window.setDynamicIslandState = function (state, options = {}) {
     currentIslandState = state;
+    window.currentIslandState = state;
     const island = document.getElementById('dynamic-island');
     const subEl = document.getElementById('island-sub-text');
     const mainEl = document.getElementById('island-main-text');
+    const petSubEl = document.getElementById('island-pet-sub');
+    const petMainEl = document.getElementById('island-pet-main');
     const pixelLoader = document.getElementById('island-pixel-loader');
     const soundwave = document.getElementById('island-soundwave');
     const notchStopBtn = document.getElementById('island-notch-stop-btn');
 
-    if (!island || !subEl || !mainEl) return;
+    if (!island) return;
+
+    function applyIslandText(sub, main) {
+      if (subEl) subEl.textContent = sub;
+      if (mainEl) mainEl.textContent = main;
+      if (petSubEl) petSubEl.textContent = sub;
+      if (petMainEl) petMainEl.textContent = main;
+    }
 
     island.classList.remove(
       'theme-orange', 'theme-purple', 'theme-green', 'theme-default',
       'theme-cyan', 'theme-voice-listening', 'theme-voice-speaking', 'theme-stopped', 'theme-voice-stopped',
-      'is-thinking', 'is-training', 'is-ready'
+      'is-thinking', 'is-training', 'is-ready',
+      'state-ready', 'state-intake', 'state-predicting', 'state-xgboost',
+      'state-training', 'state-generating', 'state-validating', 'state-success', 'state-warning', 'state-thinking'
     );
+    island.classList.add('state-' + state);
 
     // Default icon states
     if (pixelLoader) pixelLoader.style.display = 'flex';
@@ -607,13 +740,37 @@
     if (notchStopBtn) notchStopBtn.style.display = 'none';
 
     switch (state) {
+      case 'intake':
+        applyIslandText(options.sub || 'Rekam Medis • Data Intake', options.main || 'Inputting...');
+        window.startIslandTimer();
+        break;
+
+      case 'xgboost':
+        applyIslandText(options.sub || 'XGBoost v3.4 • Tree Traversal', options.main || 'Computing...');
+        window.startIslandTimer();
+        break;
+
+      case 'validating':
+        applyIslandText(options.sub || 'Integritas Data • SHA-256 Check', options.main || 'Verifying...');
+        window.startIslandTimer();
+        break;
+
+      case 'success':
+        applyIslandText(options.sub || 'Hasil Selesai • Akurasi 94.4%', options.main || 'Completed');
+        window.stopIslandTimer(options.keepTimer ? 3500 : 0);
+        break;
+
+      case 'warning':
+        applyIslandText(options.sub || 'Perhatian Klinis • Risiko Tinggi', options.main || 'Attention');
+        window.stopIslandTimer(options.keepTimer ? 3500 : 0);
+        break;
+
       case 'voice-speaking':
         island.classList.add('theme-voice-speaking', 'theme-orange', 'is-thinking');
         if (pixelLoader) pixelLoader.style.display = 'none';
         if (soundwave) soundwave.style.display = 'flex';
         if (notchStopBtn) notchStopBtn.style.display = 'inline-flex';
-        subEl.textContent = options.sub || 'Neura Voice AI \u2022 Speaking';
-        mainEl.textContent = options.main || 'Speaking';
+        applyIslandText(options.sub || 'Neura Voice AI \u2022 Speaking', options.main || 'Speaking');
         if (!islandTimerInterval) window.startIslandTimer();
         break;
 
@@ -622,8 +779,7 @@
         if (pixelLoader) pixelLoader.style.display = 'none';
         if (soundwave) soundwave.style.display = 'flex';
         if (notchStopBtn) notchStopBtn.style.display = 'none';
-        subEl.textContent = options.sub || 'Voice AI Consultation \u2022 Listening';
-        mainEl.textContent = options.main || 'Listening';
+        applyIslandText(options.sub || 'Voice AI Consultation \u2022 Listening', options.main || 'Listening');
         if (!islandTimerInterval) window.startIslandTimer();
         break;
 
@@ -632,57 +788,49 @@
         if (pixelLoader) pixelLoader.style.display = 'flex';
         if (soundwave) soundwave.style.display = 'none';
         if (notchStopBtn) notchStopBtn.style.display = 'none';
-        subEl.textContent = options.sub || 'Voice Interrupted \u2022 Standby';
-        mainEl.textContent = options.main || 'Stopped';
+        applyIslandText(options.sub || 'Voice Interrupted \u2022 Standby', options.main || 'Stopped');
         window.stopIslandTimer(options.keepTimer ? 3500 : 0);
         break;
 
       case 'thinking':
-        island.classList.add('theme-orange', 'is-thinking');
-        subEl.textContent = options.sub || 'Matching clinical intent \u2022 chat_dataset.py';
-        mainEl.textContent = options.main || 'Thinking';
+        island.classList.add('state-thinking', 'is-thinking');
+        applyIslandText(options.sub || 'Matching clinical intent • chat_dataset.py', options.main || 'Thinking...');
         window.startIslandTimer();
         break;
 
       case 'generating':
         island.classList.add('theme-orange', 'is-thinking');
-        subEl.textContent = options.sub || 'Synthesizing \u2022 Alzheimer';
-        mainEl.textContent = options.main || 'Generating';
+        applyIslandText(options.sub || 'Synthesizing \u2022 Alzheimer', options.main || 'Generating');
         break;
 
       case 'training':
         island.classList.add('theme-orange', 'is-training');
-        subEl.textContent = options.sub || 'Training XGBoost \u2022 Gradient Boosted Trees';
-        mainEl.textContent = options.main || 'Training...';
+        applyIslandText(options.sub || 'Training XGBoost \u2022 Gradient Boosted Trees', options.main || 'Training...');
         if (!islandTimerInterval) window.startIslandTimer();
         break;
 
       case 'predicting':
         island.classList.add('theme-purple', 'is-thinking');
-        subEl.textContent = options.sub || 'Evaluating 32 Biomarkers \u2022 Clinical Inference';
-        mainEl.textContent = options.main || 'Diagnosing';
+        applyIslandText(options.sub || 'Evaluating 32 Biomarkers \u2022 Clinical Inference', options.main || 'Diagnosing');
         window.startIslandTimer();
         break;
 
       case 'evaluating':
         island.classList.add('theme-green', 'is-thinking');
-        subEl.textContent = options.sub || 'Evaluating test metrics \u2022 430 patient records';
-        mainEl.textContent = options.main || 'Evaluating';
+        applyIslandText(options.sub || 'Evaluating test metrics \u2022 430 patient records', options.main || 'Evaluating');
         window.startIslandTimer();
         break;
 
       case 'idle':
         island.classList.add('theme-default');
-        subEl.textContent = options.sub || "Alzheimer's AI \u2022 Standby";
-        mainEl.textContent = options.main || 'Idle';
+        applyIslandText(options.sub || "Alzheimer's AI \u2022 Standby", options.main || 'Idle');
         window.stopIslandTimer(options.keepTimer ? 3500 : 0);
         break;
 
       case 'ready':
       default:
-        island.classList.add('theme-green', 'is-ready');
-        subEl.textContent = options.sub || 'Alzheimer \u2022 32 Biomarkers';
-        mainEl.textContent = options.main || 'Ready';
+        island.classList.add('theme-green', 'is-ready', 'state-ready');
+        applyIslandText(options.sub || getDefaultReadySubText(), options.main || 'Ready');
         window.stopIslandTimer(options.keepTimer ? 3500 : 0);
         break;
     }
@@ -754,27 +902,44 @@
   }
 
   // ─── Background Status Poller ──────────────────────────────────────────────
+  const pollModelStatus = syncStatus;
+  window.pollModelStatus = syncStatus;
+
   async function syncStatus() {
     try {
       const res = await fetch('/api/status');
       if (!res.ok) return;
       const data = await res.json();
 
-      // Don't override active voice states
+      // Jangan ganggu proses yang sedang aktif berjalan
       if (
         currentIslandState === 'voice-speaking' ||
         currentIslandState === 'voice-listening' ||
-        currentIslandState === 'voice-stopped'
+        currentIslandState === 'voice-stopped' ||
+        currentIslandState === 'intake' ||
+        currentIslandState === 'predicting' ||
+        currentIslandState === 'xgboost' ||
+        currentIslandState === 'generating' ||
+        currentIslandState === 'thinking' ||
+        currentIslandState === 'validating'
       ) return;
 
-      if (currentIslandState === 'ready' || currentIslandState === 'idle') {
-        if (data.training_running) {
+      if (data.training_running) {
+        if (currentIslandState !== 'training') {
           window.setDynamicIslandState('training', { sub: 'Training in background…', main: 'Training…' });
-        } else {
-          const subEl = document.getElementById('island-sub-text');
-          const mainEl = document.getElementById('island-main-text');
-          if (subEl) subEl.textContent = data.model_ready ? 'Alzheimer \u2022 32 Bio' : 'No Checkpoint';
-          if (mainEl) mainEl.textContent = data.model_ready ? 'Ready' : 'Idle';
+        }
+      } else {
+        if (currentIslandState === 'training') {
+          window.setDynamicIslandState('ready', { sub: 'XGBoost • 32 Biomarkers', main: 'Ready' });
+        } else if (currentIslandState === 'ready' || currentIslandState === 'idle') {
+          const targetState = data.model_ready ? 'ready' : 'idle';
+          const targetSub = data.model_ready ? getDefaultReadySubText() : 'No Checkpoint';
+          const targetMain = data.model_ready ? 'Ready' : 'Idle';
+          const island = document.getElementById('dynamic-island');
+          // Jika kelas terdesinkronisasi (misal tersisa theme-orange), re-apply state bersih
+          if (island && (!island.classList.contains('state-' + targetState) || island.classList.contains('theme-orange'))) {
+            window.setDynamicIslandState(targetState, { sub: targetSub, main: targetMain });
+          }
         }
       }
     } catch (_) {}
@@ -823,6 +988,94 @@
         } else {
           setTimeout(() => window.submitCommand(pending), 400);
         }
+      }
+    }
+  }
+
+  // ─── Interactive Clinical Pipeline Demo Runner ─────────────────────────────
+  window.demoIslandPipeline = function (intervalMs = 3200) {
+    const states = [
+      { state: 'intake',     sub: 'Rekam Medis • Data Intake',          main: 'Inputting...' },
+      { state: 'predicting', sub: 'Evaluasi 32 Biomarker • AI Engine',  main: 'Diagnosing...' },
+      { state: 'xgboost',    sub: 'XGBoost v3.4 • Tree Traversal',      main: 'Computing...' },
+      { state: 'generating', sub: 'Sintesis Klinis • Diagnostik',       main: 'Generating...' },
+      { state: 'validating', sub: 'Integritas Data • SHA-256 Check',    main: 'Verifying...' },
+      { state: 'success',    sub: 'Hasil Selesai • Akurasi 94.4%',      main: 'Completed' },
+      { state: 'ready',      sub: 'XGBoost • 32 Biomarkers',            main: 'Ready' }
+    ];
+
+    let idx = 0;
+    console.log('[Dynamic Island] Memulai demo alur proses klinis Neura...');
+    const runner = setInterval(() => {
+      if (idx >= states.length) {
+        clearInterval(runner);
+        console.log('[Dynamic Island] Demo alur selesai!');
+        return;
+      }
+      const s = states[idx++];
+      window.setDynamicIslandState(s.state, { sub: s.sub, main: s.main });
+    }, intervalMs);
+  };
+
+  // ─── Automatic Form Intake Listener ───────────────────────────────────────
+  function setupAutoIntakeListener() {
+    let intakeDebounce = null;
+
+    function handleIntakeTrigger(target) {
+      if (!target || !target.matches('input, textarea, select')) return;
+      if (target.type === 'hidden' || target.type === 'submit' || target.type === 'button') return;
+      if (target.id === 'chat-input-textarea' || (typeof target.closest === 'function' && target.closest('#chat-input-container'))) return;
+      if (
+        currentIslandState === 'voice-speaking' ||
+        currentIslandState === 'voice-listening' ||
+        currentIslandState === 'predicting' ||
+        currentIslandState === 'training'
+      ) return;
+
+      let fieldHint = target.placeholder || target.getAttribute('data-field') || target.name || target.id || 'Data Diri & Klinis';
+      fieldHint = fieldHint.replace(/profile_form_[0-9a-zA-Z_]+/gi, '').replace(/[._-]+/g, ' ').trim();
+      if (!fieldHint || fieldHint.length < 2) fieldHint = 'Data Pasien';
+
+      window.setDynamicIslandState('intake', {
+        sub: 'Rekam Medis • ' + fieldHint.slice(0, 24),
+        main: 'Inputting...'
+      });
+
+      clearTimeout(intakeDebounce);
+      intakeDebounce = setTimeout(() => {
+        if (currentIslandState === 'intake') {
+          window.setDynamicIslandState('ready', {
+            sub: 'XGBoost • 32 Biomarkers',
+            main: 'Ready'
+          });
+        }
+      }, 3500);
+    }
+
+    // Capture on both input and focusin (clicking or focusing immediately triggers intake state!)
+    document.addEventListener('input', (e) => handleIntakeTrigger(e.target), { passive: true });
+    document.addEventListener('focusin', (e) => handleIntakeTrigger(e.target), { passive: true });
+  }
+
+  window.getCurrentIslandState = () => currentIslandState;
+
+  function init() {
+    ensureDynamicIslandDOM();
+    _startRandomGaze();
+    _startNaturalBlinking();
+    syncStatus();
+    setInterval(syncStatus, 8000);
+    _showInitialWelcomeGreeting();
+    setupAutoIntakeListener();
+
+    // Check if there was a pending island prompt from welcome/landing page
+    const pending = sessionStorage.getItem('pending_neura_action');
+    if (pending) {
+      sessionStorage.removeItem('pending_neura_action');
+      if (pending === '__open_voice__') {
+        setTimeout(() => { if (window.openVoiceChat) window.openVoiceChat(); }, 500);
+      } else {
+        setTimeout(() => window.submitCommand(pending), 400);
       }
     }
   }

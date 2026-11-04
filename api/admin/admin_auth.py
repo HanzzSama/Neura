@@ -171,25 +171,25 @@ def api_admin_send_otp():
 
         logger.info(f"[Admin OTP] Generated SINGLE OTP for {email} -> dest: {real_emails}")
 
-        masked_list = [mask_email(e) for e in real_emails]
-        smtp_ok     = bool(send_result.get("success", False))
+        smtp_ok = bool(send_result.get("success", False))
+        if not smtp_ok:
+            error_msg = send_result.get("error", "Gagal mengirimkan email OTP.")
+            logger.error(f"[Admin OTP] Gagal mengirim OTP ke {real_emails}: {error_msg}")
+            return jsonify({
+                "success": False,
+                "error": f"Gagal mengirimkan kode OTP ke email admin: {error_msg}."
+            }), 500
 
+        masked_list = [mask_email(e) for e in real_emails]
         response_data = {
             "success":          True,
             "message":          "Kode OTP telah dikirimkan ke email terhubung.",
             "custom_email":     email,
             "name":             admin.get("name", "Administrator"),
             "masked_emails":    masked_list,
-            "smtp_sent":        smtp_ok,
+            "smtp_sent":        True,
             "expires_in_seconds": 300,
         }
-
-        # Dev fallback: sertakan OTP plaintext jika SMTP belum dikonfigurasi
-        if not smtp_ok or not is_smtp_configured():
-            response_data["dev_otp"]  = otp_code
-            response_data["dev_note"] = (
-                "SMTP belum dikonfigurasi di .env; kode OTP disimulasikan untuk pengujian lokal."
-            )
 
         return jsonify(response_data)
     finally:

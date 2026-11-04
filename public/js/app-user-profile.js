@@ -722,6 +722,25 @@ function syncProfileCardToStorage(formId) {
   updateSlideNavState(formId);
 }
 
+let _islandProfileDebounce = null;
+function notifyIslandFormIntake(fieldLabel) {
+  if (typeof window.setDynamicIslandState === 'function') {
+    window.setDynamicIslandState('intake', {
+      sub: 'Rekam Medis • ' + (fieldLabel || 'Data Intake'),
+      main: 'Inputting...'
+    });
+    clearTimeout(_islandProfileDebounce);
+    _islandProfileDebounce = setTimeout(() => {
+      if (typeof window.getCurrentIslandState === 'function' && window.getCurrentIslandState() === 'intake') {
+        window.setDynamicIslandState('ready', {
+          sub: 'XGBoost • 32 Biomarkers',
+          main: 'Ready'
+        });
+      }
+    }, 3500);
+  }
+}
+
 // Handler untuk slider advanced (gaya hidup, kognitif)
 window.onAdvSlider = function (formId, field, val, unit) {
   const form = getOrCreateProfileForm(formId);

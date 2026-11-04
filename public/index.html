@@ -28,9 +28,9 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=7.3" />
+  <link rel="stylesheet" href="/css/style.css?v=7.7" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
-  <link rel="stylesheet" href="/css/dynamic-island.css?v=63" />
+  <link rel="stylesheet" href="/css/dynamic-island.css?v=70" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
 
   <!-- Pre-Render Auth Shield: Menyembunyikan dashboard sampai auth-guard memverifikasi pengguna -->
@@ -121,10 +121,27 @@
             </g>
           </svg>
         </div>
-        <div class="bot-mood-row" id="bot-mood-row">
-          <span class="bot-mood-dot mood-happy" id="bot-mood-dot"></span>
-          <span class="bot-mood-label" id="bot-mood-label">Happy</span>
+        <div class="island-pet-status" id="island-pet-status">
+          <span class="island-pet-sub" id="island-pet-sub">XGBoost &bull; 32 Biomarkers</span>
+          <div class="island-pet-main-row">
+            <div class="island-pixel-loader island-pet-pixel-loader" id="island-pet-pixel-loader" title="Neura AI Processing">
+              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
+                <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
+                <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
+                <rect x="8" y="0" width="4" height="4" class="px-cell px-2-0" />
+                <rect x="0" y="4" width="4" height="4" class="px-cell px-0-1" />
+                <rect x="4" y="4" width="4" height="4" class="px-cell px-1-1" />
+                <rect x="8" y="4" width="4" height="4" class="px-cell px-2-1" />
+                <rect x="0" y="8" width="4" height="4" class="px-cell px-0-2" />
+                <rect x="4" y="8" width="4" height="4" class="px-cell px-1-2" />
+                <rect x="8" y="8" width="4" height="4" class="px-cell px-2-2" />
+              </svg>
+            </div>
+            <span class="island-pet-main" id="island-pet-main">Ready</span>
+          </div>
         </div>
+        <!-- Slot konten kapsul mengambang (siap untuk widget / konten mendatang) -->
+        <div class="island-capsule-content" id="island-capsule-content"></div>
       </div>
     </div>
   </div>
@@ -1866,8 +1883,26 @@
                   </button>
                 </div>
 
-                <span class="ib-model-label" id="ib-model-label" title="Model Neura aktif">Neura <span
-                    class="ib-model-tier">Clinical</span></span>
+                <div class="ib-model-switcher-wrapper" id="ib-model-switcher-wrapper">
+                  <button type="button" class="ib-model-btn" id="ib-model-btn" onclick="toggleModelDropdown(event)" title="Ganti Model Chat AI">
+                    <span class="ib-model-status-dot" id="ib-model-status-dot" title="Status Model"></span>
+                    <span class="ib-model-label" id="ib-model-label">Neura <span class="ib-model-tier" id="ib-model-tier">Clinical</span></span>
+                    <svg class="ib-model-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+
+                  <div class="ib-model-dropdown" id="ib-model-dropdown" style="display: none;">
+                    <button type="button" class="qm-item active" id="opt-model-dataset" data-model="dataset" onclick="selectChatModel('dataset', event)" title="Engine Dataset Klinis 32 Biomarker">
+                      <span class="qm-name">Neura Clinical</span>
+                      <span class="qm-tag">/clinical</span>
+                    </button>
+                    <button type="button" class="qm-item" id="opt-model-llm" data-model="llm" onclick="selectChatModel('llm', event)" title="Engine Generative AI Llama 3.2 1B">
+                      <span class="qm-name">Neura LLM</span>
+                      <span class="qm-tag">/llama_3.2</span>
+                    </button>
+                  </div>
+                </div>
 
                 <button class="send-icon-btn is-voice" id="send-msg-btn" title="Bicara atau kirim pesan"
                   onclick="handleSendClick()">
@@ -3355,19 +3390,19 @@
 <!-- External JavaScript -->
 <script src="/js/qrcode.min.js"></script>
 <script src="/js/about_app.js?v=2"></script>
-<script src="/js/dynamic-island.js?v=61"></script>
+<script src="/js/dynamic-island.js?v=71"></script>
 <!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
 <script src="/js/app-core.js?v=7.3"></script>
 <script src="/js/app-translations.js?v=7.3"></script>
-<script src="/js/app-ui.js?v=7.3"></script>
+<script src="/js/app-ui.js?v=7.4"></script>
 <script src="/js/app-auth.js?v=7.3"></script>
 <script src="/js/app-settings.js?v=7.7"></script>
 <script src="/js/app-voice-input.js?v=7.3"></script>
 <script src="/js/app-ml-commands.js?v=7.3"></script>
-<script src="/js/app-chat.js?v=7.3"></script>
+<script src="/js/app-chat.js?v=8.0"></script>
 
 <!-- Neura Modular Architecture: 2. Role User (Pasien) -->
-<script src="/js/app-user-profile.js?v=7.3"></script>
+<script src="/js/app-user-profile.js?v=7.4"></script>
 <script src="/js/app-user-predict.js?v=7.3"></script>
 <script src="/js/app-user-consultation.js?v=7.3"></script>
 <script src="/js/app-user-voice.js?v=7.3"></script>

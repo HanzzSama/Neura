@@ -706,3 +706,460 @@
     font-size: 9px;
   }
 }
+
+
+/* ==========================================================================
+   Floating Elongated Capsule Mode (Double-Click Triggered)
+   Detached from ceiling, elongated capsule pill, NeuraPet on the left corner
+   ========================================================================== */
+
+/* Wrapper translation down from ceiling (tidak menempel di layar) */
+.dynamic-island-wrapper.wrapper-floating {
+  transform: translateX(-50%) translate3d(0, calc(18px + var(--island-parallax-y, 0px)), 0) !important;
+  pointer-events: auto !important;
+  z-index: 2100;
+}
+
+/* Elongated floating pill shape */
+.dynamic-island.is-floating-capsule {
+  width: 520px !important;
+  max-width: calc(100vw - 32px) !important;
+  height: 68px !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 44px -4px rgba(0, 0, 0, 0.72),
+              0 4px 16px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  cursor: pointer;
+  transition: width 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+              border-radius 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s ease,
+              transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hide ceiling-attached concave ears when floating */
+.dynamic-island.is-floating-capsule::before,
+.dynamic-island.is-floating-capsule::after {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease;
+}
+
+/* Hide compact notch text and loader in floating capsule */
+.dynamic-island.is-floating-capsule .island-notch-compact {
+  opacity: 0 !important;
+  transform: translateY(-6px) scale(0.9) !important;
+  pointer-events: none !important;
+}
+
+/* Reorient bot panel to horizontal row: NeuraPet on the left corner */
+.dynamic-island.is-floating-capsule .island-bot-panel {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  pointer-events: auto !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 0 22px 0 14px !important;
+  gap: 12px !important;
+}
+
+/* Compact NeuraPet avatar placed in left corner */
+.dynamic-island.is-floating-capsule .bot-face-large {
+  width: 62px !important;
+  height: 46px !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.dynamic-island.is-floating-capsule .bot-face-svg {
+  width: 62px !important;
+  height: 46px !important;
+}
+
+/* Mood row alongside NeuraPet */
+.dynamic-island.is-floating-capsule .bot-mood-row {
+  margin: 0 !important;
+  padding: 3px 9px 3px 7px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Slot konten kapsul mengambang (dibiarkan kosong sesuai instruksi) */
+.island-capsule-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  height: 100%;
+}
+
+@media (max-width: 640px) {
+  .dynamic-island.is-floating-capsule {
+    width: calc(100vw - 20px) !important;
+    height: 60px !important;
+  }
+  .dynamic-island.is-floating-capsule .island-bot-panel {
+    padding: 0 14px 0 10px !important;
+    gap: 8px !important;
+  }
+  .dynamic-island.is-floating-capsule .bot-face-large {
+    width: 52px !important;
+    height: 38px !important;
+  }
+  .dynamic-island.is-floating-capsule .bot-face-svg {
+    width: 52px !important;
+    height: 38px !important;
+  }
+  .dynamic-island.is-floating-capsule .bot-mood-label {
+    display: none;
+  }
+}
+
+
+/* ==========================================================================
+   Island Pet Status Indicator (Matching Image 1: XGBoost Subtitle + Pixel Loader Ready)
+   ========================================================================== */
+.island-pet-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1.15;
+  user-select: none;
+}
+
+.island-pet-sub {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  font-size: 10.5px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  line-height: 1.1;
+}
+
+.island-pet-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.island-pet-pixel-loader {
+  width: 13px;
+  height: 13px;
+}
+
+.island-pet-main {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #86EFAC;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  transition: color 0.3s ease;
+}
+
+.dynamic-island.theme-orange .island-pet-main { color: #FED7AA; }
+.dynamic-island.theme-purple .island-pet-main { color: #DDD6FE; }
+.dynamic-island.theme-cyan .island-pet-main { color: #BAE6FD; }
+.dynamic-island.theme-stopped .island-pet-main { color: #FDA4AF; }
+
+/* Floating Capsule Mode Alignment */
+.dynamic-island.is-floating-capsule .island-pet-status {
+  align-items: flex-start !important;
+  text-align: left !important;
+  margin-left: 2px !important;
+}
+
+.dynamic-island.is-floating-capsule .island-pet-main-row {
+  justify-content: flex-start !important;
+}
+
+
+/* ==========================================================================
+   ADVANCED PIXEL MATRIX ANIMATION SUITE (Distinct patterns for each state)
+   3x3 Grid: (0,0)(1,0)(2,0) / (0,1)(1,1)(2,1) / (0,2)(1,2)(2,2)
+   ========================================================================== */
+
+/* ─── 1. READY STATE (Exact Default Green Clockwise Chase) ─── */
+.dynamic-island.state-ready,
+.dynamic-island.is-ready {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 14px -2px rgba(34, 197, 94, 0.2),
+              0 0 0 1px rgba(34, 197, 94, 0.25);
+}
+
+.dynamic-island.state-ready .pixel-loader-svg,
+.dynamic-island.is-ready .pixel-loader-svg {
+  filter: drop-shadow(0 0 2.5px rgba(34, 197, 94, 0.35));
+}
+
+.dynamic-island.state-ready .px-cell,
+.dynamic-island.is-ready .px-cell {
+  animation-name: px-chase-green !important;
+  animation-duration: 1.3s !important;
+  animation-iteration-count: infinite !important;
+  animation-timing-function: ease-in-out !important;
+}
+
+.dynamic-island.state-ready .px-0-0, .dynamic-island.is-ready .px-0-0 { animation-delay: 0s !important; }
+.dynamic-island.state-ready .px-1-0, .dynamic-island.is-ready .px-1-0 { animation-delay: -0.1625s !important; }
+.dynamic-island.state-ready .px-2-0, .dynamic-island.is-ready .px-2-0 { animation-delay: -0.325s !important; }
+.dynamic-island.state-ready .px-2-1, .dynamic-island.is-ready .px-2-1 { animation-delay: -0.4875s !important; }
+.dynamic-island.state-ready .px-2-2, .dynamic-island.is-ready .px-2-2 { animation-delay: -0.65s !important; }
+.dynamic-island.state-ready .px-1-2, .dynamic-island.is-ready .px-1-2 { animation-delay: -0.8125s !important; }
+.dynamic-island.state-ready .px-0-2, .dynamic-island.is-ready .px-0-2 { animation-delay: -0.975s !important; }
+.dynamic-island.state-ready .px-0-1, .dynamic-island.is-ready .px-0-1 { animation-delay: -1.1375s !important; }
+
+.dynamic-island.state-ready .px-1-1,
+.dynamic-island.is-ready .px-1-1 {
+  animation-name: px-center-chase-green !important;
+  animation-duration: 1.3s !important;
+  animation-iteration-count: infinite !important;
+  animation-timing-function: ease-in-out !important;
+  animation-delay: 0s !important;
+}
+
+.dynamic-island.state-ready .island-notch-main,
+.dynamic-island.state-ready .island-pet-main,
+.dynamic-island.is-ready .island-notch-main,
+.dynamic-island.is-ready .island-pet-main {
+  color: #86EFAC !important;
+}
+.dynamic-island.state-ready .island-notch-sub,
+.dynamic-island.state-ready .island-pet-sub,
+.dynamic-island.is-ready .island-notch-sub,
+.dynamic-island.is-ready .island-pet-sub {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* ─── 2. INTAKE STATE (Horizontal Scanner Sweep: Col 0 -> Col 1 -> Col 2) ─── */
+.dynamic-island.state-intake {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 14px -2px rgba(96, 165, 250, 0.3),
+              0 0 0 1px rgba(96, 165, 250, 0.35);
+}
+.dynamic-island.state-intake .pixel-loader-svg { filter: drop-shadow(0 0 2.5px rgba(96, 165, 250, 0.5)); }
+.dynamic-island.state-intake .island-notch-main,
+.dynamic-island.state-intake .island-pet-main { color: #93C5FD !important; }
+.dynamic-island.state-intake .px-cell {
+  animation: px-col-sweep 1.2s infinite ease-in-out !important;
+}
+.dynamic-island.state-intake .px-0-0,
+.dynamic-island.state-intake .px-0-1,
+.dynamic-island.state-intake .px-0-2 { animation-delay: 0s !important; }
+.dynamic-island.state-intake .px-1-0,
+.dynamic-island.state-intake .px-1-1,
+.dynamic-island.state-intake .px-1-2 { animation-delay: 0.24s !important; }
+.dynamic-island.state-intake .px-2-0,
+.dynamic-island.state-intake .px-2-1,
+.dynamic-island.state-intake .px-2-2 { animation-delay: 0.48s !important; }
+
+@keyframes px-col-sweep {
+  0%, 100% { fill: #1E3A8A; opacity: 0.22; }
+  35%      { fill: #BFDBFE; opacity: 1; filter: drop-shadow(0 0 2.5px rgba(147, 197, 253, 0.8)); }
+  70%      { fill: #3B82F6; opacity: 0.6; }
+}
+
+/* ─── 3. PREDICTING STATE (Neural Ripple / Diamond Bloom: Center -> Cross -> Corners) ─── */
+.dynamic-island.state-predicting {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -2px rgba(192, 132, 252, 0.35),
+              0 0 0 1px rgba(192, 132, 252, 0.4);
+}
+.dynamic-island.state-predicting .pixel-loader-svg { filter: drop-shadow(0 0 3px rgba(192, 132, 252, 0.5)); }
+.dynamic-island.state-predicting .island-notch-main,
+.dynamic-island.state-predicting .island-pet-main { color: #E9D5FF !important; }
+.dynamic-island.state-predicting .px-cell {
+  animation: px-neural-bloom 1.35s infinite ease-in-out !important;
+}
+.dynamic-island.state-predicting .px-1-1 { animation-delay: 0s !important; }
+.dynamic-island.state-predicting .px-1-0,
+.dynamic-island.state-predicting .px-0-1,
+.dynamic-island.state-predicting .px-2-1,
+.dynamic-island.state-predicting .px-1-2 { animation-delay: 0.26s !important; }
+.dynamic-island.state-predicting .px-0-0,
+.dynamic-island.state-predicting .px-2-0,
+.dynamic-island.state-predicting .px-0-2,
+.dynamic-island.state-predicting .px-2-2 { animation-delay: 0.52s !important; }
+
+@keyframes px-neural-bloom {
+  0%, 100% { fill: #3B0764; opacity: 0.24; }
+  38%      { fill: #F3E8FF; opacity: 1; filter: drop-shadow(0 0 3px rgba(243, 232, 255, 0.9)); }
+  72%      { fill: #A855F7; opacity: 0.65; }
+}
+
+/* ─── 4. XGBOOST STATE (Branching Split Shift: Main Diagonal vs Anti-Diagonal) ─── */
+.dynamic-island.state-xgboost {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -2px rgba(56, 189, 248, 0.32),
+              0 0 0 1px rgba(56, 189, 248, 0.38);
+}
+.dynamic-island.state-xgboost .pixel-loader-svg { filter: drop-shadow(0 0 2.5px rgba(56, 189, 248, 0.5)); }
+.dynamic-island.state-xgboost .island-notch-main,
+.dynamic-island.state-xgboost .island-pet-main { color: #BAE6FD !important; }
+.dynamic-island.state-xgboost .px-cell {
+  animation: px-tree-split 1.4s infinite ease-in-out !important;
+}
+.dynamic-island.state-xgboost .px-0-0,
+.dynamic-island.state-xgboost .px-2-2 { animation-delay: 0s !important; }
+.dynamic-island.state-xgboost .px-1-1 { animation-delay: 0.28s !important; }
+.dynamic-island.state-xgboost .px-2-0,
+.dynamic-island.state-xgboost .px-0-2 { animation-delay: 0.56s !important; }
+.dynamic-island.state-xgboost .px-1-0,
+.dynamic-island.state-xgboost .px-0-1,
+.dynamic-island.state-xgboost .px-2-1,
+.dynamic-island.state-xgboost .px-1-2 { animation-delay: 0.84s !important; }
+
+@keyframes px-tree-split {
+  0%, 100% { fill: #082F49; opacity: 0.2; }
+  35%      { fill: #E0F2FE; opacity: 1; filter: drop-shadow(0 0 2px rgba(224, 242, 254, 0.8)); }
+  70%      { fill: #0284C7; opacity: 0.55; }
+}
+
+/* ─── 5. TRAINING STATE (High-Velocity Orbital Chase) ─── */
+.dynamic-island.state-training {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -2px rgba(251, 191, 36, 0.35),
+              0 0 0 1px rgba(251, 191, 36, 0.4);
+}
+.dynamic-island.state-training .pixel-loader-svg { filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.5)); }
+.dynamic-island.state-training .island-notch-main,
+.dynamic-island.state-training .island-pet-main { color: #FEF08A !important; }
+.dynamic-island.state-training .px-cell { animation: px-chase-amber 0.85s infinite ease-in-out !important; }
+.dynamic-island.state-training .px-0-0 { animation-delay: 0s !important; }
+.dynamic-island.state-training .px-1-0 { animation-delay: -0.106s !important; }
+.dynamic-island.state-training .px-2-0 { animation-delay: -0.212s !important; }
+.dynamic-island.state-training .px-2-1 { animation-delay: -0.318s !important; }
+.dynamic-island.state-training .px-2-2 { animation-delay: -0.424s !important; }
+.dynamic-island.state-training .px-1-2 { animation-delay: -0.530s !important; }
+.dynamic-island.state-training .px-0-2 { animation-delay: -0.636s !important; }
+.dynamic-island.state-training .px-0-1 { animation-delay: -0.742s !important; }
+.dynamic-island.state-training .px-1-1 { animation: px-center-amber 0.85s infinite ease-in-out !important; }
+
+@keyframes px-chase-amber {
+  0% { fill: #FEF08A; opacity: 1; }
+  25% { fill: #F59E0B; opacity: 0.85; }
+  50% { fill: #B45309; opacity: 0.5; }
+  75%, 100% { fill: #451A03; opacity: 0.22; }
+}
+@keyframes px-center-amber {
+  0%, 100% { fill: #78350F; opacity: 0.3; }
+  50% { fill: #FDE047; opacity: 1; filter: drop-shadow(0 0 2.5px rgba(253, 224, 71, 0.7)); }
+}
+
+/* ─── 6. GENERATING STATE (Waterfall / Matrix Cascade: Row 0 -> Row 1 -> Row 2) ─── */
+.dynamic-island.state-generating {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -2px rgba(251, 146, 60, 0.35),
+              0 0 0 1px rgba(251, 146, 60, 0.4);
+}
+.dynamic-island.state-generating .pixel-loader-svg { filter: drop-shadow(0 0 2.5px rgba(251, 146, 60, 0.5)); }
+.dynamic-island.state-generating .island-notch-main,
+.dynamic-island.state-generating .island-pet-main { color: #FED7AA !important; }
+.dynamic-island.state-generating .px-cell {
+  animation: px-row-cascade 1.1s infinite ease-in-out !important;
+}
+.dynamic-island.state-generating .px-0-0,
+.dynamic-island.state-generating .px-1-0,
+.dynamic-island.state-generating .px-2-0 { animation-delay: 0s !important; }
+.dynamic-island.state-generating .px-0-1,
+.dynamic-island.state-generating .px-1-1,
+.dynamic-island.state-generating .px-2-1 { animation-delay: 0.26s !important; }
+.dynamic-island.state-generating .px-0-2,
+.dynamic-island.state-generating .px-1-2,
+.dynamic-island.state-generating .px-2-2 { animation-delay: 0.52s !important; }
+
+@keyframes px-row-cascade {
+  0%, 100% { fill: #431407; opacity: 0.2; }
+  35%      { fill: #FFEDD5; opacity: 1; filter: drop-shadow(0 0 2px rgba(255, 237, 213, 0.8)); }
+  70%      { fill: #EA580C; opacity: 0.6; }
+}
+
+/* ─── 7. VALIDATING STATE (Blinking Crosshair Radar: Plus + vs Cross x) ─── */
+.dynamic-island.state-validating {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -2px rgba(45, 212, 191, 0.35),
+              0 0 0 1px rgba(45, 212, 191, 0.4);
+}
+.dynamic-island.state-validating .pixel-loader-svg { filter: drop-shadow(0 0 2.5px rgba(45, 212, 191, 0.5)); }
+.dynamic-island.state-validating .island-notch-main,
+.dynamic-island.state-validating .island-pet-main { color: #99F6E4 !important; }
+.dynamic-island.state-validating .px-1-0,
+.dynamic-island.state-validating .px-0-1,
+.dynamic-island.state-validating .px-1-1,
+.dynamic-island.state-validating .px-2-1,
+.dynamic-island.state-validating .px-1-2 {
+  animation: px-cross-plus 1.3s infinite ease-in-out !important;
+}
+.dynamic-island.state-validating .px-0-0,
+.dynamic-island.state-validating .px-2-0,
+.dynamic-island.state-validating .px-0-2,
+.dynamic-island.state-validating .px-2-2 {
+  animation: px-cross-diag 1.3s infinite ease-in-out !important;
+}
+@keyframes px-cross-plus {
+  0%, 48%   { fill: #CCFBF1; opacity: 1; filter: drop-shadow(0 0 2.5px rgba(204, 251, 241, 0.8)); }
+  52%, 100% { fill: #042F2E; opacity: 0.22; }
+}
+@keyframes px-cross-diag {
+  0%, 48%   { fill: #042F2E; opacity: 0.22; }
+  52%, 100% { fill: #5EEAD4; opacity: 1; filter: drop-shadow(0 0 2.5px rgba(94, 234, 212, 0.8)); }
+}
+
+/* ─── 8. SUCCESS STATE (Checkmark Bloom / V-Spark) ─── */
+.dynamic-island.state-success {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -2px rgba(74, 222, 128, 0.4),
+              0 0 0 1px rgba(74, 222, 128, 0.45);
+}
+.dynamic-island.state-success .pixel-loader-svg { filter: drop-shadow(0 0 3px rgba(74, 222, 128, 0.6)); }
+.dynamic-island.state-success .island-notch-main,
+.dynamic-island.state-success .island-pet-main { color: #86EFAC !important; }
+.dynamic-island.state-success .px-cell {
+  animation: none !important;
+  fill: #052E16;
+  opacity: 0.2;
+}
+.dynamic-island.state-success .px-0-1,
+.dynamic-island.state-success .px-1-2,
+.dynamic-island.state-success .px-2-0 {
+  animation: px-check-spark 1.8s infinite ease-in-out !important;
+}
+@keyframes px-check-spark {
+  0%, 100% { fill: #4ADE80; opacity: 0.85; }
+  50%      { fill: #DCFCE7; opacity: 1; filter: drop-shadow(0 0 3.5px rgba(220, 252, 231, 0.9)); }
+}
+
+/* ─── 9. WARNING / ATTENTION STATE (Alert Pulse) ─── */
+.dynamic-island.state-warning {
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.12),
+              0 10px 24px -4px rgba(0, 0, 0, 0.18),
+              0 0 16px -1px rgba(248, 113, 113, 0.45),
+              0 0 0 1px rgba(248, 113, 113, 0.5);
+}
+.dynamic-island.state-warning .pixel-loader-svg { filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.6)); }
+.dynamic-island.state-warning .island-notch-main,
+.dynamic-island.state-warning .island-pet-main { color: #FCA5A5 !important; }
+.dynamic-island.state-warning .px-cell {
+  animation: px-hazard-pulse 0.7s infinite alternate ease-in-out !important;
+}
+@keyframes px-hazard-pulse {
+  from { fill: #7F1D1D; opacity: 0.35; }
+  to   { fill: #F87171; opacity: 1; filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.8)); }
+}

@@ -5,6 +5,148 @@
  * Interactive Slash Commands & DOM Stream Appenders.
  */
 
+// --------------------------------------------------------------------------
+// Chat Model Selection Engine (Dataset Clinical vs Local GGUF LLM)
+// --------------------------------------------------------------------------
+window.neuraChatModel = localStorage.getItem('neura_chat_model') || 'dataset';
+
+function getSelectedChatModel() {
+  return window.neuraChatModel || localStorage.getItem('neura_chat_model') || 'dataset';
+}
+
+function updateModelSwitcherUI(model) {
+  const labelEl = document.getElementById('ib-model-label');
+  const dotEl = document.getElementById('ib-model-status-dot');
+  const optDataset = document.getElementById('opt-model-dataset');
+  const optLlm = document.getElementById('opt-model-llm');
+
+  const activeIsland = (typeof window.getCurrentIslandState === 'function') ? window.getCurrentIslandState() : (window.currentIslandState || 'ready');
+
+  if (model === 'llm') {
+    if (labelEl) labelEl.innerHTML = 'Neura <span class="ib-model-tier" id="ib-model-tier">LLM</span>';
+    if (dotEl) {
+      dotEl.className = 'ib-model-status-dot dot-llm';
+      dotEl.title = 'Model: Llama 3.2 1B Instruct (GGUF)';
+    }
+    if (optDataset) optDataset.classList.remove('active');
+    if (optLlm) optLlm.classList.add('active');
+
+    // Update dynamic island ready state to LLM
+    if (activeIsland === 'ready' && typeof window.setDynamicIslandState === 'function') {
+      window.setDynamicIslandState('ready', {
+        sub: 'Llama 3.2 1B • Generative AI',
+        main: 'Ready',
+        keepTimer: false
+      });
+    }
+  } else {
+    if (labelEl) labelEl.innerHTML = 'Neura <span class="ib-model-tier" id="ib-model-tier">Clinical</span>';
+    if (dotEl) {
+      dotEl.className = 'ib-model-status-dot';
+      dotEl.title = 'Model: Dataset Klinis 32 Biomarker';
+    }
+    if (optDataset) optDataset.classList.add('active');
+    if (optLlm) optLlm.classList.remove('active');
+
+    // Update dynamic island ready state to Dataset Klinis
+    if (activeIsland === 'ready' && typeof window.setDynamicIslandState === 'function') {
+      window.setDynamicIslandState('ready', {
+        sub: 'XGBoost • 32 Biomarkers',
+        main: 'Ready',
+        keepTimer: false
+      });
+    }
+  }
+}
+
+function toggleModelDropdown(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const wrapper = document.getElementById('ib-model-switcher-wrapper');
+  const dropdown = document.getElementById('ib-model-dropdown');
+  if (!dropdown) return;
+
+  const isOpen = dropdown.style.display !== 'none';
+  if (isOpen) {
+    dropdown.style.display = 'none';
+    if (wrapper) wrapper.classList.remove('is-open');
+  } else {
+    dropdown.style.display = 'block';
+    if (wrapper) wrapper.classList.add('is-open');
+    checkLLMReadiness();
+  }
+}
+
+async function checkLLMReadiness() {
+  try {
+    const res = await fetch('/api/features/llm-status');
+    const data = await res.json();
+    const optDesc = document.querySelector('#opt-model-llm .ib-model-opt-desc');
+    const dotEl = document.getElementById('ib-model-status-dot');
+    const isLLM = (window.neuraChatModel === 'llm');
+
+    if (data && data.ready) {
+      if (optDesc) optDesc.textContent = 'Local generative model aktif (Llama 3.2 1B GGUF Siap Digunakan)';
+      if (isLLM && dotEl) {
+        dotEl.className = 'ib-model-status-dot dot-llm';
+      }
+    } else if (data && data.state === 'downloading') {
+      if (optDesc) optDesc.textContent = 'Sedang mengunduh model Llama 3.2 1B...';
+      if (isLLM && dotEl) {
+        dotEl.className = 'ib-model-status-dot dot-warning';
+      }
+    } else {
+      if (optDesc) optDesc.textContent = 'Model LLM sedang tidak aktif / file belum dimuat';
+      if (isLLM && dotEl) {
+        dotEl.className = 'ib-model-status-dot dot-offline';
+      }
+    }
+  } catch (err) {}
+}
+
+function selectChatModel(model, e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  window.neuraChatModel = model;
+  try {
+    localStorage.setItem('neura_chat_model', model);
+  } catch (err) {}
+
+  updateModelSwitcherUI(model);
+
+  const wrapper = document.getElementById('ib-model-switcher-wrapper');
+  const dropdown = document.getElementById('ib-model-dropdown');
+  if (dropdown) dropdown.style.display = 'none';
+  if (wrapper) wrapper.classList.remove('is-open');
+
+  const modelName = model === 'llm' ? 'Neura LLM (Llama 3.2 1B)' : 'Neura Clinical (Dataset Klinis)';
+  if (typeof showToast === 'function') {
+    showToast(`Model konsultasi diubah ke: ${modelName}`, 'info');
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const wrapper = document.getElementById('ib-model-switcher-wrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    const dropdown = document.getElementById('ib-model-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+    wrapper.classList.remove('is-open');
+  }
+});
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    updateModelSwitcherUI(getSelectedChatModel());
+  });
+} else {
+  updateModelSwitcherUI(getSelectedChatModel());
+}
+
+
 // Recent Chats & Sessions Management
 // --------------------------------------------------------------------------
 function _getChatStorageKey() {
@@ -517,7 +659,7 @@ function submitCommand(cmd) {
   }
 
   // If the suggestion chip contains a slash command (e.g. /status, /count_user, /count_doc, /count_nakes, /stats, /data_summary, /predict, /eval, etc.)
-  const slashMatch = cmd.match(/\/(status|count_user|count-user|count_doc|count-doc|count_nakes|count-nakes|data_summary|data-summary|stats|platform_stats|platform-stats|predict|dokumen|doc|hasil|laporan|rujukan|nakes|periksa|validasi|kode|eval|train(?:\s+\d+)?|help|progress|voice|intro|about|konsul)(?:\s+[^\s]+)?\b/i);
+  const slashMatch = cmd.match(/\/(status|count_user|count-user|count_doc|count-doc|count_nakes|count-nakes|data_summary|data-summary|stats|platform_stats|platform-stats|predict|dokumen|doc|hasil|laporan|rujukan|nakes|periksa|validasi|kode|eval|train(?:\s+\d+)?|help|progress|voice|intro|about|konsul|llm|llama|llama_3\.2|clinical|dataset)(?:\s+[^\s]+)?\b/i);
   let finalCmd = cmd;
   if (slashMatch && (cmd.startsWith('/') || cmd.includes('/'))) {
     finalCmd = slashMatch[0];
@@ -627,10 +769,20 @@ async function _executeMessage(text, pendingId = null) {
   const typingId = showTypingIndicator();
 
   const preview = text.length > 26 ? text.slice(0, 26) + '...' : text;
-  setDynamicIslandState('thinking', {
-    sub: `Processing: "${preview}"`,
-    main: 'Thinking'
-  });
+  const activeChatModel = (typeof getSelectedChatModel === 'function') ? getSelectedChatModel() : (window.neuraChatModel || 'dataset');
+  const isLLMActive = (activeChatModel === 'llm');
+
+  if (isLLMActive) {
+    setDynamicIslandState('thinking', {
+      sub: 'Llama 3.2 1B LLM • Berpikir...',
+      main: 'Thinking'
+    });
+  } else {
+    setDynamicIslandState('thinking', {
+      sub: `Processing: "${preview}"`,
+      main: 'Thinking'
+    });
+  }
 
   const startTime = Date.now();
 
@@ -655,12 +807,21 @@ async function _executeMessage(text, pendingId = null) {
       _isProcessingMessage = false;
       setGeneratingState(false);
       playSuccessChime();
-      if (currentIslandState !== 'training') {
-        setDynamicIslandState('ready', {
-          sub: 'Response complete \u2022 Neura MLP',
-          main: 'Ready',
-          keepTimer: true
-        });
+
+      const activeIslandState = (typeof window.getCurrentIslandState === 'function')
+        ? window.getCurrentIslandState()
+        : (window.currentIslandState || 'ready');
+
+      if (activeIslandState !== 'training') {
+        if (typeof window.setDynamicIslandState === 'function') {
+          const curModel = (typeof getSelectedChatModel === 'function') ? getSelectedChatModel() : (window.neuraChatModel || 'dataset');
+          const readySub = (curModel === 'llm') ? 'Llama 3.2 1B \u2022 Generative AI' : 'XGBoost \u2022 32 Biomarkers';
+          window.setDynamicIslandState('ready', {
+            sub: readySub,
+            main: 'Ready',
+            keepTimer: false
+          });
+        }
       }
       updateSendBtnState();
     }
@@ -729,6 +890,36 @@ async function processMLInput(rawText, typingId, startTime) {
     }
     return;
 
+  } else if (lower === '/llm' || lower === '/llama' || lower === '/llama_3.2' || lower === '/model llm') {
+    if (typeof selectChatModel === 'function') selectChatModel('llm');
+    await waitLoad(startTime, 300);
+    removeTypingIndicator(typingId);
+    appendAssistantMessage(`
+      <p>✓ Engine konsultasi dialihkan ke <strong>Neura LLM (Llama 3.2 1B Instruct GGUF)</strong>.</p>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-top:4px">Percakapan berikutnya akan diproses 100% oleh model generative AI lokal.</p>
+    `, {
+      stream: false,
+      source: 'gguf_llm',
+      modelTag: '&bull; Llama 3.2 1B LLM',
+      suggestions: ['Apa perbedaan pikun biasa vs Alzheimer?', 'Gaya hidup sehat untuk otak', '/clinical']
+    });
+    return;
+
+  } else if (lower === '/clinical' || lower === '/dataset' || lower === '/model clinical' || lower === '/model dataset') {
+    if (typeof selectChatModel === 'function') selectChatModel('dataset');
+    await waitLoad(startTime, 300);
+    removeTypingIndicator(typingId);
+    appendAssistantMessage(`
+      <p>✓ Engine konsultasi dialihkan ke <strong>Neura Clinical (Dataset Klinis)</strong>.</p>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-top:4px">Percakapan berikutnya akan diproses 100% oleh aturan dataset 32 biomarker medis.</p>
+    `, {
+      stream: false,
+      source: 'dataset',
+      modelTag: '&bull; Dataset Klinis',
+      suggestions: ['Saya ingin konsultasi daya ingat', 'Apa saja gejala awal Alzheimer?', '/predict', '/llm']
+    });
+    return;
+
   } else if (lower === '/help' || lower.endsWith('/help')) {
     await waitLoad(startTime, 400);
     removeTypingIndicator(typingId);
@@ -740,12 +931,13 @@ async function processMLInput(rawText, typingId, startTime) {
       main: 'Intro'
     });
     try {
-      const chatRes = await fetchJSON('/api/chat', 'POST', { message: 'pengenalan neura ai' });
+      const activeModel = (typeof getSelectedChatModel === 'function') ? getSelectedChatModel() : (window.neuraChatModel || 'dataset');
+      const chatRes = await fetchJSON('/api/chat', 'POST', { message: 'pengenalan neura ai', model: activeModel });
       await waitLoad(startTime, 450);
       removeTypingIndicator(typingId);
       if (chatRes && chatRes.reply) {
         const formatted = formatConsultationReply(chatRes.reply);
-        appendAssistantMessage(formatted, {
+        await appendAssistantMessage(formatted, {
           stream: true,
           suggestions: chatRes.suggestions || ['Saya ingin konsultasi daya ingat', 'Apa saja gejala awal Alzheimer?', 'Coba diagnosis pasien /predict']
         });
@@ -1399,7 +1591,7 @@ async function processMLInput(rawText, typingId, startTime) {
     renderNakesLookupPromptCard();
     return;
 
-  } else if (/\b(konsul|konsultasi|tanya dokter|tanya keluhan|cek kesehatan|data diri|biodata|profil|profile)\b/i.test(text) || lower === '/profile' || lower === '/konsultasi') {
+  } else if ((lower === '/profile' || lower === '/konsultasi' || lower === 'data diri' || lower === 'isi data diri' || lower === 'biodata' || lower === 'profil saya' || lower === '/profile reset' || lower === 'reset profil' || lower === 'ubah data diri') && ((typeof getSelectedChatModel === 'function' ? getSelectedChatModel() : window.neuraChatModel) !== 'llm')) {
     const userRole = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : 'User';
     if (userRole === 'Nakes') {
       const activeDoc = typeof getActivePatientDoc === 'function' ? getActivePatientDoc() : null;
@@ -1474,12 +1666,22 @@ async function processMLInput(rawText, typingId, startTime) {
     }
 
   } else {
-    // Natural Language Assistant Response powered by Chat Dataset
+    // Natural Language Assistant Response (Dataset Clinical vs Llama 3.2 LLM)
     try {
-      setDynamicIslandState('thinking', {
-        sub: 'Matching intent \u2022 chat_dataset.py',
-        main: 'Thinking'
-      });
+      const activeChatModel = (typeof getSelectedChatModel === 'function') ? getSelectedChatModel() : (window.neuraChatModel || 'dataset');
+      const isLLMActive = (activeChatModel === 'llm');
+
+      if (isLLMActive) {
+        setDynamicIslandState('thinking', {
+          sub: 'Llama 3.2 1B \u2022 Memproses respon...',
+          main: 'Thinking'
+        });
+      } else {
+        setDynamicIslandState('thinking', {
+          sub: 'Dataset Klinis \u2022 Analisis intent...',
+          main: 'Thinking'
+        });
+      }
 
       let currentUserName = '';
       try {
@@ -1503,12 +1705,19 @@ async function processMLInput(rawText, typingId, startTime) {
         currentUserName = 'Hanzz';
       }
 
-      const chatRes = await fetchJSON('/api/chat', 'POST', { message: text, user_name: currentUserName });
+            const selectedModel = getSelectedChatModel();
+      const chatRes = await fetchJSON('/api/chat', 'POST', {
+        message: text,
+        user_name: currentUserName,
+        model: selectedModel
+      }, 90000);
       await waitLoad(startTime, 500);
       removeTypingIndicator(typingId);
       if (chatRes && chatRes.reply) {
+        const isFromLLM = (chatRes.source === 'gguf_llm');
+        const engineLabel = isFromLLM ? 'Llama 3.2 1B LLM' : (chatRes.topic || 'Dataset Klinis');
         setDynamicIslandState('generating', {
-          sub: `Konsultasi \u2022 ${chatRes.topic || 'Neura Clinical AI'}`,
+          sub: `Konsultasi • ${engineLabel}`,
           main: 'Generating'
         });
         let replyText = chatRes.reply;
@@ -1521,7 +1730,9 @@ async function processMLInput(rawText, typingId, startTime) {
         const formatted = formatConsultationReply(replyText);
         appendAssistantMessage(formatted, {
           stream: true,
-          suggestions: chatRes.suggestions || []
+          suggestions: chatRes.suggestions || [],
+          source: chatRes.source,
+          modelTag: isFromLLM ? '&bull; Llama 3.2 1B LLM' : '&bull; Dataset Klinis'
         });
       } else {
         setDynamicIslandState('generating', {
@@ -1529,7 +1740,7 @@ async function processMLInput(rawText, typingId, startTime) {
           main: 'Generating'
         });
         const conv = generateConversationalReply(text);
-        appendAssistantMessage(conv, { stream: true });
+        await appendAssistantMessage(conv, { stream: true });
       }
     } catch (e) {
       await waitLoad(startTime, 400);
@@ -1555,9 +1766,20 @@ function formatConsultationReply(rawText) {
     rawText = rawText.join('\n\n');
   }
 
-  // Process markdown tables if present
-  if (rawText.includes('|')) {
-    const lines = rawText.split('\n');
+  // Trim and normalize line endings
+  let text = String(rawText).replace(/\r\n/g, '\n').trim();
+
+  // 1. Process code blocks ``` ... ```
+  const codeBlocks = [];
+  text = text.replace(/```([a-z0-9_-]*)\n([\s\S]*?)```/gi, (match, lang, code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(`<pre class="claude-code-block"><code class="lang-${lang}">${escapeHtml(code.trim())}</code></pre>`);
+    return `__CODE_BLOCK_${idx}__`;
+  });
+
+  // 2. Process markdown tables if present
+  if (text.includes('|')) {
+    const lines = text.split('\n');
     let inTable = false;
     let tableHtml = '';
     let resultLines = [];
@@ -1571,7 +1793,7 @@ function formatConsultationReply(rawText) {
         }
         if (!inTable) {
           inTable = true;
-          tableHtml = '<table class="claude-table" style="margin:10px 0"><thead><tr>' + cells.map(c => `<th>${escapeHtml(c)}</th>`).join('') + '</tr></thead><tbody>';
+          tableHtml = '<table class="claude-table" style="margin:14px 0"><thead><tr>' + cells.map(c => `<th>${escapeHtml(c)}</th>`).join('') + '</tr></thead><tbody>';
         } else {
           tableHtml += '<tr>' + cells.map(c => `<td>${escapeHtml(c)}</td>`).join('') + '</tr>';
         }
@@ -1589,18 +1811,99 @@ function formatConsultationReply(rawText) {
       tableHtml += '</tbody></table>';
       resultLines.push(tableHtml);
     }
-    rawText = resultLines.join('\n');
+    text = resultLines.join('\n');
   }
 
-  // Parse markdown formatting
-  let html = rawText
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>');
+  // 3. Process blockquotes
+  text = text.replace(/^>\s*(.+)$/gm, '<blockquote class="claude-quote">$1</blockquote>');
 
-  return `<p>${html}</p>`;
+  // 4. Process Headings
+  text = text.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
+  text = text.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+
+  // 5. Auto-bold titles in numbered or bulleted list items before colon
+  // E.g.: "1. Penyakit Alzheimer: Penyakit..." -> "1. **Penyakit Alzheimer**: Penyakit..."
+  text = text.replace(/^(\s*\d+\.\s+)([a-zA-Z0-9\s\-_/()]+)(:\s+)/gm, (m, num, title, colon) => {
+    if (title.includes('*') || title.length > 45) return m;
+    return `${num}**${title.trim()}**${colon}`;
+  });
+  text = text.replace(/^(\s*[-*•]\s+)([a-zA-Z0-9\s\-_/()]+)(:\s+)/gm, (m, bullet, title, colon) => {
+    if (title.includes('*') || title.length > 45) return m;
+    return `${bullet}**${title.trim()}**${colon}`;
+  });
+
+  // 6. Inline bold, italic, code
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*([^\*\n]+?)\*/g, '<em>$1</em>');
+  text = text.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+
+  // 7. Parse Ordered & Unordered Lists into structured HTML tags
+  const lines = text.split('\n');
+  const parsed = [];
+  let currentListType = null; // 'ol' | 'ul' | null
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Check for ordered list: "1. text"
+    const olMatch = trimmed.match(/^(\d+)\.\s+(.+)$/);
+    // Check for unordered list: "- text" or "* text" or "• text"
+    const ulMatch = trimmed.match(/^[-*•]\s+(.+)$/);
+
+    if (olMatch) {
+      if (currentListType !== 'ol') {
+        if (currentListType === 'ul') parsed.push('</ul>');
+        parsed.push('<ol class="neura-ordered-list">');
+        currentListType = 'ol';
+      }
+      parsed.push(`  <li>${olMatch[2]}</li>`);
+    } else if (ulMatch) {
+      if (currentListType !== 'ul') {
+        if (currentListType === 'ol') parsed.push('</ol>');
+        parsed.push('<ul class="neura-unordered-list">');
+        currentListType = 'ul';
+      }
+      parsed.push(`  <li>${ulMatch[1]}</li>`);
+    } else {
+      if (currentListType === 'ol') {
+        parsed.push('</ol>');
+        currentListType = null;
+      } else if (currentListType === 'ul') {
+        parsed.push('</ul>');
+        currentListType = null;
+      }
+      parsed.push(line);
+    }
+  }
+  if (currentListType === 'ol') parsed.push('</ol>');
+  if (currentListType === 'ul') parsed.push('</ul>');
+
+  text = parsed.join('\n');
+
+  // 8. Convert remaining paragraphs (separated by double newlines)
+  const blocks = text.split(/\n{2,}/);
+  const formattedBlocks = blocks.map(block => {
+    const trimmed = block.trim();
+    if (!trimmed) return '';
+    // If block is already an HTML block tag (h1-h4, ol, ul, table, blockquote, pre)
+    if (/^<(h[1-4]|ol|ul|table|blockquote|pre)[\s>]/i.test(trimmed)) {
+      return trimmed;
+    }
+    // Otherwise wrap in <p> with single newlines converted to <br>
+    return `<p>${trimmed.replace(/\n/g, '<br>')}</p>`;
+  });
+
+  text = formattedBlocks.filter(Boolean).join('');
+
+  // 9. Restore code blocks
+  codeBlocks.forEach((codeHtml, idx) => {
+    text = text.replace(`__CODE_BLOCK_${idx}__`, codeHtml);
+  });
+
+  return text;
 }
 
 function generateConversationalReply(text) {
@@ -1937,16 +2240,15 @@ function appendUserBubble(text, options = {}) {
   const row = document.createElement('div');
   row.className = 'message-row user';
   if (isPending && pendingId) {
+    row.classList.add('has-pending-queue');
     row.innerHTML = `
-      <div class="user-bubble user-bubble-pending" id="${pendingId}">
-        <div class="user-bubble-text">${escapeHtml(text)}</div>
-        <div class="msg-pending-badge" id="badge_${pendingId}">
-          <svg class="spin-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
-            <path d="M12 2a10 10 0 0 1 10 10"/>
-          </svg>
-          <span>Menunggu antrean...</span>
-        </div>
+      <div class="user-bubble" id="${pendingId}">${escapeHtml(text)}</div>
+      <div class="msg-pending-card" id="badge_${pendingId}">
+        <svg class="spin-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+          <path d="M12 2a10 10 0 0 1 10 10"/>
+        </svg>
+        <span>Menunggu antrean...</span>
       </div>
     `;
   } else {
@@ -1957,6 +2259,7 @@ function appendUserBubble(text, options = {}) {
 }
 
 function appendAssistantMessage(html, options = {}) {
+  return new Promise((resolve) => {
   let contentHtml = html;
   let suggestionsList = options.suggestions || [];
   if (typeof html === 'object' && html !== null && html.html) {
@@ -1973,7 +2276,7 @@ function appendAssistantMessage(html, options = {}) {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
-      <span class="assistant-model-tag">&bull; Alzheimer</span>
+      <span class="assistant-model-tag">${options.modelTag || (options.source === 'gguf_llm' ? '&bull; Llama 3.2 1B LLM' : '&bull; Alzheimer')}</span>
     </div>
     <div class="assistant-prose fade-in"></div>
     <div class="assistant-suggestions-slot"></div>
@@ -2004,6 +2307,7 @@ function appendAssistantMessage(html, options = {}) {
     }
     if (actionRow) actionRow.style.display = 'flex';
     scrollToBottom();
+    try { resolve(row); } catch (_) {}
   }
 
   if (stream) {
@@ -2024,6 +2328,7 @@ function appendAssistantMessage(html, options = {}) {
     }
     scrollToBottom();
   }
+  });
 }
 
 function streamTypewriter(targetElement, fullHtml, onComplete) {
