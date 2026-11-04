@@ -9,7 +9,7 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Claude &bull; Neura AI</title>
+  <title>&bull; Neura AI</title>
   <meta name="description"
     content="Neura AI â€” Interactive machine learning assistant powered by TensorFlow, featuring Claude's warm and intuitive interface." />
 
@@ -111,12 +111,14 @@
       <!-- Bot Pet Expanded Panel (Message removed, centered bot + mood) -->
       <div class="island-bot-panel" id="island-bot-panel">
         <div class="bot-face-large" id="bot-face-large">
-          <svg width="86" height="64" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" class="bot-face-svg" id="bot-face-large-svg">
-            <path id="bot-head-body" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF"/>
+          <svg width="86" height="64" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg"
+            class="bot-face-svg" id="bot-face-large-svg">
+            <path id="bot-head-body"
+              d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF" />
             <g class="bot-eyes-wrapper" id="bot-eyes-wrapper">
               <g class="bot-eyes-track" id="bot-eyes-track">
-                <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000"/>
-                <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000"/>
+                <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000" />
+                <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000" />
               </g>
             </g>
           </svg>
@@ -124,7 +126,8 @@
         <div class="island-pet-status" id="island-pet-status">
           <span class="island-pet-sub" id="island-pet-sub">XGBoost &bull; 32 Biomarkers</span>
           <div class="island-pet-main-row">
-            <div class="island-pixel-loader island-pet-pixel-loader" id="island-pet-pixel-loader" title="Neura AI Processing">
+            <div class="island-pixel-loader island-pet-pixel-loader" id="island-pet-pixel-loader"
+              title="Neura AI Processing">
               <svg width="13" height="13" viewBox="0 0 12 12" fill="none" class="pixel-loader-svg">
                 <rect x="0" y="0" width="4" height="4" class="px-cell px-0-0" />
                 <rect x="4" y="0" width="4" height="4" class="px-cell px-1-0" />
@@ -214,7 +217,8 @@
 
         <!-- Menu Khusus Halaman Admin: Dropdown Accordion (Di Atas ML Commands) -->
         <div class="nav-group-section admin-only-section" id="admin-menu-dropdown-section" style="display: none;">
-          <button class="nav-group-header" id="admin-menu-toggle-btn" onclick="toggleAdminMenuDropdown()" aria-expanded="true">
+          <button class="nav-group-header" id="admin-menu-toggle-btn" onclick="toggleAdminMenuDropdown()"
+            aria-expanded="true">
             <span class="nav-group-title" data-i18n="nav_admin_menu">MENU ADMIN</span>
             <svg class="dropdown-chevron-icon" id="admin-menu-chevron" width="13" height="13" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -254,8 +258,8 @@
             </button>
 
             <!-- 3. Statistik -->
-            <button class="ml-command-item admin-menu-item" id="sidebar-stats-link"
-              onclick="switchAdminRoom('stats')" title="Statistik & Analytics">
+            <button class="ml-command-item admin-menu-item" id="sidebar-stats-link" onclick="switchAdminRoom('stats')"
+              title="Statistik & Analytics">
               <div class="admin-item-label">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -1884,20 +1888,25 @@
                 </div>
 
                 <div class="ib-model-switcher-wrapper" id="ib-model-switcher-wrapper">
-                  <button type="button" class="ib-model-btn" id="ib-model-btn" onclick="toggleModelDropdown(event)" title="Ganti Model Chat AI">
+                  <button type="button" class="ib-model-btn" id="ib-model-btn" onclick="toggleModelDropdown(event)"
+                    title="Ganti Model Chat AI">
                     <span class="ib-model-status-dot" id="ib-model-status-dot" title="Status Model"></span>
-                    <span class="ib-model-label" id="ib-model-label">Neura <span class="ib-model-tier" id="ib-model-tier">Clinical</span></span>
-                    <svg class="ib-model-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <span class="ib-model-label" id="ib-model-label">Neura <span class="ib-model-tier"
+                        id="ib-model-tier">Clinical</span></span>
+                    <svg class="ib-model-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                   </button>
 
                   <div class="ib-model-dropdown" id="ib-model-dropdown" style="display: none;">
-                    <button type="button" class="qm-item active" id="opt-model-dataset" data-model="dataset" onclick="selectChatModel('dataset', event)" title="Engine Dataset Klinis 32 Biomarker">
+                    <button type="button" class="qm-item active" id="opt-model-dataset" data-model="dataset"
+                      onclick="selectChatModel('dataset', event)" title="Engine Dataset Klinis 32 Biomarker">
                       <span class="qm-name">Neura Clinical</span>
                       <span class="qm-tag">/clinical</span>
                     </button>
-                    <button type="button" class="qm-item" id="opt-model-llm" data-model="llm" onclick="selectChatModel('llm', event)" title="Engine Generative AI Llama 3.2 1B">
+                    <button type="button" class="qm-item" id="opt-model-llm" data-model="llm"
+                      onclick="selectChatModel('llm', event)" title="Engine Generative AI Llama 3.2 1B">
                       <span class="qm-name">Neura LLM</span>
                       <span class="qm-tag">/llama_3.2</span>
                     </button>
@@ -3158,282 +3167,284 @@
 
     </div>
   </div>
-</button>
-<button type="button" class="profile-banner-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')"
-  title="Keamanan Sandi">
-  <span>Keamanan</span>
-</button>
-</div>
-
-<button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-    stroke-linecap="round" stroke-linejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-</button>
-</div>
-
-<!-- Floating Avatar (overlapping banner bottom edge) -->
-<div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
-  <div class="profile-floating-avatar-circle" id="edit-avatar-preview">H</div>
-  <div class="profile-avatar-camera-mini" title="Ubah Foto">
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-      <circle cx="12" cy="13" r="4"></circle>
-    </svg>
+  </button>
+  <button type="button" class="profile-banner-tab" id="tab-nav-security" onclick="switchEditProfileTab('security')"
+    title="Keamanan Sandi">
+    <span>Keamanan</span>
+  </button>
   </div>
-</div>
 
-<!-- Banner Action Controls (Google Pill + Circle Actions) -->
-<div class="profile-banner-action-controls">
-  <button type="button" class="profile-banner-pill-btn" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()"
-    title="Sinkronkan foto profil dari akun Google">
-    <svg width="13" height="13" viewBox="0 0 24 24">
-      <path fill="#4285F4"
-        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z" />
-      <path fill="#34A853"
-        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z" />
-      <path fill="#FBBC05"
-        d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z" />
-      <path fill="#EA4335"
-        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z" />
-    </svg>
-    <span>Google Acc...</span>
-  </button>
-
-  <button type="button" class="profile-banner-circle-btn" onclick="triggerAvatarUpload()"
-    title="Unggah foto baru dari perangkat">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+  <button type="button" class="profile-modal-close-circle" onclick="closeEditProfileModal()" title="Tutup Modal">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
       stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-      <polyline points="17 8 12 3 7 8"></polyline>
-      <line x1="12" y1="3" x2="12" y2="15"></line>
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
     </svg>
   </button>
+  </div>
 
-  <button type="button" class="profile-banner-circle-btn btn-delete-circle" id="btn-remove-avatar"
-    onclick="handleRemoveAvatar()" title="Hapus foto profil">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 6h18"></path>
-      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-    </svg>
-  </button>
-</div>
-</div>
-
-<input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;"
-  onchange="handleAvatarFileSelected(event)">
-
-<!-- User Identification Header (Name & @handle) -->
-<div class="profile-hero-user-header">
-  <h3 class="profile-hero-user-name" id="edit-avatar-name-display">HanzzSama</h3>
-  <div class="profile-hero-user-handle" id="edit-avatar-role-badge">@user</div>
-</div>
-
-<!-- ============================================================ -->
-<!-- PANEL 1: PROFILE PREVIEW (Desain 1:1 seperti gambar atas) -->
-<!-- ============================================================ -->
-<div class="profile-view-panel" id="panel-profile-view" style="display:block;">
-  <p class="profile-preview-bio-text" id="preview-profile-bio">
-    Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzbheimer berbasis 32 biomarker multimodal, dengan
-    akurasi 95,2% yang telah divalidasi pada 430 rekam medis
-  </p>
-</div>
-
-<!-- ============================================================ -->
-<!-- PANEL 2: UPDATE FORM (Desain seperti gambar bawah) -->
-<!-- ============================================================ -->
-<div class="profile-view-panel" id="panel-profile-update" style="display:none;">
-  <form id="form-edit-profile" onsubmit="handleSaveProfile(event)">
-    <div class="profile-update-form-grid">
-      <!-- Nama Lengkap -->
-      <div class="profile-form-pill-group">
-        <label class="profile-pill-label" for="edit-profile-input-name">Nama Lengkap</label>
-        <input type="text" class="profile-pill-input" id="edit-profile-input-name" placeholder="Nama Lengkap" required
-          oninput="handleEditProfileNameChange()">
-      </div>
-
-      <!-- Email Terdaftar (Readonly) -->
-      <div class="profile-form-pill-group">
-        <label class="profile-pill-label" for="edit-profile-input-email">Alamat Email</label>
-        <input type="email" class="profile-pill-input input-readonly" id="edit-profile-input-email" readonly
-          placeholder="Alamat Email">
-      </div>
-
-      <!-- Instansi / RS -->
-      <div class="profile-form-pill-group">
-        <label class="profile-pill-label" for="edit-profile-input-institution">Instansi / Organisasi</label>
-        <input type="text" class="profile-pill-input" id="edit-profile-input-institution"
-          placeholder="Instansi / Rumah Sakit">
-      </div>
-
-      <!-- Nomor Telepon -->
-      <div class="profile-form-pill-group">
-        <label class="profile-pill-label" for="edit-profile-input-phone">Nomor Telepon</label>
-        <input type="tel" class="profile-pill-input" id="edit-profile-input-phone"
-          placeholder="Nomor Telepon / WhatsApp">
-      </div>
-
-      <!-- Bio Singkat (Full width) -->
-      <div class="profile-form-pill-group full-width">
-        <label class="profile-pill-label" for="edit-profile-input-bio">Bio Singkat / Minat Klinis</label>
-        <textarea class="profile-pill-textarea" id="edit-profile-input-bio" rows="2"
-          placeholder="Tuliskan catatan peran klinis atau bio profil Anda..."></textarea>
-      </div>
-    </div>
-
-    <div class="profile-update-actions-footer">
-      <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
-        Batal
-      </button>
-      <button type="submit" class="profile-action-btn-solid" id="btn-save-profile">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>Simpan Perubahan</span>
-      </button>
-    </div>
-  </form>
-</div>
-
-<!-- ============================================================ -->
-<!-- PANEL 3: SECURITY / GANTI PASSWORD -->
-<!-- ============================================================ -->
-<div class="profile-view-panel" id="panel-edit-profile-security" style="display:none;">
-  <form id="form-edit-password" onsubmit="handleUpdatePassword(event)">
-    <div class="profile-security-banner-clean">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  <!-- Floating Avatar (overlapping banner bottom edge) -->
+  <div class="profile-floating-avatar-wrap" onclick="triggerAvatarUpload()" title="Klik untuk mengubah foto profil">
+    <div class="profile-floating-avatar-circle" id="edit-avatar-preview">H</div>
+    <div class="profile-avatar-camera-mini" title="Ubah Foto">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+        <circle cx="12" cy="13" r="4"></circle>
       </svg>
-      <div>
-        <span>Gunakan minimal 6 karakter kombinasi huruf besar, kecil, dan angka.</span>
-      </div>
     </div>
+  </div>
 
-    <div class="profile-update-form-grid" style="margin-top:14px;">
-      <div class="profile-form-pill-group full-width">
-        <label class="profile-pill-label" for="input-old-password">Kata Sandi Saat Ini</label>
-        <div class="profile-pill-password-wrap">
-          <input type="password" class="profile-pill-input" id="input-old-password"
-            placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
-          <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-old-password', this)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+  <!-- Banner Action Controls (Google Pill + Circle Actions) -->
+  <div class="profile-banner-action-controls">
+    <button type="button" class="profile-banner-pill-btn" id="btn-sync-google-avatar" onclick="syncAvatarFromGoogle()"
+      title="Sinkronkan foto profil dari akun Google">
+      <svg width="13" height="13" viewBox="0 0 24 24">
+        <path fill="#4285F4"
+          d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z" />
+        <path fill="#34A853"
+          d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.1-6.7-4.94H1.3v3.15C3.29 21.36 7.37 24 12 24z" />
+        <path fill="#FBBC05"
+          d="M5.3 14.26c-.24-.72-.38-1.49-.38-2.26s.14-1.54.38-2.26V6.59H1.3A11.968 11.968 0 0 0 0 12c0 1.92.45 3.74 1.3 5.41l4-3.15z" />
+        <path fill="#EA4335"
+          d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.3 6.59l4 3.15c.94-2.84 3.58-4.99 6.7-4.99z" />
+      </svg>
+      <span>Google Acc...</span>
+    </button>
+
+    <button type="button" class="profile-banner-circle-btn" onclick="triggerAvatarUpload()"
+      title="Unggah foto baru dari perangkat">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+    </button>
+
+    <button type="button" class="profile-banner-circle-btn btn-delete-circle" id="btn-remove-avatar"
+      onclick="handleRemoveAvatar()" title="Hapus foto profil">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18"></path>
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+      </svg>
+    </button>
+  </div>
+  </div>
+
+  <input type="file" id="edit-avatar-file-input" accept="image/png,image/jpeg,image/webp" style="display:none;"
+    onchange="handleAvatarFileSelected(event)">
+
+  <!-- User Identification Header (Name & @handle) -->
+  <div class="profile-hero-user-header">
+    <h3 class="profile-hero-user-name" id="edit-avatar-name-display">HanzzSama</h3>
+    <div class="profile-hero-user-handle" id="edit-avatar-role-badge">@user</div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PANEL 1: PROFILE PREVIEW (Desain 1:1 seperti gambar atas) -->
+  <!-- ============================================================ -->
+  <div class="profile-view-panel" id="panel-profile-view" style="display:block;">
+    <p class="profile-preview-bio-text" id="preview-profile-bio">
+      Platform kecerdasan buatan klinis untuk evaluasi dini resiko Alzbheimer berbasis 32 biomarker multimodal, dengan
+      akurasi 95,2% yang telah divalidasi pada 430 rekam medis
+    </p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PANEL 2: UPDATE FORM (Desain seperti gambar bawah) -->
+  <!-- ============================================================ -->
+  <div class="profile-view-panel" id="panel-profile-update" style="display:none;">
+    <form id="form-edit-profile" onsubmit="handleSaveProfile(event)">
+      <div class="profile-update-form-grid">
+        <!-- Nama Lengkap -->
+        <div class="profile-form-pill-group">
+          <label class="profile-pill-label" for="edit-profile-input-name">Nama Lengkap</label>
+          <input type="text" class="profile-pill-input" id="edit-profile-input-name" placeholder="Nama Lengkap" required
+            oninput="handleEditProfileNameChange()">
+        </div>
+
+        <!-- Email Terdaftar (Readonly) -->
+        <div class="profile-form-pill-group">
+          <label class="profile-pill-label" for="edit-profile-input-email">Alamat Email</label>
+          <input type="email" class="profile-pill-input input-readonly" id="edit-profile-input-email" readonly
+            placeholder="Alamat Email">
+        </div>
+
+        <!-- Instansi / RS -->
+        <div class="profile-form-pill-group">
+          <label class="profile-pill-label" for="edit-profile-input-institution">Instansi / Organisasi</label>
+          <input type="text" class="profile-pill-input" id="edit-profile-input-institution"
+            placeholder="Instansi / Rumah Sakit">
+        </div>
+
+        <!-- Nomor Telepon -->
+        <div class="profile-form-pill-group">
+          <label class="profile-pill-label" for="edit-profile-input-phone">Nomor Telepon</label>
+          <input type="tel" class="profile-pill-input" id="edit-profile-input-phone"
+            placeholder="Nomor Telepon / WhatsApp">
+        </div>
+
+        <!-- Bio Singkat (Full width) -->
+        <div class="profile-form-pill-group full-width">
+          <label class="profile-pill-label" for="edit-profile-input-bio">Bio Singkat / Minat Klinis</label>
+          <textarea class="profile-pill-textarea" id="edit-profile-input-bio" rows="2"
+            placeholder="Tuliskan catatan peran klinis atau bio profil Anda..."></textarea>
         </div>
       </div>
 
-      <div class="profile-form-pill-group">
-        <label class="profile-pill-label" for="input-new-password">Kata Sandi Baru</label>
-        <div class="profile-pill-password-wrap">
-          <input type="password" class="profile-pill-input" id="input-new-password" placeholder="Minimal 6 karakter"
-            required minlength="6" autocomplete="new-password" oninput="handlePasswordStrengthInput(this.value)">
-          <button type="button" class="profile-pill-eye" onclick="togglePasswordVisibility('input-new-password', this)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+      <div class="profile-update-actions-footer">
+        <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
+          Batal
+        </button>
+        <button type="submit" class="profile-action-btn-solid" id="btn-save-profile">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Simpan Perubahan</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PANEL 3: SECURITY / GANTI PASSWORD -->
+  <!-- ============================================================ -->
+  <div class="profile-view-panel" id="panel-edit-profile-security" style="display:none;">
+    <form id="form-edit-password" onsubmit="handleUpdatePassword(event)">
+      <div class="profile-security-banner-clean">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        <div>
+          <span>Gunakan minimal 6 karakter kombinasi huruf besar, kecil, dan angka.</span>
         </div>
       </div>
 
-      <div class="profile-form-pill-group">
-        <label class="profile-pill-label" for="input-confirm-password">Konfirmasi Kata Sandi Baru</label>
-        <div class="profile-pill-password-wrap">
-          <input type="password" class="profile-pill-input" id="input-confirm-password"
-            placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
-          <button type="button" class="profile-pill-eye"
-            onclick="togglePasswordVisibility('input-confirm-password', this)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+      <div class="profile-update-form-grid" style="margin-top:14px;">
+        <div class="profile-form-pill-group full-width">
+          <label class="profile-pill-label" for="input-old-password">Kata Sandi Saat Ini</label>
+          <div class="profile-pill-password-wrap">
+            <input type="password" class="profile-pill-input" id="input-old-password"
+              placeholder="Masukkan kata sandi saat ini" required autocomplete="current-password">
+            <button type="button" class="profile-pill-eye"
+              onclick="togglePasswordVisibility('input-old-password', this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-form-pill-group">
+          <label class="profile-pill-label" for="input-new-password">Kata Sandi Baru</label>
+          <div class="profile-pill-password-wrap">
+            <input type="password" class="profile-pill-input" id="input-new-password" placeholder="Minimal 6 karakter"
+              required minlength="6" autocomplete="new-password" oninput="handlePasswordStrengthInput(this.value)">
+            <button type="button" class="profile-pill-eye"
+              onclick="togglePasswordVisibility('input-new-password', this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-form-pill-group">
+          <label class="profile-pill-label" for="input-confirm-password">Konfirmasi Kata Sandi Baru</label>
+          <div class="profile-pill-password-wrap">
+            <input type="password" class="profile-pill-input" id="input-confirm-password"
+              placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+            <button type="button" class="profile-pill-eye"
+              onclick="togglePasswordVisibility('input-confirm-password', this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Password Strength Meter -->
-    <div class="password-strength-container" id="pwd-strength-container" style="margin-top:10px;">
-      <div class="password-strength-bar">
-        <div class="password-strength-fill" id="pwd-strength-fill"></div>
+      <!-- Password Strength Meter -->
+      <div class="password-strength-container" id="pwd-strength-container" style="margin-top:10px;">
+        <div class="password-strength-bar">
+          <div class="password-strength-fill" id="pwd-strength-fill"></div>
+        </div>
+        <div class="password-strength-label" id="pwd-strength-label">Kekuatan Sandi: —</div>
       </div>
-      <div class="password-strength-label" id="pwd-strength-label">Kekuatan Sandi: —</div>
-    </div>
 
-    <div class="profile-update-actions-footer">
-      <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
-        Batal
-      </button>
-      <button type="submit" class="profile-action-btn-solid" id="btn-save-password">
-        <span>Perbarui Kata Sandi</span>
-      </button>
-    </div>
-  </form>
-</div>
+      <div class="profile-update-actions-footer">
+        <button type="button" class="profile-action-btn-ghost" onclick="switchEditProfileTab('profile')">
+          Batal
+        </button>
+        <button type="submit" class="profile-action-btn-solid" id="btn-save-password">
+          <span>Perbarui Kata Sandi</span>
+        </button>
+      </div>
+    </form>
+  </div>
 
-</div>
-</div>
+  </div>
+  </div>
 
 
-<!-- ============================================================ -->
-<!-- Toast Container -->
-<div class="toast-box" id="toast-box"></div>
+  <!-- ============================================================ -->
+  <!-- Toast Container -->
+  <div class="toast-box" id="toast-box"></div>
 
-<!-- External JavaScript -->
-<script src="/js/qrcode.min.js"></script>
-<script src="/js/about_app.js?v=2"></script>
-<script src="/js/dynamic-island.js?v=71"></script>
-<!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
-<script src="/js/app-core.js?v=7.3"></script>
-<script src="/js/app-translations.js?v=7.3"></script>
-<script src="/js/app-ui.js?v=7.4"></script>
-<script src="/js/app-auth.js?v=7.3"></script>
-<script src="/js/app-settings.js?v=7.7"></script>
-<script src="/js/app-voice-input.js?v=7.3"></script>
-<script src="/js/app-ml-commands.js?v=7.3"></script>
-<script src="/js/app-chat.js?v=8.0"></script>
+  <!-- External JavaScript -->
+  <script src="/js/qrcode.min.js"></script>
+  <script src="/js/about_app.js?v=2"></script>
+  <script src="/js/dynamic-island.js?v=71"></script>
+  <!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
+  <script src="/js/app-core.js?v=7.3"></script>
+  <script src="/js/app-translations.js?v=7.3"></script>
+  <script src="/js/app-ui.js?v=7.4"></script>
+  <script src="/js/app-auth.js?v=7.3"></script>
+  <script src="/js/app-settings.js?v=7.7"></script>
+  <script src="/js/app-voice-input.js?v=7.3"></script>
+  <script src="/js/app-ml-commands.js?v=7.3"></script>
+  <script src="/js/app-chat.js?v=8.0"></script>
 
-<!-- Neura Modular Architecture: 2. Role User (Pasien) -->
-<script src="/js/app-user-profile.js?v=7.4"></script>
-<script src="/js/app-user-predict.js?v=7.3"></script>
-<script src="/js/app-user-consultation.js?v=7.3"></script>
-<script src="/js/app-user-voice.js?v=7.3"></script>
-<script src="/js/app-user-history.js?v=7.3"></script>
-<script src="/js/app-user.js?v=7.3"></script>
+  <!-- Neura Modular Architecture: 2. Role User (Pasien) -->
+  <script src="/js/app-user-profile.js?v=7.4"></script>
+  <script src="/js/app-user-predict.js?v=7.3"></script>
+  <script src="/js/app-user-consultation.js?v=7.3"></script>
+  <script src="/js/app-user-voice.js?v=7.3"></script>
+  <script src="/js/app-user-history.js?v=7.3"></script>
+  <script src="/js/app-user.js?v=7.3"></script>
 
-<!-- Neura Modular Architecture: 3. Role Nakes (Tenaga Kesehatan) -->
-<script src="/js/app-nakes-auth.js?v=7.3"></script>
-<script src="/js/app-nakes-lookup.js?v=7.3"></script>
-<script src="/js/app-nakes-validate.js?v=7.3"></script>
-<script src="/js/app-nakes-patient.js?v=7.3"></script>
-<script src="/js/app-nakes-history.js?v=7.3"></script>
-<script src="/js/app-nakes.js?v=7.3"></script>
+  <!-- Neura Modular Architecture: 3. Role Nakes (Tenaga Kesehatan) -->
+  <script src="/js/app-nakes-auth.js?v=7.3"></script>
+  <script src="/js/app-nakes-lookup.js?v=7.3"></script>
+  <script src="/js/app-nakes-validate.js?v=7.3"></script>
+  <script src="/js/app-nakes-patient.js?v=7.3"></script>
+  <script src="/js/app-nakes-history.js?v=7.3"></script>
+  <script src="/js/app-nakes.js?v=7.3"></script>
 
-<!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
-<script src="/js/app-admin-auth.js?v=7.3"></script>
-<script src="/js/app-admin-nakes.js?v=7.3"></script>
-<script src="/js/app-admin-ml.js?v=7.3"></script>
-<script src="/js/app-admin-history.js?v=7.3"></script>
-<script src="/js/app-admin.js?v=7.3"></script>
-<script src="/js/app-admin-panels.js?v=1.2"></script>
+  <!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
+  <script src="/js/app-admin-auth.js?v=7.3"></script>
+  <script src="/js/app-admin-nakes.js?v=7.3"></script>
+  <script src="/js/app-admin-ml.js?v=7.3"></script>
+  <script src="/js/app-admin-history.js?v=7.3"></script>
+  <script src="/js/app-admin.js?v=7.3"></script>
+  <script src="/js/app-admin-panels.js?v=1.2"></script>
 
-<script src="/js/voice-consultation.js?v=65"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+  <script src="/js/voice-consultation.js?v=65"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 
-<!-- Firebase Authentication & Workspace Security Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="/js/firebase-config.js?v=3"></script>
-<script src="/js/auth-guard.js?v=4"></script>
+  <!-- Firebase Authentication & Workspace Security Guard -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js?v=3"></script>
+  <script src="/js/auth-guard.js?v=4"></script>
 
 </body>
 
