@@ -25,7 +25,8 @@
     try {
       const curModel = localStorage.getItem('neura_chat_model') || (window.neuraChatModel || 'dataset');
       if (curModel === 'llm') {
-        return 'Llama 3.2 1B • Generative AI';
+        const llmName = (typeof getLLMShortName === 'function') ? getLLMShortName() : (localStorage.getItem('neura_llm_model_name') || 'LLM');
+        return llmName + ' • Generative AI';
       }
     } catch (e) {}
     return 'XGBoost • 32 Biomarkers';

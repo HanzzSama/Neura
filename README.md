@@ -38,6 +38,7 @@
 - [Sistem Autentikasi Admin 2FA](#-sistem-autentikasi-admin-2fa)
 - [Perintah Chat Interaktif](#-perintah-chat-interaktif)
 - [Dataset & Model ML](#-dataset--model-ml)
+- [Neura LLM — Model Generatif Lokal](#-neura-llm--model-generatif-lokal)
 - [Voice AI Agent](#-voice-ai-agent)
 - [Git — Push, Pull & Kolaborasi](#-git--push-pull--kolaborasi)
 - [Troubleshooting](#-troubleshooting)
@@ -855,6 +856,92 @@ public/checkpoints/
 public/reports/
 +-- eval_{timestamp}.json      # Hasil evaluasi per sesi
 ```
+
+---
+
+## 🤖 Neura LLM — Model Generatif Lokal
+
+Neura mendukung dua engine konsultasi AI: **Neura Clinical** (berbasis dataset XGBoost) dan **Neura LLM** (berbasis model bahasa generatif lokal Llama 3.2 1B GGUF).
+
+> ⚠️ **File model GGUF tidak disertakan di repository** karena ukurannya ±770MB. Anda perlu mengunduhnya secara manual setelah clone.
+
+### Struktur Folder yang Dibutuhkan
+
+```
+Neura/
+└── modelsLLM/
+    └── llama-3.2-1b-instruct-q4_k_m.gguf   # ← File ini perlu diunduh manual
+```
+
+### Cara Mendapatkan Model (Pilih Salah Satu)
+
+#### Opsi A — Download Otomatis via Script (Direkomendasikan)
+
+```bash
+# Aktifkan virtual environment terlebih dahulu
+.\venv\Scripts\Activate.ps1   # Windows PowerShell
+# atau
+source venv/bin/activate        # Mac / Linux / Git Bash
+
+# Jalankan script downloader
+python scripts/download_llm.py
+```
+
+Script akan otomatis:
+1. Membuat folder `modelsLLM/`
+2. Mengunduh model dari Hugging Face (~770MB)
+3. Memverifikasi file GGUF valid
+
+#### Opsi B — Download Manual dari Hugging Face
+
+1. Buka: [https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF](https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF)
+2. Download file: `llama-3.2-1b-instruct-q4_k_m.gguf`
+3. Buat folder `modelsLLM/` di root project
+4. Pindahkan file ke: `Neura/modelsLLM/llama-3.2-1b-instruct-q4_k_m.gguf`
+
+### Verifikasi Model Siap
+
+Setelah file diletakkan, cek status via API:
+
+```bash
+# Jalankan server terlebih dahulu
+python app.py
+
+# Lalu akses endpoint status LLM
+curl http://localhost:5000/api/features/llm-status
+```
+
+Response jika model siap:
+```json
+{
+  "status": "ready",
+  "model": "llama-3.2-1b-instruct-q4_k_m.gguf",
+  "message": "Model LLM siap digunakan"
+}
+```
+
+### Mengaktifkan Neura LLM di Chat
+
+Setelah model terunduh dan server berjalan:
+
+1. Buka chat Neura di browser
+2. Klik tombol **"Neura Clinical"** di input bar (pojok kanan bawah)
+3. Pilih **"Neura LLM"** dari menu switcher
+4. Atau ketik perintah langsung: `/llm` untuk switch ke LLM, `/clinical` untuk kembali ke dataset
+
+### Spesifikasi Model
+
+| Properti       | Detail                                     |
+| -------------- | ------------------------------------------ |
+| **Model**      | Llama 3.2 1B Instruct (Q4_K_M quantized)   |
+| **Format**     | GGUF (llama-cpp-python compatible)         |
+| **Ukuran**     | ±770 MB                                    |
+| **Backend**    | llama-cpp-python (CPU inference)           |
+| **Max Tokens** | 800 token per respons                      |
+| **Bahasa**     | Indonesia & English                        |
+| **Sumber**     | [Hugging Face — bartowski/Llama-3.2-1B-Instruct-GGUF](https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF) |
+
+> 💡 **Catatan:** Model berjalan sepenuhnya di CPU lokal tanpa koneksi internet setelah diunduh. Waktu respons bergantung pada spesifikasi komputer (rata-rata 10–30 detik pada CPU standar).
 
 ---
 

@@ -9,6 +9,38 @@
 // Chat Model Selection Engine (Dataset Clinical vs Local GGUF LLM)
 // --------------------------------------------------------------------------
 window.neuraChatModel = localStorage.getItem('neura_chat_model') || 'dataset';
+// Nama model LLM yang terdeteksi dari server (auto-generate dari nama file .gguf)
+window.neuraLLMModelName = localStorage.getItem('neura_llm_model_name') || 'Llama 3.2 1B';
+
+/**
+ * Mengambil label pendek dari nama file .gguf
+ * Contoh: "llama-3.2-1b-instruct-q4_k_m.gguf" → "Llama 3.2 1B"
+ *         "mistral-7b-instruct-v0.2.Q4_K_M.gguf" → "Mistral 7B"
+ */
+function getLLMShortName() {
+  return window.neuraLLMModelName || 'LLM';
+}
+
+/**
+ * Parse nama file .gguf menjadi label pendek yang mudah dibaca
+ * Ekstrak: nama model + ukuran parameter (1B, 7B, 13B, dst)
+ */
+function parseLLMDisplayName(filename) {
+  if (!filename) return 'LLM';
+  // Hapus ekstensi .gguf
+  let name = filename.replace(/.gguf$/i, '');
+  // Hapus quantization suffix (q4_k_m, q8_0, f16, dst)
+  name = name.replace(/[-_](q[0-9]+[_k_m]*|f16|f32|q[0-9]+_[0-9]+|instruct[-_]q.+)$/i, '');
+  // Hapus suffix "-instruct", "-chat", "-hf"
+  name = name.replace(/[-_](instruct|chat|hf|v[0-9.]+)$/i, '');
+  // Konversi separator ke spasi dan title-case
+  name = name.replace(/[-_]/g, ' ').trim();
+  // Title case setiap kata
+  name = name.replace(/(w)/g, c => c.toUpperCase());
+  // Perbaiki notasi ukuran (1b → 1B, 7b → 7B, dll)
+  name = name.replace(/(d+)([bBmM])/g, (_, n, u) => n + u.toUpperCase());
+  return name || 'LLM';
+}
 
 function getSelectedChatModel() {
   return window.neuraChatModel || localStorage.getItem('neura_chat_model') || 'dataset';
@@ -26,7 +58,7 @@ function updateModelSwitcherUI(model) {
     if (labelEl) labelEl.innerHTML = 'Neura <span class="ib-model-tier" id="ib-model-tier">LLM</span>';
     if (dotEl) {
       dotEl.className = 'ib-model-status-dot dot-llm';
-      dotEl.title = 'Model: Llama 3.2 1B Instruct (GGUF)';
+      dotEl.title = 'Model: ' + getLLMShortName() + ' (GGUF)';
     }
     if (optDataset) optDataset.classList.remove('active');
     if (optLlm) optLlm.classList.add('active');
@@ -34,7 +66,7 @@ function updateModelSwitcherUI(model) {
     // Update dynamic island ready state to LLM
     if (activeIsland === 'ready' && typeof window.setDynamicIslandState === 'function') {
       window.setDynamicIslandState('ready', {
-        sub: 'Llama 3.2 1B • Generative AI',
+        sub: getLLMShortName() + ' • Generative AI',
         main: 'Ready',
         keepTimer: false
       });
@@ -84,16 +116,42 @@ async function checkLLMReadiness() {
     const res = await fetch('/api/features/llm-status');
     const data = await res.json();
     const optDesc = document.querySelector('#opt-model-llm .ib-model-opt-desc');
+    const optTitle = document.querySelector('#opt-model-llm .ib-model-opt-name');
+    const optBadge = document.querySelector('#opt-model-llm .ib-model-opt-badge');
     const dotEl = document.getElementById('ib-model-status-dot');
     const isLLM = (window.neuraChatModel === 'llm');
 
+    // --- Auto-generate label dari nama file .gguf yang ditemukan server ---
+    if (data && data.model_name) {
+      const displayName = parseLLMDisplayName(data.model_name);
+      window.neuraLLMModelName = displayName;
+      try { localStorage.setItem('neura_llm_model_name', displayName); } catch(e) {}
+      // Update badge di dropdown
+      if (optBadge) optBadge.textContent = displayName;
+      // Update tooltip status dot
+      if (dotEl && isLLM) {
+        dotEl.title = 'Model: ' + data.model_name;
+      }
+      // Update dynamic island jika sedang di ready state
+      const curState = (typeof window.getCurrentIslandState === 'function') ? window.getCurrentIslandState() : (window.currentIslandState || 'ready');
+      if (isLLM && curState === 'ready' && typeof window.setDynamicIslandState === 'function') {
+        window.setDynamicIslandState('ready', {
+          sub: displayName + ' • Generative AI',
+          main: 'Ready',
+          keepTimer: false
+        });
+      }
+    }
+
     if (data && data.ready) {
-      if (optDesc) optDesc.textContent = 'Local generative model aktif (Llama 3.2 1B GGUF Siap Digunakan)';
+      const shortName = getLLMShortName();
+      if (optDesc) optDesc.textContent = 'Local generative model aktif (' + shortName + ' GGUF Siap Digunakan)';
       if (isLLM && dotEl) {
         dotEl.className = 'ib-model-status-dot dot-llm';
       }
     } else if (data && data.state === 'downloading') {
-      if (optDesc) optDesc.textContent = 'Sedang mengunduh model Llama 3.2 1B...';
+      const shortName = getLLMShortName();
+      if (optDesc) optDesc.textContent = 'Sedang mengunduh model ' + shortName + '...';
       if (isLLM && dotEl) {
         dotEl.className = 'ib-model-status-dot dot-warning';
       }
@@ -123,7 +181,7 @@ function selectChatModel(model, e) {
   if (dropdown) dropdown.style.display = 'none';
   if (wrapper) wrapper.classList.remove('is-open');
 
-  const modelName = model === 'llm' ? 'Neura LLM (Llama 3.2 1B)' : 'Neura Clinical (Dataset Klinis)';
+  const modelName = model === 'llm' ? ('Neura LLM (' + getLLMShortName() + ')') : 'Neura Clinical (Dataset Klinis)';
   if (typeof showToast === 'function') {
     showToast(`Model konsultasi diubah ke: ${modelName}`, 'info');
   }
@@ -774,7 +832,7 @@ async function _executeMessage(text, pendingId = null) {
 
   if (isLLMActive) {
     setDynamicIslandState('thinking', {
-      sub: 'Llama 3.2 1B LLM • Berpikir...',
+      sub: getLLMShortName() + ' LLM • Berpikir...',
       main: 'Thinking'
     });
   } else {
@@ -815,7 +873,7 @@ async function _executeMessage(text, pendingId = null) {
       if (activeIslandState !== 'training') {
         if (typeof window.setDynamicIslandState === 'function') {
           const curModel = (typeof getSelectedChatModel === 'function') ? getSelectedChatModel() : (window.neuraChatModel || 'dataset');
-          const readySub = (curModel === 'llm') ? 'Llama 3.2 1B \u2022 Generative AI' : 'XGBoost \u2022 32 Biomarkers';
+          const readySub = (curModel === 'llm') ? (getLLMShortName() + ' \u2022 Generative AI') : 'XGBoost \u2022 32 Biomarkers';
           window.setDynamicIslandState('ready', {
             sub: readySub,
             main: 'Ready',
@@ -895,12 +953,12 @@ async function processMLInput(rawText, typingId, startTime) {
     await waitLoad(startTime, 300);
     removeTypingIndicator(typingId);
     appendAssistantMessage(`
-      <p>✓ Engine konsultasi dialihkan ke <strong>Neura LLM (Llama 3.2 1B Instruct GGUF)</strong>.</p>
+      <p>✓ Engine konsultasi dialihkan ke <strong>Neura LLM (${getLLMShortName()} GGUF)</strong>.</p>
       <p style="font-size:12.5px;color:var(--text-secondary);margin-top:4px">Percakapan berikutnya akan diproses 100% oleh model generative AI lokal.</p>
     `, {
       stream: false,
       source: 'gguf_llm',
-      modelTag: '&bull; Llama 3.2 1B LLM',
+      modelTag: '&bull; ' + getLLMShortName() + ' LLM',
       suggestions: ['Apa perbedaan pikun biasa vs Alzheimer?', 'Gaya hidup sehat untuk otak', '/clinical']
     });
     return;
@@ -1673,7 +1731,7 @@ async function processMLInput(rawText, typingId, startTime) {
 
       if (isLLMActive) {
         setDynamicIslandState('thinking', {
-          sub: 'Llama 3.2 1B \u2022 Memproses respon...',
+          sub: getLLMShortName() + ' \u2022 Memproses respon...',
           main: 'Thinking'
         });
       } else {
@@ -1715,7 +1773,7 @@ async function processMLInput(rawText, typingId, startTime) {
       removeTypingIndicator(typingId);
       if (chatRes && chatRes.reply) {
         const isFromLLM = (chatRes.source === 'gguf_llm');
-        const engineLabel = isFromLLM ? 'Llama 3.2 1B LLM' : (chatRes.topic || 'Dataset Klinis');
+        const engineLabel = isFromLLM ? (getLLMShortName() + ' LLM') : (chatRes.topic || 'Dataset Klinis');
         setDynamicIslandState('generating', {
           sub: `Konsultasi • ${engineLabel}`,
           main: 'Generating'
@@ -1732,7 +1790,7 @@ async function processMLInput(rawText, typingId, startTime) {
           stream: true,
           suggestions: chatRes.suggestions || [],
           source: chatRes.source,
-          modelTag: isFromLLM ? '&bull; Llama 3.2 1B LLM' : '&bull; Dataset Klinis'
+          modelTag: isFromLLM ? ('&bull; ' + getLLMShortName() + ' LLM') : '&bull; Dataset Klinis'
         });
       } else {
         setDynamicIslandState('generating', {
@@ -2276,7 +2334,7 @@ function appendAssistantMessage(html, options = {}) {
     <div class="assistant-header">
       <img src="/assets/neura_logo.jpg" alt="Neura" class="assistant-avatar-img" onerror="this.style.display='none'" />
       <span class="assistant-name">Neura</span>
-      <span class="assistant-model-tag">${options.modelTag || (options.source === 'gguf_llm' ? '&bull; Llama 3.2 1B LLM' : '&bull; Alzheimer')}</span>
+      <span class="assistant-model-tag">${options.modelTag || (options.source === 'gguf_llm' ? ('&bull; ' + getLLMShortName() + ' LLM') : '&bull; Alzheimer')}</span>
     </div>
     <div class="assistant-prose fade-in"></div>
     <div class="assistant-suggestions-slot"></div>
