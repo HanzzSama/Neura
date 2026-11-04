@@ -156,9 +156,10 @@ async function checkLLMReadiness() {
       _renderLLMModelList(data.available_models, data.ready);
     }
 
-    // --- Update status dot ---
+    // --- Update status dot and switcher label ---
     if (data && data.ready) {
       if (isLLM && dotEl) dotEl.className = 'ib-model-status-dot dot-llm';
+      if (isLLM) updateModelSwitcherUI('llm');
     } else if (data && data.state === 'downloading') {
       if (isLLM && dotEl) dotEl.className = 'ib-model-status-dot dot-warning';
     } else {
@@ -173,13 +174,33 @@ async function checkLLMReadiness() {
  * Render daftar model LLM tersedia ke dalam #ib-llm-model-list.
  * Dipanggil setiap kali dropdown dibuka.
  */
+function _makeModelTag(displayName, filename) {
+  if (filename) {
+    const f = filename.toLowerCase();
+    if (f.includes('llama-3.2') || f.includes('llama_3.2')) return '/llama_3.2';
+    if (f.includes('llama')) return '/llama';
+    if (f.includes('gemma-2') || f.includes('gemma_2')) return '/gemma_2';
+    if (f.includes('gemma')) return '/gemma';
+    if (f.includes('mistral')) return '/mistral';
+    if (f.includes('deepseek')) return '/deepseek';
+    if (f.includes('phi-3') || f.includes('phi_3')) return '/phi_3';
+    if (f.includes('qwen')) return '/qwen';
+  }
+  if (!displayName) return '/llm';
+  const clean = displayName.toLowerCase().replace(/[^a-z0-9.]+/g, '_').replace(/_+$/, '');
+  const parts = clean.split('_');
+  if (parts.length >= 2 && /^\d+(\.\d+)?$/.test(parts[1])) {
+    return '/' + parts[0] + '_' + parts[1];
+  }
+  return '/' + (parts[0] || 'llm');
+}
+
 function _renderLLMModelList(models, globalReady) {
   const container = document.getElementById('ib-llm-model-list');
   const separator = document.getElementById('ib-model-separator');
   if (!container) return;
 
   if (!models || models.length === 0) {
-    // Tidak ada model tersedia
     container.innerHTML =
       '<button type="button" class="qm-item" id="opt-model-llm" data-model="llm" data-llm-file="" ' +
       'style="cursor:default;opacity:.55;" title="File model .gguf belum tersedia">' +
@@ -199,23 +220,31 @@ function _renderLLMModelList(models, globalReady) {
   container.innerHTML = models.map((m, idx) => {
     const isActive     = m.active || m.filename === activeFile;
     const isCurrentEng = (window.neuraChatModel === 'llm') && isActive;
-    const tagText      = '/llm' + (models.length > 1 ? (idx + 1) : '');
+    const tagText      = _makeModelTag(m.display_name, m.filename);
     const sizeBadge    = m.size_mb > 0
       ? (m.size_mb >= 1024 ? (m.size_mb / 1024).toFixed(1) + ' GB' : m.size_mb + ' MB')
       : '';
+    const safeFilename = encodeURIComponent(m.filename || '');
+    const safeArch = (m.architecture || '').replace(/"/g, '&quot;');
+    const safeDisp = (m.display_name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return (
       '<button type="button" class="qm-item' + (isCurrentEng ? ' active' : '') + '"' +
-      ' id="' + (idx === 0 ? 'opt-model-llm' : 'opt-model-llm-' + idx) + '"' +
+      ' id="opt-model-llm-' + idx + '"' +
       ' data-model="llm"' +
-      ' data-llm-file="' + m.filename.replace(/"/g, '&quot;') + '"' +
-      ' onclick="selectLLMModel('' + m.filename.replace(/\/g, '\\').replace(/'/g, "\'") + '', event)"' +
-      ' title="' + m.architecture.replace(/"/g, '&quot;') + (sizeBadge ? ' — ' + sizeBadge : '') + '">' +
-      '<span class="qm-name">' + m.display_name + '</span>' +
+      ' data-llm-file="' + safeFilename + '"' +
+      ' onclick="selectLLMModelByEncoded(this.getAttribute(\'data-llm-file\'), event)"' +
+      ' title="' + safeArch + (sizeBadge ? ' - ' + sizeBadge : '') + '">' +
+      '<span class="qm-name">' + safeDisp + '</span>' +
       '<span class="qm-tag">' + tagText + '</span>' +
       (isActive ? '<span class="qm-check" style="margin-left:auto;color:#c8b89a;font-size:11px;">✓</span>' : '') +
       '</button>'
     );
   }).join('');
+}
+
+function selectLLMModelByEncoded(encodedFilename, e) {
+  const filename = decodeURIComponent(encodedFilename || '');
+  return selectLLMModel(filename, e);
 }
 
 /**
@@ -332,14 +361,24 @@ document.addEventListener('click', (e) => {
   }
 });
 
+checkLLMReadiness();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     updateModelSwitcherUI(getSelectedChatModel());
+    checkLLMReadiness();
   });
 } else {
   updateModelSwitcherUI(getSelectedChatModel());
+  checkLLMReadiness();
 }
 
+
+
+// Expose model switcher handlers to window for HTML onclick attributes
+window.toggleModelDropdown = toggleModelDropdown;
+window.selectChatModel = selectChatModel;
+window.selectLLMModel = selectLLMModel;
+window.selectLLMModelByEncoded = selectLLMModelByEncoded;
 
 // Recent Chats & Sessions Management
 // --------------------------------------------------------------------------
@@ -1084,7 +1123,7 @@ async function processMLInput(rawText, typingId, startTime) {
     }
     return;
 
-  } else if (lower === '/llm' || lower === '/llama' || lower === '/llama_3.2' || lower === '/model llm') {
+  } else if (lower === '/llm' || lower === '/llama' || lower === '/llama_3.2' || lower === '/gemma' || lower === '/gemma_2' || lower === '/model llm') {
     if (typeof selectChatModel === 'function') selectChatModel('llm');
     await waitLoad(startTime, 300);
     removeTypingIndicator(typingId);

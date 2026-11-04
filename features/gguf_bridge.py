@@ -79,10 +79,14 @@ def parse_model_architecture(filename: str) -> str:
             family = label
             break
 
-    # --- Deteksi versi model (3.2, 2.5, dst) —
-    # Hindari angka yang langsung diikuti 'b' (ukuran parameter)
-    version_match = re.search(r"(?<![0-9])(\d+\.\d+)(?![bBmMgG])", name_lower)
-    version = f" {version_match.group(1)}" if version_match else ""
+    # --- Deteksi versi model (3.2, 2, 2.5, dst) ---
+    # Contoh: gemma-2-2b -> versi 2; llama-3.2-1b -> versi 3.2
+    v_match = re.search(r"(?:llama|gemma|phi|qwen|mistral|deepseek)[-_](?:v)?(\d+(?:\.\d+)?)", name_lower)
+    if v_match:
+        version = f" {v_match.group(1)}"
+    else:
+        version_match = re.search(r"(?<![0-9])(\d+\.\d+)(?![bBmMgG])", name_lower)
+        version = f" {version_match.group(1)}" if version_match else ""
 
     # --- Deteksi ukuran parameter (1b, 7b, 13b, 70b, dst) ---
     size_match = re.search(r"[-.](\d+\.?\d*)\s*([bBmMgG])(?=[-.]|$|\.gguf)", name_lower)
