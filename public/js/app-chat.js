@@ -11,6 +11,7 @@
 window.neuraChatModel = localStorage.getItem('neura_chat_model') || 'dataset';
 // Nama model LLM yang terdeteksi dari server (auto-generate dari nama file .gguf)
 window.neuraLLMModelName = localStorage.getItem('neura_llm_model_name') || 'Llama 3.2 1B';
+window.neuraLLMActiveFile = localStorage.getItem('neura_llm_active_file') || '';
 
 /**
  * Mengambil label pendek dari nama file .gguf
@@ -62,6 +63,16 @@ function updateModelSwitcherUI(model) {
     }
     if (optDataset) optDataset.classList.remove('active');
     if (optLlm) optLlm.classList.add('active');
+    // Tandai active di dynamic list
+    const llmList = document.getElementById('ib-llm-model-list');
+    if (llmList) {
+      llmList.querySelectorAll('.qm-item').forEach(btn => {
+        const f = btn.getAttribute('data-llm-file');
+        const actFile = window.neuraLLMActiveFile || localStorage.getItem('neura_llm_active_file');
+        if (f && f === actFile) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+    }
 
     // Update dynamic island ready state to LLM
     if (activeIsland === 'ready' && typeof window.setDynamicIslandState === 'function') {
@@ -115,24 +126,21 @@ async function checkLLMReadiness() {
   try {
     const res = await fetch('/api/features/llm-status');
     const data = await res.json();
-    const optDesc = document.querySelector('#opt-model-llm .ib-model-opt-desc');
-    const optTitle = document.querySelector('#opt-model-llm .ib-model-opt-name');
-    const optBadge = document.querySelector('#opt-model-llm .ib-model-opt-badge');
     const dotEl = document.getElementById('ib-model-status-dot');
     const isLLM = (window.neuraChatModel === 'llm');
 
-    // --- Auto-generate label dari nama file .gguf yang ditemukan server ---
+    // --- Update nama model aktif dari server ---
     if (data && data.model_name) {
       const displayName = parseLLMDisplayName(data.model_name);
       window.neuraLLMModelName = displayName;
-      try { localStorage.setItem('neura_llm_model_name', displayName); } catch(e) {}
-      // Update badge di dropdown
-      if (optBadge) optBadge.textContent = displayName;
-      // Update tooltip status dot
-      if (dotEl && isLLM) {
-        dotEl.title = 'Model: ' + data.model_name;
-      }
-      // Update dynamic island jika sedang di ready state
+      window.neuraLLMActiveFile = data.model_name;
+      try {
+        localStorage.setItem('neura_llm_model_name', displayName);
+        localStorage.setItem('neura_llm_active_file', data.model_name);
+      } catch(e) {}
+      // Tooltip status dot
+      if (dotEl && isLLM) dotEl.title = 'Model: ' + data.model_name;
+      // Update Dynamic Island jika ready
       const curState = (typeof window.getCurrentIslandState === 'function') ? window.getCurrentIslandState() : (window.currentIslandState || 'ready');
       if (isLLM && curState === 'ready' && typeof window.setDynamicIslandState === 'function') {
         window.setDynamicIslandState('ready', {
@@ -143,32 +151,161 @@ async function checkLLMReadiness() {
       }
     }
 
-    if (data && data.ready) {
-      const shortName = getLLMShortName();
-      if (optDesc) optDesc.textContent = 'Local generative model aktif (' + shortName + ' GGUF Siap Digunakan)';
-      if (isLLM && dotEl) {
-        dotEl.className = 'ib-model-status-dot dot-llm';
-      }
-    } else if (data && data.state === 'downloading') {
-      const shortName = getLLMShortName();
-      if (optDesc) optDesc.textContent = 'Sedang mengunduh model ' + shortName + '...';
-      if (isLLM && dotEl) {
-        dotEl.className = 'ib-model-status-dot dot-warning';
-      }
-    } else {
-      if (optDesc) optDesc.textContent = 'Model LLM sedang tidak aktif / file belum dimuat';
-      if (isLLM && dotEl) {
-        dotEl.className = 'ib-model-status-dot dot-offline';
-      }
+    // --- Render daftar model LLM tersedia secara dinamis ---
+    if (data && Array.isArray(data.available_models)) {
+      _renderLLMModelList(data.available_models, data.ready);
     }
-  } catch (err) {}
+
+    // --- Update status dot ---
+    if (data && data.ready) {
+      if (isLLM && dotEl) dotEl.className = 'ib-model-status-dot dot-llm';
+    } else if (data && data.state === 'downloading') {
+      if (isLLM && dotEl) dotEl.className = 'ib-model-status-dot dot-warning';
+    } else {
+      if (isLLM && dotEl) dotEl.className = 'ib-model-status-dot dot-offline';
+    }
+  } catch (err) {
+    console.warn('[Neura] checkLLMReadiness error:', err);
+  }
 }
+
+/**
+ * Render daftar model LLM tersedia ke dalam #ib-llm-model-list.
+ * Dipanggil setiap kali dropdown dibuka.
+ */
+function _renderLLMModelList(models, globalReady) {
+  const container = document.getElementById('ib-llm-model-list');
+  const separator = document.getElementById('ib-model-separator');
+  if (!container) return;
+
+  if (!models || models.length === 0) {
+    // Tidak ada model tersedia
+    container.innerHTML =
+      '<button type="button" class="qm-item" id="opt-model-llm" data-model="llm" data-llm-file="" ' +
+      'style="cursor:default;opacity:.55;" title="File model .gguf belum tersedia">' +
+      '<span class="qm-name">Neura LLM</span>' +
+      '<span class="qm-tag" style="background:rgba(255,80,80,.18);color:#ff6b6b">Offline</span>' +
+      '</button>';
+    if (separator) separator.style.display = 'none';
+    return;
+  }
+
+  if (separator) separator.style.display = '';
+
+  const activeFile = window.neuraLLMActiveFile
+    || localStorage.getItem('neura_llm_active_file')
+    || (models.find(m => m.active) || models[0]).filename;
+
+  container.innerHTML = models.map((m, idx) => {
+    const isActive     = m.active || m.filename === activeFile;
+    const isCurrentEng = (window.neuraChatModel === 'llm') && isActive;
+    const tagText      = '/llm' + (models.length > 1 ? (idx + 1) : '');
+    const sizeBadge    = m.size_mb > 0
+      ? (m.size_mb >= 1024 ? (m.size_mb / 1024).toFixed(1) + ' GB' : m.size_mb + ' MB')
+      : '';
+    return (
+      '<button type="button" class="qm-item' + (isCurrentEng ? ' active' : '') + '"' +
+      ' id="' + (idx === 0 ? 'opt-model-llm' : 'opt-model-llm-' + idx) + '"' +
+      ' data-model="llm"' +
+      ' data-llm-file="' + m.filename.replace(/"/g, '&quot;') + '"' +
+      ' onclick="selectLLMModel('' + m.filename.replace(/\/g, '\\').replace(/'/g, "\'") + '', event)"' +
+      ' title="' + m.architecture.replace(/"/g, '&quot;') + (sizeBadge ? ' — ' + sizeBadge : '') + '">' +
+      '<span class="qm-name">' + m.display_name + '</span>' +
+      '<span class="qm-tag">' + tagText + '</span>' +
+      (isActive ? '<span class="qm-check" style="margin-left:auto;color:#c8b89a;font-size:11px;">✓</span>' : '') +
+      '</button>'
+    );
+  }).join('');
+}
+
+/**
+ * Pilih model LLM tertentu dari daftar available_models.
+ * Panggil API llm-select, lalu switch engine ke LLM.
+ */
+async function selectLLMModel(filename, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+
+  // Tutup dropdown
+  const dropdown = document.getElementById('ib-model-dropdown');
+  const wrapper  = document.getElementById('ib-model-switcher-wrapper');
+  if (dropdown) dropdown.style.display = 'none';
+  if (wrapper)  wrapper.classList.remove('is-open');
+
+  const currentFile = window.neuraLLMActiveFile || localStorage.getItem('neura_llm_active_file');
+
+  // Jika file berbeda dari yang aktif → panggil API server
+  if (filename && filename !== currentFile) {
+    if (typeof showToast === 'function') {
+      showToast('Memuat model: ' + parseLLMDisplayName(filename) + '...', 'info');
+    }
+    try {
+      const res = await fetch('/api/features/llm-select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename })
+      });
+      const data = await res.json();
+      if (data.ok && data.status && data.status.model_name) {
+        const displayName = parseLLMDisplayName(data.status.model_name);
+        window.neuraLLMModelName = displayName;
+        window.neuraLLMActiveFile = data.status.model_name;
+        try {
+          localStorage.setItem('neura_llm_model_name', displayName);
+          localStorage.setItem('neura_llm_active_file', data.status.model_name);
+        } catch(err2) {}
+        if (typeof showToast === 'function') {
+          showToast('Model diubah ke: ' + displayName, 'info');
+        }
+      } else {
+        if (typeof showToast === 'function') {
+          showToast('Gagal memuat model: ' + (data.error || filename), 'error');
+        }
+        return; // Jangan switch engine jika gagal
+      }
+    } catch(err) {
+      console.warn('[Neura] selectLLMModel error:', err);
+      if (typeof showToast === 'function') showToast('Koneksi ke server gagal', 'error');
+      return;
+    }
+  } else if (filename && !currentFile) {
+    // File pertama kali dipilih
+    const displayName = parseLLMDisplayName(filename);
+    window.neuraLLMModelName = displayName;
+    window.neuraLLMActiveFile = filename;
+    try {
+      localStorage.setItem('neura_llm_model_name', displayName);
+      localStorage.setItem('neura_llm_active_file', filename);
+    } catch(e2) {}
+  }
+
+  // Switch engine ke LLM
+  window.neuraChatModel = 'llm';
+  try { localStorage.setItem('neura_chat_model', 'llm'); } catch(err) {}
+
+  updateModelSwitcherUI('llm');
+
+  if (!filename || filename === currentFile) {
+    if (typeof showToast === 'function') {
+      showToast('Model konsultasi: Neura LLM (' + getLLMShortName() + ')', 'info');
+    }
+  }
+}
+
 
 function selectChatModel(model, e) {
   if (e) {
     e.preventDefault();
     e.stopPropagation();
   }
+
+  // Jika pilih LLM, delegasikan ke selectLLMModel dengan file aktif saat ini
+  if (model === 'llm') {
+    const activeFile = window.neuraLLMActiveFile || localStorage.getItem('neura_llm_active_file') || '';
+    selectLLMModel(activeFile, e);
+    return;
+  }
+
+  // Dataset / Clinical
   window.neuraChatModel = model;
   try {
     localStorage.setItem('neura_chat_model', model);
@@ -181,9 +318,8 @@ function selectChatModel(model, e) {
   if (dropdown) dropdown.style.display = 'none';
   if (wrapper) wrapper.classList.remove('is-open');
 
-  const modelName = model === 'llm' ? ('Neura LLM (' + getLLMShortName() + ')') : 'Neura Clinical (Dataset Klinis)';
   if (typeof showToast === 'function') {
-    showToast(`Model konsultasi diubah ke: ${modelName}`, 'info');
+    showToast('Model konsultasi diubah ke: Neura Clinical (Dataset Klinis)', 'info');
   }
 }
 

@@ -3002,6 +3002,36 @@ body {
   border-color: rgba(217, 119, 87, 0.35);
 }
 
+/* Model LLM separator label */
+.ib-model-separator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: rgba(200,184,154,.45);
+  pointer-events: none;
+  user-select: none;
+}
+.ib-model-separator::before,
+.ib-model-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(200,184,154,.12);
+}
+
+/* Checkmark active model di multi-LLM list */
+.ib-model-dropdown .qm-check {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--accent-terracotta-hover);
+  flex-shrink: 0;
+}
+
 /* Send / Voice Button Base */
 .send-icon-btn {
   width: 30px;

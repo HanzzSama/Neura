@@ -93,3 +93,21 @@ def api_llm_status():
     except Exception as e:
         logger.error(f"Error in api_llm_status: {traceback.format_exc()}")
         return jsonify({"ready": False, "error": str(e)}), 500
+
+
+@user_chat_bp.route("/features/llm-select", methods=["POST"])
+def api_llm_select():
+    """Ganti model .gguf aktif. Body: { "filename": "nama-file.gguf" }"""
+    try:
+        from features.gguf_bridge import set_active_gguf_model, get_llm_status
+        data = request.get_json(silent=True) or {}
+        filename = (data.get("filename") or "").strip()
+        if not filename:
+            return jsonify({"ok": False, "error": "Parameter 'filename' wajib diisi"}), 400
+        ok = set_active_gguf_model(filename)
+        if not ok:
+            return jsonify({"ok": False, "error": f"File '{filename}' tidak ditemukan atau tidak valid"}), 404
+        return jsonify({"ok": True, "status": get_llm_status()})
+    except Exception as e:
+        logger.error(f"Error in api_llm_select: {traceback.format_exc()}")
+        return jsonify({"ok": False, "error": str(e)}), 500
