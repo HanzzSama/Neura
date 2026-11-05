@@ -17,12 +17,12 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=56">
+  <link rel="stylesheet" href="/css/welcome.css?v=60">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=44">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
-  <link rel="stylesheet" href="/css/auth-hero.css?v=106">
+  <link rel="stylesheet" href="/css/auth-hero.css?v=108">
 </head>
 
 <body>
@@ -155,6 +155,17 @@
     <!-- Right Column: Neural Precision Mapping Visual (Interactive Particle Brain Network) -->
     <div class="hero-right" id="hero-right">
       <canvas id="hero-brain-canvas" class="hero-brain-canvas" aria-label="Jaringan Partikel Otak Neura — Neural Precision Mapping"></canvas>
+      <!-- Interactive Brain Region Tooltip HUD -->
+      <div class="brain-tooltip" id="brain-tooltip" aria-hidden="true">
+        <div class="bt-badge">
+          <div class="bt-badge-main">
+            <span class="bt-dot"></span>
+            <span class="bt-title" id="bt-title">Lobus Frontal</span>
+          </div>
+          <span class="bt-tag" id="bt-tag">Prefrontal Cortex</span>
+        </div>
+        <p class="bt-desc" id="bt-desc">Fungsi eksekutif, penalaran klinis, &amp; memori kerja.</p>
+      </div>
     </div>
   </section>
 
@@ -2096,7 +2107,7 @@
     }
   })();
   </script>
-  <script src="/js/hero-brain-canvas.js?v=1.4"></script>
+  <script src="/js/hero-brain-canvas.js?v=1.8"></script>
   </body>
 
 </html>
