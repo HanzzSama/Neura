@@ -41,23 +41,29 @@ app = Flask(__name__, static_folder="public", static_url_path="")
 CORS(app, supports_credentials=True)
 
 # -----------------------------------------------------------------------
-# Session & Secure Cookie Configuration
+# Session & Secure Cookie Configuration (Remember Me: 30 Hari Aktif)
 # -----------------------------------------------------------------------
 import secrets
+from datetime import timedelta
 from flask_session import Session
 
 os.makedirs(".flask_sessions", exist_ok=True)
+
+# Secret key statis fallback agar restart server tidak membatalkan sesi cookie pengguna
+_STATIC_SECRET_FALLBACK = "8f7e4bce82d6c87bfea4937b969ebb31baf606dd5415a746991f422f64bb4c5b"
+_SECRET_KEY = os.getenv("FLASK_SECRET_KEY") or _STATIC_SECRET_FALLBACK
+
 app.config.update(
-    SECRET_KEY=os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32),
+    SECRET_KEY=_SECRET_KEY,
     SESSION_TYPE="filesystem",
     SESSION_FILE_DIR=".flask_sessions",
-    SESSION_PERMANENT=False,
+    SESSION_PERMANENT=True,             # Remember Me: cookie memiliki masa berlaku permanen
     SESSION_USE_SIGNER=True,
     SESSION_COOKIE_NAME="neura_session",
     SESSION_COOKIE_HTTPONLY=True,       # JavaScript cannot read session cookie (XSS protection)
     SESSION_COOKIE_SAMESITE="Lax",      # Prevents CSRF while allowing standard navigation
     SESSION_COOKIE_SECURE=False,        # Set to True on production HTTPS
-    PERMANENT_SESSION_LIFETIME=86400,   # 24 hours expiry
+    PERMANENT_SESSION_LIFETIME=timedelta(days=30),  # Remember Me: 30 hari bertahan melewati restart
 )
 Session(app)
 

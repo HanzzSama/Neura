@@ -84,6 +84,18 @@ def api_nakes_login():
             "error": "Kata sandi nakes salah. Format default: nks{tahun}{urutan}, contoh nks2026001.",
         }), 401
 
+    # Inisialisasi sesi HTTPOnly cookie server untuk nakes (Remember Me: 30 hari aktif)
+    try:
+        from api.shared.session_middleware import set_user_session
+        set_user_session(
+            uid=matched.get("id"),
+            email=matched.get("nakes_email"),
+            name=matched.get("name"),
+            role="Nakes",
+        )
+    except Exception as sess_err:
+        logger.warning(f"[NakesAuth] Gagal set user session: {sess_err}")
+
     return jsonify({
         "success": True,
         "message": f"Selamat datang, {matched.get('name')}!",

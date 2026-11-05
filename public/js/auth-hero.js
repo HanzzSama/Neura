@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var currentMode = 'login'; // 'login' | 'register'
+  var currentMode = 'welcome'; // 'login' | 'register'
   var isAuthOpen = false;
 
   // DOM Elements
@@ -61,6 +61,12 @@
     tabRegisterBtn = document.getElementById('tab-register-btn');
     sliderTrack = document.getElementById('auth-slider-track');
     loginForm = document.getElementById('auth-login-form');
+    var remBox = document.getElementById('login-remember-me');
+    if (remBox) {
+      try {
+        remBox.checked = (localStorage.getItem('neura_remember_me') !== 'false');
+      } catch (e) {}
+    }
     registerForm = document.getElementById('auth-register-form');
     googleBtn = document.getElementById('auth-google-btn');
     googleBtnText = document.getElementById('auth-google-btn-text');
@@ -69,11 +75,11 @@
     dividerText = document.getElementById('auth-divider-text');
     alertBox = document.getElementById('auth-alert');
     alertText = document.getElementById('auth-alert-text');
-    loggedView = document.getElementById('auth-logged-view');
-    loggedAvatar = document.getElementById('auth-logged-avatar');
-    loggedName = document.getElementById('auth-logged-name');
-    loggedEmail = document.getElementById('auth-logged-email');
-    logoutBtn = document.getElementById('auth-logout-btn');
+    loggedView = document.getElementById('pane-view-profile') || document.getElementById('auth-logged-view');
+    loggedAvatar = document.getElementById('welcome-user-avatar') || document.getElementById('auth-logged-avatar');
+    loggedName = document.getElementById('welcome-user-name') || document.getElementById('auth-logged-name');
+    loggedEmail = document.getElementById('welcome-user-email') || document.getElementById('auth-logged-email');
+    logoutBtn = document.getElementById('btn-logged-logout') || document.getElementById('auth-logout-btn');
     loginSubmitBtn = document.getElementById('login-submit-btn');
     registerSubmitBtn = document.getElementById('register-submit-btn');
 
@@ -111,6 +117,44 @@
   }
 
   // Open the Auth Drawer with slide-in from right animation
+  
+  // =========================================================================
+  // Remember Me Pill Button Handler
+  // =========================================================================
+  function initRememberMeButton() {
+    var btn = document.getElementById('login-remember-btn');
+    var hiddenInput = document.getElementById('login-remember-me');
+    if (!btn) return;
+
+    // Baca preferensi tersimpan (default: true)
+    var savedPref = localStorage.getItem('neura_remember_me');
+    var isActive = (savedPref !== 'false');
+
+    function updateState(active) {
+      if (active) {
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-checked', 'true');
+        if (hiddenInput) hiddenInput.value = 'true';
+      } else {
+        btn.classList.remove('is-active');
+        btn.setAttribute('aria-checked', 'false');
+        if (hiddenInput) hiddenInput.value = 'false';
+      }
+      try {
+        localStorage.setItem('neura_remember_me', active ? 'true' : 'false');
+      } catch (e) {}
+    }
+
+    updateState(isActive);
+
+    btn.onclick = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var nowActive = !btn.classList.contains('is-active');
+      updateState(nowActive);
+    };
+  }
+
   function openAuthCard(mode) {
     isAuthOpen = true;
     if (authCard) {
@@ -126,7 +170,8 @@
 
     if (navLoginBtn) navLoginBtn.classList.add('active');
 
-    if (mode) switchTab(mode);
+    var targetView = mode || 'welcome';
+    switchTab(targetView);
 
     // Auto focus first field after entrance animation & check email value
     setTimeout(function () {
@@ -168,44 +213,147 @@
     if (authCard && authCard.classList.contains('is-open')) {
       closeAuthCard();
     } else {
-      openAuthCard(mode || 'login');
+      openAuthCard(mode || 'welcome');
     }
   }
 
-  function switchTab(mode) {
-    currentMode = mode;
+  function switchAuthView(viewName) {
+    currentMode = viewName;
     hideAlert();
     stopVerifyPolling();
     stopWelcomeCountdown();
     stopAdminOtpTimer();
-    isInOnboardingStep = false; // Reset guard saat kembali ke tab normal
+    isInOnboardingStep = (viewName === 'admin-verify');
 
-    if (authCard) authCard.classList.remove('in-step-mode');
-
-    if (mode === 'register') {
-      if (tabsNav) tabsNav.classList.add('is-register');
-      if (tabLoginBtn) tabLoginBtn.classList.remove('active');
-      if (tabRegisterBtn) tabRegisterBtn.classList.add('active');
-      if (sliderTrack) sliderTrack.className = 'auth-slider-track show-register';
-      if (googleTitle) googleTitle.innerHTML = 'Sign up with <span id="auth-google-btn-text">Google</span>';
-      if (googleSub) googleSub.textContent = 'Registrasi akun klinis cepat & instan';
-      if (googleBtn) googleBtn.title = 'Daftar Akun Baru dengan Google';
-      if (dividerText) dividerText.textContent = 'atau daftar dengan email';
-      if (comp1Title) comp1Title.textContent = 'Sign up';
-      if (comp1ModeToggle) comp1ModeToggle.textContent = 'Log in';
-    } else {
-      if (tabsNav) tabsNav.classList.remove('is-register');
-      if (tabLoginBtn) tabLoginBtn.classList.add('active');
-      if (tabRegisterBtn) tabRegisterBtn.classList.remove('active');
-      if (sliderTrack) sliderTrack.className = 'auth-slider-track show-login';
-      if (googleTitle) googleTitle.innerHTML = 'Log in with <span id="auth-google-btn-text">Google</span>';
-      if (googleSub) googleSub.textContent = 'Single Sign-On Klinis Terverifikasi';
-      if (googleBtn) googleBtn.title = 'Masuk dengan Akun Google Terdaftar';
-      if (dividerText) dividerText.textContent = 'atau masuk dengan email';
-      if (comp1Title) comp1Title.textContent = 'Log in';
-      if (comp1ModeToggle) comp1ModeToggle.textContent = 'Sign up';
+    // Toggle is-welcome-view class on main card for particle & centering CSS
+    var mainCard = document.getElementById('neura-auth-main-card');
+    if (mainCard) {
+      if (viewName === 'welcome') {
+        mainCard.classList.add('is-welcome-view');
+      } else {
+        mainCard.classList.remove('is-welcome-view');
+      }
     }
-    googleBtnText = document.getElementById('auth-google-btn-text');
+
+    // Titles & Subtitles with Apple smooth fade transition
+    var titleEl = document.getElementById('auth-dynamic-title');
+    var subtitleEl = document.getElementById('auth-dynamic-subtitle');
+    var titlesMap = {
+      'welcome': ['Welcome', 'Mulai Konsultasi dan kenali gejala lebih awal'],
+      'login': ['Login', 'Mulai Konsultasi dan kenali gejala lebih awal'],
+      'register': ['Register', 'Mulai Konsultasi dan kenali gejala lebih awal'],
+      'forgot': ['Fotgot Pass', 'Mulai Konsultasi dan kenali gejala lebih awal'],
+      'profile': ['Profile', 'Profil mu dan beberapa data profil'],
+      'admin-verify': ['Verifikasi 2FA', 'Kode OTP telah dikirimkan ke email administrator']
+    };
+    var nextTexts = titlesMap[viewName] || ['Welcome', 'Mulai Konsultasi dan kenali gejala lebih awal'];
+
+    if (titleEl && subtitleEl) {
+      if (titleEl.textContent !== nextTexts[0] || subtitleEl.textContent !== nextTexts[1]) {
+        titleEl.classList.add('is-fading');
+        subtitleEl.classList.add('is-fading');
+        if (window.__authTitleTimer) clearTimeout(window.__authTitleTimer);
+        window.__authTitleTimer = setTimeout(function () {
+          titleEl.textContent = nextTexts[0];
+          subtitleEl.textContent = nextTexts[1];
+          titleEl.classList.remove('is-fading');
+          subtitleEl.classList.remove('is-fading');
+          window.__authTitleTimer = null;
+        }, 140);
+      }
+    }
+
+    // Panes switching with Apple spring smooth motion
+    var allPanes = document.querySelectorAll('.auth-view-pane');
+    var currentActive = document.querySelector('.auth-view-pane.active');
+    var targetPaneId = (viewName === 'admin-verify') ? 'auth-admin-verify-pane' : ('pane-view-' + viewName);
+    var targetPane = document.getElementById(targetPaneId);
+    if (!targetPane && viewName === 'login') {
+      targetPane = document.getElementById('pane-view-login');
+    }
+
+    if (window.__authPaneTimer) {
+      clearTimeout(window.__authPaneTimer);
+      window.__authPaneTimer = null;
+    }
+
+    if (currentActive && targetPane && currentActive !== targetPane) {
+      // Smooth exit: outgoing pane glides up and fades out
+      currentActive.classList.add('is-leaving');
+      var outgoing = currentActive;
+
+      window.__authPaneTimer = setTimeout(function () {
+        outgoing.classList.remove('active', 'is-leaving');
+        allPanes.forEach(function (p) {
+          if (p !== targetPane) p.classList.remove('active', 'is-leaving');
+        });
+        targetPane.classList.add('active');
+        window.__authPaneTimer = null;
+      }, 150);
+    } else if (targetPane) {
+      allPanes.forEach(function (p) { p.classList.remove('active', 'is-leaving'); });
+      targetPane.classList.add('active');
+    }
+
+    // Top Pills Indicator (3 pills at top right)
+    var pillLogin = document.getElementById('top-pill-login');
+    var pillRegister = document.getElementById('top-pill-register');
+    var pillForgot = document.getElementById('top-pill-forgot');
+    [pillLogin, pillRegister, pillForgot].forEach(function (pill) {
+      if (pill) pill.classList.remove('active');
+    });
+
+    if (viewName === 'welcome' || viewName === 'login') {
+      if (pillLogin) pillLogin.classList.add('active');
+    } else if (viewName === 'register') {
+      if (pillRegister) pillRegister.classList.add('active');
+    } else if (viewName === 'forgot') {
+      if (pillForgot) pillForgot.classList.add('active');
+    }
+
+    // Sub stack buttons visibility (Outside main card)
+    var subStack = document.getElementById('neura-auth-sub-stack');
+    var btnEmail = document.getElementById('btn-goto-login-email');
+    var btnGoogle = document.getElementById('auth-google-btn');
+    var placeholder = document.getElementById('sub-stack-placeholder');
+
+    // Container class & attribute update for uniform height guarantee
+    var authContainer = document.querySelector('.neura-auth-flow-container');
+    if (authContainer) {
+      authContainer.setAttribute('data-auth-view', viewName);
+    }
+    var drawerInner = document.querySelector('.auth-drawer-inner');
+    if (drawerInner) {
+      drawerInner.setAttribute('data-auth-view', viewName);
+    }
+
+    if (viewName === 'welcome') {
+      if (subStack) subStack.style.setProperty('display', 'flex', 'important');
+      if (btnEmail) {
+        btnEmail.style.removeProperty('display');
+        btnEmail.classList.remove('is-hidden');
+      }
+      if (btnGoogle) btnGoogle.style.setProperty('display', 'flex', 'important');
+      if (placeholder) {
+        placeholder.style.removeProperty('display');
+        placeholder.classList.remove('is-hidden');
+      }
+    } else if (viewName === 'login' || viewName === 'register' || viewName === 'forgot') {
+      if (subStack) subStack.style.setProperty('display', 'flex', 'important');
+      if (btnEmail) {
+        btnEmail.classList.add('is-hidden');
+      }
+      if (btnGoogle) btnGoogle.style.setProperty('display', 'flex', 'important');
+      if (placeholder) {
+        placeholder.classList.add('is-hidden');
+      }
+    } else if (viewName === 'profile' || viewName === 'admin-verify') {
+      if (subStack) subStack.style.display = 'none';
+    }
+  }
+
+  function switchTab(mode) {
+    switchAuthView(mode);
   }
 
   // Menampilkan Slide 3: Verifikasi Email
@@ -370,19 +518,36 @@
     var submitBtn = document.getElementById('login-submit-btn');
     var descText = document.getElementById('comp1-desc-text');
 
+    var loginForm = document.getElementById('auth-login-form');
     if (active) {
       if (emailPill) emailPill.classList.add('is-admin-verified');
       if (emailAdminIcon) emailAdminIcon.style.display = 'inline-flex';
 
-      if (passPill) passPill.style.display = 'none';
+      if (loginForm) loginForm.classList.add('is-admin-mode');
+
+      // Apple smooth transition: hide password pill, reveal admin notice
+      if (passPill) {
+        passPill.classList.add('is-collapsed');
+        setTimeout(function() {
+          if (loginForm && loginForm.classList.contains('is-admin-mode')) {
+            passPill.style.setProperty('display', 'none', 'important');
+          }
+        }, 280);
+      }
       if (passInput) {
         passInput.disabled = true;
         passInput.removeAttribute('required');
         passInput.value = '';
       }
-      if (notice) notice.style.display = 'flex';
+      if (notice) {
+        notice.style.removeProperty('display');
+        notice.style.display = 'flex';
+        // Force reflow for smooth animation
+        void notice.offsetWidth;
+        notice.classList.add('is-visible');
+      }
       if (submitBtn) {
-        var label = submitBtn.querySelector('.comp1-submit-label');
+        var label = submitBtn.querySelector('.submit-btn-label') || submitBtn.querySelector('.comp1-submit-label');
         if (label) label.textContent = 'Verifikasi 2FA';
         submitBtn.title = 'Lanjut ke Verifikasi Admin 2FA';
         submitBtn.classList.add('is-admin-action');
@@ -394,16 +559,30 @@
       if (emailPill) emailPill.classList.remove('is-admin-verified');
       if (emailAdminIcon) emailAdminIcon.style.display = 'none';
 
-      if (passPill) passPill.style.display = 'flex';
+      if (loginForm) loginForm.classList.remove('is-admin-mode');
+
+      // Restore password capsule and hide admin notice smoothly
+      if (notice) {
+        notice.classList.remove('is-visible');
+        setTimeout(function() {
+          if (loginForm && !loginForm.classList.contains('is-admin-mode')) {
+            notice.style.setProperty('display', 'none', 'important');
+          }
+        }, 240);
+      }
+      if (passPill) {
+        passPill.style.removeProperty('display');
+        void passPill.offsetWidth;
+        passPill.classList.remove('is-collapsed');
+      }
       if (passInput) {
         passInput.disabled = false;
         passInput.setAttribute('required', '');
         passInput.placeholder = 'password';
       }
-      if (notice) notice.style.display = 'none';
       if (submitBtn) {
-        var label = submitBtn.querySelector('.comp1-submit-label');
-        if (label) label.textContent = 'Log in';
+        var label = submitBtn.querySelector('.submit-btn-label') || submitBtn.querySelector('.comp1-submit-label');
+        if (label) label.textContent = 'Login';
         submitBtn.title = 'Masuk ke Workspace';
         submitBtn.classList.remove('is-admin-action');
       }
@@ -448,8 +627,7 @@
     currentAdminEmail = customEmail;
     hideAlert();
 
-    if (authCard) authCard.classList.add('in-step-mode');
-    if (sliderTrack) sliderTrack.className = 'auth-slider-track show-admin-verify';
+    switchAuthView('admin-verify');
 
     if (adminCustomEmailDisplay) adminCustomEmailDisplay.textContent = customEmail;
     if (adminRealEmailDisplay) {
@@ -776,9 +954,11 @@
     if (loading) {
       btn.classList.add('is-loading');
       btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
     } else {
       btn.classList.remove('is-loading');
       btn.disabled = false;
+      btn.removeAttribute('aria-busy');
     }
   }
 
@@ -857,11 +1037,11 @@
   }
 
   function showLoggedState(user) {
-    if (!loggedView) return;
+    if (!user) return;
 
     var displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
     var email = user.email || '';
-    var savedRole = localStorage.getItem('neura_user_role') || 'User';
+    var savedRole = localStorage.getItem('neura_user_role') || user.role || 'User';
     var formattedName = displayName;
     if (savedRole === 'Nakes') {
       formattedName = displayName.startsWith('dr.') ? displayName : ('dr. ' + displayName.charAt(0).toUpperCase() + displayName.slice(1));
@@ -871,23 +1051,17 @@
       formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
     }
 
-    if (loggedName) loggedName.textContent = formattedName;
-    if (loggedEmail) loggedEmail.textContent = email;
+    var nameEl = document.getElementById('welcome-user-name');
+    var roleEl = document.getElementById('welcome-user-role');
+    var emailEl = document.getElementById('welcome-user-email');
+    var avatarEl = document.getElementById('welcome-user-avatar');
 
-    if (loggedAvatar) {
-      var initial = (displayName.charAt(0) || 'D').toUpperCase();
-      var badgeSvg = '<span class="auth-avatar-badge" title="Akun Terverifikasi"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>';
+    if (nameEl) nameEl.textContent = formattedName;
+    if (roleEl) roleEl.textContent = '@' + savedRole.toLowerCase();
+    if (emailEl) emailEl.textContent = email;
 
-      if (user.photoURL) {
-        loggedAvatar.innerHTML =
-          '<img src="' + user.photoURL + '" alt="' + displayName + '" class="auth-avatar-img" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'; if(this.nextElementSibling) this.nextElementSibling.style.display=\'flex\';" />' +
-          '<div class="auth-avatar-fallback" style="display:none">' + initial + '</div>' +
-          badgeSvg;
-      } else {
-        loggedAvatar.innerHTML =
-          '<div class="auth-avatar-fallback">' + initial + '</div>' +
-          badgeSvg;
-      }
+    if (avatarEl && user.photoURL) {
+      avatarEl.src = user.photoURL;
     }
 
     // Update navbar button to show user name
@@ -899,34 +1073,13 @@
       navLoginBtn.title = 'Sesi Klinis Aktif: ' + displayName;
     }
 
-    // Add .is-logged-in to card to hide login headers ("Log in" / "Sign up")
-    var formCard = document.getElementById('auth-comp-form-card');
-    if (formCard) formCard.classList.add('is-logged-in');
-
-    // Hide input forms and slider tabs
-    if (tabsNav) tabsNav.style.display = 'none';
-    if (googleBtn) googleBtn.style.display = 'none';
-    var divider = document.querySelector('.auth-divider');
-    if (divider) divider.style.display = 'none';
-    if (sliderTrack && sliderTrack.parentElement) sliderTrack.parentElement.style.display = 'none';
-
-    // Show logged view
-    loggedView.style.display = 'flex';
+    switchAuthView('profile');
   }
 
   function showUnloggedState() {
-    var formCard = document.getElementById('auth-comp-form-card');
-    if (formCard) formCard.classList.remove('is-logged-in');
-
-    if (loggedView) loggedView.style.display = 'none';
-    if (tabsNav) tabsNav.style.display = 'grid';
-    if (googleBtn) googleBtn.style.display = 'flex';
-    var divider = document.querySelector('.auth-divider');
-    if (divider) divider.style.display = 'flex';
-    if (sliderTrack && sliderTrack.parentElement) sliderTrack.parentElement.style.display = 'block';
-
     if (navLoginText) navLoginText.textContent = 'Masuk';
     if (navLoginBtn) navLoginBtn.title = 'Buka Form Masuk / Registrasi';
+    switchAuthView('welcome');
   }
 
   /**
@@ -1015,7 +1168,7 @@
     if (navLoginBtn) {
       navLoginBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        toggleAuthCard('login');
+        toggleAuthCard('welcome');
       });
     }
 
@@ -1025,7 +1178,7 @@
         e.preventDefault();
         var drawer = document.getElementById('nav-mobile-drawer');
         if (drawer) drawer.classList.remove('open');
-        openAuthCard('login');
+        openAuthCard('welcome');
       });
     }
 
@@ -1033,14 +1186,14 @@
     if (heroBrainTrigger) {
       heroBrainTrigger.addEventListener('click', function (e) {
         e.preventDefault();
-        openAuthCard('login');
+        openAuthCard('welcome');
       });
     }
     var heroSecondaryBtn = document.getElementById('hero-open-auth-btn');
     if (heroSecondaryBtn) {
       heroSecondaryBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        openAuthCard('login');
+        openAuthCard('welcome');
       });
     }
 
@@ -1064,6 +1217,77 @@
         closeAuthCard();
       }
     });
+
+    // Neura 2026 Redesign: Top 3 Pills Navigation (Mockups 1, 2, 3, 4)
+    var btnBackToWelcome = document.getElementById('auth-back-to-welcome-btn');
+    if (btnBackToWelcome) {
+      btnBackToWelcome.addEventListener('click', function (e) {
+        e.preventDefault();
+        switchAuthView('welcome');
+      });
+    }
+
+    var pillLogin = document.getElementById('top-pill-login');
+    var pillRegister = document.getElementById('top-pill-register');
+    var pillForgot = document.getElementById('top-pill-forgot');
+    if (pillLogin) {
+      pillLogin.addEventListener('click', function () {
+        switchAuthView('login');
+      });
+    }
+    if (pillRegister) {
+      pillRegister.addEventListener('click', function () {
+        switchAuthView('register');
+      });
+    }
+    if (pillForgot) {
+      pillForgot.addEventListener('click', function () {
+        switchAuthView('forgot');
+      });
+    }
+
+    // "Login With Email" Capsule button (Image 1)
+    var btnGotoEmail = document.getElementById('btn-goto-login-email');
+    if (btnGotoEmail) {
+      btnGotoEmail.addEventListener('click', function () {
+        switchAuthView('login');
+      });
+    }
+
+    // Forgot Password Form Submit Handler (Image 3)
+    var forgotForm = document.getElementById('auth-forgot-form');
+    if (forgotForm) {
+      forgotForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var emailInput = document.getElementById('forgot-email');
+        var email = emailInput ? emailInput.value.trim() : '';
+        if (!email) {
+          showAlert('Silakan masukkan email Anda.', true);
+          return;
+        }
+        var submitBtn = document.getElementById('forgot-submit-btn');
+        setButtonLoading(submitBtn, true);
+        var fb = window.NeuraFirebase;
+        var auth = fb ? fb.getAuth() : null;
+        if (!auth) {
+          setButtonLoading(submitBtn, false);
+          showAlert('Tautan verifikasi reset telah dikirimkan ke ' + email, false);
+          return;
+        }
+        auth.sendPasswordResetEmail(email)
+          .then(function () {
+            setButtonLoading(submitBtn, false);
+            showAlert('Tautan verifikasi reset kata sandi telah dikirim ke ' + email + '. Silakan periksa kotak masuk email Anda.', false);
+            setTimeout(function () {
+              switchAuthView('login');
+            }, 3000);
+          })
+          .catch(function (err) {
+            setButtonLoading(submitBtn, false);
+            showAlert(translateFirebaseError(err), true);
+          });
+      });
+    }
 
     // 6. Tab switches inside form
     if (tabLoginBtn) {
@@ -1320,6 +1544,13 @@
         var passwordInput = document.getElementById('login-password');
         var email = emailInput ? emailInput.value.trim().toLowerCase() : '';
         var password = passwordInput ? passwordInput.value : '';
+
+        // Simpan preferensi Remember Me (Ingat Saya: 30 hari aktif)
+        var rememberBox = document.getElementById('login-remember-me');
+        var isRemember = rememberBox ? rememberBox.checked : true;
+        try {
+          localStorage.setItem('neura_remember_me', isRemember ? 'true' : 'false');
+        } catch (e) {}
 
         if (!email) {
           showAlert('Silakan isi email Anda.', true);
@@ -1805,6 +2036,25 @@
   // Expose global methods
   window.openAuthCard = openAuthCard;
   window.closeAuthCard = closeAuthCard;
+  window.switchAuthView = switchAuthView;
+  window.logoutCurrentSession = function () {
+    if (logoutBtn) {
+      logoutBtn.click();
+    } else {
+      try {
+        if (window.NeuraFirebase && window.NeuraFirebase.getAuth()) {
+          window.NeuraFirebase.getAuth().signOut().catch(function () {});
+        }
+      } catch (e) {}
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (e) {}
+      showUnloggedState();
+      switchAuthView('welcome');
+      showAlert('Anda telah berhasil keluar dari sesi akun.', false, true);
+    }
+  };
   window.toggleAuthCard = toggleAuthCard;
 
   // Component 3 Dynamic Date Formatter
@@ -1834,6 +2084,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initElements();
     initComp3Date();
+    initRememberMeButton();
     loadAdminEmailsList();
     bindEvents();
     monitorAuthState();
@@ -1920,6 +2171,23 @@
           );
         }, 500);
 
+      // Auto-display hero auth card on desktop screen: default ke form Welcome terlebih dahulu
+      if (window.innerWidth >= 1024 && !paramLoggedOut && !paramAuthRequired && !paramVerified && !paramUnverified) {
+        setTimeout(function () {
+          var cached = localStorage.getItem('neura_auth_user');
+          if (cached) {
+            try {
+              var parsed = JSON.parse(cached);
+              if (parsed && parsed.email) {
+                openAuthCard('profile');
+                return;
+              }
+            } catch (e) {}
+          }
+          openAuthCard('welcome');
+        }, 150);
+      }
+      
       } else if (paramAuthRequired === 'true') {
         // Cek dulu apakah sesi admin aktif: jika ya langsung redirect ke /app
         try {

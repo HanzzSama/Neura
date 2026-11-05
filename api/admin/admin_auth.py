@@ -15,6 +15,8 @@ import time
 import uuid
 import random
 import threading
+import json
+from pathlib import Path
 from flask import Blueprint, request, jsonify
 from core.logger import get_logger
 
@@ -30,6 +32,39 @@ _admin_sessions   = {}  # { token: { "email": str, "name": str, "role": str, "cr
 _otp_lock = threading.Lock()
 _otp_in_flight = set()
 
+# File penyimpanan sesi token admin (Remember Me: bertahan saat restart server)
+ADMIN_SESSIONS_FILE = Path(__file__).resolve().parent.parent.parent / ".flask_sessions" / "admin_sessions.json"
+
+def _load_admin_sessions():
+    """Muat sesi admin yang tersimpan agar tetap login setelah restart server."""
+    global _admin_sessions
+    try:
+        if ADMIN_SESSIONS_FILE.exists():
+            with open(ADMIN_SESSIONS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                now = time.time()
+                # Pertahankan sesi yang belum kedaluwarsa (maks 30 hari)
+                valid_sessions = {
+                    k: v for k, v in data.items()
+                    if (now - v.get("created_at", 0)) < (86400 * 30)
+                }
+                _admin_sessions.clear()
+                _admin_sessions.update(valid_sessions)
+                logger.info(f"[AdminAuth] Berhasil memuat {len(_admin_sessions)} sesi admin aktif dari disk.")
+    except Exception as e:
+        logger.warning(f"[AdminAuth] Gagal memuat admin_sessions.json: {e}")
+
+def _save_admin_sessions():
+    """Simpan sesi token admin ke file disk."""
+    try:
+        ADMIN_SESSIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(ADMIN_SESSIONS_FILE, "w", encoding="utf-8") as f:
+            json.dump(_admin_sessions, f, indent=2)
+    except Exception as e:
+        logger.warning(f"[AdminAuth] Gagal menyimpan admin_sessions.json: {e}")
+
+# Muat sesi yang tersimpan saat modul pertama kali diimport
+_load_admin_sessions()
 
 def get_admin_sessions():
     """Expose session store ke modul lain (mis. status_routes)."""
@@ -250,6 +285,7 @@ def api_admin_verify_otp():
         "role":       "Admin",
         "created_at": time.time(),
     }
+    _save_admin_sessions()
 
     return jsonify({
         "success": True,
@@ -296,7 +332,8 @@ def api_admin_verify_session():
 
     if token and token in _admin_sessions:
         s_data = _admin_sessions[token]
-        if (time.time() - s_data["created_at"]) < 86400:
+        # Validasi masa aktif 30 hari (Remember Me)
+        if (time.time() - s_data.get("created_at", 0)) < (86400 * 30):
             # Upgrade ke cookie session juga
             set_admin_session(
                 email=s_data["email"],
@@ -313,6 +350,7 @@ def api_admin_verify_session():
             })
         else:
             _admin_sessions.pop(token, None)
+            _save_admin_sessions()
 
     return jsonify({"valid": False, "error": "Sesi admin tidak valid atau telah kedaluwarsa."}), 401
 
@@ -327,4 +365,5 @@ def api_admin_logout():
     token = str(body.get("token") or "").strip()
     if token and token in _admin_sessions:
         _admin_sessions.pop(token, None)
+        _save_admin_sessions()
     return jsonify({"success": True, "message": "Sesi admin berhasil diakhiri."})
