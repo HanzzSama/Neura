@@ -8,7 +8,8 @@
    ========================================================================== */
 
 /* ---------- Reset Brain Image (Tanpa Shadow) ---------- */
-.hero-brain-img {
+.hero-brain-img,
+.hero-brain-canvas {
   width: 100%;
   max-width: 580px;
   height: auto;

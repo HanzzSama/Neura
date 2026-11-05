@@ -11741,34 +11741,55 @@ body.reduce-motion *::after {
 .admin-room-header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
+  flex-wrap: nowrap;
 }
 
 .admin-room-action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 7px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  font-size: 12.5px;
+  justify-content: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.12s;
-}
-
-.admin-room-action-btn {
-  border-color: rgba(224, 122, 95, 0.25);
-  background: rgba(224, 122, 95, 0.08);
-  color: var(--accent-terracotta, #e07a5f);
+  transition: all 0.16s ease;
+  white-space: nowrap;
+  user-select: none;
+  background: rgba(217, 119, 87, 0.08);
+  border: 1px solid rgba(217, 119, 87, 0.28);
+  color: var(--accent-terracotta, #D97757);
 }
 
 .admin-room-action-btn:hover {
-  background: rgba(224, 122, 95, 0.18);
-  border-color: rgba(224, 122, 95, 0.45);
-  color: #ff9e80;
+  background: rgba(217, 119, 87, 0.16);
+  border-color: rgba(217, 119, 87, 0.45);
+  color: var(--accent-terracotta, #D97757);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.admin-room-action-btn:active {
+  transform: translateY(0);
+}
+
+.admin-room-action-btn.secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.admin-room-action-btn.secondary:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .admin-room-back-btn:hover {
@@ -11940,24 +11961,26 @@ body.reduce-motion *::after {
   margin-top: 1px;
 }
 
-/* ── Toolbar: Mengikuti Tema Input & Select Website ── */
+/* ── Toolbar: Modern, Minimalist, Theme Native ── */
 .nakes-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 8px 12px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.15s ease;
 }
 
 .nakes-toolbar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
+  min-width: 0;
   flex-wrap: wrap;
 }
 
@@ -11965,21 +11988,26 @@ body.reduce-motion *::after {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-input, var(--bg-surface));
-  border: 1px solid var(--border-input, var(--border-subtle));
-  border-radius: 7px;
-  padding: 0 10px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0 11px;
   height: 34px;
-  min-width: 260px;
-  max-width: 380px;
+  min-width: 220px;
+  max-width: 320px;
   flex: 1;
   color: var(--text-muted);
-  transition: all 0.12s ease;
+  transition: all 0.15s ease;
+}
+
+.nakes-search-box:hover {
+  border-color: var(--border-strong);
 }
 
 .nakes-search-box:focus-within {
+  background: var(--bg-surface);
   border-color: var(--accent-terracotta);
-  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.15);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.12);
   color: var(--accent-terracotta);
 }
 
@@ -11987,7 +12015,7 @@ body.reduce-motion *::after {
   border: none;
   background: transparent;
   outline: none;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--text-primary);
   width: 100%;
   font-family: inherit;
@@ -11995,37 +12023,42 @@ body.reduce-motion *::after {
 
 .nakes-search-box input::placeholder {
   color: var(--text-muted);
+  opacity: 0.85;
 }
 
 /* Select Dropdown Mengikuti Tema Website */
 .nakes-select {
   appearance: none;
   -webkit-appearance: none;
-  background: var(--bg-input, var(--bg-surface));
-  border: 1px solid var(--border-input, var(--border-subtle));
-  border-radius: 7px;
-  padding: 0 28px 0 10px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0 28px 0 11px;
   height: 34px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   outline: none;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.12s ease;
+  transition: all 0.15s ease;
   background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%239B9890' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
-  background-size: 10px 6px;
+  background-size: 9px 5px;
+  white-space: nowrap;
 }
 
 .nakes-select:hover {
   border-color: var(--border-strong);
+  color: var(--text-primary);
 }
 
 .nakes-select:focus {
+  background-color: var(--bg-surface);
   border-color: var(--accent-terracotta);
-  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.15);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.12);
+  color: var(--text-primary);
 }
 
 .nakes-select option {
@@ -12033,10 +12066,22 @@ body.reduce-motion *::after {
   color: var(--text-primary);
 }
 
+.nakes-toolbar-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .nakes-record-count {
-  font-size: 12px;
+  font-size: 11.5px;
+  font-weight: 500;
   color: var(--text-muted);
   white-space: nowrap;
+  padding: 4px 10px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  letter-spacing: 0.01em;
 }
 
 /* ── Table Mengikuti Desain Token Website ── */
@@ -12233,4 +12278,35 @@ body.reduce-motion *::after {
   background: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--border-strong);
+}
+
+@media (max-width: 900px) {
+  .nakes-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .nakes-toolbar-left {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .nakes-search-box {
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .nakes-toolbar-right {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-room-header {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .admin-room-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }

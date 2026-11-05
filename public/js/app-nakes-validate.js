@@ -110,6 +110,7 @@ async function openConsultationValidationModal(code) {
   modal.classList.add('open');
 }
 window.openConsultationValidationModal = openConsultationValidationModal;
+window.openNakesValidationModal = openConsultationValidationModal;
 
 function closeConsultationValidationModal() {
   const modal = document.getElementById('consultation-validation-modal');

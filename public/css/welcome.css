@@ -958,19 +958,22 @@ a {
   padding: 24px 0 24px 24px;
 }
 
-.hero-brain-img {
+.hero-brain-img,
+.hero-brain-canvas {
   width: 100%;
-  max-width: 580px;
+  max-width: 620px;
   height: auto;
   max-height: min(38em, calc(100vh - 180px));
-  aspect-ratio: 2048 / 1529;
+  aspect-ratio: 929 / 816;
   object-fit: contain;
   display: block;
   margin: 0 auto;
+  cursor: pointer;
   transform: scale(var(--hero-img-scale, 1)) translateY(var(--hero-img-ty, 0px));
   opacity: var(--hero-img-opacity, 1);
   transform-origin: center center;
   will-change: transform, opacity;
+  cursor: crosshair;
 }
 
 /* CSS step shapes — hidden since steps are baked into the image */
@@ -1019,7 +1022,8 @@ a {
     padding: 20px 24px 48px;
   }
 
-  .hero-brain-img {
+  .hero-brain-img,
+  .hero-brain-canvas {
     max-height: 360px;
   }
 }
