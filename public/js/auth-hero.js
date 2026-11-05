@@ -10,6 +10,27 @@
 
   var currentMode = 'welcome'; // 'login' | 'register'
   var isAuthOpen = false;
+  var isUserLoggedIn = false;
+
+  function checkIsLoggedIn() {
+    if (isUserLoggedIn) return true;
+    try {
+      var cached = localStorage.getItem('neura_auth_user');
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        if (parsed && (parsed.email || parsed.uid)) return true;
+      }
+      if (localStorage.getItem('neura_admin_authenticated') === 'true' ||
+          sessionStorage.getItem('neura_admin_session') === 'true') {
+        return true;
+      }
+      if (window.NeuraFirebase && typeof window.NeuraFirebase.getAuth === 'function') {
+        var fbAuth = window.NeuraFirebase.getAuth();
+        if (fbAuth && fbAuth.currentUser) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
 
   // DOM Elements
   var heroRight, authCard, authOverlay;
@@ -177,7 +198,7 @@
 
     if (navLoginBtn) navLoginBtn.classList.add('active');
 
-    var targetView = mode || 'welcome';
+    var targetView = checkIsLoggedIn() ? 'profile' : (mode || 'welcome');
     switchTab(targetView);
 
     // Auto focus first field after entrance animation & check email value
@@ -227,11 +248,15 @@
     if (authCard && authCard.classList.contains('is-open')) {
       closeAuthCard();
     } else {
-      openAuthCard(mode || 'welcome');
+      openAuthCard(checkIsLoggedIn() ? 'profile' : (mode || 'welcome'));
     }
   }
 
   function switchAuthView(viewName) {
+    // Saat sudah login, hanya izinkan form profile (sembunyikan/blokir form lainnya)
+    if (checkIsLoggedIn() && viewName !== 'profile') {
+      viewName = 'profile';
+    }
     currentMode = viewName;
     hideAlert();
     stopVerifyPolling();
@@ -1109,12 +1134,29 @@
       navLoginBtn.title = 'Sesi Klinis Aktif: ' + displayName;
     }
 
+    isUserLoggedIn = true;
+    var authCardEl = document.getElementById('neura-auth-card') || document.querySelector('.neura-auth-card');
+    if (authCardEl) authCardEl.classList.add('is-logged-in');
+    var flowContainer = document.querySelector('.neura-auth-flow-container');
+    if (flowContainer) flowContainer.classList.add('is-logged-in');
+    document.documentElement.classList.add('user-logged-in');
+    document.body.classList.add('user-logged-in');
+
     switchAuthView('profile');
   }
 
   function showUnloggedState() {
+    isUserLoggedIn = false;
     if (navLoginText) navLoginText.textContent = 'Masuk';
     if (navLoginBtn) navLoginBtn.title = 'Buka Form Masuk / Registrasi';
+
+    var authCardEl = document.getElementById('neura-auth-card') || document.querySelector('.neura-auth-card');
+    if (authCardEl) authCardEl.classList.remove('is-logged-in');
+    var flowContainer = document.querySelector('.neura-auth-flow-container');
+    if (flowContainer) flowContainer.classList.remove('is-logged-in');
+    document.documentElement.classList.remove('user-logged-in');
+    document.body.classList.remove('user-logged-in');
+
     switchAuthView('welcome');
   }
 
@@ -1259,6 +1301,7 @@
     if (btnBackToWelcome) {
       btnBackToWelcome.addEventListener('click', function (e) {
         e.preventDefault();
+        if (checkIsLoggedIn()) return;
         switchAuthView('welcome');
       });
     }
@@ -1268,16 +1311,19 @@
     var pillForgot = document.getElementById('top-pill-forgot');
     if (pillLogin) {
       pillLogin.addEventListener('click', function () {
+        if (checkIsLoggedIn()) return;
         switchAuthView('login');
       });
     }
     if (pillRegister) {
       pillRegister.addEventListener('click', function () {
+        if (checkIsLoggedIn()) return;
         switchAuthView('register');
       });
     }
     if (pillForgot) {
       pillForgot.addEventListener('click', function () {
+        if (checkIsLoggedIn()) return;
         switchAuthView('forgot');
       });
     }
@@ -2124,6 +2170,16 @@
     loadAdminEmailsList();
     bindEvents();
     monitorAuthState();
+
+    if (checkIsLoggedIn()) {
+      isUserLoggedIn = true;
+      var authCardEl = document.getElementById('neura-auth-card') || document.querySelector('.neura-auth-card');
+      if (authCardEl) authCardEl.classList.add('is-logged-in');
+      var flowContainer = document.querySelector('.neura-auth-flow-container');
+      if (flowContainer) flowContainer.classList.add('is-logged-in');
+      document.documentElement.classList.add('user-logged-in');
+      document.body.classList.add('user-logged-in');
+    }
 
     // Deteksi parameter URL (?verified=true | ?unverified=true | ?auth_required=true)
     // Bersihkan URL setelah dibaca agar tidak persist saat refresh

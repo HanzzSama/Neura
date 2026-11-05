@@ -649,8 +649,8 @@
 }
 
 /* Hide Google Card when in step mode or logged in */
-.in-step-mode ~ .auth-comp-google-card,
-.is-logged-in ~ .auth-comp-google-card {
+.in-step-mode~.auth-comp-google-card,
+.is-logged-in~.auth-comp-google-card {
   display: none !important;
 }
 
@@ -1212,6 +1212,7 @@
     opacity: 0;
     transform: translateY(4px) scale(0.99);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1323,11 +1324,14 @@
 }
 
 @keyframes adminDotPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
     box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
   }
+
   50% {
     opacity: 0.65;
     transform: scale(0.9);
@@ -1368,8 +1372,15 @@
 }
 
 @keyframes adminCheckPop {
-  0% { transform: scale(0.6); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .comp1-capsule-submit.is-admin-action {
@@ -1520,8 +1531,15 @@
 }
 
 @keyframes otpPulse {
-  0% { transform: scale(1); box-shadow: 0 0 0 rgba(217, 119, 87, 0); }
-  100% { transform: scale(1.03); box-shadow: 0 0 10px rgba(217, 119, 87, 0.35); }
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(217, 119, 87, 0);
+  }
+
+  100% {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px rgba(217, 119, 87, 0.35);
+  }
 }
 
 /* Animasi Sukses Verifikasi */
@@ -1552,9 +1570,21 @@
 }
 
 @keyframes otpShake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-5px); }
-  40%, 80% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-5px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 /* Status Banner saat verifikasi */
@@ -1687,6 +1717,7 @@
     font-size: 20px;
     border-radius: 11px;
   }
+
   .admin-otp-boxes-wrap {
     gap: 5px;
   }
@@ -2447,10 +2478,10 @@
   padding: 0 !important;
   opacity: 0.65 !important;
   transition: width 0.34s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.24s ease,
-              background 0.24s ease,
-              box-shadow 0.3s ease,
-              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    opacity 0.24s ease,
+    background 0.24s ease,
+    box-shadow 0.3s ease,
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
   outline: none !important;
 }
 
@@ -2510,6 +2541,7 @@
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -2902,17 +2934,28 @@
   border-color: rgba(255, 117, 117, 0.3) !important;
 }
 
-/* Close Button */
+/* Close Button — Solid Black */
 .auth-card-close-btn {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: #111111 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
-  z-index: 20 !important;
+  z-index: 30 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .auth-card-close-btn:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: #2a2a2a !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
   color: #ffffff !important;
+  transform: rotate(90deg) scale(1.08) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6) !important;
+}
+
+.auth-card-close-btn:active {
+  transform: scale(0.93) !important;
 }
 
 /* Responsive adjustment */
@@ -2923,6 +2966,7 @@
     justify-content: center !important;
     padding: 20px 16px !important;
   }
+
   .neura-auth-main-card {
     min-height: auto !important;
     padding: 28px 24px 32px !important;
@@ -2986,12 +3030,14 @@
   width: 100%;
   height: 100%;
   z-index: 1;
-  pointer-events: none; /* Let all mouse events hit the card/parent seamlessly */
+  pointer-events: none;
+  /* Let all mouse events hit the card/parent seamlessly */
   border-radius: inherit;
 }
 
 .neura-auth-main-card.is-welcome-view .auth-card-header {
-  pointer-events: none; /* Text won't intercept/block mouse coordinates on welcome */
+  pointer-events: none;
+  /* Text won't intercept/block mouse coordinates on welcome */
   user-select: none;
 }
 
@@ -3039,6 +3085,7 @@
     opacity: 0;
     transform: translateY(-4px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -3359,8 +3406,8 @@
   pointer-events: none !important;
   animation: none !important;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 1, 1),
-              transform 0.16s cubic-bezier(0.4, 0, 1, 1),
-              filter 0.15s cubic-bezier(0.4, 0, 1, 1) !important;
+    transform 0.16s cubic-bezier(0.4, 0, 1, 1),
+    filter 0.15s cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 @keyframes applePaneEntrance {
@@ -3369,9 +3416,11 @@
     transform: scale(0.975) translateY(12px);
     filter: blur(4px);
   }
+
   65% {
     filter: blur(0);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -3383,8 +3432,8 @@
 .auth-card-title,
 .auth-card-subtitle {
   transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
   will-change: opacity, transform, filter;
 }
 
@@ -3402,10 +3451,10 @@
   opacity: 1 !important;
   transform: translateY(0) scale(1) !important;
   transition: max-height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              margin-bottom 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              padding 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    margin-bottom 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
   will-change: max-height, opacity, transform;
 }
 
@@ -3427,9 +3476,9 @@
   transform: translateY(8px) scale(0.96) !important;
   overflow: hidden !important;
   transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.36s ease !important;
+    opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.36s ease !important;
 }
 
 .neura-auth-flow-container #admin-detected-notice.is-visible {
@@ -3445,17 +3494,17 @@
 .otp-submit-btn {
   position: relative !important;
   transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.24s ease,
-              border-color 0.24s ease,
-              box-shadow 0.24s ease,
-              opacity 0.24s ease !important;
+    background 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    opacity 0.24s ease !important;
 }
 
 .neura-auth-submit-btn .submit-btn-label,
 .otp-submit-btn .submit-btn-label {
   display: inline-block !important;
   transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* When loading: Smooth label fade & elevation */
@@ -3491,7 +3540,7 @@
   opacity: 0 !important;
   transform: scale(0.6) rotate(0deg) !important;
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
   pointer-events: none !important;
 }
 
@@ -3503,8 +3552,13 @@
 }
 
 @keyframes appleSmoothSpin {
-  0% { transform: scale(1) rotate(0deg); }
-  100% { transform: scale(1) rotate(360deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
 }
 
 /* Google Capsule Loading Effect */
@@ -3519,14 +3573,22 @@
 }
 
 @keyframes applePulseIcon {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(0.88); opacity: 0.5; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.88);
+    opacity: 0.5;
+  }
 }
 
 /* Smooth Top Pill Tabs */
 .top-pill-btn {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
+
 /* Active pill size handled by Apple Dynamic Elongating Tabs */
 
 /* --------------------------------------------------------------------------
@@ -3536,9 +3598,11 @@
   height: 100vh !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important; /* Perfect vertical centering in drawer */
+  justify-content: center !important;
+  /* Perfect vertical centering in drawer */
   align-items: flex-end !important;
-  padding: 32px 42px 32px 20px !important; /* Equal 32px top and bottom balance */
+  padding: 32px 42px 32px 20px !important;
+  /* Equal 32px top and bottom balance */
   box-sizing: border-box !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -3547,7 +3611,8 @@
 .auth-drawer-inner {
   width: 100% !important;
   max-width: 580px !important;
-  margin: auto 0 !important; /* Centers within drawer scroll viewport */
+  margin: auto 0 !important;
+  /* Centers within drawer scroll viewport */
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -3577,7 +3642,8 @@
   .hero-auth-drawer {
     width: 100vw !important;
     max-width: 100vw !important;
-    padding: 24px 16px 24px !important; /* Equal top and bottom padding on tablets */
+    padding: 24px 16px 24px !important;
+    /* Equal top and bottom padding on tablets */
     align-items: center !important;
     justify-content: center !important;
   }
@@ -3627,8 +3693,8 @@
   justify-content: flex-start !important;
   overflow: hidden !important;
   transition: height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              min-height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              max-height 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    min-height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    max-height 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Welcome: 550px Main Card + 168px (Email + Google) + 14px gap = 732px */
@@ -3693,7 +3759,7 @@
   flex-shrink: 0 !important;
   transform: translateY(0) scale(1) !important;
   transition: transform 0.44s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.22s ease !important;
+    opacity 0.22s ease !important;
   will-change: transform !important;
 }
 
@@ -3760,7 +3826,7 @@
 /* Bottom Stack Smooth Transition & Morph */
 .neura-auth-sub-stack {
   transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .sub-stack-capsule-btn,
@@ -3770,11 +3836,11 @@
   transform: translateY(0) scale(1) !important;
   overflow: hidden !important;
   transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              margin 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              padding 0.36s cubic-bezier(0.16, 1, 0.3, 1),
-              border-width 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    border-width 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Hidden state for Email capsule & Placeholder during Form views */
@@ -3845,10 +3911,10 @@
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
   transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.2s ease,
-              border-color 0.2s ease,
-              box-shadow 0.2s ease !important;
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease !important;
 }
 
 .auth-back-to-welcome-btn svg {
@@ -3940,7 +4006,7 @@
   opacity: 0 !important;
   pointer-events: none !important;
   transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   z-index: 99 !important;
 }
 
@@ -3959,13 +4025,13 @@
 }
 
 /* Forgot Pass tooltip alignment: aligned toward left so it doesn't touch right card margin */
-#top-pill-forgot + .top-pill-tooltip {
+#top-pill-forgot+.top-pill-tooltip {
   left: auto !important;
   right: -4px !important;
   transform: translateY(-4px) scale(0.92) !important;
 }
 
-#top-pill-forgot + .top-pill-tooltip::before {
+#top-pill-forgot+.top-pill-tooltip::before {
   left: auto !important;
   right: 17px !important;
   transform: rotate(45deg) !important;
@@ -3973,13 +4039,13 @@
 
 /* Hover & Focus state: Smooth Apple spring reveal */
 .top-pill-item:hover .top-pill-tooltip,
-.top-pill-btn:focus-visible + .top-pill-tooltip {
+.top-pill-btn:focus-visible+.top-pill-tooltip {
   opacity: 1 !important;
   transform: translateX(-50%) translateY(0) scale(1) !important;
 }
 
-.top-pill-item:hover #top-pill-forgot + .top-pill-tooltip,
-#top-pill-forgot:focus-visible + .top-pill-tooltip {
+.top-pill-item:hover #top-pill-forgot+.top-pill-tooltip,
+#top-pill-forgot:focus-visible+.top-pill-tooltip {
   opacity: 1 !important;
   transform: translateY(0) scale(1) !important;
 }
@@ -4007,6 +4073,354 @@ body.auth-drawer-open::-webkit-scrollbar {
 }
 
 html.auth-drawer-open {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE / Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE / Edge */
+}
+
+/* ==========================================================================
+   STRICT LOGGED-IN VIEW RULES: ONLY PROFILE IS ACCESSIBLE
+   Saat sudah login (atau data-auth-view="profile"):
+   - Sembunyikan 3 top pill tabs (Login, Register, Forgot)
+   - Sembunyikan tombol back to welcome
+   - Sembunyikan sub-stack di bawah card (Google SSO, Email)
+   - Sembunyikan seluruh pane form non-profile (welcome, login, register, forgot, admin OTP)
+   ========================================================================== */
+.is-logged-in .auth-top-pills,
+.is-logged-in #auth-top-pills,
+.user-logged-in .auth-top-pills,
+.user-logged-in #auth-top-pills,
+[data-auth-view="profile"] .auth-top-pills,
+[data-auth-view="profile"] #auth-top-pills {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+.is-logged-in .auth-back-to-welcome-btn,
+.is-logged-in #auth-back-to-welcome-btn,
+.user-logged-in .auth-back-to-welcome-btn,
+.user-logged-in #auth-back-to-welcome-btn,
+[data-auth-view="profile"] .auth-back-to-welcome-btn,
+[data-auth-view="profile"] #auth-back-to-welcome-btn {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.is-logged-in .neura-auth-sub-stack,
+.is-logged-in #neura-auth-sub-stack,
+.user-logged-in .neura-auth-sub-stack,
+.user-logged-in #neura-auth-sub-stack,
+[data-auth-view="profile"] .neura-auth-sub-stack,
+[data-auth-view="profile"] #neura-auth-sub-stack {
+  display: none !important;
+}
+
+/* Sembunyikan semua pane form non-profile saat logged in */
+.is-logged-in #pane-view-welcome,
+.is-logged-in #pane-view-login,
+.is-logged-in #pane-view-register,
+.is-logged-in #pane-view-forgot,
+.is-logged-in #auth-admin-verify-pane,
+.user-logged-in #pane-view-welcome,
+.user-logged-in #pane-view-login,
+.user-logged-in #pane-view-register,
+.user-logged-in #pane-view-forgot,
+.user-logged-in #auth-admin-verify-pane {
+  display: none !important;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN — auth-hero.css
+   Breakpoints: tablet ≤ 1024px | mobile ≤ 640px | xs ≤ 390px
+   ============================================================ */
+
+/* ---- TABLET (≤ 1024px) ---- */
+@media (max-width: 1024px) {
+  /* Drawer: full width, centered, scrollable */
+  .hero-auth-drawer {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 20px 20px 32px !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    overflow-y: auto !important;
+  }
+
+  .auth-drawer-inner {
+    max-width: 480px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .neura-auth-flow-container {
+    max-width: 480px !important;
+    width: 100% !important;
+  }
+
+  /* Override semua fixed heights — biarkan card auto-size */
+  .neura-auth-main-card {
+    height: auto !important;
+    min-height: 480px !important;
+    max-height: none !important;
+    padding: 32px 28px 36px !important;
+  }
+
+  [data-auth-view="welcome"] .neura-auth-main-card,
+  .neura-auth-main-card.is-welcome-view {
+    height: auto !important;
+    min-height: 400px !important;
+    max-height: none !important;
+  }
+
+  [data-auth-view="login"] .neura-auth-main-card,
+  [data-auth-view="register"] .neura-auth-main-card {
+    height: auto !important;
+    min-height: 480px !important;
+    max-height: none !important;
+  }
+
+  [data-auth-view="forgot"] .neura-auth-main-card,
+  [data-auth-view="profile"] .neura-auth-main-card,
+  [data-auth-view="admin-verify"] .neura-auth-main-card {
+    height: auto !important;
+    min-height: 480px !important;
+    max-height: none !important;
+  }
+
+  /* Welcome header centering */
+  .neura-auth-main-card.is-welcome-view .auth-card-header {
+    transform: translateY(100px) scale(1.02) !important;
+  }
+
+  /* Sub-stack capsule buttons */
+  .sub-stack-capsule-btn {
+    height: 68px !important;
+    padding: 0 20px !important;
+  }
+
+  /* Profile card */
+  .profile-card-box {
+    padding: 18px 20px !important;
+    gap: 14px !important;
+  }
+
+  .profile-card-avatar-wrap {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .profile-action-pill {
+    height: 56px !important;
+  }
+
+  /* OTP digit boxes */
+  .admin-otp-boxes-wrap {
+    gap: 8px !important;
+  }
+
+  .admin-otp-digit {
+    width: 44px !important;
+    height: 52px !important;
+    font-size: 20px !important;
+  }
+
+  /* Close button */
+  .auth-card-close-btn {
+    top: 12px !important;
+    right: 14px !important;
+  }
+
+  /* Top pills */
+  .auth-top-pills {
+    right: 14px !important;
+  }
+}
+
+/* ---- MOBILE (≤ 640px) ---- */
+@media (max-width: 640px) {
+  /* Drawer full width, minimal padding */
+  .hero-auth-drawer {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 16px 12px 24px !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+  }
+
+  .auth-drawer-inner {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .neura-auth-flow-container {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Cards */
+  .neura-auth-main-card {
+    height: auto !important;
+    min-height: 420px !important;
+    max-height: none !important;
+    padding: 28px 20px 32px !important;
+    border-radius: 22px !important;
+  }
+
+  [data-auth-view="welcome"] .neura-auth-main-card,
+  .neura-auth-main-card.is-welcome-view {
+    height: auto !important;
+    min-height: 340px !important;
+    max-height: none !important;
+    border-radius: 22px !important;
+  }
+
+  [data-auth-view="login"] .neura-auth-main-card,
+  [data-auth-view="register"] .neura-auth-main-card {
+    height: auto !important;
+    min-height: 420px !important;
+    max-height: none !important;
+  }
+
+  [data-auth-view="forgot"] .neura-auth-main-card,
+  [data-auth-view="profile"] .neura-auth-main-card,
+  [data-auth-view="admin-verify"] .neura-auth-main-card {
+    height: auto !important;
+    min-height: 420px !important;
+    max-height: none !important;
+  }
+
+  /* Welcome header */
+  .neura-auth-main-card.is-welcome-view .auth-card-header {
+    transform: translateY(70px) scale(1.0) !important;
+  }
+
+  /* Typography */
+  .auth-card-title {
+    font-size: 28px !important;
+  }
+
+  .auth-card-subtitle {
+    font-size: 13px !important;
+  }
+
+  /* Inputs */
+  .neura-auth-input {
+    height: 52px !important;
+    font-size: 15px !important;
+  }
+
+  .neura-auth-submit-btn {
+    height: 52px !important;
+    font-size: 16px !important;
+  }
+
+  /* Sub-stack capsule buttons */
+  .sub-stack-capsule-btn {
+    height: 62px !important;
+    padding: 0 16px !important;
+    gap: 14px !important;
+  }
+
+  .capsule-title {
+    font-size: 14px !important;
+  }
+
+  .capsule-sub {
+    font-size: 11px !important;
+  }
+
+  .neura-auth-sub-stack {
+    gap: 10px !important;
+  }
+
+  /* OTP */
+  .admin-otp-boxes-wrap {
+    gap: 6px !important;
+  }
+
+  .admin-otp-digit {
+    width: 38px !important;
+    height: 46px !important;
+    font-size: 18px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Profile card */
+  .profile-card-box {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+
+  .profile-card-badge-wrap {
+    align-self: flex-end !important;
+    margin-top: -48px !important;
+  }
+
+  .profile-action-pill {
+    height: 54px !important;
+    font-size: 14px !important;
+  }
+
+  /* Pills position */
+  .auth-top-pills {
+    top: 20px !important;
+    right: 20px !important;
+    gap: 5px !important;
+  }
+
+  /* Close button */
+  .auth-card-close-btn {
+    top: 10px !important;
+    right: 10px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  /* Back button */
+  .auth-back-to-welcome-btn,
+  #auth-back-to-welcome-btn {
+    top: 10px !important;
+    left: 10px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* ---- EXTRA SMALL (≤ 390px) ---- */
+@media (max-width: 390px) {
+  .neura-auth-main-card {
+    padding: 24px 16px 28px !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-otp-digit {
+    width: 34px !important;
+    height: 42px !important;
+    font-size: 16px !important;
+  }
+
+  .profile-card-name {
+    font-size: 15px !important;
+  }
+
+  .auth-card-title {
+    font-size: 24px !important;
+  }
+
+  .neura-auth-input {
+    height: 48px !important;
+    font-size: 14px !important;
+  }
+
+  .neura-auth-submit-btn {
+    height: 48px !important;
+    font-size: 15px !important;
+  }
 }

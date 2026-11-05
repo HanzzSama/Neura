@@ -272,6 +272,93 @@
     updateHeroParallax(window.scrollY || 0, 0);
   }
 
+  /* ========================================================================
+     PROXIMITY & ACTIVE SCROLLBAR REVEAL ENGINE
+     Menghilangkan scrollbar secara default, dan memunculkannya saat:
+     1. Kursor mouse mendekati pojok/tepi kanan layar (<= 60px)
+     2. Pengguna sedang aktif scrolling (mouse wheel / touchpad)
+     3. Pengguna sedang mengklik/men-drag scrollbar
+     ======================================================================== */
+  function initProximityScrollbar() {
+    var html = document.documentElement;
+    var hideTimer = null;
+    var isDragging = false;
+    var PROXIMITY_THRESHOLD = 60; // 60px dari tepi kanan viewport
+
+    function reveal() {
+      html.classList.add('scrollbar-revealed');
+    }
+
+    function hide() {
+      if (!isDragging) {
+        html.classList.remove('scrollbar-revealed');
+      }
+    }
+
+    // 1. Mousemove: deteksi jarak kursor ke tepi kanan layar
+    window.addEventListener('mousemove', function (e) {
+      if (isDragging) return;
+      var distFromRight = window.innerWidth - e.clientX;
+      if (distFromRight <= PROXIMITY_THRESHOLD && e.clientX >= 0) {
+        if (hideTimer) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+        reveal();
+      } else {
+        if (!hideTimer) {
+          hide();
+        }
+      }
+    }, { passive: true });
+
+    // Saat mouse keluar dari jendela browser
+    document.addEventListener('mouseleave', function () {
+      if (!isDragging) {
+        if (hideTimer) clearTimeout(hideTimer);
+        hide();
+      }
+    });
+
+    // 2. Scroll & Wheel: munculkan scrollbar sementara saat scrolling aktif
+    function onScrollActive() {
+      reveal();
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(function () {
+        hideTimer = null;
+        // Hanya sembunyikan jika mouse tidak sedang di pojok kanan
+        hide();
+      }, 1200);
+    }
+
+    window.addEventListener('scroll', onScrollActive, { passive: true });
+    window.addEventListener('wheel', onScrollActive, { passive: true });
+
+    // 3. Mousedown di area scrollbar: pertahankan visible saat drag
+    window.addEventListener('mousedown', function (e) {
+      if (window.innerWidth - e.clientX <= 25) {
+        isDragging = true;
+        reveal();
+      }
+    });
+
+    window.addEventListener('mouseup', function () {
+      if (isDragging) {
+        isDragging = false;
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(function () {
+          hideTimer = null;
+          hide();
+        }, 800);
+      }
+    });
+  }
+
+  // Initialize proximity scrollbar immediately
+  if (typeof window !== 'undefined') {
+    initProximityScrollbar();
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSmoothScroll);
   } else {

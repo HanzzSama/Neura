@@ -3,24 +3,55 @@
    Works across all pages: welcome.html, index.html, modals, and workspaces
    ========================================================================== */
 
-/* Firefox Standard */
-* {
+/* Firefox Standard: Page scrollbar is hidden by default */
+html,
+body {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.28s ease;
+}
+
+/* Firefox Standard: Internal scrollable containers keep thin subtle scrollbar */
+*:not(html):not(body) {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb, rgba(120, 115, 105, 0.25)) transparent;
 }
 
-/* WebKit / Chromium (Chrome, Edge, Safari, Opera, Brave) */
-::-webkit-scrollbar {
+/* WebKit / Chromium: Page scrollbar width & track */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: transparent;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* WebKit / Chromium: Default page thumb is completely invisible */
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background-color: transparent !important;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* WebKit / Chromium: Internal scrollable containers keep standard subtle thumb */
+*:not(html):not(body)::-webkit-scrollbar {
   width: 6px;
   height: 6px;
   background-color: transparent;
 }
 
-::-webkit-scrollbar-track {
+*:not(html):not(body)::-webkit-scrollbar-track {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+*:not(html):not(body)::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb, rgba(120, 115, 105, 0.25));
   border-radius: 9999px;
   border: 1px solid transparent;
@@ -28,12 +59,32 @@
   transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-::-webkit-scrollbar-thumb:hover {
+*:not(html):not(body)::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover, rgba(120, 115, 105, 0.45));
 }
 
-::-webkit-scrollbar-thumb:active {
-  background-color: var(--accent-terracotta, var(--accent-primary, #D97757));
+/* ==========================================================================
+   PROXIMITY & ACTIVE SCROLL REVEAL STATE (.scrollbar-revealed)
+   Muncul ketika kursor mendekati pojok kanan layar (<= 60px) atau saat scrolling
+   ========================================================================== */
+html.scrollbar-revealed,
+html.scrollbar-revealed body {
+  scrollbar-color: var(--scrollbar-thumb, rgba(120, 115, 105, 0.38)) transparent !important;
+}
+
+html.scrollbar-revealed::-webkit-scrollbar-thumb,
+body.scrollbar-revealed::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb, rgba(120, 115, 105, 0.38)) !important;
+}
+
+html.scrollbar-revealed::-webkit-scrollbar-thumb:hover,
+body.scrollbar-revealed::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover, rgba(120, 115, 105, 0.65)) !important;
+}
+
+html.scrollbar-revealed::-webkit-scrollbar-thumb:active,
+body.scrollbar-revealed::-webkit-scrollbar-thumb:active {
+  background-color: var(--accent-terracotta, var(--accent-primary, #D97757)) !important;
 }
 
 ::-webkit-scrollbar-corner {
