@@ -57,11 +57,13 @@ const ADMIN_ROOMS = {
 
 function switchAdminRoom(roomKey) {
   const mainView = document.querySelector('.main-view');
-  // Hide all admin rooms
+  // Hide all admin rooms & nakes rooms
   Object.values(ADMIN_ROOMS).forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.style.display = 'none'; el.setAttribute('aria-hidden', 'true'); }
   });
+  const nakesInbox = document.getElementById('nakes-room-inbox');
+  if (nakesInbox) { nakesInbox.style.display = 'none'; nakesInbox.setAttribute('aria-hidden', 'true'); }
   if (roomKey === 'chat' || !ADMIN_ROOMS[roomKey]) {
     if (mainView) mainView.classList.remove('admin-room-active');
     // Highlight no sidebar item as active

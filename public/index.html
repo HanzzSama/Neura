@@ -28,7 +28,7 @@
     rel="stylesheet" />
 
   <!-- External Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=7.8" />
+  <link rel="stylesheet" href="/css/style.css?v=8.6" />
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
@@ -283,6 +283,51 @@
                 <span data-i18n="nav_files_admin">Struktur Folder</span>
               </div>
               <span class="ml-tag">FILES</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Menu Khusus Halaman Nakes: Dropdown Accordion -->
+        <div class="nav-group-section nakes-only-section" id="nakes-menu-dropdown-section" style="display: none;">
+          <button class="nav-group-header" id="nakes-menu-toggle-btn" onclick="toggleNakesMenuDropdown()"
+            aria-expanded="true">
+            <span class="nav-group-title" data-i18n="nav_nakes_menu">MENU NAKES</span>
+            <svg class="dropdown-chevron-icon" id="nakes-menu-chevron" width="13" height="13" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div class="ml-commands-list" id="nakes-menu-list">
+            <!-- 1. Daftar Konsultasi Pasien -->
+            <button class="ml-command-item nakes-menu-item" id="sidebar-nakes-inbox-link"
+              onclick="switchNakesRoom('inbox')" title="Daftar Hasil Konsultasi & Skrining Pasien">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span data-i18n="nav_nakes_inbox">Daftar Konsultasi</span>
+              </div>
+              <span class="ml-tag" style="background:rgba(16,185,129,0.15);color:#10b981;border-color:rgba(16,185,129,0.3)">PASIEN</span>
+            </button>
+
+            <!-- 2. Pemeriksaan Dokumen Cepat -->
+            <button class="ml-command-item nakes-menu-item" id="sidebar-nakes-lookup-link"
+              onclick="renderNakesLookupPromptCard(); if (typeof switchAdminRoom === 'function') switchAdminRoom('chat');"
+              title="Periksa Dokumen Pasien via Kode NKS">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span data-i18n="nav_nakes_lookup">Periksa via Kode</span>
+              </div>
+              <span class="ml-tag" style="background:rgba(217,119,87,0.15);color:var(--accent-terracotta);border-color:rgba(217,119,87,0.3)">KODE</span>
             </button>
           </div>
         </div>
@@ -1903,6 +1948,7 @@
                     <!-- Engine Dataset Klinis (static) -->
                     <button type="button" class="qm-item active" id="opt-model-dataset" data-model="dataset"
                       onclick="selectChatModel('dataset', event)" title="Engine Dataset Klinis 32 Biomarker">
+                      <span class="qm-check-slot" id="dataset-check-slot"><span class="qm-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5.5 4,8 8.5,2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
                       <span class="qm-name">Neura Clinical</span>
                       <span class="qm-tag">/clinical</span>
                     </button>
@@ -1915,12 +1961,14 @@
                       <button type="button" class="qm-item" id="opt-model-llm-0" data-model="llm"
                         data-llm-file="gemma-2-2b-it-q4_k_m.gguf"
                         onclick="selectLLMModel('gemma-2-2b-it-q4_k_m.gguf', event)" title="Gemma 2 2B Instruct (GGUF Q4_K_M)">
+                        <span class="qm-check-slot"></span>
                         <span class="qm-name">Gemma 2 2B</span>
                         <span class="qm-tag">/gemma_2</span>
                       </button>
                       <button type="button" class="qm-item" id="opt-model-llm-1" data-model="llm"
                         data-llm-file="llama-3.2-1b-instruct-q4_k_m.gguf"
                         onclick="selectLLMModel('llama-3.2-1b-instruct-q4_k_m.gguf', event)" title="Llama 3.2 1B Instruct (GGUF Q4_K_M)">
+                        <span class="qm-check-slot"></span>
                         <span class="qm-name">Llama 3.2 1B</span>
                         <span class="qm-tag">/llama_3.2</span>
                       </button>
@@ -2662,6 +2710,144 @@
         <div class="explorer-statusbar">
           <span id="explorer-status-left">Ready</span>
           <span id="explorer-status-right"></span>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- NAKES ROOM: Daftar Hasil Konsultasi Pasien (Worklist)        -->
+      <!-- ============================================================ -->
+      <div class="admin-room nakes-room" id="nakes-room-inbox" style="display: none;" aria-hidden="true">
+        <div class="admin-room-header">
+          <div class="admin-room-header-left">
+            <button class="admin-room-back-btn" onclick="switchNakesRoom('chat')" title="Kembali ke Konsultasi / Chat">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <div class="admin-room-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h2 class="admin-room-title">Daftar Hasil Konsultasi Pasien</h2>
+              <p class="admin-room-subtitle">Worklist Skrining Klinis &amp; Validasi Medis Nakes (@neura.ns.id)</p>
+            </div>
+          </div>
+          <div class="admin-room-header-actions">
+            <button class="admin-room-action-btn" onclick="loadNakesConsultationsTable(true)" title="Muat Ulang Data Konsultasi">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+              <span>Refresh Data</span>
+            </button>
+            <button class="admin-room-action-btn secondary" onclick="exportNakesConsultationsCsv()" title="Unduh Laporan Konsultasi ke Format CSV">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-room-body nakes-room-body">
+          <!-- KPI Summary Cards -->
+          <div class="nakes-kpi-grid">
+            <div class="nakes-kpi-card">
+              <div class="nakes-kpi-header">
+                <span class="nakes-kpi-label">Total Konsultasi</span>
+                <span class="nakes-kpi-icon-pill" style="background:rgba(217,119,87,0.12);color:var(--accent-terracotta)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </span>
+              </div>
+              <div class="nakes-kpi-val" id="kpi-nakes-total">—</div>
+              <div class="nakes-kpi-desc">Akumulasi seluruh skrining pasien</div>
+            </div>
+
+            <div class="nakes-kpi-card">
+              <div class="nakes-kpi-header">
+                <span class="nakes-kpi-label">Menunggu Telaah</span>
+                <span class="nakes-kpi-icon-pill" style="background:rgba(245,158,11,0.14);color:#f59e0b">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+              </div>
+              <div class="nakes-kpi-val" id="kpi-nakes-pending" style="color:#f59e0b">—</div>
+              <div class="nakes-kpi-desc">Belum divalidasi dokter spesialis</div>
+            </div>
+
+            <div class="nakes-kpi-card">
+              <div class="nakes-kpi-header">
+                <span class="nakes-kpi-label">Risiko Tinggi (Triage)</span>
+                <span class="nakes-kpi-icon-pill" style="background:rgba(239,68,68,0.14);color:#ef4444">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+              </div>
+              <div class="nakes-kpi-val" id="kpi-nakes-high-risk" style="color:#ef4444">—</div>
+              <div class="nakes-kpi-desc">Probabilitas ≥ 70% atau defisit nyata</div>
+            </div>
+
+            <div class="nakes-kpi-card">
+              <div class="nakes-kpi-header">
+                <span class="nakes-kpi-label">Terkonfirmasi Klinis</span>
+                <span class="nakes-kpi-icon-pill" style="background:rgba(16,185,129,0.14);color:#10b981">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </span>
+              </div>
+              <div class="nakes-kpi-val" id="kpi-nakes-validated" style="color:#10b981">—</div>
+              <div class="nakes-kpi-desc">Memiliki tanda tangan digital resmi</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="nakes-toolbar">
+            <div class="nakes-toolbar-left">
+              <div class="nakes-search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="nakes-search-input" placeholder="Cari nama pasien, kode NKS, no dokumen..." oninput="onNakesSearchInput(this.value)" />
+              </div>
+              <select id="nakes-filter-status" class="nakes-select" onchange="filterNakesConsultationsByStatus(this.value)">
+                <option value="all">Semua Status Telaah</option>
+                <option value="pending">Menunggu Telaah Medis</option>
+                <option value="validated">Terkonfirmasi Klinis</option>
+              </select>
+              <select id="nakes-filter-risk" class="nakes-select" onchange="filterNakesConsultationsByRisk(this.value)">
+                <option value="all">Semua Tingkat Risiko</option>
+                <option value="high">Risiko Tinggi (≥ 70%)</option>
+                <option value="moderate">Risiko Sedang (40 - 69%)</option>
+                <option value="low">Risiko Rendah (&lt; 40%)</option>
+              </select>
+            </div>
+            <div class="nakes-toolbar-right">
+              <span class="nakes-record-count" id="nakes-record-count">Memuat konsultasi...</span>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="nakes-table-wrapper">
+            <table class="nakes-table">
+              <thead>
+                <tr>
+                  <th>KODE DOKUMEN</th>
+                  <th>WAKTU KONSULTASI</th>
+                  <th>DATA PASIEN</th>
+                  <th>SKOR KOGNITIF</th>
+                  <th>HASIL SKRINING AI</th>
+                  <th>STATUS TELAAH</th>
+                  <th style="text-align:right">AKSI KLINIS</th>
+                </tr>
+              </thead>
+              <tbody id="nakes-consult-tbody">
+                <!-- Diisi dinamis oleh loadNakesConsultationsTable() -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -3425,7 +3611,7 @@
   <script src="/js/app-settings.js?v=7.7"></script>
   <script src="/js/app-voice-input.js?v=7.3"></script>
   <script src="/js/app-ml-commands.js?v=7.3"></script>
-  <script src="/js/app-chat.js?v=8.4"></script>
+  <script src="/js/app-chat.js?v=8.8"></script>
 
   <!-- Neura Modular Architecture: 2. Role User (Pasien) -->
   <script src="/js/app-user-profile.js?v=7.4"></script>
@@ -3442,6 +3628,7 @@
   <script src="/js/app-nakes-patient.js?v=7.3"></script>
   <script src="/js/app-nakes-history.js?v=7.3"></script>
   <script src="/js/app-nakes.js?v=7.3"></script>
+  <script src="/js/app-nakes-panels.js?v=1.0"></script>
 
   <!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
   <script src="/js/app-admin-auth.js?v=7.3"></script>

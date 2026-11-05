@@ -40,8 +40,141 @@ def _find_doc(code):
 
 
 # -----------------------------------------------------------------------
+# Helper: Ambil seluruh konsultasi unik (deduplikasi berdasarkan doc_id)
+# -----------------------------------------------------------------------
+def _get_unique_consultations():
+    store = _get_store()
+    seen = set()
+    unique_docs = []
+    for k, doc in store.items():
+        if not isinstance(doc, dict):
+            continue
+        doc_id = doc.get("doc_id") or doc.get("nakes_code") or k
+        if doc_id in seen:
+            continue
+        seen.add(doc_id)
+        unique_docs.append(doc)
+    
+    # Urutkan dari yang terbaru (ISO timestamp / created_at)
+    def _sort_key(d):
+        return d.get("timestamp_iso") or d.get("created_at") or ""
+        
+    unique_docs.sort(key=_sort_key, reverse=True)
+    return unique_docs
+
+
+# -----------------------------------------------------------------------
 # Routes
 # -----------------------------------------------------------------------
+
+@nakes_consult_bp.route("/list", methods=["GET"])
+@nakes_consult_bp.route("/all", methods=["GET"])
+def api_consultations_list():
+    """
+    Mengambil daftar seluruh hasil konsultasi & skrining pasien untuk Nakes.
+    Mendukung filter status validasi, tingkat risiko, dan pencarian nama/kode.
+    """
+    try:
+        docs = _get_unique_consultations()
+        
+        status_filter = request.args.get("status", "all").strip().lower()
+        risk_filter   = request.args.get("risk", "all").strip().lower()
+        search_query  = request.args.get("search", "").strip().lower()
+        
+        filtered = []
+        for doc in docs:
+            # 1. Status Filter (pending vs validated)
+            doc_status = (doc.get("status") or "").upper()
+            is_validated = doc_status == "VALIDATED_BY_CLINICIAN" or bool(doc.get("validation", {}).get("is_validated"))
+            if status_filter == "validated" and not is_validated:
+                continue
+            if status_filter == "pending" and is_validated:
+                continue
+                
+            # 2. Risk Filter
+            pred = doc.get("prediction", {})
+            prob = float(pred.get("probability", 0.0))
+            risk_label = (pred.get("risk_level") or "").lower()
+            if risk_filter == "high":
+                if prob < 70.0 and "high" not in risk_label:
+                    continue
+            elif risk_filter == "moderate":
+                if (prob < 40.0 or prob >= 70.0) and "mod" not in risk_label:
+                    continue
+            elif risk_filter == "low":
+                if prob >= 40.0 and "low" not in risk_label:
+                    continue
+                    
+            # 3. Search Query (Nama, Kode NKS, No Dokumen)
+            if search_query:
+                p_name = (doc.get("patient", {}).get("name") or "").lower()
+                nks    = (doc.get("nakes_code") or "").lower()
+                d_id   = (doc.get("doc_id") or "").lower()
+                if search_query not in p_name and search_query not in nks and search_query not in d_id:
+                    continue
+                    
+            filtered.append(doc)
+            
+        return jsonify({
+            "success": True,
+            "total": len(docs),
+            "filtered_count": len(filtered),
+            "data": filtered
+        })
+    except Exception as e:
+        logger.error(f"Error in api_consultations_list: {traceback.format_exc()}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@nakes_consult_bp.route("/summary", methods=["GET"])
+def api_consultations_summary():
+    """
+    Mengambil statistik agregat KPI konsultasi untuk dashboard Nakes:
+    - Total Pasien
+    - Menunggu Telaah (Pending)
+    - Terkonfirmasi Klinis (Validated)
+    - Risiko Tinggi (High Risk / Triage Merah)
+    """
+    try:
+        docs = _get_unique_consultations()
+        total = len(docs)
+        validated_count = 0
+        pending_count = 0
+        high_risk_count = 0
+        moderate_risk_count = 0
+        low_risk_count = 0
+        
+        for doc in docs:
+            doc_status = (doc.get("status") or "").upper()
+            is_val = doc_status == "VALIDATED_BY_CLINICIAN" or bool(doc.get("validation", {}).get("is_validated"))
+            if is_val:
+                validated_count += 1
+            else:
+                pending_count += 1
+                
+            pred = doc.get("prediction", {})
+            prob = float(pred.get("probability", 0.0))
+            risk_label = (pred.get("risk_level") or "").lower()
+            if prob >= 70.0 or "high" in risk_label:
+                high_risk_count += 1
+            elif prob >= 40.0 or "mod" in risk_label:
+                moderate_risk_count += 1
+            else:
+                low_risk_count += 1
+                
+        return jsonify({
+            "success": True,
+            "total_patients": total,
+            "pending_count": pending_count,
+            "validated_count": validated_count,
+            "high_risk_count": high_risk_count,
+            "moderate_risk_count": moderate_risk_count,
+            "low_risk_count": low_risk_count
+        })
+    except Exception as e:
+        logger.error(f"Error in api_consultations_summary: {traceback.format_exc()}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 @nakes_consult_bp.route("/<code>", methods=["GET"])
 def api_consultation_get(code):

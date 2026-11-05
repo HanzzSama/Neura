@@ -28,6 +28,9 @@ function syncAdminNavVisibility() {
     if (adminSection) {
       adminSection.style.display = isAdmin ? 'block' : 'none';
     }
+    if (typeof syncNakesNavVisibility === 'function') {
+      syncNakesNavVisibility();
+    }
   } catch (e) { }
 }
 window.syncAdminNavVisibility = syncAdminNavVisibility;

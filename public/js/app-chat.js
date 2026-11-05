@@ -63,14 +63,24 @@ function updateModelSwitcherUI(model) {
     }
     if (optDataset) optDataset.classList.remove('active');
     if (optLlm) optLlm.classList.add('active');
-    // Tandai active di dynamic list
+    // Update check slots
+    var dsSlotOff = document.getElementById('dataset-check-slot');
+    if (dsSlotOff) dsSlotOff.innerHTML = '';
+    // Tandai active di dynamic list & pasang centang hanya pada model aktif
+    const checkSvg = '<span class="qm-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5.5 4,8 8.5,2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
     const llmList = document.getElementById('ib-llm-model-list');
     if (llmList) {
       llmList.querySelectorAll('.qm-item').forEach(btn => {
         const f = btn.getAttribute('data-llm-file');
         const actFile = window.neuraLLMActiveFile || localStorage.getItem('neura_llm_active_file');
-        if (f && f === actFile) btn.classList.add('active');
-        else btn.classList.remove('active');
+        const slot = btn.querySelector('.qm-check-slot');
+        if (f && f === actFile) {
+          btn.classList.add('active');
+          if (slot) slot.innerHTML = checkSvg;
+        } else {
+          btn.classList.remove('active');
+          if (slot) slot.innerHTML = '';
+        }
       });
     }
 
@@ -90,6 +100,10 @@ function updateModelSwitcherUI(model) {
     }
     if (optDataset) optDataset.classList.add('active');
     if (optLlm) optLlm.classList.remove('active');
+    // Update check slots
+    var dsSlotOn = document.getElementById('dataset-check-slot');
+    if (dsSlotOn) dsSlotOn.innerHTML = '<span class="qm-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5.5 4,8 8.5,2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+    document.querySelectorAll('#ib-llm-model-list .qm-check-slot').forEach(function(el){el.innerHTML='';});
 
     // Update dynamic island ready state to Dataset Klinis
     if (activeIsland === 'ready' && typeof window.setDynamicIslandState === 'function') {
@@ -234,9 +248,9 @@ function _renderLLMModelList(models, globalReady) {
       ' data-llm-file="' + safeFilename + '"' +
       ' onclick="selectLLMModelByEncoded(this.getAttribute(\'data-llm-file\'), event)"' +
       ' title="' + safeArch + (sizeBadge ? ' - ' + sizeBadge : '') + '">' +
+      '<span class="qm-check-slot">' + (isCurrentEng ? '<span class="qm-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5.5 4,8 8.5,2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' : '') + '</span>' +
       '<span class="qm-name">' + safeDisp + '</span>' +
       '<span class="qm-tag">' + tagText + '</span>' +
-      (isActive ? '<span class="qm-check" style="margin-left:auto;color:#c8b89a;font-size:11px;">✓</span>' : '') +
       '</button>'
     );
   }).join('');
