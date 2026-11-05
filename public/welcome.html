@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=43">
   <link rel="stylesheet" href="/css/voice-consultation.css?v=44">
-  <link rel="stylesheet" href="/css/auth-hero.css?v=95">
+  <link rel="stylesheet" href="/css/auth-hero.css?v=101">
 </head>
 
 <body>
@@ -88,15 +88,6 @@
           <span id="nav-login-text" data-i18n="nav_login">Masuk</span>
         </button>
 
-        <!-- Primary CTA Button -->
-        <a href="/app" class="nav-cta-btn">
-          <span data-i18n="btn_consult">Mulai Diagnosis</span>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-        </a>
 
         <!-- Language Selector -->
         <button class="nav-lang-btn" id="lang-toggle-btn" title="Ganti Bahasa">
@@ -203,11 +194,20 @@
             </svg>
           </button>
 
-          <!-- Top Right 3 Pill Tabs Indicator -->
+          <!-- Top Right 3 Pill Tabs Indicator with Apple Floating Tooltips -->
           <div class="auth-top-pills" id="auth-top-pills">
-            <button type="button" class="top-pill-btn active" id="top-pill-login" title="Login / Welcome" data-pane="login"></button>
-            <button type="button" class="top-pill-btn" id="top-pill-register" title="Registrasi" data-pane="register"></button>
-            <button type="button" class="top-pill-btn" id="top-pill-forgot" title="Forgot Password" data-pane="forgot"></button>
+            <div class="top-pill-item">
+              <button type="button" class="top-pill-btn active" id="top-pill-login" aria-label="Login" data-pane="login"></button>
+              <div class="top-pill-tooltip">Login</div>
+            </div>
+            <div class="top-pill-item">
+              <button type="button" class="top-pill-btn" id="top-pill-register" aria-label="Register" data-pane="register"></button>
+              <div class="top-pill-tooltip">Register</div>
+            </div>
+            <div class="top-pill-item">
+              <button type="button" class="top-pill-btn" id="top-pill-forgot" aria-label="Forgot Password" data-pane="forgot"></button>
+              <div class="top-pill-tooltip">Forgot Pass</div>
+            </div>
           </div>
 
           <!-- Card Header (Dynamic Title & Subtitle) -->
@@ -510,8 +510,8 @@
               </svg>
             </span>
             <div class="capsule-text-group">
-              <span class="capsule-title">Login With Google</span>
-              <span class="capsule-sub">Single Sign-On Klinis Terverifikasi</span>
+              <span class="capsule-title" id="auth-google-btn-title">Login With Google</span>
+              <span class="capsule-sub" id="auth-google-btn-sub">Single Sign-On Klinis Terverifikasi</span>
             </div>
             <span class="auth-btn-spinner" style="margin-left:auto;"></span>
           </button>
@@ -1820,7 +1820,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
-  <script src="/js/auth-hero.js?v=95"></script>
+  <script src="/js/auth-hero.js?v=101"></script>
 
   <!-- NeuraPet Welcome Preview Interactions (eye tracking, blink, squish) -->
   <script>

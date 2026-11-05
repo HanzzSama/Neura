@@ -165,8 +165,15 @@
       authOverlay.classList.add('is-open');
       authOverlay.setAttribute('aria-hidden', 'false');
     }
+    document.documentElement.classList.add('auth-drawer-open');
     document.body.classList.add('auth-drawer-open');
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+
+    // Stop Lenis smooth scroll if running
+    if (window.lenis && typeof window.lenis.stop === 'function') {
+      try { window.lenis.stop(); } catch (e) {}
+    }
 
     if (navLoginBtn) navLoginBtn.classList.add('active');
 
@@ -202,8 +209,15 @@
       authOverlay.classList.remove('is-open');
       authOverlay.setAttribute('aria-hidden', 'true');
     }
+    document.documentElement.classList.remove('auth-drawer-open');
     document.body.classList.remove('auth-drawer-open');
+    document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
+
+    // Resume Lenis smooth scroll if running
+    if (window.lenis && typeof window.lenis.start === 'function') {
+      try { window.lenis.start(); } catch (e) {}
+    }
 
     if (navLoginBtn) navLoginBtn.classList.remove('active');
     hideAlert();
@@ -242,7 +256,7 @@
       'welcome': ['Welcome', 'Mulai Konsultasi dan kenali gejala lebih awal'],
       'login': ['Login', 'Mulai Konsultasi dan kenali gejala lebih awal'],
       'register': ['Register', 'Mulai Konsultasi dan kenali gejala lebih awal'],
-      'forgot': ['Fotgot Pass', 'Mulai Konsultasi dan kenali gejala lebih awal'],
+      'forgot': ['Forgot Pass', 'Mulai Konsultasi dan kenali gejala lebih awal'],
       'profile': ['Profile', 'Profil mu dan beberapa data profil'],
       'admin-verify': ['Verifikasi 2FA', 'Kode OTP telah dikirimkan ke email administrator']
     };
@@ -327,28 +341,50 @@
       drawerInner.setAttribute('data-auth-view', viewName);
     }
 
+    // Dynamic Google button text & sub-stack handling
+    var googleTitleEl = document.getElementById('auth-google-btn-title') || (btnGoogle ? btnGoogle.querySelector('.capsule-title') : null);
+    if (viewName === 'register') {
+      if (googleTitleEl) googleTitleEl.textContent = 'Register With Google';
+      if (btnGoogle) btnGoogle.title = 'Daftar dengan Akun Google';
+    } else {
+      if (googleTitleEl) googleTitleEl.textContent = 'Login With Google';
+      if (btnGoogle) btnGoogle.title = 'Masuk dengan Akun Google';
+    }
+
     if (viewName === 'welcome') {
       if (subStack) subStack.style.setProperty('display', 'flex', 'important');
       if (btnEmail) {
         btnEmail.style.removeProperty('display');
         btnEmail.classList.remove('is-hidden');
       }
-      if (btnGoogle) btnGoogle.style.setProperty('display', 'flex', 'important');
-      if (placeholder) {
-        placeholder.style.removeProperty('display');
-        placeholder.classList.remove('is-hidden');
+      if (btnGoogle) {
+        btnGoogle.style.setProperty('display', 'flex', 'important');
+        btnGoogle.classList.remove('is-hidden');
       }
-    } else if (viewName === 'login' || viewName === 'register' || viewName === 'forgot') {
+      if (placeholder) {
+        placeholder.style.setProperty('display', 'none', 'important');
+        placeholder.classList.add('is-hidden');
+      }
+    } else if (viewName === 'login' || viewName === 'register') {
       if (subStack) subStack.style.setProperty('display', 'flex', 'important');
       if (btnEmail) {
         btnEmail.classList.add('is-hidden');
       }
-      if (btnGoogle) btnGoogle.style.setProperty('display', 'flex', 'important');
+      if (btnGoogle) {
+        btnGoogle.style.setProperty('display', 'flex', 'important');
+        btnGoogle.classList.remove('is-hidden');
+      }
       if (placeholder) {
         placeholder.classList.add('is-hidden');
       }
+    } else if (viewName === 'forgot') {
+      // Hilangkan card Google pada form Forgot Password
+      if (subStack) subStack.style.setProperty('display', 'none', 'important');
+      if (btnEmail) btnEmail.classList.add('is-hidden');
+      if (btnGoogle) btnGoogle.classList.add('is-hidden');
+      if (placeholder) placeholder.classList.add('is-hidden');
     } else if (viewName === 'profile' || viewName === 'admin-verify') {
-      if (subStack) subStack.style.display = 'none';
+      if (subStack) subStack.style.setProperty('display', 'none', 'important');
     }
   }
 
@@ -1168,7 +1204,7 @@
     if (navLoginBtn) {
       navLoginBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        toggleAuthCard('welcome');
+        toggleAuthCard(currentMode || 'profile');
       });
     }
 
@@ -2171,9 +2207,14 @@
           );
         }, 500);
 
-      // Auto-display hero auth card on desktop screen: default ke form Welcome terlebih dahulu
+      // Auto-display hero auth card on desktop screen: default ke card profile (Mockup 4)
       if (window.innerWidth >= 1024 && !paramLoggedOut && !paramAuthRequired && !paramVerified && !paramUnverified) {
         setTimeout(function () {
+          var viewParam = urlParams.get('view');
+          if (viewParam) {
+            openAuthCard(viewParam);
+            return;
+          }
           var cached = localStorage.getItem('neura_auth_user');
           if (cached) {
             try {
@@ -2184,7 +2225,7 @@
               }
             } catch (e) {}
           }
-          openAuthCard('welcome');
+          openAuthCard('profile');
         }, 150);
       }
       

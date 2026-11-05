@@ -2426,7 +2426,7 @@
   justify-content: flex-start !important;
 }
 
-/* 3 White Pill Tabs in Top Right (Gambar 2) */
+/* 3 White Pill Tabs in Top Right - Apple Dynamic Elongating Tabs */
 .auth-top-pills {
   position: absolute !important;
   top: 32px !important;
@@ -2438,27 +2438,35 @@
 }
 
 .top-pill-btn {
-  width: 34px !important;
-  height: 15px !important;
+  width: 28px !important;
+  height: 14px !important;
   border-radius: 9999px !important;
-  background: #ffffff !important;
+  background: rgba(255, 255, 255, 0.45) !important;
   border: none !important;
   cursor: pointer !important;
   padding: 0 !important;
-  opacity: 0.92 !important;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  opacity: 0.65 !important;
+  transition: width 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.24s ease,
+              background 0.24s ease,
+              box-shadow 0.3s ease,
+              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
   outline: none !important;
 }
 
 .top-pill-btn:hover {
-  opacity: 1 !important;
-  transform: scale(1.08) !important;
+  opacity: 0.95 !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  transform: scale(1.06) !important;
 }
 
+/* Elongated Active Pill (Apple Dynamic Pill indicator) */
 .top-pill-btn.active {
   opacity: 1 !important;
-  width: 38px !important;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5) !important;
+  width: 48px !important;
+  background: #ffffff !important;
+  transform: scale(1) !important;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.7), 0 0 4px rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Dynamic Card Header */
@@ -2855,7 +2863,7 @@
   border-radius: 9999px !important;
   background: #141414 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 0 24px !important;
+  padding: 0 26px !important;
   display: flex !important;
   align-items: center !important;
   gap: 14px !important;
@@ -2863,8 +2871,20 @@
   font-size: 15px !important;
   font-weight: 500 !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   outline: none !important;
+  box-sizing: border-box !important;
+}
+
+.profile-action-pill svg {
+  flex-shrink: 0 !important;
+  color: inherit !important;
+}
+
+.profile-action-pill span {
+  color: inherit !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
 }
 
 .profile-action-pill:hover {
@@ -3507,9 +3527,7 @@
 .top-pill-btn {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
-.top-pill-btn.active {
-  transform: scale(1.08) !important;
-}
+/* Active pill size handled by Apple Dynamic Elongating Tabs */
 
 /* --------------------------------------------------------------------------
    SYMMETRICAL SPACING FIX (Top & Bottom Balance across all viewports)
@@ -3621,22 +3639,30 @@
   max-height: 550px !important;
 }
 
-/* Login, Register, Forgot: 640px Main Card + 78px (Google) + 14px gap = 732px */
+/* Login, Register: 640px Main Card + 78px (Google) + 14px gap = 732px */
 [data-auth-view="login"] .neura-auth-main-card,
-[data-auth-view="register"] .neura-auth-main-card,
-[data-auth-view="forgot"] .neura-auth-main-card,
-.neura-auth-main-card:not(.is-welcome-view) {
+[data-auth-view="register"] .neura-auth-main-card {
   height: 640px !important;
   min-height: 640px !important;
   max-height: 640px !important;
 }
 
-/* 2FA OTP & Profile (no sub-stack): Full 732px Main Card = 732px */
+/* Forgot Pass, 2FA OTP & Profile (no Google card / no sub-stack): Full 732px Main Card = 732px */
+[data-auth-view="forgot"] .neura-auth-main-card,
 [data-auth-view="admin-verify"] .neura-auth-main-card,
-[data-auth-view="profile"] .neura-auth-main-card {
+[data-auth-view="profile"] .neura-auth-main-card,
+.neura-auth-main-card:not(.is-welcome-view) {
   height: 732px !important;
   min-height: 732px !important;
   max-height: 732px !important;
+}
+
+/* Ensure Login & Register remain 640px despite fallback rule above */
+[data-auth-view="login"] .neura-auth-main-card,
+[data-auth-view="register"] .neura-auth-main-card {
+  height: 640px !important;
+  min-height: 640px !important;
+  max-height: 640px !important;
 }
 
 /* 2. Vertically Centered Forms & Panes */
@@ -3770,13 +3796,14 @@
   display: flex !important;
 }
 
-/* Login, Register, Forgot screens sub stack: Identical 78px Google capsule */
+/* Login, Register screens sub stack: Identical 78px Google capsule */
 [data-auth-view="login"] .neura-auth-sub-stack,
-[data-auth-view="register"] .neura-auth-sub-stack,
-[data-auth-view="forgot"] .neura-auth-sub-stack {
+[data-auth-view="register"] .neura-auth-sub-stack {
   display: flex !important;
 }
 
+/* Forgot Password, Profile, and OTP screens: Hide sub-stack completely */
+[data-auth-view="forgot"] .neura-auth-sub-stack,
 [data-auth-view="profile"] .neura-auth-sub-stack,
 [data-auth-view="admin-verify"] .neura-auth-sub-stack {
   display: none !important;
@@ -3850,6 +3877,13 @@
   transform: translateX(0) scale(1) !important;
 }
 
+/* Hide back button completely on Profile view (Mockup 4) */
+[data-auth-view="profile"] .auth-back-to-welcome-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateX(-8px) scale(0.9) !important;
+}
+
 @media (max-width: 1024px) {
   .auth-back-to-welcome-btn {
     top: 24px !important;
@@ -3871,4 +3905,108 @@
   padding: 0 !important;
   border: none !important;
   pointer-events: none !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   APPLE GLASS FLOATING TOOLTIP FOR TOP 3 PILL TABS
+   -------------------------------------------------------------------------- */
+.top-pill-item {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.top-pill-tooltip {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(-4px) scale(0.92) !important;
+  background: rgba(18, 18, 18, 0.96) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 9999px !important;
+  padding: 4px 11px !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.3px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 10px rgba(255, 255, 255, 0.08) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  z-index: 99 !important;
+}
+
+/* Caret arrow pointing up to pill */
+.top-pill-tooltip::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -4px !important;
+  left: 50% !important;
+  transform: translateX(-50%) rotate(45deg) !important;
+  width: 7px !important;
+  height: 7px !important;
+  background: rgba(18, 18, 18, 0.96) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Forgot Pass tooltip alignment: aligned toward left so it doesn't touch right card margin */
+#top-pill-forgot + .top-pill-tooltip {
+  left: auto !important;
+  right: -4px !important;
+  transform: translateY(-4px) scale(0.92) !important;
+}
+
+#top-pill-forgot + .top-pill-tooltip::before {
+  left: auto !important;
+  right: 17px !important;
+  transform: rotate(45deg) !important;
+}
+
+/* Hover & Focus state: Smooth Apple spring reveal */
+.top-pill-item:hover .top-pill-tooltip,
+.top-pill-btn:focus-visible + .top-pill-tooltip {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) scale(1) !important;
+}
+
+.top-pill-item:hover #top-pill-forgot + .top-pill-tooltip,
+#top-pill-forgot:focus-visible + .top-pill-tooltip {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   DISABLE HTML & BODY SCROLLBAR WHEN AUTH FORM IS DISPLAYED
+   -------------------------------------------------------------------------- */
+html.auth-drawer-open,
+body.auth-drawer-open {
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  height: 100% !important;
+  max-height: 100vh !important;
+  overscroll-behavior: none !important;
+}
+
+/* Completely hide WebKit & Firefox scrollbar tracks on html & body when form is active */
+html.auth-drawer-open::-webkit-scrollbar,
+body.auth-drawer-open::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+html.auth-drawer-open {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE / Edge */
 }
