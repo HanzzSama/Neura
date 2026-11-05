@@ -3,7 +3,7 @@
 
 <head>
   <!-- ═══ Neura Iris Transition Engine: must be FIRST in head for pre-render blocking ═══ -->
-  <script src="/js/page-transition.js?v=10"></script>
+  <script src="/js/page-transition.js?v=11"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Neura &bull; AI Deteksi &amp; Diagnosis Dini Alzheimer</title>
@@ -17,7 +17,7 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=60">
+  <link rel="stylesheet" href="/css/welcome.css?v=63">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=44">
@@ -552,308 +552,45 @@
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
           </span>
-          <span class="sil-url-bar"></span>
+          <span class="sil-url-text">neura.ai/preview</span>
         </div>
         <div class="sil-live-pill">
           <span class="sil-live-dot"></span>
-          <span class="sil-pill-line sil-pill-line--sm"></span>
+          <span class="sil-live-text">Pratinjau Demo</span>
         </div>
       </div>
 
-      <!-- App body -->
-      <div class="sil-body">
+      <!-- Video Preview Player with Magnetic Smooth Cursor Play Follower (Image 1 & 2) -->
+      <div class="showcase-video-wrap" id="showcase-video-wrap" role="region" aria-label="Pemutar Pratinjau Video Neura AI">
+        <video id="showcase-video" class="showcase-video" data-src="/assets/NeuraVideo.mp4" playsinline loop muted preload="none" disablepictureinpicture aria-label="Pratinjau Video Neura AI"></video>
 
-        <!-- Sidebar (Directly mirrors real Neura sidebar from Image 2 in silhouette form) -->
-        <aside class="sil-sidebar">
-          <!-- Top Group: Brand + New Chat + Dashboard -->
-          <div class="sil-sb-top">
-            <!-- Brand row -->
-            <div class="sil-sb-brand">
-              <div class="sil-sb-logo" title="Neura Logo">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="2.4"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <div class="sil-sb-name-group">
-                <span class="sil-brand-title-line"></span>
-                <span class="sil-brand-tag"></span>
-              </div>
-              <span class="sil-sb-icon-btn" title="Toggle Sidebar">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <line x1="9" y1="3" x2="9" y2="21" />
-                </svg>
-              </span>
-            </div>
+        <!-- Magnetic Smooth Cursor Play Pill (Image 2) -->
+        <div class="video-cursor-pill" id="video-cursor-pill" aria-hidden="true">
+          <span class="vcp-icon" id="vcp-icon">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6 3 20 12 6 21 6 3" />
+            </svg>
+          </span>
+          <span class="vcp-text" id="vcp-text">Putar intro</span>
+        </div>
 
-            <!-- Start new chat button -->
-            <div class="sil-sb-newchat" title="Start new chat">
-              <span class="sil-plus-icon">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </span>
-              <span class="sil-line sil-line--newchat"></span>
-              <span class="sil-shortcut-chip"></span>
-            </div>
+        <!-- Hairline Progress Line -->
+        <div class="video-progress-bar" aria-hidden="true">
+          <div class="video-progress-fill" id="video-progress-fill"></div>
+        </div>
 
-            <!-- Dashboard Hub button (Direct from Image 2) -->
-            <div class="sil-sb-dashboard" title="Dashboard">
-              <span class="sil-dash-icon">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e07a5f" stroke-width="2.2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-                  <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-                  <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-                  <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-                </svg>
-              </span>
-              <span class="sil-line sil-line--dash"></span>
-              <span class="sil-hub-badge"></span>
-            </div>
-          </div>
-
-          <!-- Middle Navigation section -->
-          <div class="sil-sb-nav">
-            <!-- RECENT CHATS Heading -->
-            <div class="sil-nav-heading">
-              <span class="sil-nav-label"></span>
-            </div>
-
-            <!-- Item 1: Active ("Voice Consultation") -->
-            <div class="sil-nav-item sil-nav-item--active">
-              <span class="sil-chat-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </span>
-              <span class="sil-line sil-line--chat-active"></span>
-            </div>
-
-            <!-- Item 2: ("Voice Consultation") -->
-            <div class="sil-nav-item">
-              <span class="sil-chat-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </span>
-              <span class="sil-line sil-line--chat-2"></span>
-            </div>
-
-            <!-- Item 3: ("Model Evaluation") -->
-            <div class="sil-nav-item">
-              <span class="sil-chat-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </span>
-              <span class="sil-line sil-line--chat-3"></span>
-            </div>
-
-            <!-- Item 4: ("Check Status") -->
-            <div class="sil-nav-item">
-              <span class="sil-chat-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </span>
-              <span class="sil-line sil-line--chat-4"></span>
-            </div>
-
-            <!-- ML COMMANDS Heading (Collapsed with chevron arrow > just like Image 2) -->
-            <div class="sil-nav-heading sil-nav-heading--gap">
-              <span class="sil-nav-label sil-nav-label--cmd"></span>
-              <span class="sil-chevron-icon">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </span>
-            </div>
-          </div>
-
-          <!-- Bottom Footer section (Mirrors Image 2 exactly) -->
-          <div class="sil-sb-footer">
-            <!-- Model Ready strip -->
-            <div class="sil-model-strip" title="Model Ready">
-              <span class="sil-status-dot"></span>
-              <span class="sil-line sil-line--model-ready"></span>
-              <div class="sil-info-chip">
-                <span class="sil-info-line"></span>
-                <span class="sil-info-icon">ℹ</span>
-              </div>
-            </div>
-
-            <!-- User profile row: Haidar Rifky -->
-            <div class="sil-user-row">
-              <div class="sil-avatar">H</div>
-              <div class="sil-user-info">
-                <span class="sil-line sil-line--user-name"></span>
-                <span class="sil-line sil-line--user-sub"></span>
-              </div>
-              <div class="sil-user-actions">
-                <!-- Theme Toggle Icon (Sun) -->
-                <span class="sil-action-icon" title="Theme">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="4" />
-                    <path
-                      d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                  </svg>
-                </span>
-                <!-- Logout Icon -->
-                <span class="sil-action-icon" title="Logout">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                </span>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Main area -->
-        <main class="sil-main">
-          <!-- Dynamic island notch -->
-          <div class="sil-island">
-            <span class="sil-island-sub"></span>
-            <div class="sil-island-body">
-              <div class="sil-pixel-grid">
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-              </div>
-              <span class="sil-island-status"></span>
-            </div>
-          </div>
-
-          <!-- Top right icons -->
-          <div class="sil-topbar-icons">
-            <span class="sil-icon-circ"></span>
-            <span class="sil-icon-circ"></span>
-          </div>
-
-          <!-- Hero greeting center -->
-          <div class="sil-hero">
-            <div class="sil-hero-logo">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
-            </div>
-
-            <!-- Greeting text silhouettes -->
-            <div class="sil-greeting-block">
-              <span class="sil-headline-line"></span>
-              <span class="sil-sub-line"></span>
-              <span class="sil-sub-line sil-sub-line--short"></span>
-            </div>
-
-            <!-- 2×2 card grid -->
-            <div class="sil-cards-grid">
-              <div class="sil-card">
-                <div class="sil-card-head">
-                  <span class="sil-card-icon"></span>
-                  <span class="sil-line sil-line--md sil-line--bold"></span>
-                </div>
-                <span class="sil-line sil-line--lg"></span>
-                <span class="sil-line sil-line--md"></span>
-              </div>
-              <div class="sil-card">
-                <div class="sil-card-head">
-                  <span class="sil-card-icon sil-card-icon--alt"></span>
-                  <span class="sil-line sil-line--md sil-line--bold"></span>
-                </div>
-                <span class="sil-line sil-line--lg"></span>
-                <span class="sil-line sil-line--sm"></span>
-              </div>
-              <div class="sil-card">
-                <div class="sil-card-head">
-                  <span class="sil-card-icon sil-card-icon--green"></span>
-                  <span class="sil-line sil-line--md sil-line--bold"></span>
-                </div>
-                <span class="sil-line sil-line--lg"></span>
-                <span class="sil-line sil-line--md"></span>
-              </div>
-              <div class="sil-card">
-                <div class="sil-card-head">
-                  <span class="sil-card-icon sil-card-icon--purple"></span>
-                  <span class="sil-line sil-line--md sil-line--bold"></span>
-                </div>
-                <span class="sil-line sil-line--lg"></span>
-                <span class="sil-line sil-line--sm"></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bottom input area: Latest Neura Chat Input Architecture -->
-          <div class="sil-input-wrap">
-            <div class="sil-input-glow">
-              <div class="sil-input-box">
-                <!-- Textarea silhouette line -->
-                <div class="sil-input-top">
-                  <span class="sil-placeholder-line"></span>
-                </div>
-
-                <!-- Input bottom bar: Replicating real Neura input-bottom-bar -->
-                <div class="sil-input-footer">
-                  <!-- Left: Attach / Quick Commands (+) -->
-                  <div class="sil-input-left">
-                    <span class="sil-ib-btn" title="Aksi / Perintah">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg>
-                    </span>
-                  </div>
-
-                  <!-- Right: Model badge + Mic / Send button + Voice Waveform button -->
-                  <div class="sil-input-right">
-                    <!-- Model Tier Badge -->
-                    <div class="sil-model-pill">
-                      <span class="sil-model-pill-dot"></span>
-                      <span class="sil-model-pill-text"></span>
-                    </div>
-
-                    <!-- Mic / Send Circular Button -->
-                    <span class="sil-send-btn" title="Kirim / Bicara">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                        <line x1="12" y1="19" x2="12" y2="23" />
-                        <line x1="8" y1="23" x2="16" y2="23" />
-                      </svg>
-                    </span>
-
-                    <!-- Voice Waveform Button -->
-                    <span class="sil-wave-btn" title="Voice Room">
-                      <span class="sil-wave-bar sil-wb-1"></span>
-                      <span class="sil-wave-bar sil-wb-2"></span>
-                      <span class="sil-wave-bar sil-wb-3"></span>
-                      <span class="sil-wave-bar sil-wb-4"></span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Disclaimer line -->
-            <span class="sil-disclaimer-line"></span>
-          </div>
-        </main>
-
+        <!-- Mute / Unmute Corner Toggle Button -->
+        <button type="button" class="video-sound-btn" id="video-sound-btn" aria-label="Beralih Suara" title="Beralih Suara">
+          <svg class="v-sound-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+          <svg class="v-sound-unmuted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
       </div>
     </div>
   </section>
@@ -2108,6 +1845,7 @@
   })();
   </script>
   <script src="/js/hero-brain-canvas.js?v=1.8"></script>
+  <script src="/js/showcase-video.js?v=1.0"></script>
   </body>
 
 </html>

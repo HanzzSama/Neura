@@ -85,37 +85,108 @@
   var isAnimating = false;
   var animFrameId = null;
 
+  // ── Scroll & Overflow Lock (Mencegah Scrollbar & Overflow Gutter selama Loading Screen) ──
+  function lockScroll() {
+    try {
+      if (document.documentElement) {
+        document.documentElement.classList.add('neura-transitioning');
+      }
+      if (document.body) {
+        document.body.classList.add('neura-transitioning');
+      }
+    } catch (e) {}
+  }
+
+  function unlockScroll() {
+    try {
+      if (document.documentElement) {
+        document.documentElement.classList.remove('neura-transitioning');
+      }
+      if (document.body) {
+        document.body.classList.remove('neura-transitioning');
+      }
+    } catch (e) {}
+  }
+
+  // Inject CSS lock styles sedini mungkin di <head> agar scrollbar tidak pernah muncul saat transisi
+  (function injectLockStyle() {
+    if (document.getElementById('neura-transition-lock')) return;
+    var style = document.createElement('style');
+    style.id = 'neura-transition-lock';
+    style.textContent = [
+      'html.neura-transitioning, html.neura-transitioning body {',
+      '  overflow: hidden !important;',
+      '  scrollbar-width: none !important;',
+      '  -ms-overflow-style: none !important;',
+      '}',
+      'html.neura-transitioning::-webkit-scrollbar,',
+      'html.neura-transitioning body::-webkit-scrollbar {',
+      '  display: none !important;',
+      '  width: 0 !important;',
+      '  height: 0 !important;',
+      '}',
+      '#neura-iris-canvas,',
+      '#neura-iris-closing-overlay {',
+      '  position: fixed !important;',
+      '  top: 0 !important;',
+      '  left: 0 !important;',
+      '  right: 0 !important;',
+      '  bottom: 0 !important;',
+      '  width: 100% !important;',
+      '  height: 100% !important;',
+      '  margin: 0 !important;',
+      '  padding: 0 !important;',
+      '  border: none !important;',
+      '  outline: none !important;',
+      '  box-sizing: border-box !important;',
+      '  overflow: hidden !important;',
+      '  pointer-events: all;',
+      '}'
+    ].join('\n');
+    var target = document.head || document.documentElement;
+    if (target) target.appendChild(style);
+  })();
+
   /**
    * Menghitung radius maksimal untuk menutupi seluruh 4 sudut viewport
    * dari titik pusat kursor/layar manapun.
    */
   function calcMaxRadius(originX, originY) {
-    var w = window.innerWidth;
-    var h = window.innerHeight;
+    var w = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
+    var h = Math.max(window.innerHeight, document.documentElement.clientHeight || 0);
     var d1 = Math.hypot(originX, originY);
     var d2 = Math.hypot(w - originX, originY);
     var d3 = Math.hypot(originX, h - originY);
     var d4 = Math.hypot(w - originX, h - originY);
-    return Math.ceil(Math.max(d1, d2, d3, d4) * 1.1) + 24;
+    return Math.ceil(Math.max(d1, d2, d3, d4) * 1.15) + 36;
   }
 
   /**
    * Inisialisasi Hardware Canvas 2D
    */
   function initCanvas() {
+    lockScroll();
+
     if (!canvasEl) {
       canvasEl = document.createElement('canvas');
       canvasEl.id = 'neura-iris-canvas';
       canvasEl.setAttribute('aria-hidden', 'true');
       canvasEl.style.cssText = [
         'position:fixed',
-        'inset:0',
-        'width:100vw',
-        'height:100vh',
-        'z-index:999999',
+        'top:0',
+        'left:0',
+        'right:0',
+        'bottom:0',
+        'width:100%',
+        'height:100%',
+        'z-index:9999999',
         'pointer-events:all',
         'visibility:visible',
-        'opacity:1'
+        'opacity:1',
+        'margin:0',
+        'padding:0',
+        'border:none',
+        'outline:none'
       ].join(';') + ';';
 
       var root = document.documentElement || document.body;
@@ -123,8 +194,8 @@
     }
 
     var dpr = window.devicePixelRatio || 1;
-    var w = window.innerWidth;
-    var h = window.innerHeight;
+    var w = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
+    var h = Math.max(window.innerHeight, document.documentElement.clientHeight || 0);
 
     if (canvasEl.width !== Math.round(w * dpr) || canvasEl.height !== Math.round(h * dpr)) {
       canvasEl.width  = Math.round(w * dpr);
@@ -154,6 +225,7 @@
     canvasEl    = null;
     ctx         = null;
     isAnimating = false;
+    unlockScroll();
   }
 
   /**
@@ -162,13 +234,13 @@
    */
   function drawAperture(originX, originY, radius) {
     if (!ctx || !canvasEl) return;
-    var w = window.innerWidth;
-    var h = window.innerHeight;
+    var w = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
+    var h = Math.max(window.innerHeight, document.documentElement.clientHeight || 0);
 
-    // Bingkai latar belakang solid gelap
+    // Bingkai latar belakang solid gelap (overscan 24px agar tidak ada celah subpixel pada scaling DPI)
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = OVERLAY_COLOR;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(-24, -24, w + 48, h + 48);
 
     if (radius <= 0) return;
 
@@ -316,17 +388,23 @@
    */
   function triggerUnloadApertureClose(originX, originY) {
     if (document.getElementById('neura-iris-closing-overlay')) return;
+    lockScroll();
 
     var overlay = document.createElement('div');
     overlay.id = 'neura-iris-closing-overlay';
     overlay.style.cssText = [
       'position:fixed',
-      'inset:0',
-      'width:100vw',
-      'height:100vh',
+      'top:0',
+      'left:0',
+      'right:0',
+      'bottom:0',
+      'width:100%',
+      'height:100%',
       'z-index:9999999',
       'pointer-events:all',
-      'overflow:hidden'
+      'overflow:hidden',
+      'margin:0',
+      'padding:0'
     ].join(';') + ';';
 
     var maxR = calcMaxRadius(originX, originY);
@@ -541,8 +619,11 @@
     } catch (e) {}
 
     if (shouldBlock) {
+      lockScroll();
       initCanvas();
-      drawAperture(window.innerWidth / 2, window.innerHeight / 2, 0);
+      var w = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
+      var h = Math.max(window.innerHeight, document.documentElement.clientHeight || 0);
+      drawAperture(w / 2, h / 2, 0);
     }
   }
 

@@ -93,6 +93,23 @@ pre {
 }
 
 /* ==========================================================================
+   Neura Page Transition & Loading Screen Lock (Zero Overflow & Edge-to-Edge)
+   ========================================================================== */
+html.neura-transitioning,
+html.neura-transitioning body {
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html.neura-transitioning::-webkit-scrollbar,
+html.neura-transitioning body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ==========================================================================
    MINIMALIST & MODERN GLOBAL SCROLLBAR SYSTEM
    Applied universally across the landing page and all scrollable containers
    ========================================================================== */
@@ -1202,26 +1219,25 @@ a {
 .showcase-section {
   position: relative;
   max-width: 1240px;
-  margin: 100px auto 160px;
-  padding: 0 28px;
+  margin: 80px auto 120px;
+  padding: 0 24px;
   z-index: 10;
-  perspective: 1400px;
+  contain: layout style;
 }
 
-/* ── Window shell ──────────────────────────────────────────────────────── */
+/* ── Window shell (Hardware Accelerated & Paint Isolated) ─────────────── */
 .sil-window {
   background: #191815;
   border-radius: 18px;
   box-shadow:
-    0 40px 100px -20px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(237, 235, 230, 0.08),
-    inset 0 0 0 1px rgba(237, 235, 230, 0.04);
+    0 24px 60px -14px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(237, 235, 230, 0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transform-origin: center top;
-  will-change: transform;
-  transition: box-shadow 0.3s ease;
+  contain: paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* ── Title-bar ─────────────────────────────────────────────────────────── */
@@ -1262,7 +1278,8 @@ a {
   border-radius: 9999px;
   padding: 3px 14px;
   height: 24px;
-  width: 280px;
+  width: auto;
+  min-width: 170px;
 }
 
 .sil-lock-icon {
@@ -1270,6 +1287,13 @@ a {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+}
+
+.sil-url-text {
+  font-family: var(--font-code, monospace);
+  font-size: 11px;
+  color: rgba(237, 235, 230, 0.65);
+  letter-spacing: -0.01em;
 }
 
 .sil-url-bar {
@@ -1300,781 +1324,158 @@ a {
   flex-shrink: 0;
 }
 
+.sil-live-text {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #22c55e;
+}
+
 @keyframes silPulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%       { opacity: 0.45; transform: scale(0.82); }
 }
 
-/* ── Body layout ───────────────────────────────────────────────────────── */
-.sil-body {
-  display: grid;
-  grid-template-columns: 232px 1fr;
-  min-height: 590px;
-  max-height: 670px;
-}
-
-/* ── Sidebar (Precisely matching Neura Obsidian Palette) ──────────────── */
-.sil-sidebar {
-  background: #191815;
-  border-right: 1px solid rgba(237, 235, 230, 0.06);
-  display: flex;
-  flex-direction: column;
-  padding: 16px 14px 14px;
-  gap: 12px;
-  overflow: hidden;
-}
-
-/* Skeleton line utility — warm ivory tones */
-.sil-line {
-  display: block;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.12);
-  height: 8px;
-  flex-shrink: 0;
-}
-.sil-line--xs    { width: 50%; }
-.sil-line--sm    { width: 65%; }
-.sil-line--md    { width: 80%; }
-.sil-line--lg    { width: 100%; }
-
-/* Top group: Brand + New Chat + Dashboard */
-.sil-sb-top {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Brand row */
-.sil-sb-brand {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 2px 2px 6px;
-}
-
-.sil-sb-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: rgba(217, 119, 87, 0.14);
-  border: 1px solid rgba(217, 119, 87, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.sil-sb-name-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-}
-
-.sil-brand-title-line {
-  display: block;
-  width: 55px;
-  height: 11px;
-  border-radius: 3.5px;
-  background: rgba(237, 235, 230, 0.85);
-}
-
-.sil-brand-tag {
-  display: block;
-  width: 18px;
-  height: 10px;
-  border-radius: 2.5px;
-  background: rgba(217, 119, 87, 0.18);
-  border: 1px solid rgba(217, 119, 87, 0.35);
-}
-
-.sil-sb-icon-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  background: rgba(237, 235, 230, 0.04);
-  border: 1px solid rgba(237, 235, 230, 0.07);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(237, 235, 230, 0.4);
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-/* New chat button */
-.sil-sb-newchat {
-  height: 38px;
-  padding: 0 10px;
-  background: #252320;
-  border: 1px solid rgba(237, 235, 230, 0.08);
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.sil-plus-icon {
-  color: rgba(237, 235, 230, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.sil-line--newchat {
-  display: block;
-  width: 88px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.72);
-}
-
-.sil-shortcut-chip {
-  width: 38px;
-  height: 18px;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.05);
-  border: 1px solid rgba(237, 235, 230, 0.08);
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-/* Dashboard button (Hub) */
-.sil-sb-dashboard {
-  height: 38px;
-  padding: 0 10px;
-  background: #252320;
-  border: 1px solid rgba(237, 235, 230, 0.07);
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.sil-dash-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.sil-line--dash {
-  display: block;
-  width: 72px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.75);
-}
-
-.sil-hub-badge {
-  width: 30px;
-  height: 18px;
-  border-radius: 4px;
-  background: rgba(217, 119, 87, 0.18);
-  border: 1px solid rgba(217, 119, 87, 0.38);
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-/* Middle Navigation section */
-.sil-sb-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  flex: 1;
-  overflow: hidden;
-  margin-top: 4px;
-}
-
-.sil-nav-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 6px 4px;
-  margin-bottom: 2px;
-}
-
-.sil-nav-heading--gap {
-  margin-top: 14px;
-}
-
-.sil-nav-label {
-  display: block;
-  height: 6px;
-  width: 78px;
-  border-radius: 3px;
-  background: rgba(237, 235, 230, 0.22);
-}
-
-.sil-nav-label--cmd {
-  width: 84px;
-}
-
-.sil-chevron-icon {
-  color: rgba(237, 235, 230, 0.3);
-  display: flex;
-  align-items: center;
-}
-
-.sil-nav-item {
-  height: 34px;
-  padding: 0 8px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background 0.15s ease;
-}
-
-.sil-nav-item--active {
-  background: #2F2D28;
-  border: 1px solid rgba(237, 235, 230, 0.08);
-}
-
-.sil-chat-icon {
-  color: rgba(237, 235, 230, 0.28);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.sil-nav-item--active .sil-chat-icon {
-  color: #d97757;
-}
-
-.sil-line--chat-active {
-  display: block;
-  width: 115px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.85);
-}
-
-.sil-line--chat-2 {
-  display: block;
-  width: 110px;
-  height: 7px;
-  border-radius: 3.5px;
-  background: rgba(237, 235, 230, 0.35);
-}
-
-.sil-line--chat-3 {
-  display: block;
-  width: 100px;
-  height: 7px;
-  border-radius: 3.5px;
-  background: rgba(237, 235, 230, 0.35);
-}
-
-.sil-line--chat-4 {
-  display: block;
-  width: 82px;
-  height: 7px;
-  border-radius: 3.5px;
-  background: rgba(237, 235, 230, 0.35);
-}
-
-/* Footer */
-.sil-sb-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(237, 235, 230, 0.07);
-}
-
-.sil-model-strip {
-  height: 38px;
-  padding: 0 12px;
-  border-radius: 9px;
-  background: #252320;
-  border: 1px solid rgba(237, 235, 230, 0.08);
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.sil-status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
-  flex-shrink: 0;
-}
-
-.sil-line--model-ready {
-  display: block;
-  width: 78px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.75);
-}
-
-.sil-info-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-  color: rgba(237, 235, 230, 0.35);
-  flex-shrink: 0;
-}
-
-.sil-info-line {
-  display: block;
-  width: 22px;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(237, 235, 230, 0.25);
-}
-
-.sil-info-icon {
-  font-size: 11px;
-  color: rgba(237, 235, 230, 0.35);
-  line-height: 1;
-}
-
-.sil-user-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 2px 2px;
-}
-
-.sil-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #d97757;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(217, 119, 87, 0.35);
-}
-
-.sil-user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 0;
-}
-
-.sil-line--user-name {
-  display: block;
-  width: 75px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(237, 235, 230, 0.85);
-}
-
-.sil-line--user-sub {
-  display: block;
-  width: 95px;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(237, 235, 230, 0.28);
-}
-
-.sil-user-actions {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-left: auto;
-}
-
-.sil-action-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(237, 235, 230, 0.38);
-  flex-shrink: 0;
-}
-
-/* ── Main area (Obsidian Dark #21201C) ─────────────────────────────────── */
-.sil-main {
+/* ==========================================================================
+   Showcase Video Preview & Magnetic Smooth Cursor Play Follower (Image 1 & 2)
+   ========================================================================== */
+.showcase-video-wrap {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  background: #21201C;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0d0c0a;
   overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  contain: layout paint;
+  transform: translateZ(0);
 }
 
-/* Dynamic island */
-.sil-island {
+.showcase-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #0d0c0a;
+  transform: translateZ(0);
+}
+
+/* ── Magnetic Smooth Cursor Play Pill (Image 2) ── */
+.video-cursor-pill {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #141310;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
-  padding: 5px 18px 7px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-  z-index: 5;
+  left: 0;
   pointer-events: none;
-  gap: 3px;
-}
-
-.sil-island-sub {
-  display: block;
-  width: 110px;
-  height: 5px;
-  border-radius: 3px;
-  background: rgba(237, 235, 230, 0.16);
-}
-
-.sil-island-body {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.sil-pixel-grid {
-  width: 10px;
-  height: 10px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5px;
-}
-
-.sil-pixel-grid span {
-  background: #22c55e;
-  border-radius: 0.5px;
-}
-
-.sil-island-status {
-  display: block;
-  width: 36px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(34, 197, 94, 0.55);
-}
-
-/* Top-right icon circles */
-.sil-topbar-icons {
-  position: absolute;
-  top: 14px;
-  right: 18px;
-  display: flex;
-  gap: 10px;
-  z-index: 4;
-}
-
-.sil-icon-circ {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: rgba(237, 235, 230, 0.08);
-}
-
-/* ── Hero greeting center ──────────────────────────────────────────────── */
-.sil-hero {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 42px 28px 146px;
-  gap: 0;
-}
-
-.sil-hero-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(217, 119, 87, 0.14);
-  border: 1px solid rgba(217, 119, 87, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 12px rgba(217, 119, 87, 0.15);
-}
-
-.sil-greeting-block {
-  display: flex;
-  flex-direction: column;
+  z-index: 25;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 26px;
-}
-
-/* Hero title: prominent warm ivory */
-.sil-headline-line {
-  display: block;
-  width: 270px;
-  height: 20px;
-  border-radius: 6px;
-  background: rgba(237, 235, 230, 0.85);
-}
-
-.sil-sub-line {
-  display: block;
-  width: 360px;
-  height: 9px;
-  border-radius: 5px;
-  background: rgba(237, 235, 230, 0.35);
-}
-
-.sil-sub-line--short {
-  width: 280px;
-}
-
-/* 2×2 card grid — matches exact width of input box */
-.sil-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  width: 100%;
-  max-width: 620px;
-}
-
-.sil-card {
-  background: #282622;
-  border: 1px solid rgba(237, 235, 230, 0.08);
-  border-radius: 12px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.sil-card:hover {
-  background: #2F2D29;
-  border-color: rgba(217, 119, 87, 0.3);
-  transform: translateY(-2px);
-}
-
-.sil-card-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sil-card-head .sil-line--bold {
-  background: rgba(237, 235, 230, 0.75);
-}
-
-.sil-card > .sil-line--lg {
-  background: rgba(237, 235, 230, 0.3);
-}
-
-.sil-card > .sil-line--md,
-.sil-card > .sil-line--sm {
-  background: rgba(237, 235, 230, 0.22);
-}
-
-/* Calibrated Harmonious Card Badges */
-.sil-card-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  background: rgba(217, 119, 87, 0.22);
-  border: 1px solid rgba(217, 119, 87, 0.4);
-  flex-shrink: 0;
-}
-
-.sil-card-icon--alt    { background: rgba(217, 160, 87, 0.2); border: 1px solid rgba(217, 160, 87, 0.38); }
-.sil-card-icon--green  { background: rgba(34, 197, 94, 0.2);  border: 1px solid rgba(34, 197, 94, 0.38); }
-.sil-card-icon--purple { background: rgba(96, 165, 250, 0.2); border: 1px solid rgba(96, 165, 250, 0.38); }
-
-/* ── Bottom input area: Latest Neura Chat Input Architecture ─────────────── */
-.sil-input-wrap {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 64px);
-  max-width: 620px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  z-index: 5;
-}
-
-/* Ambient glow ring matching Neura signature terracotta */
-.sil-input-glow {
-  width: 100%;
-  position: relative;
-  border-radius: 18px;
-  box-shadow:
-    0 4px 30px -4px rgba(217, 119, 87, 0.24),
-    0 -2px 20px -2px rgba(217, 119, 87, 0.12);
-}
-
-.sil-input-box {
-  width: 100%;
-  background: #272622;
-  border: 1px solid rgba(217, 119, 87, 0.4);
-  border-radius: 18px;
-  padding: 13px 16px 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-  box-sizing: border-box;
-}
-
-.sil-input-top {
-  display: flex;
-  align-items: center;
-  padding-top: 2px;
-}
-
-.sil-placeholder-line {
-  display: block;
-  width: 150px;
-  height: 9px;
-  border-radius: 5px;
-  background: rgba(237, 235, 230, 0.3);
-}
-
-.sil-input-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.sil-input-left {
-  display: flex;
-  align-items: center;
-}
-
-/* Quick Commands / Attach Button (+) */
-.sil-ib-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: rgba(237, 235, 230, 0.05);
-  border: 1px solid rgba(237, 235, 230, 0.09);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(237, 235, 230, 0.45);
-}
-
-.sil-input-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Model pill label ("Neura Clinical") */
-.sil-model-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 26px;
-  padding: 0 10px;
+  background: #FFFFFF;
+  color: #111111;
+  padding: 8px 18px 8px 15px;
   border-radius: 9999px;
-  background: rgba(237, 235, 230, 0.04);
-  border: 1px solid rgba(237, 235, 230, 0.09);
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.48), 0 4px 12px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  opacity: 0;
+  transform: translate3d(-9999px, -9999px, 0) translate(-50%, -50%) scale(0.6);
+  user-select: none;
+  white-space: nowrap;
+  contain: layout style;
+  will-change: transform, opacity;
 }
 
-.sil-model-pill-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #22c55e;
-}
-
-.sil-model-pill-text {
-  display: block;
-  width: 54px;
-  height: 7px;
-  border-radius: 3px;
-  background: rgba(237, 235, 230, 0.45);
-}
-
-/* Mic / Send Button */
-.sil-send-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #d97757 0%, #c66545 100%);
+.vcp-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(217, 119, 87, 0.45);
+  color: #111111;
   flex-shrink: 0;
 }
 
-/* Voice Waveform Button */
-.sil-wave-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: rgba(237, 235, 230, 0.05);
-  border: 1px solid rgba(237, 235, 230, 0.09);
+.vcp-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.01em;
+}
+
+/* ── Hairline Progress Bar ── */
+.video-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.video-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-primary, #D97757);
+  box-shadow: 0 0 8px rgba(217, 119, 87, 0.8);
+  transition: width 0.1s linear;
+}
+
+/* ── Corner Mute / Unmute Button ── */
+.video-sound-btn {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  z-index: 15;
+  background: rgba(20, 18, 16, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #FAF9F5;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5px;
-  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
-.sil-wave-bar {
-  display: inline-block;
-  width: 2px;
-  border-radius: 1px;
-  background: rgba(237, 235, 230, 0.6);
+.video-sound-btn:hover {
+  background: rgba(35, 32, 28, 0.95);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.08);
 }
 
-.sil-wb-1 { height: 6px; }
-.sil-wb-2 { height: 13px; }
-.sil-wb-3 { height: 9px; }
-.sil-wb-4 { height: 5px; }
-
-/* Disclaimer text line under input */
-.sil-disclaimer-line {
-  display: block;
-  width: 240px;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(237, 235, 230, 0.18);
-}
-
-/* ── Responsive ────────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .sil-body {
-    grid-template-columns: 1fr;
+/* Responsive Touch Devices */
+@media (hover: none), (max-width: 768px) {
+  .video-cursor-pill {
+    position: absolute;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+    opacity: 1 !important;
+    pointer-events: auto;
   }
-
-  .sil-sidebar {
-    display: none;
+  .showcase-video-wrap.is-playing .video-cursor-pill {
+    opacity: 0 !important;
+    pointer-events: none;
   }
-
-  .sil-cards-grid {
-    grid-template-columns: 1fr;
-    max-width: 100%;
-  }
-
-  .sil-input-wrap {
-    width: calc(100% - 32px);
-    max-width: 100%;
-  }
-
   .sil-url-pill {
-    display: none;
+    width: auto;
+    max-width: 170px;
+  }
+  .sil-url-text {
+    font-size: 10px;
   }
 }
-
-
 
 .app-window-frame {
   background: var(--color-bg);
