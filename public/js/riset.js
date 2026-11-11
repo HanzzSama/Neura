@@ -721,10 +721,12 @@
     const gBadge = document.getElementById('cfg-group-badge');
     const gMockup = document.getElementById('cfg-group-mockup');
     const gCollab = document.getElementById('cfg-group-collab');
+    const gImage = document.getElementById('cfg-group-image');
 
-    if (gBadge) gBadge.style.display = (type === 'badge_glow' || type === 'neon_code' || type === 'vision_glow') ? 'block' : 'none';
-    if (gMockup) gMockup.style.display = (type === 'mockup_card') ? 'block' : 'none';
-    if (gCollab) gCollab.style.display = (type === 'collab_widget') ? 'block' : 'none';
+    if (gBadge) gBadge.style.display = (type === 'badge_glow' || type === 'neon_code' || type === 'vision_glow') ? 'flex' : 'none';
+    if (gMockup) gMockup.style.display = (type === 'mockup_card') ? 'flex' : 'none';
+    if (gCollab) gCollab.style.display = (type === 'collab_widget') ? 'flex' : 'none';
+    if (gImage) gImage.style.display = (type === 'custom_image') ? 'flex' : 'none';
 
     cfg = cfg || {};
     if (cfg.badgeText && document.getElementById('cfg-badge-text')) {
@@ -1158,7 +1160,34 @@
     if (window.triggerAutoSave) triggerAutoSave();
   }
   // ── 8. Drawers & Accordion Handling ────────────────────────────────────────
+  let _currentHelpTab = 'shortcuts';
+
+  function toggleHelpControls() {
+    const controls = document.getElementById('help-active-controls');
+    if (!controls) return;
+    const isHidden = controls.style.display === 'none' || window.getComputedStyle(controls).display === 'none';
+    controls.style.display = isHidden ? 'flex' : 'none';
+  }
+
+  function switchHelpTab(tab) {
+    _currentHelpTab = tab || 'shortcuts';
+    const btnS = document.getElementById('btn-ht-shortcuts');
+    const btnG = document.getElementById('btn-ht-guide');
+    const panS = document.getElementById('panel-help-shortcuts');
+    const panG = document.getElementById('panel-help-guide');
+
+    if (btnS) btnS.classList.toggle('active', tab === 'shortcuts');
+    if (btnG) btnG.classList.toggle('active', tab === 'guide');
+
+    if (panS) panS.style.display = (tab === 'shortcuts') ? 'flex' : 'none';
+    if (panG) panG.style.display = (tab === 'guide') ? 'flex' : 'none';
+  }
+
   function toggleDrawer(name) {
+    if (name === 'help') {
+      toggleHelpControls();
+      return;
+    }
     const drawer = document.getElementById('drawer-' + name);
     if (!drawer) return;
     const isShowing = drawer.style.display !== 'none';
@@ -1936,6 +1965,8 @@
   window.switchSettingsTab = switchSettingsTab;
   window.setPageMargin = setPageMargin;
   window.setDocumentWatermark = setDocumentWatermark;
+  window.toggleHelpControls = toggleHelpControls;
+  window.switchHelpTab = switchHelpTab;
   window.switchLeftTab = switchLeftTab;
   window.selectDocPage = selectDocPage;
   window.addNewPage = addNewPage;

@@ -20,7 +20,7 @@
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="/css/welcome.css?v=65">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
-  <link rel="stylesheet" href="/css/riset.css?v=5.3">
+  <link rel="stylesheet" href="/css/riset.css?v=5.7">
 
   <!-- Pre-load theme preference -->
   <script>
@@ -555,74 +555,98 @@
                 <option value="CONFIDENTIAL">CONFIDENTIAL / RAHASIA</option>
                 <option value="INTERNAL REVIEW">INTERNAL REVIEW ONLY</option>
               </select>
-              <div class="settings-select-chevron">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </div>
             </div>
           </div>
         </div>
 
         <!-- Panel 2: Thumbnail Showcase Engine -->
         <div class="settings-panel-section" id="panel-settings-thumbnail" style="display:none;">
-          <span class="setting-field-group-title" style="margin-bottom:8px;">Format Thumbnail</span>
-          <div class="thumb-style-pills">
-            <button type="button" class="thumb-style-pill active" data-type="badge_glow" onclick="setThumbnailType('badge_glow')">
-              <span>✦ Glow Badge</span>
-            </button>
-            <button type="button" class="thumb-style-pill" data-type="mockup_card" onclick="setThumbnailType('mockup_card')">
-              <span>⊞ Mockup Card</span>
-            </button>
-            <button type="button" class="thumb-style-pill" data-type="neon_code" onclick="setThumbnailType('neon_code')">
-              <span>&lt;/&gt; Neon Code</span>
-            </button>
-            <button type="button" class="thumb-style-pill" data-type="collab_widget" onclick="setThumbnailType('collab_widget')">
-              <span>⑂ Mini Widget</span>
-            </button>
-            <button type="button" class="thumb-style-pill" data-type="vision_glow" onclick="setThumbnailType('vision_glow')">
-              <span>◉ Vision Glow</span>
-            </button>
-            <button type="button" class="thumb-style-pill" data-type="custom_image" onclick="setThumbnailType('custom_image')">
-              <span>🖼 Banner Img</span>
-            </button>
+          <div class="settings-item-group">
+            <div class="settings-item-header">
+              <span class="settings-item-label">Format Thumbnail</span>
+            </div>
+            <div class="thumb-style-pills">
+              <button type="button" class="thumb-style-pill active" data-type="badge_glow" onclick="setThumbnailType('badge_glow')">
+                <svg class="thumb-pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+                </svg>
+                <span>Glow Badge</span>
+              </button>
+              <button type="button" class="thumb-style-pill" data-type="mockup_card" onclick="setThumbnailType('mockup_card')">
+                <svg class="thumb-pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+                <span>Mockup Card</span>
+              </button>
+              <button type="button" class="thumb-style-pill" data-type="neon_code" onclick="setThumbnailType('neon_code')">
+                <svg class="thumb-pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                  <polyline points="16 18 22 12 16 6"/>
+                  <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                <span>Neon Code</span>
+              </button>
+              <button type="button" class="thumb-style-pill" data-type="collab_widget" onclick="setThumbnailType('collab_widget')">
+                <svg class="thumb-pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                  <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                <span>Mini Widget</span>
+              </button>
+              <button type="button" class="thumb-style-pill" data-type="vision_glow" onclick="setThumbnailType('vision_glow')">
+                <svg class="thumb-pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9"/>
+                  <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                </svg>
+                <span>Vision Glow</span>
+              </button>
+              <button type="button" class="thumb-style-pill" data-type="custom_image" onclick="setThumbnailType('custom_image')">
+                <svg class="thumb-pill-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/>
+                  <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span>Banner Img</span>
+              </button>
+            </div>
           </div>
 
           <!-- Dynamic Config Fields -->
-          <div class="thumb-config-panel" style="margin-top:10px;">
-            <div id="cfg-group-badge" class="inspector-field">
-              <label for="cfg-badge-text">Teks Label Spotlight</label>
-              <input type="text" id="cfg-badge-text" value="Model Klinis" placeholder="Contoh: Model Klinis" oninput="updateInspectorPreview(); triggerAutoSave();">
+          <div class="thumb-config-panel">
+            <div id="cfg-group-badge" class="settings-item-group">
+              <div class="settings-item-header">
+                <label for="cfg-badge-text" class="settings-item-label">Teks Label Spotlight</label>
+              </div>
+              <input type="text" id="cfg-badge-text" class="settings-input-field" value="Model Klinis" placeholder="Contoh: Model Klinis" oninput="updateInspectorPreview(); triggerAutoSave();">
               <input type="hidden" id="cfg-badge-icon" value="✦">
             </div>
 
-            <div id="cfg-group-mockup" style="display:none;">
-              <div class="inspector-field">
-                <label for="cfg-mockup-title">Judul Mockup</label>
-                <input type="text" id="cfg-mockup-title" value="32 Profil Biomarker Klinis" oninput="updateInspectorPreview(); triggerAutoSave();">
+            <div id="cfg-group-mockup" class="settings-item-group" style="display:none; gap:10px;">
+              <div class="settings-item-group">
+                <label for="cfg-mockup-title" class="settings-item-label">Judul Mockup</label>
+                <input type="text" id="cfg-mockup-title" class="settings-input-field" value="32 Profil Biomarker Klinis" oninput="updateInspectorPreview(); triggerAutoSave();">
               </div>
-              <div class="inspector-field">
-                <label for="cfg-mockup-desc">Deskripsi</label>
-                <textarea id="cfg-mockup-desc" rows="2" oninput="updateInspectorPreview(); triggerAutoSave();">Evaluasi korelasi skor MMSE, ADL...</textarea>
+              <div class="settings-item-group">
+                <label for="cfg-mockup-desc" class="settings-item-label">Deskripsi Mockup</label>
+                <textarea id="cfg-mockup-desc" class="settings-textarea-field" rows="2" oninput="updateInspectorPreview(); triggerAutoSave();">Evaluasi korelasi skor MMSE, ADL...</textarea>
               </div>
-              <div class="inspector-field">
-                <label for="cfg-mockup-btn">Teks Tombol</label>
-                <input type="text" id="cfg-mockup-btn" value="Eksplorasi" oninput="updateInspectorPreview(); triggerAutoSave();">
-              </div>
-            </div>
-
-            <div id="cfg-group-collab" style="display:none;">
-              <div class="inspector-field">
-                <label for="cfg-collab-body">Teks Inti Widget</label>
-                <input type="text" id="cfg-collab-body" value="Clinical Decision Support" oninput="updateInspectorPreview(); triggerAutoSave();">
+              <div class="settings-item-group">
+                <label for="cfg-mockup-btn" class="settings-item-label">Teks Tombol CTA</label>
+                <input type="text" id="cfg-mockup-btn" class="settings-input-field" value="Eksplorasi" oninput="updateInspectorPreview(); triggerAutoSave();">
               </div>
             </div>
 
-            <div id="cfg-group-image" style="display:none;">
-              <div class="inspector-field">
-                <label for="cfg-custom-url">URL Gambar Banner</label>
-                <input type="url" id="cfg-custom-url" placeholder="https://..." oninput="updateInspectorPreview(); triggerAutoSave();">
-              </div>
+            <div id="cfg-group-collab" class="settings-item-group" style="display:none;">
+              <label for="cfg-collab-body" class="settings-item-label">Teks Inti Widget</label>
+              <input type="text" id="cfg-collab-body" class="settings-input-field" value="Clinical Decision Support" oninput="updateInspectorPreview(); triggerAutoSave();">
+            </div>
+
+            <div id="cfg-group-image" class="settings-item-group" style="display:none;">
+              <label for="cfg-custom-url" class="settings-item-label">URL Gambar Banner</label>
+              <input type="url" id="cfg-custom-url" class="settings-input-field" placeholder="https://..." oninput="updateInspectorPreview(); triggerAutoSave();">
             </div>
           </div>
         </div>
@@ -669,21 +693,118 @@
           </select>
         </div>
       </div>
-      <!-- Widget 8: Help (Accordion Drawer Row) -->
-      <div class="widget-card widget-row-item widget-clickable" onclick="toggleDrawer('help')">
-        <div class="widget-row-left">
-          <span class="widget-swatch-dot dot-help"></span>
-          <span class="widget-row-label">Help</span>
+      <!-- Widget 7: Help & Keyboard Shortcuts Studio -->
+      <div class="widget-card widget-clickable widget-help-card" id="card-help" onclick="toggleHelpControls()">
+        <div class="help-card-top-row">
+          <div class="help-specimen-wrap">
+            <div class="help-specimen-badge">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="help-specimen-bars">
+              <span class="specimen-help-bar bar-shortcut"><kbd class="specimen-mini-kbd">⌘K</kbd></span>
+              <span class="specimen-help-bar bar-guide">PANDUAN</span>
+            </div>
+          </div>
+          <div class="help-drag-handle" title="Drag to reorder">
+            <svg width="12" height="18" viewBox="0 0 12 18" fill="none">
+              <circle cx="2.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+            </svg>
+          </div>
         </div>
-        <span class="widget-drag-dots">⋮⋮</span>
+        <div class="help-card-bottom-info">
+          <span class="help-card-title">Help &amp; shortcuts</span>
+          <span class="help-card-sub">Keyboard shortcuts &amp; editor guide</span>
+        </div>
       </div>
-      <div class="widget-drawer-panel" id="drawer-help" style="display:none;">
-        <div style="font-size:12px; line-height:1.6; color:var(--riset-text-secondary);">
-          <p><strong>Shortcut Keyboard:</strong></p>
-          <p>&bull; <code>Ctrl + B</code>: Tebal</p>
-          <p>&bull; <code>Ctrl + I</code>: Miring</p>
-          <p>&bull; <code>Ctrl + Z</code>: Undo</p>
-          <p>&bull; <code>Ctrl + Y</code>: Redo</p>
+
+      <!-- Active Help Controls -->
+      <div class="help-active-controls" id="help-active-controls" style="display: none;">
+        <!-- Help Sub-Tabs -->
+        <div class="help-subtabs-nav">
+          <button type="button" class="help-subtab-btn active" id="btn-ht-shortcuts" onclick="switchHelpTab('shortcuts')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+              <line x1="6" y1="8" x2="6.01" y2="8"/>
+              <line x1="10" y1="8" x2="10.01" y2="8"/>
+              <line x1="14" y1="8" x2="14.01" y2="8"/>
+              <line x1="18" y1="8" x2="18.01" y2="8"/>
+              <line x1="8" y1="16" x2="16" y2="16"/>
+            </svg>
+            <span>Pintasan</span>
+          </button>
+          <button type="button" class="help-subtab-btn" id="btn-ht-guide" onclick="switchHelpTab('guide')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span>Panduan</span>
+          </button>
+        </div>
+
+        <!-- Panel 1: Shortcuts Cheat Sheet -->
+        <div class="help-panel-section" id="panel-help-shortcuts">
+          <div class="shortcut-list-wrap">
+            <div class="shortcut-item-row">
+              <span class="shortcut-desc">Teks Tebal (Bold)</span>
+              <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-plus">+</span><kbd>B</kbd></div>
+            </div>
+            <div class="shortcut-item-row">
+              <span class="shortcut-desc">Teks Miring (Italic)</span>
+              <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-plus">+</span><kbd>I</kbd></div>
+            </div>
+            <div class="shortcut-item-row">
+              <span class="shortcut-desc">Garis Bawah (Underline)</span>
+              <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-plus">+</span><kbd>U</kbd></div>
+            </div>
+            <div class="shortcut-item-row">
+              <span class="shortcut-desc">Urungkan (Undo)</span>
+              <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-plus">+</span><kbd>Z</kbd></div>
+            </div>
+            <div class="shortcut-item-row">
+              <span class="shortcut-desc">Ulangi (Redo)</span>
+              <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-plus">+</span><kbd>Y</kbd></div>
+            </div>
+            <div class="shortcut-item-row">
+              <span class="shortcut-desc">Simpan Draf Otomatis</span>
+              <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-plus">+</span><kbd>S</kbd></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Quick Editor Features Guide -->
+        <div class="help-panel-section" id="panel-help-guide" style="display: none;">
+          <div class="help-guide-cards">
+            <div class="help-guide-item">
+              <div class="guide-item-icon">✦</div>
+              <div class="guide-item-content">
+                <span class="guide-item-title">Neura AI Poles Riset</span>
+                <span class="guide-item-desc">Klik kartu AI di atas untuk menyempurnakan struktur kalimat &amp; tata bahasa medis.</span>
+              </div>
+            </div>
+            <div class="help-guide-item">
+              <div class="guide-item-icon">🖼</div>
+              <div class="guide-item-content">
+                <span class="guide-item-title">Sisip Media &amp; Bagan</span>
+                <span class="guide-item-desc">Seret gambar PNG, JPG, WebP, atau video MP4 langsung ke atas kertas A4.</span>
+              </div>
+            </div>
+            <div class="help-guide-item">
+              <div class="guide-item-icon">📑</div>
+              <div class="guide-item-content">
+                <span class="guide-item-title">Multi-Halaman Tak Terbatas</span>
+                <span class="guide-item-desc">Gunakan tombol "+" di kiri bawah untuk menambah lembar kerja riset baru.</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -750,7 +871,7 @@
   </div>
 
   <!-- External JavaScript -->
-  <script src="/js/riset.js?v=4.9"></script>
+  <script src="/js/riset.js?v=5.1"></script>
 </body>
 
 </html>
