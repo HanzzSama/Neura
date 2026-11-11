@@ -841,6 +841,15 @@
     if (!controls) return;
     const isHidden = controls.style.display === 'none' || window.getComputedStyle(controls).display === 'none';
     controls.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+      // Ensure wheel handle is positioned accurately on opening
+      const currentHex = document.getElementById('custom-color-hex')?.value || 'D97757';
+      requestAnimationFrame(() => {
+        if (typeof updateWheelHandleFromHex === 'function') {
+          updateWheelHandleFromHex('#' + currentHex);
+        }
+      });
+    }
   }
 
   function switchColorMode(mode) {
@@ -857,9 +866,9 @@
     if (btnHl) btnHl.classList.toggle('active', mode === 'highlight');
     if (btnPaper) btnPaper.classList.toggle('active', mode === 'paper');
 
-    if (secText) secText.style.display = (mode === 'text') ? 'block' : 'none';
-    if (secHl) secHl.style.display = (mode === 'highlight') ? 'block' : 'none';
-    if (secPaper) secPaper.style.display = (mode === 'paper') ? 'block' : 'none';
+    if (secText) secText.style.display = (mode === 'text') ? 'flex' : 'none';
+    if (secHl) secHl.style.display = (mode === 'highlight') ? 'flex' : 'none';
+    if (secPaper) secPaper.style.display = (mode === 'paper') ? 'flex' : 'none';
   }
 
   function applyTextColor(hex) {
@@ -1984,6 +1993,25 @@
       const savedTheme = localStorage.getItem('neura_theme_v1');
       if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
     } catch (e) { }
+
+    // ── Block Chrome Extension Injected Images ─────────────────────────────
+    (function blockExtensionImages() {
+      function removeExtImgs(root) {
+        (root || document).querySelectorAll('img[src^="chrome-extension://"]').forEach(img => img.remove());
+      }
+      removeExtImgs(document);
+      const obs = new MutationObserver(mutations => {
+        mutations.forEach(m => m.addedNodes.forEach(node => {
+          if (node.nodeType !== 1) return;
+          if (node.tagName === 'IMG' && node.src && node.src.startsWith('chrome-extension://')) {
+            node.remove();
+          } else {
+            removeExtImgs(node);
+          }
+        }));
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+    })();
   });
 
 })();
