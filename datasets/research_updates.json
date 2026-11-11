@@ -1,0 +1,107 @@
+[
+  {
+    "id": "res-001",
+    "title": "Validasi Akurasi 94.4% Model XGBoost pada Deteksi Dini Alzheimer",
+    "dateText": "Okt 2026",
+    "categories": [
+      "Model AI",
+      "Validasi"
+    ],
+    "readLinkText": "Baca riset",
+    "linkUrl": "/app",
+    "summaryText": "Validasi performa model gradient boosted trees pada 2.149 sampel klinis biomarker dengan capaian akurasi 94.4% dan ROC-AUC 0.933.",
+    "thumbnailType": "badge_glow",
+    "thumbnailConfig": {
+      "badgeIcon": "✦",
+      "badgeText": "Model Klinis",
+      "glowColor": "terracotta"
+    },
+    "isPublished": true,
+    "createdAt": 1728518400000,
+    "order": 1
+  },
+  {
+    "id": "res-002",
+    "title": "Peran 32 Biomarker Kritis dalam Deteksi Risiko Demensia",
+    "dateText": "Sep 2026",
+    "categories": [
+      "Biomarker",
+      "Klinis"
+    ],
+    "readLinkText": "Baca riset",
+    "linkUrl": "/app",
+    "summaryText": "Evaluasi multivariat korelasi skor MMSE, fungsionalitas ADL, dan riwayat memori pasien terhadap progresi neurodegeneratif.",
+    "thumbnailType": "mockup_card",
+    "thumbnailConfig": {
+      "mockupTitle": "32 Profil Biomarker Klinis",
+      "mockupDesc": "Evaluasi korelasi skor MMSE, ADL, dan riwayat memori pasien",
+      "mockupBtnText": "Eksplorasi",
+      "showCursor": true
+    },
+    "isPublished": true,
+    "createdAt": 1726099200000,
+    "order": 2
+  },
+  {
+    "id": "res-003",
+    "title": "Mendeteksi Mild Cognitive Impairment Sebelum Gejala Klinis Akut",
+    "dateText": "Sep 2026",
+    "categories": [
+      "Diagnostik",
+      "Skrining"
+    ],
+    "readLinkText": "Baca riset",
+    "linkUrl": "/app",
+    "summaryText": "Strategi skrining awal untuk mengidentifikasi penurunan kognitif ringan (MCI) sedini mungkin sebelum terjadi atrofi struktural.",
+    "thumbnailType": "neon_code",
+    "thumbnailConfig": {
+      "badgeIcon": "✦",
+      "badgeText": "Deteksi MCI",
+      "codeBrackets": "< >"
+    },
+    "isPublished": true,
+    "createdAt": 1725580800000,
+    "order": 3
+  },
+  {
+    "id": "res-004",
+    "title": "AI Sebagai Rekan Analisis Bagi Dokter Spesialis Saraf",
+    "dateText": "Agu 2026",
+    "categories": [
+      "Kedokteran",
+      "Riset"
+    ],
+    "readLinkText": "Baca riset",
+    "linkUrl": "/app",
+    "summaryText": "Penerapan sistem pendukung keputusan klinis (CDSS) untuk membantu neurolog dalam interpretasi riwayat dan risiko pasien.",
+    "thumbnailType": "collab_widget",
+    "thumbnailConfig": {
+      "widgetHeaderLeft": "⑂ kolaborasi-medis",
+      "widgetHeaderRight": "+ Neura Clinical ⌄",
+      "widgetBodyText": "Clinical Decision Support"
+    },
+    "isPublished": true,
+    "createdAt": 1724198400000,
+    "order": 4
+  },
+  {
+    "id": "res-005",
+    "title": "Uji Validasi Multimodal pada 430 Rekam Medis Pasien",
+    "dateText": "Agu 2026",
+    "categories": [
+      "Validasi Data",
+      "Kohort"
+    ],
+    "readLinkText": "Baca riset",
+    "linkUrl": "/app",
+    "summaryText": "Hasil benchmark pengujian silang data klinis multi-sumber membuktikan ketahanan model terhadap variasi instrumen skrining kognitif.",
+    "thumbnailType": "vision_glow",
+    "thumbnailConfig": {
+      "badgeIcon": "✦",
+      "badgeText": "Kohort Data"
+    },
+    "isPublished": true,
+    "createdAt": 1723507200000,
+    "order": 5
+  }
+]

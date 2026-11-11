@@ -2,6 +2,11 @@
 scripts/predict_xgboost_alzheimer.py
 ====================================
 Inference and Prediction Pipeline for Alzheimer's Disease using trained XGBoost Model.
+
+Compute Policy:
+  - Clinical Dataset (XGBoost + PureTreeEvaluator): SELALU CPU-only.
+    Decision tree inference sangat ringan (~1 ms/pasien), tidak butuh GPU.
+    GPU VRAM dijaga bebas untuk LLM (Llama/Gemma GGUF).
 """
 
 import json
@@ -22,6 +27,14 @@ import math
 import re
 import numpy as np
 import pandas as pd
+
+# ── Enforce CPU-only untuk seluruh pipeline XGBoost clinical ──────────────────
+# VRAM GPU harus bebas untuk LLM (Llama/Gemma GGUF).
+# XGBoost decision-tree inference tidak membutuhkan GPU sama sekali.
+import os
+os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")   # Sembunyikan GPU dari XGBoost
+os.environ.setdefault("OMP_NUM_THREADS", str(min(os.cpu_count() or 4, 8)))  # Batas thread CPU
+
 try:
     import xgboost as xgb
 except Exception:

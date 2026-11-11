@@ -23,9 +23,9 @@
 
     if (!wrapEl || !videoEl || !pillEl) return;
 
-    // Icons SVG templates
-    const PLAY_SVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3" /></svg>';
-    const PAUSE_SVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>';
+    // Icons SVG templates (Enlarged)
+    const PLAY_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3" /></svg>';
+    const PAUSE_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>';
 
     // Physics Lerp State
     let mouseX = -9999;

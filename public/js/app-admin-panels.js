@@ -53,9 +53,11 @@ const ADMIN_ROOMS = {
   database: 'admin-room-database',
   stats:    'admin-room-stats',
   explorer: 'admin-room-explorer',
+  research: 'admin-room-research',
 };
 
 function switchAdminRoom(roomKey) {
+  if (window._closeSidebarIfNarrow) window._closeSidebarIfNarrow();
   const mainView = document.querySelector('.main-view');
   // Hide all admin rooms & nakes rooms
   Object.values(ADMIN_ROOMS).forEach(id => {
@@ -67,7 +69,7 @@ function switchAdminRoom(roomKey) {
   if (roomKey === 'chat' || !ADMIN_ROOMS[roomKey]) {
     if (mainView) mainView.classList.remove('admin-room-active');
     // Highlight no sidebar item as active
-    document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link,#sidebar-research-admin-link').forEach(el => el.classList.remove('active'));
     return;
   }
   const roomEl = document.getElementById(ADMIN_ROOMS[roomKey]);
@@ -78,9 +80,10 @@ function switchAdminRoom(roomKey) {
     nakes:    'sidebar-nakes-admin-link',
     database: 'sidebar-database-link',
     stats:    'sidebar-stats-link',
-    explorer: 'sidebar-files-link'
+    explorer: 'sidebar-files-link',
+    research: 'sidebar-research-admin-link'
   };
-  document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link,#sidebar-research-admin-link').forEach(el => el.classList.remove('active'));
   const activeNav = document.getElementById(sidebarMap[roomKey]);
   if (activeNav) activeNav.classList.add('active');
 
@@ -94,6 +97,8 @@ function switchAdminRoom(roomKey) {
     loadStatistics();
   } else if (roomKey === 'explorer') {
     _initExplorerView();
+  } else if (roomKey === 'research') {
+    if (typeof loadAdminResearchLogs === 'function') loadAdminResearchLogs();
   }
 }
 window.switchAdminRoom = switchAdminRoom;

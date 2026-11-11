@@ -897,6 +897,7 @@ function handleChipClick(btn) {
 
 function submitCommand(cmd) {
   if (!cmd) return;
+  if (window._closeSidebarIfNarrow) window._closeSidebarIfNarrow();
 
   if (cmd.trim().toLowerCase() === '/voice') {
     if (typeof window.openVoiceChat === 'function') {

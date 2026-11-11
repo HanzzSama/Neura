@@ -691,6 +691,153 @@
   };
 
   // -------------------------------------------------------------------------
+  // 8.1 Dynamic Research Updates Loader (from Admin Logs API)
+  // -------------------------------------------------------------------------
+  function renderPublicResearchCards(items) {
+    const track = document.getElementById('blog-carousel-track');
+    if (!track || !Array.isArray(items) || items.length === 0) return;
+
+    function esc(s) {
+      if (!s) return '';
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderThumb(type, cfg) {
+      cfg = cfg || {};
+      switch (type) {
+        case 'mockup_card': {
+          const title = esc(cfg.mockupTitle || '32 Profil Biomarker Klinis');
+          const desc = esc(cfg.mockupDesc || 'Evaluasi korelasi skor MMSE, ADL, dan riwayat memori pasien');
+          const btn = esc(cfg.mockupBtnText || 'Eksplorasi');
+          const cursor = cfg.showCursor !== false;
+          return `
+            <div class="blog-card-media blog-media-plugin">
+              <div class="plugin-mockup-card">
+                <div class="plugin-card-title">${title}</div>
+                <div class="plugin-card-desc">${desc}</div>
+                <div class="plugin-card-btn-row">
+                  <span class="plugin-customize-btn">${btn}</span>
+                  ${cursor ? `<svg class="cursor-pointer-icon" width="18" height="18" viewBox="0 0 24 24" fill="#ffffff" stroke="#000000" stroke-width="1.6"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>` : ''}
+                </div>
+              </div>
+            </div>`;
+        }
+        case 'neon_code': {
+          const icon = esc(cfg.badgeIcon || '✦');
+          const badge = esc(cfg.badgeText || 'Deteksi MCI');
+          const brackets = esc(cfg.codeBrackets || '< >');
+          return `
+            <div class="blog-card-media blog-media-flash">
+              <div class="neon-glow-brackets">${brackets}</div>
+              <span class="blog-media-badge"><span class="sparkle-google">${icon}</span> ${badge}</span>
+            </div>`;
+        }
+        case 'collab_widget': {
+          const left = esc(cfg.widgetHeaderLeft || '⑂ kolaborasi-medis');
+          const right = esc(cfg.widgetHeaderRight || '+ Neura Clinical ⌄');
+          const body = esc(cfg.widgetBodyText || 'Clinical Decision Support');
+          return `
+            <div class="blog-card-media blog-media-dive">
+              <div class="dive-mini-widget">
+                <div class="dive-widget-header"><span>${left}</span><span>${right}</span></div>
+                <div class="dive-widget-body"><span>${body}</span></div>
+              </div>
+            </div>`;
+        }
+        case 'vision_glow': {
+          const icon = esc(cfg.badgeIcon || '✦');
+          const badge = esc(cfg.badgeText || 'Kohort Data');
+          return `
+            <div class="blog-card-media blog-media-vision">
+              <div class="vision-radial-glow"></div>
+              <span class="blog-media-badge"><span class="sparkle-google">${icon}</span> ${badge}</span>
+            </div>`;
+        }
+        case 'custom_image': {
+          const img = cfg.imageUrl || '/assets/neura_hero.png';
+          return `
+            <div class="blog-card-media" style="background-image:url('${img}'); background-size:cover; background-position:center; min-height:165px; border-radius:16px; position:relative;">
+              <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%);"></div>
+            </div>`;
+        }
+        case 'badge_glow':
+        default: {
+          const icon = esc(cfg.badgeIcon || '✦');
+          const badge = esc(cfg.badgeText || 'Model Klinis');
+          return `
+            <div class="blog-card-media blog-media-argon">
+              <div class="neon-glow-ribbon"></div>
+              <span class="blog-media-badge"><span class="sparkle-google">${icon}</span> ${badge}</span>
+            </div>`;
+        }
+      }
+    }
+
+    track.innerHTML = items.map(item => {
+      const cats = Array.isArray(item.categories) ? item.categories : [item.categories || 'Riset'];
+      const catHtml = cats.map(c => `<span>${esc(c)}</span>`).join('');
+      const thumbHtml = renderThumb(item.thumbnailType, item.thumbnailConfig);
+      const linkUrl = esc(item.linkUrl || '/app');
+      const readText = esc(item.readLinkText || 'Baca riset');
+
+      return `
+        <article class="blog-card" onclick="window.location.href='${linkUrl}'">
+          ${thumbHtml}
+          <div class="blog-card-content">
+            <h3 class="blog-card-title">${esc(item.title)}</h3>
+            <div class="blog-card-meta">
+              <span>${esc(item.dateText || '')}</span>
+              ${catHtml}
+            </div>
+            <div class="blog-card-link">
+              <span>${readText}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  async function initDynamicResearchFeed() {
+    try {
+      const res = await fetch('/api/research');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+          try {
+            localStorage.setItem('neura_research_updates', JSON.stringify(json.data));
+          } catch (e) { }
+          renderPublicResearchCards(json.data);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('[Welcome Research] API fetch failed, falling back to cache...', e);
+    }
+
+    // Try cache
+    try {
+      const cached = localStorage.getItem('neura_research_updates');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          renderPublicResearchCards(parsed.filter(it => it.isPublished !== false));
+        }
+      }
+    } catch (err) { }
+  }
+
+  document.addEventListener('DOMContentLoaded', initDynamicResearchFeed);
+
+  // -------------------------------------------------------------------------
   // 9. Tools Strip Scroll Parallax
   // -------------------------------------------------------------------------
   (function initToolsParallax() {

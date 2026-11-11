@@ -70,6 +70,7 @@
    * Beralih ke Ruang Kerja Nakes (Room Switcher)
    */
   function switchNakesRoom(roomKey) {
+    if (window._closeSidebarIfNarrow) window._closeSidebarIfNarrow();
     const mainView = document.querySelector('.main-view');
     const inboxRoom = document.getElementById('nakes-room-inbox');
 

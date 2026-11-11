@@ -82,10 +82,12 @@ app.register_blueprint(status_bp)
 from api.admin.admin_auth import admin_auth_bp
 from api.admin.admin_nakes import admin_nakes_bp
 from api.admin.admin_ml import admin_ml_bp
+from api.admin.admin_research import admin_research_bp
 
 app.register_blueprint(admin_auth_bp, url_prefix="/api/admin")
 app.register_blueprint(admin_nakes_bp, url_prefix="/api/admin")
 app.register_blueprint(admin_ml_bp, url_prefix="/api")
+app.register_blueprint(admin_research_bp, url_prefix="/api")
 
 # 3. Nakes Role Routes
 from api.nakes.nakes_auth import nakes_auth_bp
@@ -115,21 +117,29 @@ app.register_blueprint(user_session_bp, url_prefix="/api/user")
 # -----------------------------------------------------------------------
 
 @app.route("/")
-@app.route("/welcome")
+@app.route("/welcome", strict_slashes=False)
 def welcome():
     return send_from_directory("public", "welcome.html")
 
 
-@app.route("/verify-email")
+@app.route("/verify-email", strict_slashes=False)
 def verify_email_page():
     """Custom email verification landing page for Firebase email action links."""
     return send_from_directory("public", "verify-email.html")
 
 
-@app.route("/app")
-@app.route("/chat")
+@app.route("/app", strict_slashes=False)
+@app.route("/chat", strict_slashes=False)
 def index():
     return send_from_directory("public", "index.html")
+
+
+@app.route("/app/riset", strict_slashes=False)
+@app.route("/riset", strict_slashes=False)
+@app.route("/riset.html", strict_slashes=False)
+def research_studio():
+    """Halaman editor riset klinis bergaya Microsoft Word / Scribe."""
+    return send_from_directory("public", "riset.html")
 
 
 @app.route("/assets/<path:filename>")
@@ -145,6 +155,11 @@ def serve_css(filename):
 @app.route("/js/<path:filename>")
 def serve_js(filename):
     return send_from_directory("public/js", filename)
+
+
+@app.route("/uploads/<path:filename>")
+def serve_uploads(filename):
+    return send_from_directory("public/uploads", filename)
 
 
 # -----------------------------------------------------------------------

@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="/css/template.css?v=1.2" />
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70" />
   <link rel="stylesheet" href="/css/voice-consultation.css?v=61" />
+  <link rel="stylesheet" href="/css/responsive-app.css?v=1.1" />
 
   <!-- Pre-Render Auth Shield: Menyembunyikan dashboard sampai auth-guard memverifikasi pengguna -->
   <style id="auth-shield-style">
@@ -284,6 +285,22 @@
               </div>
               <span class="ml-tag">FILES</span>
             </button>
+
+            <!-- 5. Research Update Log & Studio -->
+            <a href="/app/riset" class="ml-command-item admin-menu-item" id="sidebar-research-admin-link"
+              title="Studio Riset &amp; Publikasi Klinis (Buka Halaman Editor Riset)">
+              <div class="admin-item-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                  <line x1="9" y1="7" x2="15" y2="7"></line>
+                  <line x1="9" y1="11" x2="13" y2="11"></line>
+                </svg>
+                <span data-i18n="nav_research_admin">Research Studio</span>
+              </div>
+              <span class="ml-tag" style="background:rgba(217,119,87,0.15);color:var(--accent-terracotta);border-color:rgba(217,119,87,0.3)">STUDIO</span>
+            </a>
           </div>
         </div>
 
@@ -2714,6 +2731,283 @@
       </div>
 
       <!-- ============================================================ -->
+      <!-- ADMIN ROOM: Research Update Log & Publikasi Klinis          -->
+      <!-- ============================================================ -->
+      <div class="admin-room" id="admin-room-research" style="display: none;" aria-hidden="true">
+        <!-- Header -->
+        <div class="admin-room-header">
+          <div class="admin-room-header-left">
+            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <div class="admin-room-icon" style="background: rgba(217, 119, 87, 0.12); color: var(--accent-terracotta); border: 1px solid rgba(217, 119, 87, 0.25);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                <line x1="9" y1="7" x2="15" y2="7"></line>
+                <line x1="9" y1="11" x2="13" y2="11"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="admin-room-portal-tag">ADMINISTRATOR &bull; CLINICAL PUBLICATIONS &amp; RESEARCH LOGS</div>
+              <h2 class="admin-room-title">Manajemen Research Update Log &amp; Publikasi</h2>
+            </div>
+          </div>
+          <div class="admin-room-header-actions">
+            <button class="admin-room-action-btn" onclick="syncAllResearchToFirestore(true)" title="Sinkronkan Data ke Cloud Firestore">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+              </svg>
+              <span>Sync Firestore</span>
+            </button>
+            <button class="admin-room-action-btn" onclick="loadAdminResearchLogs()" title="Muat Ulang Data">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+              <span>Refresh</span>
+            </button>
+            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Tutup Room">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs Bar -->
+        <div class="nakes-admin-tabs-bar">
+          <div class="nakes-tabs-left">
+            <button class="nakes-tab-btn active" id="research-tab-btn-table" onclick="switchResearchAdminView('table')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M3 9h18M3 15h18M9 3v18"></path>
+              </svg>
+              <span>Daftar Publikasi Riset</span>
+              <span class="nakes-counter-badge" id="research-total-counter">0</span>
+            </button>
+            <button class="nakes-tab-btn" id="research-tab-btn-form" onclick="switchResearchAdminView('form')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span id="research-form-tab-title">Tambah Log Riset Baru</span>
+            </button>
+          </div>
+          <div class="nakes-tabs-right">
+            <button class="nakes-primary-action-btn" onclick="resetResearchForm(); switchResearchAdminView('form')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Tambah Riset Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEW 1: TABLE DAFTAR RISET -->
+        <div class="nakes-admin-view-panel" id="research-view-table" style="display:block;">
+          <div class="nakes-table-toolbar">
+            <div class="nakes-search-wrapper">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="research-search-input" placeholder="Cari judul riset, kategori, atau tipe thumbnail..." oninput="handleResearchTableSearch()">
+            </div>
+          </div>
+          <div class="nakes-table-responsive-box">
+            <table class="nakes-admin-table" id="research-admin-table">
+              <thead>
+                <tr>
+                  <th style="width:40px;">No</th>
+                  <th style="width:100px;">Pratinjau</th>
+                  <th>Judul Riset &amp; Publikasi</th>
+                  <th>Tanggal &amp; Kategori</th>
+                  <th>Tipe Thumbnail</th>
+                  <th>Status</th>
+                  <th style="width:120px;text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="research-table-tbody">
+                <!-- Diisi dinamis -->
+              </tbody>
+            </table>
+            <div class="nakes-empty-state" id="research-table-empty" style="display:none;">
+              <p>Belum ada entri log riset.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: FORM TAMBAH / EDIT DENGAN LIVE PREVIEW -->
+        <div class="nakes-admin-view-panel" id="research-view-form" style="display:none;">
+          <div class="research-form-container-flex" style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; padding:18px;">
+            <!-- KIRI: Form Input -->
+            <form id="research-edit-form" onsubmit="handleResearchFormSubmit(event)" style="flex:1; min-width:320px;">
+              <input type="hidden" id="research-input-id" value="">
+              
+              <div class="nakes-form-grid" style="grid-template-columns: 1fr;">
+                <!-- Judul Riset -->
+                <div class="nakes-form-field">
+                  <label for="research-input-title">Judul Riset / Publikasi <span class="nakes-required">*</span></label>
+                  <input type="text" id="research-input-title" placeholder="Contoh: Validasi Akurasi 94.4% Model XGBoost..." required oninput="updateResearchLivePreview()">
+                </div>
+
+                <!-- Baris: Tanggal & Kategori -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                  <div class="nakes-form-field">
+                    <label for="research-input-date">Bulan &amp; Tahun <span class="nakes-required">*</span></label>
+                    <input type="text" id="research-input-date" placeholder="Contoh: Okt 2026" required oninput="updateResearchLivePreview()">
+                  </div>
+                  <div class="nakes-form-field">
+                    <label for="research-input-categories">Kategori Tag (Pisahkan koma) <span class="nakes-required">*</span></label>
+                    <input type="text" id="research-input-categories" placeholder="Contoh: Model AI, Validasi" required oninput="updateResearchLivePreview()">
+                  </div>
+                </div>
+
+                <!-- Tipe Thumbnail Selector -->
+                <div class="nakes-form-field">
+                  <label for="research-input-thumb-type">Tipe Desain Thumbnail <span class="nakes-required">*</span></label>
+                  <select id="research-input-thumb-type" required onchange="handleThumbnailTypeChange()">
+                    <option value="badge_glow">Style 1: Radial Glow + Center Badge (Gambar 2 - Model Klinis)</option>
+                    <option value="mockup_card">Style 2: Interactive Mockup Card (Gambar 3 - 32 Biomarker + Eksplorasi)</option>
+                    <option value="neon_code">Style 3: Neon Brackets &lt; &gt; (Deteksi MCI)</option>
+                    <option value="collab_widget">Style 4: Mini Collaboration Widget (Decision Support)</option>
+                    <option value="vision_glow">Style 5: Vision Glow Radial (Kohort Data)</option>
+                    <option value="custom_image">Style 6: Gambar Kustom (URL Banner)</option>
+                  </select>
+                </div>
+
+                <!-- Conditional Config: Style 1 (Badge Glow - Gambar 2) -->
+                <div id="cfg-badge-glow" class="thumb-cfg-group" style="background:rgba(217,119,87,0.06); padding:12px; border-radius:8px; border:1px dashed rgba(217,119,87,0.3);">
+                  <div style="font-size:12px; font-weight:600; margin-bottom:8px; color:var(--accent-terracotta);">Konfigurasi Style 1 (Glow Badge - Gambar 2):</div>
+                  <div style="display:grid; grid-template-columns: 80px 1fr; gap:10px;">
+                    <div class="nakes-form-field">
+                      <label>Ikon Badge</label>
+                      <input type="text" id="research-badge-icon" value="✦" oninput="updateResearchLivePreview()">
+                    </div>
+                    <div class="nakes-form-field">
+                      <label>Teks Badge</label>
+                      <input type="text" id="research-badge-text" value="Model Klinis" placeholder="Contoh: Model Klinis" oninput="updateResearchLivePreview()">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Conditional Config: Style 2 (Mockup Card - Gambar 3) -->
+                <div id="cfg-mockup-card" class="thumb-cfg-group" style="display:none; background:rgba(255,255,255,0.06); padding:12px; border-radius:8px; border:1px dashed var(--border-subtle);">
+                  <div style="font-size:12px; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Konfigurasi Style 2 (Mockup Card - Gambar 3):</div>
+                  <div class="nakes-form-field" style="margin-bottom:8px;">
+                    <label>Judul Mockup Box</label>
+                    <input type="text" id="research-mockup-title" value="32 Profil Biomarker Klinis" oninput="updateResearchLivePreview()">
+                  </div>
+                  <div class="nakes-form-field" style="margin-bottom:8px;">
+                    <label>Deskripsi Singkat</label>
+                    <input type="text" id="research-mockup-desc" value="Evaluasi korelasi skor MMSE, ADL, dan riwayat memori pasien" oninput="updateResearchLivePreview()">
+                  </div>
+                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="nakes-form-field">
+                      <label>Teks Tombol Mockup</label>
+                      <input type="text" id="research-mockup-btn" value="Eksplorasi" oninput="updateResearchLivePreview()">
+                    </div>
+                    <div class="nakes-form-field">
+                      <label>Tampilkan Kursor Mouse</label>
+                      <select id="research-mockup-cursor" onchange="updateResearchLivePreview()">
+                        <option value="true">Ya (Tampilkan Kursor)</option>
+                        <option value="false">Tidak</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Conditional Config: Style 4 (Collab Widget) -->
+                <div id="cfg-collab-widget" class="thumb-cfg-group" style="display:none; background:rgba(255,255,255,0.06); padding:12px; border-radius:8px; border:1px dashed var(--border-subtle);">
+                  <div style="font-size:12px; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Konfigurasi Style 4 (Mini Widget):</div>
+                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:8px;">
+                    <div class="nakes-form-field">
+                      <label>Tag Kiri Header</label>
+                      <input type="text" id="research-widget-left" value="⑂ kolaborasi-medis" oninput="updateResearchLivePreview()">
+                    </div>
+                    <div class="nakes-form-field">
+                      <label>Tag Kanan Header</label>
+                      <input type="text" id="research-widget-right" value="+ Neura Clinical ⌄" oninput="updateResearchLivePreview()">
+                    </div>
+                  </div>
+                  <div class="nakes-form-field">
+                    <label>Teks Body Widget</label>
+                    <input type="text" id="research-widget-body" value="Clinical Decision Support" oninput="updateResearchLivePreview()">
+                  </div>
+                </div>
+
+                <!-- Conditional Config: Style 6 (Custom Image URL) -->
+                <div id="cfg-custom-image" class="thumb-cfg-group" style="display:none; background:rgba(255,255,255,0.06); padding:12px; border-radius:8px; border:1px dashed var(--border-subtle);">
+                  <div style="font-size:12px; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Gambar Kustom:</div>
+                  <div class="nakes-form-field">
+                    <label>URL Gambar Banner</label>
+                    <input type="url" id="research-image-url" placeholder="https://example.com/image.jpg" oninput="updateResearchLivePreview()">
+                  </div>
+                </div>
+
+                <!-- Ringkasan / Excerpt -->
+                <div class="nakes-form-field">
+                  <label for="research-input-summary">Ringkasan / Abstrak Riset (Opsional)</label>
+                  <textarea id="research-input-summary" rows="2" style="padding:10px 12px; border-radius:8px; background:var(--bg-app); border:1px solid var(--border-subtle); color:var(--text-primary); resize:vertical;" placeholder="Tuliskan intisari riset klinis..."></textarea>
+                </div>
+
+                <!-- Baris: Teks Link & URL Target -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                  <div class="nakes-form-field">
+                    <label for="research-input-link-text">Teks Tombol Aksi</label>
+                    <input type="text" id="research-input-link-text" value="Baca riset" oninput="updateResearchLivePreview()">
+                  </div>
+                  <div class="nakes-form-field">
+                    <label for="research-input-link-url">Target URL</label>
+                    <input type="text" id="research-input-link-url" value="/app" oninput="updateResearchLivePreview()">
+                  </div>
+                </div>
+
+                <!-- Status Publikasi -->
+                <div class="nakes-form-field">
+                  <label for="research-input-published">Status Publikasi</label>
+                  <select id="research-input-published">
+                    <option value="true">Publikasikan Sekarang (Tampil di Welcome Page)</option>
+                    <option value="false">Simpan sebagai Draf (Hanya Admin)</option>
+                  </select>
+                </div>
+
+                <!-- Tombol Submit -->
+                <div style="display:flex; gap:10px; margin-top:12px;">
+                  <button type="submit" class="nakes-submit-btn" id="research-btn-save" style="flex:1;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                      <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    <span id="research-btn-save-text">Simpan &amp; Publikasikan</span>
+                  </button>
+                  <button type="button" class="admin-room-action-btn" onclick="resetResearchForm(); switchResearchAdminView('table');" style="padding:10px 18px;">
+                    <span>Batal</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- KANAN: Real-time Live Preview Card -->
+            <div class="research-preview-column" style="width:310px; flex-shrink:0;">
+              <div style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">
+                ✦ LIVE PREVIEW (TAMPILAN WELCOME)
+              </div>
+              <div id="research-live-preview-box" class="blog-card" style="width:100%; max-width:310px; margin:0; pointer-events:none; box-shadow:0 12px 30px rgba(0,0,0,0.18);">
+                <!-- Konten dinamis di-render oleh updateResearchLivePreview() -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
       <!-- NAKES ROOM: Daftar Hasil Konsultasi Pasien (Worklist)        -->
       <!-- ============================================================ -->
       <div class="admin-room nakes-room" id="nakes-room-inbox" style="display: none;" aria-hidden="true">
@@ -3606,12 +3900,12 @@
   <!-- Neura Modular Architecture: 1. Core & Shared Foundation -->
   <script src="/js/app-core.js?v=7.3"></script>
   <script src="/js/app-translations.js?v=7.3"></script>
-  <script src="/js/app-ui.js?v=7.4"></script>
+  <script src="/js/app-ui.js?v=7.5"></script>
   <script src="/js/app-auth.js?v=7.3"></script>
   <script src="/js/app-settings.js?v=7.7"></script>
   <script src="/js/app-voice-input.js?v=7.3"></script>
   <script src="/js/app-ml-commands.js?v=7.3"></script>
-  <script src="/js/app-chat.js?v=8.8"></script>
+  <script src="/js/app-chat.js?v=8.9"></script>
 
   <!-- Neura Modular Architecture: 2. Role User (Pasien) -->
   <script src="/js/app-user-profile.js?v=7.4"></script>
@@ -3628,7 +3922,7 @@
   <script src="/js/app-nakes-patient.js?v=7.3"></script>
   <script src="/js/app-nakes-history.js?v=7.3"></script>
   <script src="/js/app-nakes.js?v=7.3"></script>
-  <script src="/js/app-nakes-panels.js?v=1.0"></script>
+  <script src="/js/app-nakes-panels.js?v=1.1"></script>
 
   <!-- Neura Modular Architecture: 4. Role Admin (Administrator & ML) -->
   <script src="/js/app-admin-auth.js?v=7.3"></script>
@@ -3636,7 +3930,8 @@
   <script src="/js/app-admin-ml.js?v=7.3"></script>
   <script src="/js/app-admin-history.js?v=7.3"></script>
   <script src="/js/app-admin.js?v=7.3"></script>
-  <script src="/js/app-admin-panels.js?v=1.2"></script>
+  <script src="/js/app-admin-panels.js?v=1.3"></script>
+  <script src="/js/app-admin-research.js?v=1.0"></script>
 
   <script src="/js/voice-consultation.js?v=65"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>

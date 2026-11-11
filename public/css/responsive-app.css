@@ -1,0 +1,541 @@
+/* =============================================================================
+   NEURA APP — RESPONSIVE LAYER
+   Covers: Tablet (768px–1024px) · Mobile (≤767px) · Short screens (height ≤600px)
+   Strategy: mobile-first overrides, all scoped to @media to never break desktop.
+   Author: Neura Team | v1.0
+   ============================================================================= */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   0. BASE SAFETY — prevent horizontal overflow on any viewport
+   ───────────────────────────────────────────────────────────────────────────── */
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   1. TABLET & MOBILE DRAWER (≤ 1024px)
+      Sidebar collapses automatically on tablet and mobile viewports,
+      functioning as an overlay drawer so main content is never squeezed.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+
+  /* ── Sidebar: fixed overlay drawer ── */
+  .sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    min-width: 280px !important;
+    z-index: 200 !important;
+    transform: translateX(0);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 6px 0 28px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Closed state: slide completely off-screen */
+  .sidebar.collapsed {
+    transform: translateX(-100%) !important;
+    margin-left: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Backdrop behind drawer when opened */
+  .sidebar-mobile-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38);
+    z-index: 199;
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
+  }
+
+  .sidebar-mobile-backdrop.visible {
+    display: block;
+  }
+
+  /* Open button in top navigation bar always available when collapsed */
+  .open-sidebar-btn {
+    display: grid !important;
+  }
+
+  /* Main view expands to 100% viewport width without sidebar pushing it */
+  .main-view {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   1.1 TABLET SPECIFIC  (768px – 1024px)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  /* Dynamic Island: medium compact */
+  .dynamic-island {
+    width: 220px !important;
+  }
+
+  /* Top Nav */
+  .top-nav {
+    padding: 0 20px;
+    height: 54px;
+  }
+
+  /* Hero greeting */
+  .hero-greeting {
+    font-size: 30px;
+  }
+
+  /* Hero cards: 2 columns on tablet */
+  .hero-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+
+  /* Floating Input container */
+  .floating-input-container {
+    padding: 0 20px 16px;
+  }
+
+  .input-box-wrapper {
+    max-width: 720px;
+  }
+
+  /* Chat scroll area */
+  .chat-scroll-area {
+    padding-bottom: 135px;
+  }
+
+  /* Model switcher label — hide tier badge on tablet */
+  .ib-model-tier {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   2. MOBILE SPECIFIC  (≤ 767px)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* ── Layout dynamic height ── */
+  .claude-layout {
+    height: 100dvh;
+    height: 100vh;
+  }
+
+  /* ── Top Nav ── */
+  .top-nav {
+    height: 52px;
+    padding: 0 14px;
+  }
+
+  /* Hide lang toggle on very small screens */
+  @media (max-width: 400px) {
+    .top-nav-lang-btn {
+      display: none;
+    }
+  }
+
+  /* ── Dynamic Island ── */
+  .dynamic-island {
+    width: 200px !important;
+    height: 38px !important;
+  }
+
+  .island-notch-sub {
+    font-size: 10px;
+  }
+
+  .island-notch-main {
+    font-size: 12px;
+  }
+
+  /* ── Hero Section ── */
+  .claude-hero {
+    padding: 24px 16px 16px;
+    align-items: flex-start;
+  }
+
+  .hero-greeting {
+    font-size: 26px;
+    line-height: 1.25;
+  }
+
+  .hero-subhead {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .hero-neura-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Hero cards: single column */
+  .hero-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .hero-card {
+    padding: 14px 16px;
+  }
+
+  /* ── Chat scroll area ── */
+  .chat-scroll-area {
+    padding-bottom: 130px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .chat-content-container {
+    padding: 0 12px;
+  }
+
+  /* ── Message bubbles: wider on mobile ── */
+  .message-bubble,
+  .cl-message-block {
+    max-width: 100% !important;
+  }
+
+  /* ── Floating Input ── */
+  .floating-input-container {
+    padding: 0 10px 12px;
+  }
+
+  .input-box-wrapper {
+    max-width: 100%;
+    border-radius: 16px;
+    padding: 12px 14px 10px;
+  }
+
+  #chat-input-textarea {
+    font-size: 14px;
+    max-height: 120px;
+  }
+
+  /* Model label — truncate */
+  .ib-model-label {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ib-model-tier {
+    display: none;
+  }
+
+  /* Model dropdown: full-width from bottom on mobile */
+  .ib-model-dropdown {
+    left: auto !important;
+    right: 0 !important;
+    min-width: 200px;
+  }
+
+  /* ── Settings Panel ── */
+  .settings-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    right: 0 !important;
+    left: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    max-height: 85dvh;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  /* ── User dot popup ── */
+  .user-dot-popup {
+    right: 0;
+    left: auto;
+    bottom: 100%;
+  }
+
+  /* ── Admin / Nakes room panels ── */
+  .db-main-content {
+    padding: 12px;
+  }
+
+  .nakes-room-body {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .nakes-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* ── Voice consultation modal ── */
+  .voice-modal-wrap,
+  .voice-consultation-modal {
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+  }
+
+  /* ── Profile card / modals: full-width ── */
+  .modal-box,
+  .profile-modal,
+  .edit-profile-modal {
+    width: calc(100vw - 24px) !important;
+    max-width: 100% !important;
+    margin: 0 12px;
+    border-radius: 16px;
+  }
+
+  /* Sidebar footer: compress user row */
+  .user-meta-name {
+    font-size: 12px;
+  }
+  .user-meta-role {
+    font-size: 10px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   3. SMALL MOBILE  (≤ 480px)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  /* Dynamic Island even more compact */
+  .dynamic-island {
+    width: 180px !important;
+    height: 36px !important;
+  }
+
+  /* Hero text */
+  .hero-greeting {
+    font-size: 22px;
+  }
+
+  /* Top nav padding */
+  .top-nav {
+    padding: 0 10px;
+    height: 48px;
+  }
+
+  /* Input */
+  .floating-input-container {
+    padding: 0 8px 10px;
+  }
+
+  .input-box-wrapper {
+    padding: 10px 12px 8px;
+    border-radius: 14px;
+  }
+
+  /* Sidebar width narrower on small phone */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+  }
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+
+  /* Nakes KPI: single column */
+  .nakes-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Chat content extra padding off */
+  .chat-content-container {
+    padding: 0 8px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   4. SHORT SCREENS  (height ≤ 600px — landscape phone, small laptop)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-height: 600px) {
+
+  /* Reduce top nav */
+  .top-nav {
+    height: 44px;
+  }
+
+  /* Compress hero */
+  .claude-hero {
+    padding-top: 12px;
+    padding-bottom: 8px;
+    gap: 10px;
+  }
+
+  .hero-greeting {
+    font-size: 22px;
+  }
+
+  .hero-subhead {
+    display: none;
+  }
+
+  /* Hero cards: 2 columns even on mobile */
+  .hero-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .hero-card {
+    padding: 10px 12px;
+  }
+
+  /* Reduce input padding */
+  .floating-input-container {
+    padding-bottom: 8px;
+  }
+
+  .input-box-wrapper {
+    padding: 10px 14px 8px;
+  }
+
+  #chat-input-textarea {
+    max-height: 80px;
+  }
+
+  /* Dynamic island */
+  .dynamic-island {
+    height: 36px !important;
+  }
+
+  /* Sidebar footer compress */
+  .sidebar-footer {
+    padding: 8px 12px;
+  }
+
+  .model-status-strip {
+    padding: 6px 10px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   5. VERY SHORT  (height ≤ 450px — landscape phone + notch)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-height: 450px) {
+
+  .hero-neura-logo {
+    display: none;
+  }
+
+  .claude-hero {
+    padding-top: 6px;
+  }
+
+  .hero-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Voice modal: allow scroll */
+  .voice-modal-wrap,
+  .voice-consultation-modal {
+    max-height: 95dvh;
+    overflow-y: auto;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   6. TABLET PORTRAIT  (768px – 900px) — tighter sidebar brand row
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 900px) {
+
+  .brand-title {
+    font-size: 15px;
+  }
+
+  .new-chat-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .shortcut-badge {
+    display: none;
+  }
+
+  .sidebar-nav-tag {
+    display: none;
+  }
+
+  .ml-tag {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   7. TOUCH / POINTER COARSE — improve tap targets
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (pointer: coarse) {
+
+  .ib-icon-btn,
+  .send-icon-btn,
+  .nav-icon-btn,
+  .open-sidebar-btn,
+  .sidebar-collapse-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .ml-command-item,
+  .settings-menu-btn,
+  .dot-menu-item {
+    min-height: 44px;
+  }
+
+  /* Increase chat history item height */
+  .chat-history-item {
+    min-height: 40px;
+  }
+
+  /* Scroll areas: momentum scrolling on iOS */
+  .chat-scroll-area,
+  .sidebar-body,
+  .settings-nav-viewport {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   8. DARK THEME — mobile backdrop tinted darker
+   ───────────────────────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] .sidebar-mobile-backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   9. SAFE AREA INSETS — iPhone X+ notch & home bar
+   ───────────────────────────────────────────────────────────────────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .floating-input-container {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .sidebar {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  @media (max-width: 767px) {
+    .settings-panel {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+}
+
+@supports (padding-left: env(safe-area-inset-left)) {
+  @media (max-width: 767px) {
+    .top-nav {
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+    }
+  }
+}
+

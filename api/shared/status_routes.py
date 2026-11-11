@@ -1,10 +1,12 @@
 """
 api/shared/status_routes.py
 ============================
-Shared route:
-  GET /api/status  — Status model, training, dan dataset
+Shared routes:
+  GET /api/status         — Status model, training, dan dataset
+  GET /api/device-status  — Status komputasi GPU/CPU (device_manager)
 """
 
+import traceback
 from pathlib import Path
 from flask import Blueprint, jsonify
 from core.config import Config
@@ -61,3 +63,21 @@ def api_status():
         "dataset":          "alzheimers_disease_data.csv",
         "metrics":          metrics,
     })
+
+
+@status_bp.route("/api/device-status", methods=["GET"])
+def api_device_status():
+    """
+    Status komputasi GPU/CPU Neura AI.
+
+    Kebijakan alokasi:
+      - Clinical dataset (XGBoost): CPU-only (menjaga VRAM bebas untuk LLM)
+      - LLM (GGUF Llama/Gemma):    GPU dedicated → iGPU → CPU (fallback)
+    """
+    try:
+        from core.device_manager import get_device_summary
+        summary = get_device_summary()
+        return jsonify({"ok": True, **summary})
+    except Exception as e:
+        logger.error(f"Error in api_device_status: {traceback.format_exc()}")
+        return jsonify({"ok": False, "error": str(e)}), 500

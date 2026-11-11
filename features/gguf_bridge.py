@@ -304,40 +304,87 @@ def get_gguf_model():
     global _llm_state
     _model_load_attempted = True
     _llm_state = "loading"
-    n_ctx        = int(os.getenv("GGUF_N_CTX",      "2048"))
-    n_threads    = int(os.getenv("GGUF_N_THREADS",   str(min(os.cpu_count() or 4, 8))))
-    n_gpu_layers = int(os.getenv("GGUF_GPU_LAYERS",  "-1"))
 
-    print(f"[Neura LLM] Memuat model GGUF: {model_path} (ctx={n_ctx}, threads={n_threads})...")
+    # ── Gunakan device_manager untuk mendapatkan konfigurasi GPU optimal ──
+    # LLM → GPU (dedicated / iGPU) → CPU fallback (kebijakan Neura AI)
+    try:
+        from core.device_manager import get_llm_device_config
+        dev_cfg = get_llm_device_config()
+    except Exception as dm_err:
+        print(f"[Neura LLM] device_manager tidak tersedia ({dm_err}), pakai default.")
+        dev_cfg = {
+            "n_gpu_layers": int(os.getenv("GGUF_GPU_LAYERS", "-1")),
+            "n_threads": min(os.cpu_count() or 4, 8),
+            "use_mlock": False,
+            "use_mmap": True,
+        }
 
-    # Coba inisialisasi dengan akselerasi GPU terlebih dahulu (jika diminta)
+    # Env override masih dihormati untuk kompatibilitas mundur
+    n_ctx        = int(os.getenv("GGUF_N_CTX", "2048"))
+    n_gpu_layers = dev_cfg["n_gpu_layers"]
+    n_threads    = dev_cfg["n_threads"]
+    use_mlock    = dev_cfg.get("use_mlock", False)
+    use_mmap     = dev_cfg.get("use_mmap", True)
+
+    tier_label = dev_cfg.get("_meta", {}).get("tier", "unknown")
+    device_name = dev_cfg.get("_meta", {}).get("device_name", "")
+    print(
+        f"[Neura LLM] Memuat model GGUF: {os.path.basename(model_path)} | "
+        f"Device: {tier_label.upper()} ({device_name}) | "
+        f"gpu_layers={n_gpu_layers} | threads={n_threads} | ctx={n_ctx}"
+    )
+
+    # ── Coba load dengan GPU layers yang diminta ──
     try:
         _gguf_instance = Llama(
             model_path=model_path,
             n_ctx=n_ctx,
             n_threads=n_threads,
             n_gpu_layers=n_gpu_layers,
-            verbose=False
+            use_mlock=use_mlock,
+            use_mmap=use_mmap,
+            verbose=False,
         )
-        print(f"[Neura LLM] Model berhasil dimuat dengan GPU layers={n_gpu_layers}!")
+        actual_tier = "CPU" if n_gpu_layers == 0 else tier_label.upper()
+        print(f"[Neura LLM] ✅ Model berhasil dimuat pada {actual_tier} (gpu_layers={n_gpu_layers})")
         _llm_state = "idle"
         return _gguf_instance
+
     except Exception as gpu_err:
+        # ── Fallback bertahap: dedicated GPU → iGPU (sebagian layer) → CPU ──
         if n_gpu_layers != 0:
-            print(f"[Neura LLM] GPU load gagal ({gpu_err}), mencoba fallback ke CPU...")
+            print(f"[Neura LLM] ⚠️ GPU load gagal ({gpu_err}). Mencoba iGPU (20 layers)...")
             try:
                 _gguf_instance = Llama(
                     model_path=model_path,
                     n_ctx=n_ctx,
                     n_threads=n_threads,
-                    n_gpu_layers=0,
-                    verbose=False
+                    n_gpu_layers=20,   # Sebagian layer untuk iGPU / VRAM terbatas
+                    use_mmap=True,
+                    verbose=False,
                 )
-                print("[Neura LLM] Model berhasil dimuat pada CPU!")
+                print("[Neura LLM] ✅ Model berhasil dimuat pada iGPU (20 layers)")
                 _llm_state = "idle"
                 return _gguf_instance
-            except Exception as cpu_err:
-                raise RuntimeError(f"Gagal memuat model GGUF pada CPU: {cpu_err}") from cpu_err
+            except Exception as igpu_err:
+                print(f"[Neura LLM] ⚠️ iGPU load gagal ({igpu_err}). Fallback ke CPU...")
+                try:
+                    _gguf_instance = Llama(
+                        model_path=model_path,
+                        n_ctx=n_ctx,
+                        n_threads=n_threads,
+                        n_gpu_layers=0,
+                        use_mmap=True,
+                        verbose=False,
+                    )
+                    print("[Neura LLM] ✅ Model berhasil dimuat pada CPU (no GPU)")
+                    _llm_state = "idle"
+                    return _gguf_instance
+                except Exception as cpu_err:
+                    raise RuntimeError(
+                        f"Gagal memuat model GGUF di GPU, iGPU, maupun CPU. "
+                        f"Error CPU: {cpu_err}"
+                    ) from cpu_err
         else:
             raise gpu_err
 
@@ -436,6 +483,22 @@ def get_llm_status() -> dict:
     for m in available:
         m["active"] = (m["filename"] == active_key)
 
+    # Sertakan info device (GPU/CPU) dari device_manager
+    device_info = {}
+    try:
+        from core.device_manager import detect_gpu_tier, get_llm_device_config
+        gpu = detect_gpu_tier()
+        llm_cfg = get_llm_device_config()
+        device_info = {
+            "gpu_tier":     gpu["tier"],
+            "gpu_backend":  gpu["backend"],
+            "device_name":  gpu["device_name"],
+            "n_gpu_layers": llm_cfg["n_gpu_layers"],
+            "vram_mb":      gpu["vram_mb"],
+        }
+    except Exception:
+        device_info = {"gpu_tier": "unknown", "n_gpu_layers": -1}
+
     return {
         "ready":            ready,
         "loaded":           _gguf_instance is not None,
@@ -444,4 +507,5 @@ def get_llm_status() -> dict:
         "model_name":       model_name,
         "architecture":     architecture,
         "available_models": available,
+        "device":           device_info,
     }

@@ -5,7 +5,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -731,9 +733,19 @@ a {
 }
 
 @keyframes langPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); border-color: var(--accent-primary); color: var(--accent-primary); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Mobile Toggle */
@@ -973,6 +985,9 @@ a {
   align-items: center;
   justify-content: center;
   padding: 24px 0 24px 24px;
+  /* Isolate this column into its own GPU compositor layer */
+  isolation: isolate;
+  contain: layout style;
 }
 
 .hero-brain-img,
@@ -990,10 +1005,14 @@ a {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
-  transform: scale(var(--hero-img-scale, 1)) translateY(var(--hero-img-ty, 0px));
+  transform: scale(var(--hero-img-scale, 1)) translateY(var(--hero-img-ty, 0px)) translateZ(0);
   opacity: var(--hero-img-opacity, 1);
   transform-origin: center center;
+  /* Promote to dedicated GPU compositor layer (triggers GPU rasterization) */
   will-change: transform, opacity;
+  contain: paint layout;
+  /* Hint browser to use GPU memory for this canvas surface */
+  backface-visibility: hidden;
 }
 
 /* CSS step shapes — hidden since steps are baked into the image */
@@ -1064,8 +1083,17 @@ a {
 }
 
 @keyframes btPulseDot {
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50% { transform: scale(1.35); opacity: 1; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
 }
 
 .bt-title {
@@ -1113,13 +1141,16 @@ a {
     padding: 7px 10px 8px;
     border-radius: 10px;
   }
+
   .bt-title {
     font-size: 11.5px;
   }
+
   .bt-tag {
     font-size: 8.5px;
     padding: 1px 6px;
   }
+
   .bt-desc {
     font-size: 10.5px;
     line-height: 1.32;
@@ -1265,9 +1296,17 @@ a {
   opacity: 0.85;
 }
 
-.sil-dot-r { background: #ff5f57; }
-.sil-dot-y { background: #febc2e; }
-.sil-dot-g { background: #28c840; }
+.sil-dot-r {
+  background: #ff5f57;
+}
+
+.sil-dot-y {
+  background: #febc2e;
+}
+
+.sil-dot-g {
+  background: #28c840;
+}
 
 .sil-url-pill {
   display: flex;
@@ -1333,8 +1372,17 @@ a {
 }
 
 @keyframes silPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.45; transform: scale(0.82); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
 }
 
 /* ==========================================================================
@@ -1373,16 +1421,16 @@ a {
   z-index: 25;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #FFFFFF;
   color: #111111;
-  padding: 8px 18px 8px 15px;
+  padding: 13px 26px 13px 22px;
   border-radius: 9999px;
   font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
-  font-size: 13px;
+  font-size: 15.5px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.48), 0 4px 12px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 18px 42px -4px rgba(0, 0, 0, 0.55), 0 6px 16px rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(255, 255, 255, 0.95);
   opacity: 0;
   transform: translate3d(-9999px, -9999px, 0) translate(-50%, -50%) scale(0.6);
@@ -1400,8 +1448,14 @@ a {
   flex-shrink: 0;
 }
 
+.vcp-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
 .vcp-text {
-  font-size: 13px;
+  font-size: 15.5px;
   font-weight: 600;
   color: #111111;
   letter-spacing: -0.01em;
@@ -1455,7 +1509,8 @@ a {
 }
 
 /* Responsive Touch Devices */
-@media (hover: none), (max-width: 768px) {
+@media (hover: none),
+(max-width: 768px) {
   .video-cursor-pill {
     position: absolute;
     top: 50% !important;
@@ -1463,15 +1518,20 @@ a {
     transform: translate(-50%, -50%) scale(1) !important;
     opacity: 1 !important;
     pointer-events: auto;
+    padding: 12px 22px 12px 18px;
+    font-size: 14.5px;
   }
+
   .showcase-video-wrap.is-playing .video-cursor-pill {
     opacity: 0 !important;
     pointer-events: none;
   }
+
   .sil-url-pill {
     width: auto;
     max-width: 170px;
   }
+
   .sil-url-text {
     font-size: 10px;
   }
@@ -2302,8 +2362,8 @@ a {
 }
 
 /* Hint GPU layer promotion for smooth 60fps transforms */
-.product-row > *:first-child,
-.product-row > *:last-child {
+.product-row>*:first-child,
+.product-row>*:last-child {
   will-change: transform, opacity;
 }
 
@@ -2501,11 +2561,6 @@ a {
   align-items: flex-start;
   gap: 20px;
   cursor: default;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.pipeline-step:hover {
-  transform: translateX(4px);
 }
 
 .pipeline-node {
@@ -2517,6 +2572,8 @@ a {
   position: relative;
   z-index: 2;
   margin-top: 4px;
+  transform: none !important;
+  /* Dot tetap terkunci pada garis vertikal dan tidak ikut bergeser */
 }
 
 .node-ring {
@@ -2526,7 +2583,8 @@ a {
   background: #EBEAE5;
   border: 1.8px solid #9C998F;
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transform: none !important;
 }
 
 .pipeline-step:hover .node-ring {
@@ -2548,6 +2606,11 @@ a {
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pipeline-step:hover .pipeline-step-body {
+  transform: translateX(4px);
 }
 
 .pipeline-step-main {
@@ -3026,8 +3089,7 @@ a {
   width: 180px;
   height: 134px;
   overflow: visible;
-  filter: drop-shadow(0 6px 24px rgba(255, 255, 255, 0.14))
-          drop-shadow(0 3px 12px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 6px 24px rgba(255, 255, 255, 0.14)) drop-shadow(0 3px 12px rgba(0, 0, 0, 0.6));
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
@@ -3055,9 +3117,19 @@ a {
 
 /* Breathing */
 @keyframes neurapet-demo-breathe {
-  0%, 100% { transform: scale(1, 1); }
-  35%      { transform: scale(1.03, 0.98); }
-  70%      { transform: scale(0.98, 1.02); }
+
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+
+  35% {
+    transform: scale(1.03, 0.98);
+  }
+
+  70% {
+    transform: scale(0.98, 1.02);
+  }
 }
 
 /* Squish on click */
@@ -3066,11 +3138,25 @@ a {
 }
 
 @keyframes neurapet-demo-squish {
-  0%   { transform: scale(1, 1); }
-  22%  { transform: scale(1.18, 0.80); }
-  48%  { transform: scale(0.92, 1.12); }
-  72%  { transform: scale(1.04, 0.96); }
-  100% { transform: scale(1, 1); }
+  0% {
+    transform: scale(1, 1);
+  }
+
+  22% {
+    transform: scale(1.18, 0.80);
+  }
+
+  48% {
+    transform: scale(0.92, 1.12);
+  }
+
+  72% {
+    transform: scale(1.04, 0.96);
+  }
+
+  100% {
+    transform: scale(1, 1);
+  }
 }
 
 /* Mood pill */
@@ -3096,8 +3182,17 @@ a {
 }
 
 @keyframes neurapet-mood-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.3); opacity: 0.75; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.75;
+  }
 }
 
 .neurapet-demo-mood-label {

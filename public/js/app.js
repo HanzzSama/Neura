@@ -441,6 +441,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Send/Voice Button State
   updateSendBtnState();
 
+  // ── Auto-collapse sidebar on tablet & mobile at page load ────────────────
+  _syncSidebarToViewport();
+
+  // ── On resize: auto-collapse when entering tablet/mobile, restore on desktop ──
+  let _sidebarResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(_sidebarResizeTimer);
+    _sidebarResizeTimer = setTimeout(_syncSidebarToViewport, 120);
+  });
+
+  // ── Escape key: close sidebar drawer on tablet / mobile ──────────────────
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.innerWidth <= 1024) {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar && !sidebar.classList.contains('collapsed')) toggleSidebar();
+    }
+  });
+
   // Initialize User Profile in Sidebar & Authentication Listeners
   initAuthListeners();
 
@@ -2072,6 +2090,7 @@ function switchChatSession(sessionId) {
   } catch (e) { }
   renderRecentChatsSidebar();
   renderSessionMessages(session);
+  _closeSidebarIfNarrow();
 }
 
 function deleteChatSession(e, sessionId) {
@@ -2309,6 +2328,7 @@ function startNewChat(showNotification = true) {
   if (showNotification) {
     showToast('New conversation ready', 'info');
   }
+  _closeSidebarIfNarrow();
 }
 
 // --------------------------------------------------------------------------
@@ -2332,12 +2352,84 @@ function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const openBtn = document.getElementById('open-sidebar-btn');
   sidebar.classList.toggle('collapsed');
+
+  const isNarrow = window.innerWidth <= 1024; // tablet + mobile
+
   if (sidebar.classList.contains('collapsed')) {
     openBtn.style.display = 'grid';
+    if (isNarrow) _removeSidebarBackdrop();
   } else {
-    openBtn.style.display = window.innerWidth <= 768 ? 'grid' : 'none';
+    openBtn.style.display = window.innerWidth <= 1024 ? 'grid' : 'none';
+    if (isNarrow) _showSidebarBackdrop();
   }
 }
+
+/**
+ * Auto-sync sidebar state whenever viewport size changes.
+ * - ≤ 1024px (tablet & mobile): collapse + show open-btn
+ * - > 1024px (desktop): expand + hide open-btn
+ * Never overrides if user has manually set a preference during the same session.
+ */
+function _syncSidebarToViewport() {
+  const sidebar = document.getElementById('sidebar');
+  const openBtn = document.getElementById('open-sidebar-btn');
+  if (!sidebar || !openBtn) return;
+
+  const w = window.innerWidth;
+
+  if (w <= 1024) {
+    // Tablet & mobile → sidebar must be closed
+    if (!sidebar.classList.contains('collapsed')) {
+      sidebar.classList.add('collapsed');
+      _removeSidebarBackdrop();
+    }
+    openBtn.style.display = 'grid';
+  } else {
+    // Desktop → sidebar open, hide hamburger
+    if (sidebar.classList.contains('collapsed')) {
+      sidebar.classList.remove('collapsed');
+    }
+    openBtn.style.display = 'none';
+    _removeSidebarBackdrop();
+  }
+}
+
+function _showSidebarBackdrop() {
+  let bd = document.getElementById('sidebar-mobile-backdrop');
+  if (!bd) {
+    bd = document.createElement('div');
+    bd.id = 'sidebar-mobile-backdrop';
+    bd.className = 'sidebar-mobile-backdrop';
+    bd.addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar && !sidebar.classList.contains('collapsed')) toggleSidebar();
+    });
+    document.body.appendChild(bd);
+  }
+  requestAnimationFrame(() => bd.classList.add('visible'));
+}
+
+function _removeSidebarBackdrop() {
+  const bd = document.getElementById('sidebar-mobile-backdrop');
+  if (bd) {
+    bd.classList.remove('visible');
+    setTimeout(() => bd.remove(), 250);
+  }
+}
+
+/**
+ * Automatically dismiss the sidebar drawer on tablet / mobile after the user
+ * performs an action (selecting a chat, running a command, or creating a new chat).
+ */
+function _closeSidebarIfNarrow() {
+  if (window.innerWidth <= 1024) {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && !sidebar.classList.contains('collapsed')) {
+      toggleSidebar();
+    }
+  }
+}
+window._closeSidebarIfNarrow = _closeSidebarIfNarrow;
 
 // --------------------------------------------------------------------------
 // Textarea input auto-grow & key handling
@@ -2442,6 +2534,7 @@ function handleChipClick(btn) {
 
 function submitCommand(cmd) {
   if (!cmd) return;
+  _closeSidebarIfNarrow();
 
   if (cmd.trim().toLowerCase() === '/voice') {
     if (typeof window.openVoiceChat === 'function') {

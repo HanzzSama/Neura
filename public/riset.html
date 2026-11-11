@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neura Research Studio &bull; Word Editor &amp; Publikasi Klinis</title>
+  <meta name="description" content="Studio editor riset klinis dan manajemen pembaruan publikasi AI Neura bergaya minimalis, modern, dan presisi.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+
+  <!-- Typography: Newsreader (Serif), Inter (Sans), Poppins (Sans Accent), JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="/css/welcome.css?v=65">
+  <link rel="stylesheet" href="/css/template.css?v=1.2">
+  <link rel="stylesheet" href="/css/riset.css?v=5.0">
+
+  <!-- Pre-load theme preference -->
+  <script>
+    try {
+      const t = localStorage.getItem('neura_theme_v1');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {}
+  </script>
+</head>
+
+<body class="riset-studio-body">
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       TOP HEADER NAVIGATION BAR
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <header class="riset-header">
+    <div class="riset-header-left">
+      <a href="/app" class="btn-dashboard-pill" title="Kembali ke Dashboard Utama">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        <span>Dashboard</span>
+      </a>
+
+      <div class="riset-breadcrumbs">
+        <span class="crumb-section">Riset Klinis</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-doc" id="breadcrumb-doc-title">Dokumen Riset</span>
+      </div>
+    </div>
+
+    <div class="riset-header-right">
+      <span class="auto-sync-text" id="auto-sync-indicator">Tersimpan otomatis</span>
+
+      <!-- Draft Pill Button -->
+      <button type="button" class="btn-status-pill pill-draft" id="btn-status-draft" onclick="setPublishStatus(false)" title="Simpan sebagai Draf">
+        <span class="dot-terracotta"></span>
+        <span>Draft</span>
+      </button>
+
+      <!-- Publikasikan Pill Button -->
+      <button type="button" class="btn-status-pill pill-publish active" id="btn-status-publish" onclick="saveDocument(true)" title="Publikasikan ke halaman publik Welcome">
+        <span class="dot-white"></span>
+        <span>Publikasikan</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       MAIN WORKSPACE (4-COLUMN PRECISION ARCHITECTURE)
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <main class="riset-main-workspace">
+
+    <!-- ── COLUMN 1: LAYER PAGES & DATA RELATIONSHIP ── -->
+    <aside class="col-layers-sidebar" id="col-layers-sidebar">
+      <!-- Title Option (Segmented Navigation Bar) -->
+      <div class="layer-tabs-nav">
+        <button type="button" class="layer-tab active" id="tab-layer-pages" onclick="switchLeftTab('pages')">
+          Pages
+        </button>
+        <button type="button" class="layer-tab" id="tab-daftar-riset" onclick="switchLeftTab('riset')">
+          Daftar Riset
+        </button>
+        <button type="button" class="layer-tab" id="tab-data-rel" onclick="switchLeftTab('data')">
+          Data
+        </button>
+      </div>
+
+      <!-- VIEW A: Layer Pages (Only A4 Pages & Add Page Button) -->
+      <div class="layer-tab-pane" id="pane-layer-pages">
+        <div class="page-cards-stack" id="page-cards-stack">
+          <!-- Dynamically populated by riset.js renderPageCards() -->
+        </div>
+
+        <button type="button" class="btn-add-page" onclick="addNewPage()">
+          <span>+ Tambah page</span>
+        </button>
+      </div>
+
+      <!-- VIEW B: Daftar Riset (Pindahan Card Daftar Riset & Pencarian) -->
+      <div class="layer-tab-pane" id="pane-daftar-riset" style="display: none;">
+        <div class="sidebar-saved-docs-tray">
+          <div class="tray-search-wrap">
+            <svg class="search-mini-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="riset-search-input" placeholder="Cari naskah riset..." oninput="renderSidebarDocs()">
+          </div>
+          <button type="button" class="btn-create-riset-quick" onclick="createNewDoc()">
+            + Buat Riset Baru
+          </button>
+          <div class="riset-doc-list" id="riset-doc-list">
+            <!-- Dynamically populated by riset.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW C: Data Relationship (32 Biomarkers & Clinical Decision Tree) -->
+      <div class="layer-tab-pane" id="pane-data-rel" style="display:none;">
+        <div class="data-rel-card">
+          <div class="data-rel-header">
+            <span>32 Biomarker Features</span>
+            <span class="rel-tag">XGBoost</span>
+          </div>
+          <div class="data-rel-item">
+            <span class="feat-name">MMSE Cognitive</span>
+            <span class="feat-weight">38.4%</span>
+          </div>
+          <div class="data-rel-item">
+            <span class="feat-name">ADL Functional</span>
+            <span class="feat-weight">24.1%</span>
+          </div>
+          <div class="data-rel-item">
+            <span class="feat-name">Memory Complaints</span>
+            <span class="feat-weight">16.8%</span>
+          </div>
+          <div class="data-rel-item">
+            <span class="feat-name">ApoE4 Genetic</span>
+            <span class="feat-weight">11.2%</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── COLUMN 2: CENTER DOCUMENT SHEET (Clean Continuous Canvas Stack) ── -->
+    <section class="col-center-canvas" id="col-center-canvas">
+      <div class="pages-canvas-stack" id="pages-canvas-stack">
+        <!-- Rendered dynamically by riset.js renderCanvasPages() -->
+      </div>
+    </section>
+
+    <!-- ── COLUMN 3: FLOATING ACTION CAPSULE & UNDO/REDO ── -->
+    <aside class="col-floating-toolbar">
+      <!-- Vertical Capsule -->
+      <div class="floating-capsule" title="Format Dokumen">
+        <button type="button" class="capsule-btn" onclick="formatDoc('formatBlock', '<h2>')" title="Heading 2">H2</button>
+        <button type="button" class="capsule-btn" onclick="formatDoc('formatBlock', '<p>')" title="Paragraph">¶</button>
+        <button type="button" class="capsule-btn" onclick="formatDoc('bold')" title="Tebal (Ctrl+B)"><strong>B</strong></button>
+        <button type="button" class="capsule-btn" onclick="formatDoc('italic')" title="Miring (Ctrl+I)"><em>I</em></button>
+        <button type="button" class="capsule-btn" onclick="formatDoc('insertUnorderedList')" title="Daftar List">&bull;</button>
+      </div>
+
+      <!-- Undo Button -->
+      <button type="button" class="floating-round-btn" onclick="document.execCommand('undo')" title="Undo (Ctrl+Z)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7v6h6" />
+          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+        </svg>
+      </button>
+
+      <!-- Redo Button -->
+      <button type="button" class="floating-round-btn" onclick="document.execCommand('redo')" title="Redo (Ctrl+Y)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 7v6h-6" />
+          <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+        </svg>
+      </button>
+    </aside>
+
+    <!-- ── COLUMN 4: RIGHT MODULAR WIDGET STACK ── -->
+    <aside class="col-right-widgets" id="riset-inspector">
+      
+      <!-- Widget 1: Live Card Showcase -->
+      <div class="widget-card widget-showcase">
+        <div class="widget-thumbnail-preview" id="inspector-preview-thumbnail-slot">
+          <!-- Rendered by riset.js -->
+        </div>
+        <div class="widget-showcase-footer">
+          <div class="widget-showcase-info">
+            <span class="widget-showcase-title">Live card showcase</span>
+            <span class="widget-showcase-sub" id="showcase-card-type-text">thumbnail - model klinis</span>
+          </div>
+          <span class="widget-realtime-badge">real-time</span>
+        </div>
+      </div>
+
+      <!-- Widget 2: Customize Font (Typography) -->
+      <div class="widget-card widget-clickable widget-font-card" id="card-font" onclick="toggleFontControls()">
+        <div class="font-card-top-row">
+          <div class="font-specimen-wrap">
+            <span class="font-specimen-aa">Aa</span>
+            <div class="font-specimen-bars">
+              <span class="specimen-bar bar-long"></span>
+              <span class="specimen-bar bar-short"></span>
+            </div>
+          </div>
+          <div class="font-drag-handle" title="Drag to reorder">
+            <svg width="12" height="18" viewBox="0 0 12 18" fill="none">
+              <circle cx="2.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+            </svg>
+          </div>
+        </div>
+        <div class="font-card-bottom-info">
+          <span class="font-card-title">Customize font</span>
+          <span class="font-card-sub">Selections font</span>
+        </div>
+      </div>
+
+      <!-- Active Font Controls (Kondisi saat active, tanpa container) -->
+      <div class="font-active-controls" id="font-active-controls" style="display: none;">
+        <!-- Row 1: 3 Separate Font Family Cards (Serif, Sans, Mono) -->
+        <div class="font-type-cards-row">
+          <button type="button" class="font-type-card active" id="type-card-serif" onclick="setDocFont('serif')">
+            <span class="font-type-specimen specimen-serif">Aa</span>
+            <span class="font-type-label">Serif</span>
+          </button>
+          <button type="button" class="font-type-card" id="type-card-sans" onclick="setDocFont('sans')">
+            <span class="font-type-specimen specimen-sans">Aa</span>
+            <span class="font-type-label">Sans</span>
+          </button>
+          <button type="button" class="font-type-card" id="type-card-mono" onclick="setDocFont('mono')">
+            <span class="font-type-specimen specimen-mono">Aa</span>
+            <span class="font-type-label">Mono</span>
+          </button>
+        </div>
+
+        <!-- Row 2: Font Family Dropdown Pill -->
+        <div class="font-dropdown-wrap" id="font-family-dropdown-wrap">
+          <div class="font-row-pill" id="font-family-pill" onclick="toggleFontDropdown(event)">
+            <span class="font-row-pill-title" id="current-font-name">Poppins</span>
+            <svg class="chevron-icon" id="font-dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <!-- Dropdown List Menu -->
+          <div class="font-dropdown-menu" id="font-family-menu" style="display: none;">
+            <div class="font-menu-item active" data-font="Poppins" onclick="selectSpecificFont('Poppins')">
+              <span>Poppins</span>
+              <span class="font-menu-badge">Sans</span>
+            </div>
+            <div class="font-menu-item" data-font="Inter" onclick="selectSpecificFont('Inter')">
+              <span>Inter</span>
+              <span class="font-menu-badge">Sans</span>
+            </div>
+            <div class="font-menu-item" data-font="Newsreader" onclick="selectSpecificFont('Newsreader')">
+              <span>Newsreader</span>
+              <span class="font-menu-badge">Serif</span>
+            </div>
+            <div class="font-menu-item" data-font="JetBrains Mono" onclick="selectSpecificFont('JetBrains Mono')">
+              <span>JetBrains Mono</span>
+              <span class="font-menu-badge">Mono</span>
+            </div>
+            <div class="font-menu-item" data-font="Cinzel" onclick="selectSpecificFont('Cinzel')">
+              <span>Cinzel</span>
+              <span class="font-menu-badge">Display</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Font Size Stepper & Input Pill -->
+        <div class="font-row-pill font-size-pill">
+          <span class="font-row-pill-title">Font Size</span>
+          <div class="font-size-stepper-wrap">
+            <input 
+              type="number" 
+              class="font-size-input" 
+              id="font-size-input" 
+              value="27" 
+              min="10" 
+              max="72" 
+              onclick="this.select()" 
+              oninput="onFontSizeInputChange(this.value)" 
+              title="Klik angka untuk mengubah ukuran font"
+            >
+            <div class="stepper-arrows">
+              <button type="button" class="stepper-arrow up" onclick="adjustDocFontSize(1)" title="Perbesar Font">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="18 15 12 9 6 15"/>
+                </svg>
+              </button>
+              <button type="button" class="stepper-arrow down" onclick="adjustDocFontSize(-1)" title="Perkecil Font">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="18 15 12 9 6 15"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget 3: Media Blocks (Exact Match to Gambar Referensi) -->
+      <div class="widget-card widget-media-card">
+        <div class="media-grid-3">
+          <!-- Col 1: Videos -->
+          <div class="media-col-item" onclick="openMediaModal('video')">
+            <div class="media-thumb-box">
+              <div class="media-sheet-layer">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="4" />
+                  <path d="M2 9h20" />
+                  <polygon points="10 12 15 14.5 10 17 10 12" fill="#9E9E9E" stroke="none" />
+                </svg>
+              </div>
+            </div>
+            <span class="media-col-label">Videos</span>
+          </div>
+
+          <!-- Col 2: Images -->
+          <div class="media-col-item" onclick="openMediaModal('image')">
+            <div class="media-thumb-box">
+              <div class="media-sheet-layer">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="4" />
+                  <circle cx="8.5" cy="8.5" r="1.5" fill="#9E9E9E" stroke="none" />
+                  <path d="M21 16l-5.5-5.5a1.5 1.5 0 0 0-2.1 0L4 20" />
+                </svg>
+              </div>
+            </div>
+            <span class="media-col-label">Images</span>
+          </div>
+
+          <!-- Col 3: Links -->
+          <div class="media-col-item" onclick="openMediaModal('link')">
+            <div class="media-thumb-box">
+              <div class="media-sheet-layer">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+              </div>
+            </div>
+            <span class="media-col-label">Links</span>
+          </div>
+        </div>
+
+        <!-- Drag handle in bottom right corner -->
+        <div class="media-drag-handle" title="Drag to reorder">
+          <svg width="12" height="18" viewBox="0 0 12 18" fill="none">
+            <circle cx="2.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+            <circle cx="9.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+            <circle cx="2.5" cy="9" r="1.5" fill="#8C8A83"/>
+            <circle cx="9.5" cy="9" r="1.5" fill="#8C8A83"/>
+            <circle cx="2.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+            <circle cx="9.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Widget 4: Neura AI Poles Riset (Exact Match to Gambar Referensi) -->
+      <div class="widget-card widget-ai-card" onclick="handleAiPolish('polish')">
+        <div class="ai-card-top-visual">
+          <svg class="ai-sparkle-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C87455" stroke-width="2.4" stroke-linejoin="round">
+            <path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" />
+          </svg>
+          <div class="ai-blurred-lines">
+            <span class="ai-blurred-bar bar-long"></span>
+            <span class="ai-blurred-bar bar-short"></span>
+            <span class="ai-blurred-bar bar-med"></span>
+          </div>
+        </div>
+        <div class="ai-card-texts">
+          <span class="ai-card-title">Neura AI Poles Riset</span>
+          <span class="ai-card-sub">Generate riset revition</span>
+        </div>
+      </div>
+
+      <!-- Widget 5: Color Palette Studio (Text, Highlight & Paper Tint) -->
+      <div class="widget-card widget-clickable widget-color-card" id="card-color" onclick="toggleColorControls()">
+        <div class="color-card-top-row">
+          <div class="color-specimen-wrap">
+            <span class="color-specimen-ring"></span>
+            <div class="color-specimen-bars">
+              <span class="specimen-color-bar bar-accent"></span>
+              <span class="specimen-color-bar bar-text"></span>
+            </div>
+          </div>
+          <div class="color-drag-handle" title="Drag to reorder">
+            <svg width="12" height="18" viewBox="0 0 12 18" fill="none">
+              <circle cx="2.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+            </svg>
+          </div>
+        </div>
+        <div class="color-card-bottom-info">
+          <span class="color-card-title">Color palette</span>
+          <span class="color-card-sub">Text, highlight &amp; paper tint</span>
+        </div>
+      </div>
+
+      <!-- Active Color Controls (Precision Refined Studio) -->
+      <div class="color-active-controls" id="color-active-controls" style="display: none;">
+        <!-- Sub-Nav Pill: Text | Highlight | Paper -->
+        <div class="color-mode-nav">
+          <button type="button" class="color-mode-btn active" id="btn-colormode-text" onclick="switchColorMode('text')">Text</button>
+          <button type="button" class="color-mode-btn" id="btn-colormode-highlight" onclick="switchColorMode('highlight')">Highlight</button>
+          <button type="button" class="color-mode-btn" id="btn-colormode-paper" onclick="switchColorMode('paper')">Paper</button>
+        </div>
+
+        <!-- Section A: Text Color Palette -->
+        <div class="color-palette-section" id="section-color-text">
+          <!-- 1. Presets Swatches Row -->
+          <div class="palette-swatches-grid">
+            <button type="button" class="color-swatch-circle" style="background-color:#1C1917;" onclick="applyTextColor('#1C1917')" title="Obsidian Black"></button>
+            <button type="button" class="color-swatch-circle" style="background-color:#57534E;" onclick="applyTextColor('#57534E')" title="Slate Grey"></button>
+            <button type="button" class="color-swatch-circle active" style="background-color:#D97757;" onclick="applyTextColor('#D97757')" title="Neura Terracotta"></button>
+            <button type="button" class="color-swatch-circle" style="background-color:#2563EB;" onclick="applyTextColor('#2563EB')" title="Clinical Blue"></button>
+            <button type="button" class="color-swatch-circle" style="background-color:#059669;" onclick="applyTextColor('#059669')" title="Emerald Health"></button>
+            <button type="button" class="color-swatch-circle" style="background-color:#DC2626;" onclick="applyTextColor('#DC2626')" title="Crimson Alert"></button>
+          </div>
+
+          <!-- 2. Interactive Chromatic Color Wheel Studio (Refined) -->
+          <div class="color-wheel-container">
+            <div class="color-wheel-disc-main" id="interactive-color-wheel" title="Klik atau geser untuk memilih warna kustom">
+              <div class="wheel-conic-layer"></div>
+              <div class="wheel-radial-layer"></div>
+              <div class="wheel-specular-sheen"></div>
+              <div class="color-wheel-picker-handle" id="wheel-picker-handle" style="left: 58%; top: 21%;"></div>
+            </div>
+          </div>
+
+          <!-- 3. Bottom Hex Input & Apply Bar -->
+          <input type="color" id="native-color-picker" style="position:fixed; top:-9999px; left:-9999px; opacity:0; width:0; height:0; pointer-events:none;" value="#D97757" oninput="onNativePickerChange(this.value)">
+          <div class="color-unified-bar">
+            <!-- Solid Color Preview Circle Only (Tanpa image/wheel circle) -->
+            <button type="button" class="color-swatch-preview-dot" id="custom-color-dot" onclick="openColorPicker()" title="Warna Aktif (Klik untuk dialog sistem)" style="background-color:#D97757;"></button>
+            <div class="color-hex-input-wrap">
+              <span class="color-hex-prefix">#</span>
+              <input type="text" class="color-hex-text-input" id="custom-color-hex" value="D97757" maxlength="6" spellcheck="false" oninput="onHexColorInput(this.value)" placeholder="D97757">
+            </div>
+            <button type="button" class="btn-color-apply-sleek" onclick="applyCustomTextColor('#' + document.getElementById('custom-color-hex').value)">Terapkan</button>
+          </div>
+        </div>
+
+        <!-- Section B: Highlight / Stabilo Klinis -->
+        <div class="color-palette-section" id="section-color-highlight" style="display:none;">
+          <div class="palette-swatches-grid">
+            <button type="button" class="color-swatch-circle hl-circle" style="background-color:#FEF08A;" onclick="applyHighlightColor('#FEF08A')" title="Kuning Sitasi"></button>
+            <button type="button" class="color-swatch-circle hl-circle" style="background-color:#BBF7D0;" onclick="applyHighlightColor('#BBF7D0')" title="Hijau Validasi"></button>
+            <button type="button" class="color-swatch-circle hl-circle" style="background-color:#BAE6FD;" onclick="applyHighlightColor('#BAE6FD')" title="Biru Klinis"></button>
+            <button type="button" class="color-swatch-circle hl-circle" style="background-color:#FFEDD5;" onclick="applyHighlightColor('#FFEDD5')" title="Peach Diagnostik"></button>
+            <button type="button" class="color-swatch-circle hl-circle" style="background-color:#F3E8FF;" onclick="applyHighlightColor('#F3E8FF')" title="Lavender Data"></button>
+            <button type="button" class="color-swatch-circle clear-swatch" onclick="applyHighlightColor('transparent')" title="Hapus Highlight">✕</button>
+          </div>
+        </div>
+
+        <!-- Section C: Paper Sheet Tint -->
+        <div class="color-palette-section" id="section-color-paper" style="display:none;">
+          <div class="paper-tint-options-row">
+            <button type="button" class="paper-tint-btn active" id="tint-pure" onclick="setPaperTint('pure')" title="Pure Clinical White">
+              <span class="tint-preview pure-preview"></span>
+              <span class="tint-name">Pure</span>
+            </button>
+            <button type="button" class="paper-tint-btn" id="tint-ivory" onclick="setPaperTint('ivory')" title="Ivory Cream">
+              <span class="tint-preview ivory-preview"></span>
+              <span class="tint-name">Ivory</span>
+            </button>
+            <button type="button" class="paper-tint-btn" id="tint-warm" onclick="setPaperTint('warm')" title="Warm Editorial">
+              <span class="tint-preview warm-preview"></span>
+              <span class="tint-name">Warm</span>
+            </button>
+            <button type="button" class="paper-tint-btn" id="tint-slate" onclick="setPaperTint('slate')" title="Dark Slate">
+              <span class="tint-preview slate-preview"></span>
+              <span class="tint-name">Slate</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget 6: Document Settings (Layout, Showcase & Metadata) -->
+      <div class="widget-card widget-clickable widget-settings-card" id="card-settings" onclick="toggleSettingsControls()">
+        <div class="settings-card-top-row">
+          <div class="settings-specimen-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </div>
+          <div class="settings-drag-handle" title="Drag to reorder">
+            <svg width="12" height="18" viewBox="0 0 12 18" fill="none">
+              <circle cx="2.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="2.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="9" r="1.5" fill="#8C8A83"/>
+              <circle cx="2.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+              <circle cx="9.5" cy="15.5" r="1.5" fill="#8C8A83"/>
+            </svg>
+          </div>
+        </div>
+        <div class="settings-card-bottom-info">
+          <span class="settings-card-title">Document settings</span>
+          <span class="settings-card-sub">Layout, thumbnail &amp; publication</span>
+        </div>
+      </div>
+
+      <!-- Active Settings Controls -->
+      <div class="settings-active-controls" id="settings-active-controls" style="display: none;">
+        <!-- Settings Sub-Tabs -->
+        <div class="settings-subtabs-nav">
+          <button type="button" class="settings-subtab-btn active" id="btn-st-layout" onclick="switchSettingsTab('layout')">Layout</button>
+          <button type="button" class="settings-subtab-btn" id="btn-st-thumbnail" onclick="switchSettingsTab('thumbnail')">Thumbnail</button>
+          <button type="button" class="settings-subtab-btn" id="btn-st-meta" onclick="switchSettingsTab('meta')">Publikasi</button>
+        </div>
+
+        <!-- Panel 1: Layout A4 & Margins & Watermark (Ultra-Polished) -->
+        <div class="settings-panel-section" id="panel-settings-layout">
+          <div class="settings-item-group">
+            <div class="settings-item-header">
+              <span class="settings-item-label">Margin Naskah A4</span>
+              <span class="settings-value-badge" id="margin-val-badge">72px</span>
+            </div>
+            <div class="settings-segmented-toggle">
+              <button type="button" class="seg-toggle-btn active" id="margin-normal" onclick="setPageMargin('normal')">
+                <span>Normal</span>
+              </button>
+              <button type="button" class="seg-toggle-btn" id="margin-compact" onclick="setPageMargin('compact')">
+                <span>Compact</span>
+              </button>
+              <button type="button" class="seg-toggle-btn" id="margin-wide" onclick="setPageMargin('wide')">
+                <span>Wide</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-item-group">
+            <div class="settings-item-header">
+              <label for="setting-watermark-select" class="settings-item-label">Watermark Naskah</label>
+            </div>
+            <div class="settings-select-wrapper">
+              <select id="setting-watermark-select" class="settings-select-field" onchange="setDocumentWatermark(this.value)">
+                <option value="none">Tanpa Watermark</option>
+                <option value="DRAFT">DRAFT KLINIS</option>
+                <option value="CONFIDENTIAL">CONFIDENTIAL / RAHASIA</option>
+                <option value="INTERNAL REVIEW">INTERNAL REVIEW ONLY</option>
+              </select>
+              <div class="settings-select-chevron">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Thumbnail Showcase Engine -->
+        <div class="settings-panel-section" id="panel-settings-thumbnail" style="display:none;">
+          <span class="setting-field-group-title" style="margin-bottom:8px;">Format Thumbnail</span>
+          <div class="thumb-style-pills">
+            <button type="button" class="thumb-style-pill active" data-type="badge_glow" onclick="setThumbnailType('badge_glow')">
+              <span>✦ Glow Badge</span>
+            </button>
+            <button type="button" class="thumb-style-pill" data-type="mockup_card" onclick="setThumbnailType('mockup_card')">
+              <span>⊞ Mockup Card</span>
+            </button>
+            <button type="button" class="thumb-style-pill" data-type="neon_code" onclick="setThumbnailType('neon_code')">
+              <span>&lt;/&gt; Neon Code</span>
+            </button>
+            <button type="button" class="thumb-style-pill" data-type="collab_widget" onclick="setThumbnailType('collab_widget')">
+              <span>⑂ Mini Widget</span>
+            </button>
+            <button type="button" class="thumb-style-pill" data-type="vision_glow" onclick="setThumbnailType('vision_glow')">
+              <span>◉ Vision Glow</span>
+            </button>
+            <button type="button" class="thumb-style-pill" data-type="custom_image" onclick="setThumbnailType('custom_image')">
+              <span>🖼 Banner Img</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Config Fields -->
+          <div class="thumb-config-panel" style="margin-top:10px;">
+            <div id="cfg-group-badge" class="inspector-field">
+              <label for="cfg-badge-text">Teks Label Spotlight</label>
+              <input type="text" id="cfg-badge-text" value="Model Klinis" placeholder="Contoh: Model Klinis" oninput="updateInspectorPreview(); triggerAutoSave();">
+              <input type="hidden" id="cfg-badge-icon" value="✦">
+            </div>
+
+            <div id="cfg-group-mockup" style="display:none;">
+              <div class="inspector-field">
+                <label for="cfg-mockup-title">Judul Mockup</label>
+                <input type="text" id="cfg-mockup-title" value="32 Profil Biomarker Klinis" oninput="updateInspectorPreview(); triggerAutoSave();">
+              </div>
+              <div class="inspector-field">
+                <label for="cfg-mockup-desc">Deskripsi</label>
+                <textarea id="cfg-mockup-desc" rows="2" oninput="updateInspectorPreview(); triggerAutoSave();">Evaluasi korelasi skor MMSE, ADL...</textarea>
+              </div>
+              <div class="inspector-field">
+                <label for="cfg-mockup-btn">Teks Tombol</label>
+                <input type="text" id="cfg-mockup-btn" value="Eksplorasi" oninput="updateInspectorPreview(); triggerAutoSave();">
+              </div>
+            </div>
+
+            <div id="cfg-group-collab" style="display:none;">
+              <div class="inspector-field">
+                <label for="cfg-collab-body">Teks Inti Widget</label>
+                <input type="text" id="cfg-collab-body" value="Clinical Decision Support" oninput="updateInspectorPreview(); triggerAutoSave();">
+              </div>
+            </div>
+
+            <div id="cfg-group-image" style="display:none;">
+              <div class="inspector-field">
+                <label for="cfg-custom-url">URL Gambar Banner</label>
+                <input type="url" id="cfg-custom-url" placeholder="https://..." oninput="updateInspectorPreview(); triggerAutoSave();">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Metadata & Publikasi (Refined Full-Width Design) -->
+        <div class="settings-panel-section" id="panel-settings-meta" style="display:none;">
+          <div class="settings-item-group">
+            <span class="settings-item-label">Status Naskah</span>
+            <div class="settings-segmented-toggle">
+              <button type="button" class="seg-toggle-btn active" id="btn-pub-toggle-draft" onclick="setPublishStatus(false)">
+                <span class="status-dot dot-draft"></span>
+                <span>Draf Saja</span>
+              </button>
+              <button type="button" class="seg-toggle-btn" id="btn-pub-toggle-pub" onclick="setPublishStatus(true)">
+                <span class="status-dot dot-pub"></span>
+                <span>Publikasikan</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-item-group">
+            <label for="insp-date" class="settings-item-label">Bulan &amp; Tahun Publikasi</label>
+            <input type="text" id="insp-date" class="settings-input-field" value="Okt 2026" placeholder="Contoh: Okt 2026" oninput="updateInspectorPreview(); triggerAutoSave();">
+          </div>
+
+          <div class="settings-item-group">
+            <label for="insp-cats" class="settings-item-label">Kategori Riset Klinis</label>
+            <input type="text" id="insp-cats" class="settings-input-field" value="Model AI, Validasi" placeholder="Pisahkan dengan koma (mis: Model AI, Klinis)" oninput="updateInspectorPreview(); triggerAutoSave();">
+          </div>
+
+          <div class="settings-item-group">
+            <label for="insp-link-text" class="settings-item-label">Teks Tombol CTA</label>
+            <input type="text" id="insp-link-text" class="settings-input-field" value="Baca riset" placeholder="Contoh: Baca riset" oninput="updateInspectorPreview(); triggerAutoSave();">
+          </div>
+
+          <div class="settings-item-group">
+            <label for="insp-link-url" class="settings-item-label">Tautan URL Tujuan</label>
+            <input type="text" id="insp-link-url" class="settings-input-field" value="/app" placeholder="Contoh: /app atau https://..." oninput="updateInspectorPreview(); triggerAutoSave();">
+          </div>
+
+          <select id="insp-publish-select" style="display:none;">
+            <option value="true">Publikasikan</option>
+            <option value="false" selected>Draf Saja</option>
+          </select>
+        </div>
+      </div>
+      <!-- Widget 8: Help (Accordion Drawer Row) -->
+      <div class="widget-card widget-row-item widget-clickable" onclick="toggleDrawer('help')">
+        <div class="widget-row-left">
+          <span class="widget-swatch-dot dot-help"></span>
+          <span class="widget-row-label">Help</span>
+        </div>
+        <span class="widget-drag-dots">⋮⋮</span>
+      </div>
+      <div class="widget-drawer-panel" id="drawer-help" style="display:none;">
+        <div style="font-size:12px; line-height:1.6; color:var(--riset-text-secondary);">
+          <p><strong>Shortcut Keyboard:</strong></p>
+          <p>&bull; <code>Ctrl + B</code>: Tebal</p>
+          <p>&bull; <code>Ctrl + I</code>: Miring</p>
+          <p>&bull; <code>Ctrl + Z</code>: Undo</p>
+          <p>&bull; <code>Ctrl + Y</code>: Redo</p>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       MEDIA INSERTION MODAL DIALOG
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="riset-modal-overlay" id="riset-media-modal" onclick="if(event.target === this) closeMediaModal()">
+    <div class="riset-modal-dialog" role="dialog" aria-modal="true">
+      <div class="modal-header-row">
+        <span class="modal-title" id="media-modal-title">
+          <span id="modal-title-icon">🖼</span>
+          <span id="modal-title-text">Sisipkan Media</span>
+        </span>
+        <button type="button" class="modal-close-btn" onclick="closeMediaModal()" title="Tutup">×</button>
+      </div>
+
+      <!-- Tab Switcher: Upload vs URL -->
+      <div class="modal-tabs-nav" id="media-modal-tabs">
+        <button type="button" class="modal-tab-btn active" id="modal-tab-upload" onclick="switchMediaModalTab('upload')">Unggah dari Perangkat</button>
+        <button type="button" class="modal-tab-btn" id="modal-tab-url" onclick="switchMediaModalTab('url')">Tautan / URL Web</button>
+      </div>
+
+      <!-- Tab 1: Upload Dropzone -->
+      <div id="media-tab-panel-upload" class="modal-tab-panel">
+        <div class="modal-dropzone" id="modal-file-dropzone" onclick="document.getElementById('modal-hidden-file-input').click()">
+          <span class="dropzone-icon" id="dropzone-icon">📁</span>
+          <span class="dropzone-text" id="dropzone-text">Pilih atau letakkan file di sini</span>
+          <span class="dropzone-sub" id="dropzone-sub">Mendukung Gambar (PNG, JPG, GIF, WebP, SVG) &amp; Video (MP4, WebM)</span>
+        </div>
+        <input type="file" id="modal-hidden-file-input" style="display:none;" onchange="handleModalFileSelected(this.files)" />
+      </div>
+
+      <!-- Tab 2: URL Input -->
+      <div id="media-tab-panel-url" class="modal-tab-panel" style="display:none;">
+        <div class="modal-field">
+          <label for="media-url-input" id="media-url-label">Alamat URL Media / GIF / Video</label>
+          <input type="url" id="media-url-input" class="modal-input" placeholder="https://..." oninput="onMediaUrlInput(this.value)" />
+        </div>
+      </div>
+
+      <!-- Live Preview Area in Modal -->
+      <div class="modal-preview-box" id="modal-media-preview-box">
+        <!-- Rendered preview -->
+      </div>
+
+      <!-- Caption / Label (Optional) -->
+      <div class="modal-field" id="media-caption-field">
+        <label for="media-caption-input" id="media-caption-label">Keterangan Media (Opsional)</label>
+        <input type="text" id="media-caption-input" class="modal-input" placeholder="Contoh: Gambar 1. Distribusi biomarker klinis" />
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-action-row">
+        <button type="button" class="btn-modal-cancel" onclick="closeMediaModal()">Batal</button>
+        <button type="button" class="btn-modal-confirm" id="btn-insert-media-confirm" onclick="confirmInsertMedia()">
+          <span>Sisipkan ke Dokumen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External JavaScript -->
+  <script src="/js/riset.js?v=4.6"></script>
+</body>
+
+</html>
