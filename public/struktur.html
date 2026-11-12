@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neura &bull; Struktur Folder &amp; Diagram Arsitektur</title>
+  <meta name="description" content="Visualisasi diagram arsitektur interaktif dan penjelajah struktur folder proyek Neura AI multimodal Alzheimer.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/welcome.css?v=68">
+  <link rel="stylesheet" href="/css/template.css?v=1.5">
+  <link rel="stylesheet" href="/css/struktur.css?v=4.0">
+
+  <!-- highlight.js for syntax highlighting in code drawer -->
+  <link rel="stylesheet" id="hljs-theme-link" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Pre-load theme preference -->
+  <script>
+    try {
+      const t = localStorage.getItem('neura_theme_v1') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {}
+  </script>
+</head>
+
+<body class="struktur-page-body">
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header class="struktur-topbar" id="struktur-topbar">
+    <div class="topbar-left">
+      <a href="/app" class="brand-link" title="Kembali ke Dashboard Utama">
+        <div class="brand-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+            <path d="M16 3L28 9.5V22.5L16 29L4 22.5V9.5L16 3Z" stroke="#D97757" stroke-width="2.5" stroke-linejoin="round" />
+            <circle cx="16" cy="16" r="4.5" fill="#D97757" />
+            <path d="M16 3V11.5M28 22.5L20 18M4 22.5L12 18" stroke="#D97757" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <span class="brand-name">Neura</span>
+      </a>
+
+      <div class="topbar-separator"></div>
+
+      <!-- Project Switcher / Breadcrumb -->
+      <div class="project-pill-dropdown" id="project-dropdown">
+        <span class="project-badge-dot"></span>
+        <span class="project-title" id="current-project-title">Neura Core Architecture</span>
+        <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+
+      <!-- Search Field in Topbar -->
+      <div class="canvas-search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="topbar-search-input" placeholder="Cari modul atau berkas... (Ctrl+K)" autocomplete="off">
+        <kbd class="search-keycap">⌘K</kbd>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <!-- Collaborators Avatar Stack -->
+      <div class="collaborators-stack" title="Arsitek &amp; Peneliti Aktif">
+        <span class="avatar-chip chip-1" title="Dr. Sarah K. (Lead Clinical)">SK</span>
+        <span class="avatar-chip chip-2" title="Alex R. (ML Engine)">AR</span>
+        <span class="avatar-chip chip-3" title="Hanzz (Core Dev)">HZ</span>
+        <span class="avatar-chip chip-more">+2</span>
+      </div>
+
+      <!-- Quick Filter Chips -->
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-chip active" data-filter="all">Semua</button>
+        <button class="filter-chip" data-filter="folder">📁 Folder</button>
+        <button class="filter-chip" data-filter="file">📄 File</button>
+        <button class="filter-chip" data-filter="python">🐍 .py</button>
+        <button class="filter-chip" data-filter="javascript">☕ .js</button>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Theme Toggle -->
+        <button class="topbar-btn" id="btn-theme-toggle" title="Ganti Tema (Gelap / Terang)">
+          <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+
+        <!-- Toggle Grid / Background -->
+        <button class="topbar-btn" id="btn-toggle-grid" title="Ganti Pola Kanvas (Titik / Kotak / Polos)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </button>
+
+        <!-- Export Diagram -->
+        <button class="topbar-btn" id="btn-export-diagram" title="Ekspor Visual Kanvas">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Ekspor</span>
+        </button>
+
+        <!-- Explorer Mode Toggle Button -->
+        <button class="topbar-btn topbar-btn--mode" id="btn-toggle-explorer" title="Beralih ke Explorer Mode (telusuri folder real)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Explorer</span>
+        </button>
+
+        <!-- Toggle Sidebar Folder -->
+        <button class="topbar-btn" id="btn-topbar-sidebar" title="Buka / Tutup Sidebar Folder">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="15" y1="3" x2="15" y2="21"></line>
+          </svg>
+          <span>Sidebar</span>
+        </button>
+
+        <div class="topbar-divider"></div>
+
+        <!-- Link to Studio Riset -->
+        <a href="/app/riset" class="topbar-link-btn" title="Buka Studio Riset &amp; Publikasi">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          <span>Studio Riset</span>
+        </a>
+
+        <!-- Link to Dashboard -->
+        <a href="/app" class="topbar-accent-btn" title="Kembali ke Dashboard Aplikasi">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN STUDIO WORKSPACE: CANVAS + RIGHT SIDEBAR
+       ======================================================================== -->
+  <main class="struktur-workspace" id="struktur-workspace">
+
+    <!-- FLOATING TOOLS PALETTE (LEFT SIDE) -->
+    <aside class="canvas-floating-toolbar" id="canvas-toolbar" aria-label="Tools Kanvas">
+
+      <!-- GROUP 1: Select & Pan & Lasso -->
+      <div class="toolbar-group">
+        <div class="tool-btn-wrap" data-tooltip="Pilih &amp; Pindah Node" data-shortcut="V">
+          <button class="tool-btn active" id="tool-select" data-mode="select">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Hand Tool — Geser Kanvas" data-shortcut="H / Spasi">
+          <button class="tool-btn" id="tool-pan" data-mode="pan">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 11V6a2 2 0 0 0-4 0v4M14 8V4a2 2 0 0 0-4 0v6M10 9V7a2 2 0 0 0-4 0v8a7 7 0 0 0 14 0v-4a2 2 0 0 0-4 0"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Lasso — Pilih Banyak Node" data-shortcut="L">
+          <button class="tool-btn" id="tool-lasso" data-mode="lasso">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8l6-6V5a2 2 0 0 0-2-2z"/>
+              <polyline points="13 21 13 15 19 15"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- GROUP 2: Create -->
+      <div class="toolbar-group">
+        <div class="tool-btn-wrap" data-tooltip="Tambah Modul Card" data-shortcut="N">
+          <button class="tool-btn" id="tool-add-node">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Tambah Sticky Note" data-shortcut="S">
+          <button class="tool-btn" id="tool-add-note">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Hubungkan Dua Node" data-shortcut="C">
+          <button class="tool-btn" id="tool-connect" data-mode="connect">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="6" cy="6" r="3"/>
+              <circle cx="18" cy="18" r="3"/>
+              <path d="M8.59 8.59l6.83 6.82"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- GROUP 3: History -->
+      <div class="toolbar-group">
+        <div class="tool-btn-wrap" data-tooltip="Undo" data-shortcut="Ctrl+Z">
+          <button class="tool-btn tool-btn-disabled" id="tool-undo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 14 4 9 9 4"/>
+              <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Redo" data-shortcut="Ctrl+Y">
+          <button class="tool-btn tool-btn-disabled" id="tool-redo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 14 20 9 15 4"/>
+              <path d="M4 20v-7a4 4 0 0 1 4-4h12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- GROUP 4: Zoom -->
+      <div class="toolbar-group">
+        <div class="tool-btn-wrap" data-tooltip="Perbesar" data-shortcut="Ctrl++">
+          <button class="tool-btn" id="tool-zoom-in">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/>
+              <line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </button>
+        </div>
+        <button class="zoom-level-badge" id="zoom-badge" title="Reset ke 100%">100%</button>
+        <div class="tool-btn-wrap" data-tooltip="Perkecil" data-shortcut="Ctrl+-">
+          <button class="tool-btn" id="tool-zoom-out">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Fit All Nodes" data-shortcut="Shift+1">
+          <button class="tool-btn" id="tool-fit-view">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 3 21 3 21 9"/>
+              <polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/>
+              <line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- GROUP 5: View Toggles -->
+      <div class="toolbar-group">
+        <div class="tool-btn-wrap" data-tooltip="Toggle Grid (Dot / Line / Off)" data-shortcut="G">
+          <button class="tool-btn" id="tool-toggle-grid">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tool-btn-wrap" data-tooltip="Hapus Koneksi Node Terpilih" data-shortcut="Del">
+          <button class="tool-btn" id="tool-delete-sel">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CONNECTION TYPE PICKER (shows when connect mode active) -->
+    <div class="conn-type-picker" id="conn-type-picker" style="display:none">
+      <div class="conn-type-label">Tipe Koneksi</div>
+      <label class="conn-type-opt" data-type="default">
+        <span class="conn-dot conn-dot-default"></span>Default
+        <input type="radio" name="conn-type-sel" value="default" checked hidden>
+      </label>
+      <label class="conn-type-opt" data-type="imports">
+        <span class="conn-dot conn-dot-imports"></span>Imports
+        <input type="radio" name="conn-type-sel" value="imports" hidden>
+      </label>
+      <label class="conn-type-opt" data-type="calls">
+        <span class="conn-dot conn-dot-calls"></span>Calls
+        <input type="radio" name="conn-type-sel" value="calls" hidden>
+      </label>
+      <label class="conn-type-opt" data-type="contains">
+        <span class="conn-dot conn-dot-contains"></span>Contains
+        <input type="radio" name="conn-type-sel" value="contains" hidden>
+      </label>
+      <label class="conn-type-opt" data-type="provides">
+        <span class="conn-dot conn-dot-provides"></span>Provides
+        <input type="radio" name="conn-type-sel" value="provides" hidden>
+      </label>
+      <label class="conn-type-opt" data-type="ml">
+        <span class="conn-dot conn-dot-ml"></span>ML / AI
+        <input type="radio" name="conn-type-sel" value="ml" hidden>
+      </label>
+      <div class="conn-type-hint">Klik port sumber → port tujuan untuk membuat koneksi</div>
+    </div>
+
+    <!-- LASSO SELECTION BOX (injected on canvas by JS) -->
+    <!-- Rendered dynamically as #lasso-box -->
+
+    <!-- INTERACTIVE CANVAS CONTAINER -->
+    <div class="canvas-container" id="canvas-container">
+
+      <!-- CANVAS BREADCRUMB (Explorer Mode Navigation) -->
+      <nav class="canvas-breadcrumb" id="canvas-breadcrumb" style="display:none;" aria-label="Navigasi direktori explorer">
+        <!-- Populated dynamically by JS -->
+      </nav>
+
+      <div class="canvas-viewport" id="canvas-viewport">
+
+        <!-- SVG RELATION CONNECTOR LAYER -->
+        <svg class="canvas-connections-svg" id="canvas-connections-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rel-gradient-core" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#D97757" stop-opacity="0.85" />
+              <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.85" />
+            </linearGradient>
+            <linearGradient id="rel-gradient-api" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.85" />
+              <stop offset="100%" stop-color="#10B981" stop-opacity="0.85" />
+            </linearGradient>
+            <linearGradient id="rel-gradient-ml" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.85" />
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.85" />
+            </linearGradient>
+            <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <g id="connections-paths-group"></g>
+          <g id="connections-badges-group"></g>
+        </svg>
+
+        <!-- HTML NODES LAYER (MODULE CARDS & STICKY NOTES) -->
+        <div class="canvas-nodes-layer" id="canvas-nodes-layer">
+          <!-- Dynamically populated and positioned by public/js/struktur.js -->
+        </div>
+
+      </div>
+
+      <!-- CANVAS FOOTER BAR (MINI STATS & CONTROLS) -->
+      <div class="canvas-floating-status">
+        <div class="status-indicator">
+          <span class="status-pulse-dot"></span>
+          <span class="status-text" id="status-sync-text">Diagram Relasi Sinkron (Live)</span>
+        </div>
+        <div class="status-stats">
+          <span id="canvas-node-count">7 Modul</span>
+          <span class="stats-sep">&bull;</span>
+          <span id="canvas-relation-count">9 Koneksi</span>
+        </div>
+      </div>
+
+      <!-- CANVAS MINIMAP -->
+      <div class="canvas-minimap" id="canvas-minimap" title="Peta Mini Kanvas">
+        <div class="minimap-canvas" id="minimap-nodes"></div>
+        <div class="minimap-viewport-rect" id="minimap-viewport-rect"></div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         RIGHT SIDEBAR: STRUKTUR FOLDER EXPLORER (NORMAL TREE VIEW)
+         ======================================================================== -->
+    <aside class="struktur-tree-sidebar" id="struktur-tree-sidebar" aria-label="Struktur Folder Explorer">
+      <!-- Toggle button attached to sidebar's edge -->
+      <button class="sidebar-collapse-toggle" id="btn-toggle-sidebar" title="Ciutkan / Lebarkan Sidebar" aria-label="Tutup atau Buka Sidebar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <!-- Sidebar Header -->
+      <div class="tree-sidebar-header">
+        <div class="tree-header-title-row">
+          <div class="tree-title-left">
+            <div class="tree-header-icon-box">
+              <svg class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="tree-title-texts">
+              <h2 class="tree-sidebar-title">Struktur Folder</h2>
+              <p class="tree-sidebar-desc">
+                <span class="tree-live-dot"></span>
+                <span id="tree-summary-stats">Memuat struktur direktori...</span>
+              </p>
+            </div>
+          </div>
+          <div class="tree-header-actions" role="toolbar" aria-label="Aksi Struktur Folder">
+            <button class="tree-action-btn" id="btn-tree-expand-all" title="Buka Semua Folder">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="7 13 12 18 17 13"></polyline>
+                <polyline points="7 6 12 11 17 6"></polyline>
+              </svg>
+            </button>
+            <button class="tree-action-btn" id="btn-tree-collapse-all" title="Tutup Semua Folder">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="17 11 12 6 7 11"></polyline>
+                <polyline points="17 18 12 13 7 18"></polyline>
+              </svg>
+            </button>
+            <button class="tree-action-btn" id="btn-tree-refresh" title="Muat Ulang Struktur Direktori">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar in Right Sidebar -->
+        <div class="tree-search-wrap">
+          <svg class="tree-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="tree-search-input" placeholder="Filter folder &amp; berkas..." autocomplete="off">
+          <button class="tree-search-clear" id="tree-search-clear" style="display:none;" title="Bersihkan pencarian">&times;</button>
+        </div>
+
+        <!-- Quick Access Folder Badges -->
+        <div class="tree-quick-access">
+          <button class="quick-chip" data-target="public" title="Buka direktori public/">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span>public/</span>
+          </button>
+          <button class="quick-chip" data-target="api" title="Buka direktori api/">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span>api/</span>
+          </button>
+          <button class="quick-chip" data-target="datasets" title="Buka direktori datasets/">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span>datasets/</span>
+          </button>
+          <button class="quick-chip" data-target="modelsLLM" title="Buka direktori modelsLLM/">
+            <svg class="chip-svg chip-svg-model" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 0-4 4v1H6a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v1a4 4 0 0 0 8 0v-1h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V6a4 4 0 0 0-4-4z"></path></svg>
+            <span>modelsLLM/</span>
+          </button>
+          <button class="quick-chip" data-target="server.py" title="Buka berkas server.py">
+            <span class="chip-py-badge">py</span>
+            <span>server.py</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recursive Folder Tree Container -->
+      <div class="tree-sidebar-content" id="tree-sidebar-content">
+        <div class="tree-root-list" id="folder-tree-root" role="tree">
+          <!-- Populated by JavaScript -->
+          <div class="tree-loading-state">
+            <div class="tree-spinner"></div>
+            <span>Memindai direktori Neura...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected File/Node Detail Card (Bottom of Right Sidebar) -->
+      <div class="tree-sidebar-detail" id="tree-item-detail">
+        <div class="detail-header">
+          <span class="detail-type-badge" id="detail-type-badge">Direktori</span>
+          <span class="detail-sync-btn" id="btn-focus-in-canvas" title="Pusatkan di Kanvas Diagram">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="22" y1="12" x2="18" y2="12"></line>
+              <line x1="6" y1="12" x2="2" y2="12"></line>
+              <line x1="12" y1="6" x2="12" y2="2"></line>
+              <line x1="12" y1="22" x2="12" y2="18"></line>
+            </svg>
+            Fokus Kanvas
+          </span>
+        </div>
+        <h4 class="detail-name" id="detail-item-name">Pilih berkas atau folder</h4>
+        <p class="detail-path" id="detail-item-path">Klik salah satu item untuk melihat detail &amp; relasinya</p>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- MODAL: ADD CUSTOM NODE (OPTIONAL / INTERACTIVE) -->
+  <div class="canvas-modal-overlay" id="modal-add-node" style="display: none;">
+    <div class="canvas-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Tambah Kartu Modul Arsitektur</h3>
+        <button class="modal-close-btn" id="modal-close-node">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-form-group">
+          <label for="new-node-title">Nama Modul / Folder</label>
+          <input type="text" id="new-node-title" placeholder="contoh: Audio Biomarker Pipeline" class="modal-input">
+        </div>
+        <div class="modal-form-group">
+          <label for="new-node-desc">Deskripsi Singkat</label>
+          <textarea id="new-node-desc" rows="2" placeholder="Fungsi dan tanggung jawab modul..." class="modal-input"></textarea>
+        </div>
+        <div class="modal-form-group">
+          <label>Kategori &amp; Tag</label>
+          <div class="modal-tag-selector">
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Core" checked> <span>Core</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="API"> <span>API</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Frontend"> <span>Frontend</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Model AI"> <span>Model AI</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Klinis"> <span>Klinis</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="btn-cancel-node">Batal</button>
+        <button class="btn-submit" id="btn-save-new-node">Tambahkan ke Kanvas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE PREVIEW DRAWER (SLIDING PANEL SISI KANAN) -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="code-preview-drawer" id="code-preview-drawer" aria-label="Pratinjau Kode Berkas">
+    <div class="drawer-header">
+      <span class="drawer-header-icon" id="drawer-file-icon">📄</span>
+      <div class="drawer-header-info">
+        <h3 class="drawer-file-name" id="drawer-file-name">Pilih berkas...</h3>
+        <p class="drawer-file-path" id="drawer-file-path">—</p>
+      </div>
+      <div class="drawer-header-actions">
+        <span class="drawer-lang-badge" id="drawer-lang-badge">—</span>
+        <button class="drawer-copy-btn" id="btn-drawer-copy" title="Salin Seluruh Kode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
+        <button class="drawer-close-btn" id="btn-drawer-close" title="Tutup Panel" onclick="window.closeCodeDrawer && window.closeCodeDrawer(event)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Code Outline (Function/Class list) -->
+    <div class="drawer-outline" id="drawer-outline" style="display:none">
+      <div class="drawer-outline-title">Struktur Simbol &amp; Fungsi</div>
+      <div id="drawer-outline-list"></div>
+    </div>
+
+    <!-- Code Area with Line Numbers -->
+    <div class="drawer-code-area" id="drawer-code-area">
+      <div class="drawer-line-numbers" id="drawer-line-numbers"></div>
+      <pre><code id="drawer-code-block" class="hljs"></code></pre>
+    </div>
+
+    <!-- Relation Summary -->
+    <div class="drawer-relations" id="drawer-relations">
+      <span class="drawer-relations-label">Relasi Berkas:</span>
+      <div class="drawer-relations-pills" id="drawer-relations-pills"></div>
+    </div>
+  </aside>
+
+  <!-- NODE CONTEXT MENU (KLIK KANAN) -->
+  <div class="node-context-menu" id="node-context-menu" style="display:none">
+    <div class="ctx-item" id="ctx-view-code">
+      <span class="ctx-item-icon">👁️</span>
+      <span>Lihat Kode (Showcase)</span>
+    </div>
+    <div class="ctx-item" id="ctx-copy-path">
+      <span class="ctx-item-icon">📋</span>
+      <span>Salin Path Berkas</span>
+    </div>
+    <div class="ctx-item" id="ctx-focus-tree">
+      <span class="ctx-item-icon">📁</span>
+      <span>Tampilkan di Folder Tree</span>
+    </div>
+    <div class="ctx-separator"></div>
+    <div class="ctx-item" id="ctx-focus-node">
+      <span class="ctx-item-icon">🎯</span>
+      <span>Pusatkan Kanvas</span>
+    </div>
+    <div class="ctx-item danger" id="ctx-delete-node">
+      <span class="ctx-item-icon">🗑️</span>
+      <span>Hapus dari Kanvas</span>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="/js/struktur.js?v=4.0"></script>
+</body>
+
+</html>
+

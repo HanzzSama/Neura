@@ -816,12 +816,129 @@
     slot.innerHTML = renderThumbnailHTML(_currentThumbType, cfg);
   }
 
-  // ── 7. Toolbar & Canvas Formatting ─────────────────────────────────────────
+  // ── 7. Toolbar & Canvas Formatting (Modular Power Capsule) ────────────────
   function formatDoc(cmd, val) {
     document.execCommand(cmd, false, val || null);
     const richBody = document.getElementById('doc-rich-body-' + _activePageIndex)
       || document.querySelector('.doc-rich-body');
     if (richBody) richBody.focus();
+    updateToolbarActiveStates();
+    if (window.triggerAutoSave) triggerAutoSave();
+  }
+
+  function formatBlockToggle(tag) {
+    tag = (tag || 'p').toLowerCase();
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) {
+      document.execCommand('formatBlock', false, `<${tag}>`);
+      return;
+    }
+    let node = sel.anchorNode;
+    if (node && node.nodeType === 3) node = node.parentNode;
+    const currentBlock = node ? node.closest(tag) : null;
+    if (currentBlock && tag !== 'p') {
+      document.execCommand('formatBlock', false, '<p>');
+    } else {
+      document.execCommand('formatBlock', false, `<${tag}>`);
+    }
+    const richBody = document.getElementById('doc-rich-body-' + _activePageIndex)
+      || document.querySelector('.doc-rich-body');
+    if (richBody) richBody.focus();
+    updateToolbarActiveStates();
+    if (window.triggerAutoSave) triggerAutoSave();
+  }
+
+  function toggleInlineCode() {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+    let parent = range.commonAncestorContainer;
+    if (parent && parent.nodeType === 3) parent = parent.parentNode;
+    const codeEl = parent ? parent.closest('code') : null;
+    if (codeEl) {
+      const parentNode = codeEl.parentNode;
+      while (codeEl.firstChild) {
+        parentNode.insertBefore(codeEl.firstChild, codeEl);
+      }
+      parentNode.removeChild(codeEl);
+    } else {
+      const selectedText = range.toString();
+      if (selectedText) {
+        const code = document.createElement('code');
+        code.className = 'canvas-inline-code';
+        code.textContent = selectedText;
+        range.deleteContents();
+        range.insertNode(code);
+      } else {
+        document.execCommand('fontName', false, 'monospace');
+      }
+    }
+    const richBody = document.getElementById('doc-rich-body-' + _activePageIndex)
+      || document.querySelector('.doc-rich-body');
+    if (richBody) richBody.focus();
+    updateToolbarActiveStates();
+    if (window.triggerAutoSave) triggerAutoSave();
+  }
+
+  function clearTextFormatting() {
+    document.execCommand('removeFormat', false, null);
+    document.execCommand('formatBlock', false, '<p>');
+    const richBody = document.getElementById('doc-rich-body-' + _activePageIndex)
+      || document.querySelector('.doc-rich-body');
+    if (richBody) richBody.focus();
+    updateToolbarActiveStates();
+    if (window.triggerAutoSave) triggerAutoSave();
+  }
+
+  function updateToolbarActiveStates() {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    // Standard boolean formatting states
+    const cmds = {
+      'btn-fmt-bold': 'bold',
+      'btn-fmt-italic': 'italic',
+      'btn-fmt-underline': 'underline',
+      'btn-fmt-strike': 'strikeThrough',
+      'btn-fmt-bullet': 'insertUnorderedList',
+      'btn-fmt-number': 'insertOrderedList'
+    };
+
+    for (const [btnId, cmd] of Object.entries(cmds)) {
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        try {
+          const isActive = document.queryCommandState(cmd);
+          btn.classList.toggle('active', !!isActive);
+        } catch (e) {}
+      }
+    }
+
+    // Block tags hierarchy (H1, H2, H3, P, Blockquote, Code)
+    let node = sel.anchorNode;
+    if (node && node.nodeType === 3) node = node.parentNode;
+
+    const btnH1 = document.getElementById('btn-fmt-h1');
+    const btnH2 = document.getElementById('btn-fmt-h2');
+    const btnH3 = document.getElementById('btn-fmt-h3');
+    const btnP = document.getElementById('btn-fmt-p');
+    const btnQuote = document.getElementById('btn-fmt-quote');
+    const btnCode = document.getElementById('btn-fmt-code');
+
+    const inCanvas = node ? !!node.closest('.doc-rich-body') : false;
+    const h1El = inCanvas && node ? node.closest('h1') : null;
+    const h2El = inCanvas && node ? node.closest('h2') : null;
+    const h3El = inCanvas && node ? node.closest('h3') : null;
+    const quoteEl = inCanvas && node ? node.closest('blockquote') : null;
+    const codeEl = inCanvas && node ? node.closest('code, pre') : null;
+    const isP = inCanvas && !h1El && !h2El && !h3El && !quoteEl && !codeEl;
+
+    if (btnH1) btnH1.classList.toggle('active', !!h1El);
+    if (btnH2) btnH2.classList.toggle('active', !!h2El);
+    if (btnH3) btnH3.classList.toggle('active', !!h3El);
+    if (btnP) btnP.classList.toggle('active', !!isP);
+    if (btnQuote) btnQuote.classList.toggle('active', !!quoteEl);
+    if (btnCode) btnCode.classList.toggle('active', !!codeEl);
   }
 
   function handleAiPolish(mode) {
@@ -1928,6 +2045,10 @@
   window.setPublishStatus = setPublishStatus;
   window.updateInspectorPreview = updateInspectorPreview;
   window.formatDoc = formatDoc;
+  window.formatBlockToggle = formatBlockToggle;
+  window.toggleInlineCode = toggleInlineCode;
+  window.clearTextFormatting = clearTextFormatting;
+  window.updateToolbarActiveStates = updateToolbarActiveStates;
   window.handleAiPolish = handleAiPolish;
   window.saveDocument = saveDocument;
   window.toggleDrawer = toggleDrawer;
@@ -2024,6 +2145,17 @@
       const savedTheme = localStorage.getItem('neura_theme_v1');
       if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
     } catch (e) { }
+
+    // ── Real-Time Selection Spy for Modular Power Capsule Active States ────
+    document.addEventListener('selectionchange', () => {
+      requestAnimationFrame(updateToolbarActiveStates);
+    });
+    document.addEventListener('keyup', () => {
+      requestAnimationFrame(updateToolbarActiveStates);
+    });
+    document.addEventListener('mouseup', () => {
+      requestAnimationFrame(updateToolbarActiveStates);
+    });
 
     // ── Block Chrome Extension Injected Images ─────────────────────────────
     (function blockExtensionImages() {
