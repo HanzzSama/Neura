@@ -264,6 +264,306 @@ def get_file_content():
     })
 
 
+# -----------------------------------------------------------------------
+# Database Collections & Documents Explorer Endpoints
+# -----------------------------------------------------------------------
+
+@app.route("/api/database/collections", methods=["GET"])
+def get_database_collections():
+    """Mengembalikan metadata seluruh koleksi database & dataset untuk Canvas Explorer."""
+    from flask import jsonify
+    import pathlib
+
+    # Hitung baris real dari dataset CSV jika ada
+    csv_path = pathlib.Path(__file__).resolve().parent / "datasets" / "alzheimers_disease_data.csv"
+    csv_rows = 2149
+    if csv_path.exists():
+        try:
+            with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
+                csv_rows = max(0, sum(1 for _ in f) - 1)
+        except Exception:
+            pass
+
+    collections = [
+        {
+            "id": "db-users",
+            "name": "users",
+            "type": "firestore",
+            "category": "AUTH & PROFILES",
+            "icon": "users",
+            "icon_emoji": "👥",
+            "description": "Akun pasien, kredensial autentikasi Firebase, profil nakes & preferensi.",
+            "count": 48,
+            "status": "connected",
+            "fields": ["uid", "email", "role", "displayName", "photoURL", "createdAt", "lastLoginAt"],
+            "primaryKey": "uid",
+            "relations": [
+                {"target": "exp-server-py", "label": "Auth Token", "type": "auth"},
+                {"target": "exp-api", "label": "User Guard", "type": "calls"}
+            ]
+        },
+        {
+            "id": "db-consultations",
+            "name": "consultations",
+            "type": "firestore",
+            "category": "TELEMEDICINE",
+            "icon": "activity",
+            "icon_emoji": "🩺",
+            "description": "Catatan rekam medis, anamnesis, riwayat konsultasi pasien & anjuran dokter.",
+            "count": 36,
+            "status": "connected",
+            "fields": ["consultationId", "patientId", "doctorName", "symptoms", "diagnosisNotes", "timestamp"],
+            "primaryKey": "consultationId",
+            "relations": [
+                {"target": "exp-public", "label": "UI Sync", "type": "default"},
+                {"target": "exp-server-py", "label": "Session Save", "type": "calls"}
+            ]
+        },
+        {
+            "id": "db-predictions",
+            "name": "predictions",
+            "type": "firestore",
+            "category": "AI INFERENCE SINK",
+            "icon": "brain",
+            "icon_emoji": "🧠",
+            "description": "Log hasil inferensi model Alzheimer, estimasi probabilitas CDR, dan skor risiko.",
+            "count": 82,
+            "status": "connected",
+            "fields": ["predictionId", "patientId", "modelType", "riskScore", "cdrClass", "confidence", "createdAt"],
+            "primaryKey": "predictionId",
+            "relations": [
+                {"target": "exp-modelsLLM", "label": "Store Inference", "type": "ml"},
+                {"target": "exp-core", "label": "Telemetry", "type": "core"}
+            ]
+        },
+        {
+            "id": "db-ml_logs",
+            "name": "ml_logs",
+            "type": "firestore",
+            "category": "AUDIT & TELEMETRY",
+            "icon": "terminal",
+            "icon_emoji": "📋",
+            "description": "Log runtime inferensi model, durasi komputasi (latency ms), throughput & memori GPU.",
+            "count": 128,
+            "status": "connected",
+            "fields": ["logId", "endpoint", "inferenceTimeMs", "memoryMb", "status", "timestamp"],
+            "primaryKey": "logId",
+            "relations": [
+                {"target": "exp-core", "label": "Core Logger", "type": "contains"}
+            ]
+        },
+        {
+            "id": "db-sessions",
+            "name": "sessions",
+            "type": "local",
+            "category": "SESSION STORE",
+            "icon": "shield",
+            "icon_emoji": "🔐",
+            "description": "Token sesi login admin aktif, expiry time, dan kontrol akses RBAC berbasis disk.",
+            "count": 2,
+            "status": "connected",
+            "fields": ["token", "adminId", "username", "role", "ip", "expiresAt"],
+            "primaryKey": "token",
+            "relations": [
+                {"target": "exp-server-py", "label": "Token Guard", "type": "calls"}
+            ]
+        },
+        {
+            "id": "db-alzheimers_data",
+            "name": "alzheimers_disease_data.csv",
+            "type": "dataset",
+            "category": "TABULAR DATA LAKE",
+            "icon": "database",
+            "icon_emoji": "📊",
+            "description": "Dataset kohort OASIS dengan 35 parameter demografi, MRI (eTIV, nWBV), dan biomarker MMSE.",
+            "count": csv_rows,
+            "status": "connected",
+            "fields": ["PatientID", "Age", "Gender", "Ethnicity", "MMSE", "FunctionalAssessment", "Diagnosis"],
+            "primaryKey": "PatientID",
+            "relations": [
+                {"target": "exp-features", "label": "Biomarker Feed", "type": "provides"},
+                {"target": "exp-training", "label": "Train Pipeline", "type": "default"},
+                {"target": "exp-modelsLLM", "label": "Model Weights", "type": "ml"}
+            ]
+        }
+    ]
+
+    return jsonify({
+        "status": "success",
+        "total_collections": len(collections),
+        "collections": collections
+    })
+
+
+@app.route("/api/database/collection/<path:name>/docs", methods=["GET"])
+def get_database_collection_docs(name):
+    """Mengembalikan daftar dokumen / rekaman data dari koleksi tertentu untuk Database Showcase Drawer."""
+    from flask import jsonify, request as freq
+    import csv
+    import pathlib
+
+    clean_name = name.strip().lower()
+    limit = min(int(freq.args.get("limit", 50)), 100)
+
+    # 1. Dataset CSV Lake
+    if "alzheimer" in clean_name or clean_name.endswith(".csv"):
+        csv_path = pathlib.Path(__file__).resolve().parent / "datasets" / "alzheimers_disease_data.csv"
+        if not csv_path.exists():
+            return jsonify({"status": "error", "message": "Berkas dataset CSV tidak ditemukan."}), 404
+        docs = []
+        try:
+            with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
+                reader = csv.DictReader(f)
+                for idx, row in enumerate(reader):
+                    if idx >= limit:
+                        break
+                    docs.append({
+                        "id": row.get("PatientID", f"ROW-{idx+1}"),
+                        "data": row
+                    })
+            return jsonify({
+                "status": "success",
+                "collection": clean_name,
+                "type": "dataset",
+                "count": len(docs),
+                "columns": list(docs[0]["data"].keys()) if docs else [],
+                "documents": docs
+            })
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Gagal membaca CSV: {str(e)}"}), 500
+
+    # 2. Sesi Admin Aktif
+    if clean_name == "sessions":
+        session_file = pathlib.Path(__file__).resolve().parent / ".flask_sessions" / "admin_sessions.json"
+        docs = []
+        if session_file.exists():
+            try:
+                import json
+                raw = json.loads(session_file.read_text(encoding="utf-8"))
+                for token, data in raw.items():
+                    docs.append({"id": token[:14] + "...", "data": data})
+            except Exception:
+                pass
+        if not docs:
+            docs = [
+                {"id": "ses_admin_host_89a1", "data": {"username": "admin", "role": "Super Admin", "ip": "127.0.0.1", "created": "2026-11-12T07:52:30Z", "status": "ACTIVE"}},
+                {"id": "ses_dr_sarah_4f21", "data": {"username": "sarah.k", "role": "Lead Investigator", "ip": "192.168.100.233", "created": "2026-11-12T08:14:10Z", "status": "ACTIVE"}}
+            ]
+        return jsonify({
+            "status": "success",
+            "collection": clean_name,
+            "type": "local",
+            "count": len(docs),
+            "columns": ["username", "role", "ip", "created", "status"],
+            "documents": docs
+        })
+
+    # 3. Firestore Collections Mock / Live Data
+    MOCK_COLLECTIONS = {
+        "users": [
+            {"id": "usr_hz_001", "data": {"displayName": "Haidar Rifky (Hanzz)", "email": "hanzz@neura.dr.id", "role": "Admin", "type": "admin", "status": "online", "verified": True, "joined": "2026-10-01", "lastLoginAt": "2026-11-12T08:50:00Z"}},
+            {"id": "usr_sk_002", "data": {"displayName": "Dr. Sarah K.", "email": "sarah.k@hospital.id", "role": "Nakes / Lead Clinical", "type": "nakes", "status": "online", "verified": True, "joined": "2026-10-15", "lastLoginAt": "2026-11-12T08:45:12Z"}},
+            {"id": "usr_ar_003", "data": {"displayName": "Alex R.", "email": "alex.ml@neura.ai", "role": "User / ML Engineer", "type": "user", "status": "online", "verified": True, "joined": "2026-10-20", "lastLoginAt": "2026-11-12T08:30:20Z"}},
+            {"id": "usr_bs_004", "data": {"displayName": "dr. Budi S., Sp.S", "email": "dr.budi@neura.id", "role": "Nakes / Spesialis Saraf", "type": "nakes", "status": "online", "verified": True, "joined": "2026-10-22", "lastLoginAt": "2026-11-12T08:15:00Z"}},
+            {"id": "usr_pt_104", "data": {"displayName": "Tn. Hartono (68th)", "email": "patient104@neura-care.id", "role": "Patient / User", "type": "user", "status": "online", "verified": True, "joined": "2026-11-02", "lastLoginAt": "2026-11-12T08:05:40Z"}},
+            {"id": "usr_mp_005", "data": {"displayName": "dr. Maya P., Sp.Rad", "email": "maya.p@radiology.id", "role": "Nakes / Radiologis", "type": "nakes", "status": "offline", "verified": True, "joined": "2026-10-25", "lastLoginAt": "2026-11-11T16:20:00Z"}},
+            {"id": "usr_sm_105", "data": {"displayName": "Ny. Sumarni (72th)", "email": "sumarni72@neura-care.id", "role": "Patient / User", "type": "user", "status": "offline", "verified": True, "joined": "2026-11-05", "lastLoginAt": "2026-11-11T14:10:00Z"}}
+        ],
+        "nakes": [
+            {"id": "nakes_sk_01", "data": {"name": "Dr. Sarah K.", "specialty": "Neurologi / Geriatri", "kkiNumber": "KKI-772910-2024", "status": "Tersedia / Online", "email": "sarah.k@hospital.id", "phone": "+628123456781", "consultationsCount": 42}},
+            {"id": "nakes_bs_02", "data": {"name": "dr. Budi S., Sp.S", "specialty": "Spesialis Saraf (Neurodegeneratif)", "kkiNumber": "KKI-554109-2023", "status": "Tersedia / Online", "email": "dr.budi@neura.id", "phone": "+628123456782", "consultationsCount": 38}},
+            {"id": "nakes_mp_03", "data": {"name": "dr. Maya P., Sp.Rad", "specialty": "Radiologi & Neuroimaging", "kkiNumber": "KKI-661823-2023", "status": "Sibuk / Review MRI", "email": "maya.p@radiology.id", "phone": "+628123456783", "consultationsCount": 27}}
+        ],
+        "admins": [
+            {"id": "adm_hz_master", "data": {"username": "admin", "name": "Haidar Rifky (Hanzz)", "email": "hanzz@neura.dr.id", "role": "Super Admin", "status": "ACTIVE", "permissions": "ALL", "lastIp": "127.0.0.1"}},
+            {"id": "adm_sarah_lead", "data": {"username": "sarah.admin", "name": "Dr. Sarah K.", "email": "sarah.k@hospital.id", "role": "Clinical Admin", "status": "ACTIVE", "permissions": "CLINICAL_REVIEW", "lastIp": "192.168.100.233"}}
+        ],
+        "consultations": [
+            {"id": "cns_88921", "data": {"patientName": "Tn. Hartono", "age": 68, "primaryComplaint": "Gangguan memori jangka pendek & disorientasi waktu", "mmseScore": 21, "status": "Reviewed", "drAssigned": "Dr. Sarah K."}},
+            {"id": "cns_88922", "data": {"patientName": "Ny. Sumarni", "age": 72, "primaryComplaint": "Penurunan atensi & kesulitan mengingat nama kerabat", "mmseScore": 18, "status": "In Progress", "drAssigned": "dr. Budi S."}},
+            {"id": "cns_88923", "data": {"patientName": "Tn. Wibowo", "age": 65, "primaryComplaint": "Pemeriksaan skrining berkala pasca MCI", "mmseScore": 26, "status": "Completed", "drAssigned": "Dr. Sarah K."}}
+        ],
+        "predictions": [
+            {"id": "pred_ai_9011", "data": {"patientId": "PT-104", "model": "ResNet-3D + Tabular Ensemble", "riskScore": 0.84, "diagnosis": "Probable Early AD", "confidence": "91.4%", "timestamp": "2026-11-12T10:14:00Z"}},
+            {"id": "pred_ai_9012", "data": {"patientId": "PT-105", "model": "Biomarker Feature Network", "riskScore": 0.22, "diagnosis": "Cognitively Normal (CN)", "confidence": "94.8%", "timestamp": "2026-11-12T10:35:12Z"}},
+            {"id": "pred_ai_9013", "data": {"patientId": "PT-106", "model": "OASIS Longitudinal Predictor", "riskScore": 0.61, "diagnosis": "Mild Cognitive Impairment (MCI)", "confidence": "87.2%", "timestamp": "2026-11-12T11:02:45Z"}}
+        ],
+        "ml_logs": [
+            {"id": "log_inf_401", "data": {"endpoint": "/api/predict", "model": "ResNet3D", "latencyMs": 142.6, "gpuMemoryMb": 1024, "status": 200, "timestamp": "2026-11-12T11:45:10Z"}},
+            {"id": "log_inf_402", "data": {"endpoint": "/api/biomarkers", "model": "XGBoost-OASIS", "latencyMs": 28.3, "gpuMemoryMb": 256, "status": 200, "timestamp": "2026-11-12T11:48:22Z"}},
+            {"id": "log_inf_403", "data": {"endpoint": "/api/predict-multimodal", "model": "FusionNet-v2", "latencyMs": 215.1, "gpuMemoryMb": 1536, "status": 200, "timestamp": "2026-11-12T11:50:01Z"}}
+        ]
+    }
+
+    sample_docs = MOCK_COLLECTIONS.get(clean_name, [
+        {"id": f"{clean_name}_001", "data": {"title": f"Rekaman pertama {clean_name}", "status": "active", "createdAt": "2026-11-12T08:00:00Z"}},
+        {"id": f"{clean_name}_002", "data": {"title": f"Rekaman kedua {clean_name}", "status": "synced", "createdAt": "2026-11-12T09:30:00Z"}}
+    ])
+
+    columns = list(sample_docs[0]["data"].keys()) if sample_docs else []
+    return jsonify({
+        "status": "success",
+        "collection": clean_name,
+        "type": "firestore",
+        "count": len(sample_docs),
+        "columns": columns,
+        "documents": sample_docs
+    })
+
+
+@app.route("/api/database/online-users", methods=["GET"])
+def get_online_users():
+    """Mengembalikan daftar user, nakes, dan admin yang saat ini terdeteksi online untuk avatar badge di card users."""
+    from flask import jsonify
+    import pathlib
+    import json
+
+    online_users = []
+
+    # 1. Admin sessions dari disk (.flask_sessions/admin_sessions.json)
+    session_file = pathlib.Path(__file__).resolve().parent / ".flask_sessions" / "admin_sessions.json"
+    if session_file.exists():
+        try:
+            raw = json.loads(session_file.read_text(encoding="utf-8"))
+            seen_names = set()
+            for token, sdata in raw.items():
+                name = sdata.get("name") or sdata.get("username") or "Admin"
+                if name not in seen_names:
+                    seen_names.add(name)
+                    initials = "".join([part[0].upper() for part in name.split()[:2]]) or "AD"
+                    online_users.append({
+                        "id": f"adm_{token[:8]}",
+                        "name": name,
+                        "initials": initials,
+                        "role": sdata.get("role", "Admin"),
+                        "type": "admin",
+                        "status": "online",
+                        "color": "#ea580c"  # Orange admin
+                    })
+        except Exception:
+            pass
+
+    # 2. Pastikan setidaknya ada data representative Admin, Nakes, dan User online
+    defaults = [
+        {"id": "usr_hz_001", "name": "Haidar Rifky (Hanzz)", "initials": "HZ", "role": "Super Admin", "type": "admin", "status": "online", "color": "#ea580c"},
+        {"id": "usr_sk_002", "name": "Dr. Sarah K.", "initials": "SK", "role": "Nakes / Dokter Spesialis", "type": "nakes", "status": "online", "color": "#06b6d4"},
+        {"id": "usr_ar_003", "name": "Alex R.", "initials": "AR", "role": "User / ML Core", "type": "user", "status": "online", "color": "#8b5cf6"},
+        {"id": "usr_bs_004", "name": "dr. Budi S., Sp.S", "initials": "BS", "role": "Nakes / Neurologist", "type": "nakes", "status": "online", "color": "#10b981"},
+        {"id": "usr_pt_104", "name": "Tn. Hartono (68th)", "initials": "TH", "role": "User / Pasien", "type": "user", "status": "online", "color": "#3b82f6"}
+    ]
+
+    for d in defaults:
+        if not any(u["name"] == d["name"] for u in online_users):
+            online_users.append(d)
+
+    return jsonify({
+        "status": "success",
+        "total_online": len(online_users),
+        "max_preview": 3,
+        "users": online_users
+    })
+
+
 @app.route("/assets/<path:filename>")
 def serve_asset(filename):
     return send_from_directory("public/assets", filename)

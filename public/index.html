@@ -243,21 +243,6 @@
               <span class="ml-tag">ADMIN</span>
             </button>
 
-            <!-- 2. Database -->
-            <button class="ml-command-item admin-menu-item" id="sidebar-database-link"
-              onclick="switchAdminRoom('database')" title="Database & Firestore Viewer">
-              <div class="admin-item-label">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-                </svg>
-                <span data-i18n="nav_database_admin">Database</span>
-              </div>
-              <span class="ml-tag">DB</span>
-            </button>
-
             <!-- 3. Statistik -->
             <button class="ml-command-item admin-menu-item" id="sidebar-stats-link" onclick="switchAdminRoom('stats')"
               title="Statistik & Analytics">
@@ -1552,82 +1537,6 @@
 
       </div><!-- /#voice-chat-view -->
 
-      <!-- ========================================================================
-         ADMIN ROOM: DATABASE VIEWER
-         ======================================================================== -->
-      <div id="admin-room-database" class="admin-room" style="display:none;" aria-hidden="true">
-        <div class="admin-room-header">
-          <div class="admin-room-header-left">
-            <div class="admin-room-icon admin-room-icon--db">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <ellipse cx="12" cy="5" rx="9" ry="3" />
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="admin-room-title">Database Viewer</h2>
-              <p class="admin-room-subtitle">Firestore Collections &amp; Documents</p>
-            </div>
-          </div>
-          <div class="admin-room-header-actions">
-            <button class="admin-room-action-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()"
-              title="Refresh">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <polyline points="23 4 23 10 17 10" />
-                <polyline points="1 20 1 14 7 14" />
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-              </svg>
-              Refresh
-            </button>
-            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="admin-room-body db-room-body">
-          <!-- Collections Sidebar -->
-          <div class="db-sidebar">
-            <div class="db-sidebar-header">
-              <span>Collections</span>
-              <button class="db-refresh-btn" onclick="refreshDatabaseCollections && refreshDatabaseCollections()"
-                title="Refresh">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <polyline points="23 4 23 10 17 10" />
-                  <polyline points="1 20 1 14 7 14" />
-                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-                </svg>
-              </button>
-            </div>
-            <div class="db-collection-list" id="db-collection-list"></div>
-          </div>
-          <!-- Documents Table -->
-          <div class="db-main">
-            <div class="db-main-toolbar">
-              <span class="db-breadcrumb" id="db-breadcrumb">Pilih collection</span>
-              <div class="db-toolbar-actions">
-                <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..."
-                  oninput="filterDbDocuments && filterDbDocuments(this.value)">
-                <span class="db-doc-count" id="db-doc-count"></span>
-              </div>
-            </div>
-            <div class="db-table-wrap" id="db-table-wrap">
-              <div class="db-empty-state">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
-                  opacity="0.3">
-                  <ellipse cx="12" cy="5" rx="9" ry="3" />
-                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-                </svg>
-                <p>Pilih collection untuk melihat dokumen</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- ========================================================================
          ADMIN ROOM: STATISTIK & ANALYTICS
@@ -1737,7 +1646,7 @@
             <div class="stats-table-card">
               <div class="stats-chart-header"><span class="stats-chart-title">Registrasi Terbaru</span><button
                   class="stats-view-all-btn"
-                  onclick="switchAdminRoom('database'); setTimeout(()=>loadDbCollection&&loadDbCollection('users'),300)">Lihat
+                  onclick="switchToDbCollection('users')">Lihat
                   Semua →</button></div>
               <div class="stats-recent-table" id="stats-recent-table">
                 <div class="stats-chart-loading">
@@ -2333,120 +2242,6 @@
         </div>
       </div>
 
-      <!-- ============================================================ -->
-      <!-- ADMIN ROOM: Database & Firestore Viewer                     -->
-      <!-- ============================================================ -->
-      <div class="admin-room" id="admin-room-database" style="display: none;" aria-hidden="true">
-        <div class="admin-room-header">
-          <div class="admin-room-header-left">
-            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Kembali ke Chat">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-            <div class="admin-room-icon admin-room-icon--db">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <ellipse cx="12" cy="5" rx="9" ry="3" />
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-              </svg>
-            </div>
-            <div>
-              <div class="admin-room-portal-tag">ADMINISTRATOR PORTAL &bull; FIRESTORE VIEWER</div>
-              <h2 class="admin-room-title">Database Collections &amp; Documents</h2>
-            </div>
-          </div>
-          <div class="admin-room-header-actions">
-            <button class="admin-room-action-btn" onclick="refreshDatabaseCollections()" title="Muat Ulang Koleksi">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="23 4 23 10 17 10" />
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-              </svg>
-              <span>Refresh</span>
-            </button>
-            <button class="admin-room-back-btn" onclick="switchAdminRoom('chat')" title="Tutup Room">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="admin-room-body db-room-body">
-          <!-- Sidebar: Collections -->
-          <div class="db-sidebar">
-            <div class="db-sidebar-header">
-              <span>Collections</span>
-              <button class="db-refresh-btn" onclick="refreshDatabaseCollections()" title="Refresh">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="23 4 23 10 17 10" />
-                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                </svg>
-              </button>
-            </div>
-            <div class="db-collection-list" id="db-collection-list">
-              <div class="db-loading-state">
-                <div class="db-spinner"></div>
-                <span>Memuat koleksi...</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Main Content: Documents & Detail -->
-          <div class="db-main-content">
-            <!-- Documents List Pane -->
-            <div class="db-docs-pane">
-              <div class="db-docs-header">
-                <div class="db-docs-title-wrap">
-                  <span class="db-collection-title" id="db-active-collection-title">Pilih Koleksi</span>
-                  <span class="db-doc-count" id="db-doc-count">0 dokumen</span>
-                </div>
-                <div class="db-search-wrap">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                  <input type="text" class="db-search-input" id="db-search-input" placeholder="Cari dokumen..."
-                    oninput="filterDatabaseDocs(this.value)">
-                </div>
-              </div>
-              <div class="db-docs-list" id="db-docs-list">
-                <div class="db-empty-state">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <ellipse cx="12" cy="5" rx="9" ry="3" />
-                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-                  </svg>
-                  <p>Pilih collection dari panel kiri untuk melihat data.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Document Detail View Pane -->
-            <div class="db-detail-pane">
-              <div class="db-detail-header">
-                <div class="db-detail-id-wrap">
-                  <span class="db-detail-label">Document ID:</span>
-                  <code class="db-detail-id" id="db-detail-doc-id">-</code>
-                  <button class="db-copy-btn" onclick="copyActiveDocJson()" title="Salin JSON">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="db-detail-body" id="db-detail-body">
-                <div class="db-empty-state">
-                  <p>Pilih dokumen untuk melihat data lengkap (JSON/Fields).</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- ============================================================ -->
       <!-- ADMIN ROOM: Statistik & Analytics                          -->

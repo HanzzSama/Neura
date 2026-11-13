@@ -50,13 +50,16 @@ if (document.readyState === 'loading') {
 // ============================================================
 const ADMIN_ROOMS = {
   nakes:    'admin-room-nakes',
-  database: 'admin-room-database',
   stats:    'admin-room-stats',
   explorer: 'admin-room-explorer',
   research: 'admin-room-research',
 };
 
 function switchAdminRoom(roomKey) {
+  if (roomKey === 'database') {
+    window.location.href = '/app/struktur?mode=database';
+    return;
+  }
   if (window._closeSidebarIfNarrow) window._closeSidebarIfNarrow();
   const mainView = document.querySelector('.main-view');
   // Hide all admin rooms & nakes rooms
@@ -104,126 +107,17 @@ function switchAdminRoom(roomKey) {
 window.switchAdminRoom = switchAdminRoom;
 
 // ============================================================
-// DATABASE ROOM
+// DATABASE REDIRECTION (Now integrated into Struktur Canvas)
 // ============================================================
-let _dbCurrentCollection = null;
-let _dbAllDocs = [];
-
-function openDatabaseModal() {
-  switchAdminRoom('database');
-  loadDatabaseCollections();
+function openDatabaseModal(col) {
+  window.location.href = `/app/struktur?mode=database${col ? '&col=' + encodeURIComponent(col) : ''}`;
 }
 function closeDatabaseModal() { switchAdminRoom('chat'); }
-function closeDatabaseModalOnBackdrop(e) {}
-
-
-async function loadDatabaseCollections() {
-  const listEl = document.getElementById('db-collection-list');
-  if (!listEl) return;
-  listEl.innerHTML = '<div class="db-loading-state"><div class="db-spinner"></div><span>Loading...</span></div>';
-  try {
-    // Jalankan sync nakes & admins di background jika tersedia
-    if (typeof syncAllNakesToFirestore === 'function') {
-      syncAllNakesToFirestore(false).catch(() => {});
-    }
-    if (typeof syncAdminsToFirestore === 'function') {
-      syncAdminsToFirestore(false).catch(() => {});
-    }
-
-    const db = firebase.firestore();
-    const knownCollections = ['users', 'nakes', 'admins', 'consultations', 'predictions', 'ml_logs', 'sessions'];
-    const results = [];
-    for (const name of knownCollections) {
-      try {
-        const snap = await db.collection(name).limit(1).get();
-        if (!snap.empty || snap !== undefined) results.push({ name });
-      } catch (_) {}
-    }
-    if (results.length === 0) {
-      listEl.innerHTML = '<div class="db-loading-state"><span>Tidak ada collection yang dapat diakses.</span></div>';
-      return;
-    }
-    listEl.innerHTML = results.map(c => `
-      <div class="db-collection-item" onclick="loadDbCollection('${c.name}')" data-col="${c.name}">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        <span>${c.name}</span>
-      </div>
-    `).join('');
-  } catch (err) {
-    listEl.innerHTML = `<div class="db-loading-state"><span>Error: ${err.message}</span></div>`;
-  }
-}
-
-window.refreshDatabaseCollections = loadDatabaseCollections;
-
-async function loadDbCollection(name) {
-  _dbCurrentCollection = name;
-  document.querySelectorAll('.db-collection-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.col === name);
-  });
-  const tableWrap = document.getElementById('db-table-wrap');
-  const breadcrumb = document.getElementById('db-breadcrumb');
-  const countEl = document.getElementById('db-doc-count');
-  if (breadcrumb) breadcrumb.textContent = name;
-  if (tableWrap) tableWrap.innerHTML = '<div class="db-loading-state"><div class="db-spinner"></div><span>Loading documents...</span></div>';
-  try {
-    const db = firebase.firestore();
-    const snap = await db.collection(name).limit(100).get();
-    _dbAllDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (countEl) countEl.textContent = `${_dbAllDocs.length} dokumen`;
-    renderDbTable(_dbAllDocs);
-  } catch (err) {
-    if (tableWrap) tableWrap.innerHTML = `<div class="db-empty-state"><p>Error: ${err.message}</p></div>`;
-  }
-}
-window.loadDbCollection = loadDbCollection;
-
-function renderDbTable(docs) {
-  const tableWrap = document.getElementById('db-table-wrap');
-  if (!tableWrap) return;
-  if (docs.length === 0) {
-    tableWrap.innerHTML = '<div class="db-empty-state"><p>Tidak ada dokumen ditemukan.</p></div>';
-    return;
-  }
-  const firstDoc = docs[0];
-  const priority = ['displayName', 'name', 'email', 'nakes_email', 'custom_email', 'role', 'profession', 'institution', 'phone', 'createdAt', 'updatedAt'];
-  const allKeys = Object.keys(firstDoc).filter(k => k !== 'id');
-  const orderedKeys = ['id', ...priority.filter(k => allKeys.includes(k)), ...allKeys.filter(k => !priority.includes(k))].slice(0, 8);
-
-  const formatVal = (key, val) => {
-    if (val === null || val === undefined) return '<span style="color:var(--text-muted)">null</span>';
-    if (typeof val === 'object' && val.seconds) {
-      return new Date(val.seconds * 1000).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-    }
-    if (key === 'role') {
-      const lower = String(val).toLowerCase();
-      const cls = lower === 'admin' ? 'db-badge--admin' : lower === 'nakes' ? 'db-badge--nakes' : 'db-badge--user';
-      return `<span class="db-badge ${cls}">${val}</span>`;
-    }
-    const s = String(val);
-    return s.length > 40 ? s.slice(0, 38) + '...' : s;
-  };
-
-
-  tableWrap.innerHTML = `
-    <table class="db-table">
-      <thead><tr>${orderedKeys.map(k => `<th>${k}</th>`).join('')}</tr></thead>
-      <tbody>${docs.map(doc => `<tr>${orderedKeys.map(k => `<td class="${k === 'id' ? 'db-id-cell' : ''}" title="${String(doc[k] ?? '')}">${formatVal(k, doc[k])}</td>`).join('')}</tr>`).join('')}</tbody>
-    </table>`;
-}
-
-window.filterDbDocuments = function(query) {
-  const q = query.toLowerCase();
-  const filtered = _dbAllDocs.filter(doc => Object.values(doc).some(v => String(v ?? '').toLowerCase().includes(q)));
-  const countEl = document.getElementById('db-doc-count');
-  if (countEl) countEl.textContent = `${filtered.length} / ${_dbAllDocs.length} dokumen`;
-  renderDbTable(filtered);
-};
-
+window.openDatabaseModal = openDatabaseModal;
 window.switchToDbCollection = function(name) {
-  switchAdminRoom('database');
-  setTimeout(() => loadDbCollection(name), 350);
+  window.location.href = `/app/struktur?mode=database${name ? '&col=' + encodeURIComponent(name) : ''}`;
 };
+window.refreshDatabaseCollections = function() {};
 
 // ============================================================
 // STATISTICS ROOM

@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neura &bull; Struktur Folder &amp; Diagram Arsitektur</title>
-  <meta name="description" content="Visualisasi diagram arsitektur interaktif dan penjelajah struktur folder proyek Neura AI multimodal Alzheimer.">
+  <title>Neura &bull; 3-Canvas System (General &bull; Explorer &bull; Database)</title>
+  <meta name="description" content="Sistem 3-Canvas interaktif Neura AI: General Living Network Topology, Project File Explorer, dan Database Collections.">
 
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -20,7 +20,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/welcome.css?v=68">
   <link rel="stylesheet" href="/css/template.css?v=1.5">
-  <link rel="stylesheet" href="/css/struktur.css?v=4.0">
+  <link rel="stylesheet" href="/css/struktur.css?v=5.0">
 
   <!-- highlight.js for syntax highlighting in code drawer -->
   <link rel="stylesheet" id="hljs-theme-link" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
@@ -40,10 +40,11 @@
        TOP NAVIGATION BAR
        ======================================================================== -->
   <header class="struktur-topbar" id="struktur-topbar">
+    <!-- LEFT: Brand & View Switcher -->
     <div class="topbar-left">
       <a href="/app" class="brand-link" title="Kembali ke Dashboard Utama">
         <div class="brand-logo-icon">
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
             <path d="M16 3L28 9.5V22.5L16 29L4 22.5V9.5L16 3Z" stroke="#D97757" stroke-width="2.5" stroke-linejoin="round" />
             <circle cx="16" cy="16" r="4.5" fill="#D97757" />
             <path d="M16 3V11.5M28 22.5L20 18M4 22.5L12 18" stroke="#D97757" stroke-width="2" stroke-linecap="round" />
@@ -54,45 +55,240 @@
 
       <div class="topbar-separator"></div>
 
-      <!-- Project Switcher / Breadcrumb -->
-      <div class="project-pill-dropdown" id="project-dropdown">
+      <!-- Project Switcher / Breadcrumb Dropdown Trigger -->
+      <div class="project-pill-dropdown" id="project-dropdown" title="Ganti ruang kerja & tampilan kanvas">
         <span class="project-badge-dot"></span>
         <span class="project-title" id="current-project-title">Neura Core Architecture</span>
         <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
 
+      <!-- Project / View Dropdown Menu -->
+      <div class="topbar-dropdown-menu project-dropdown-menu" id="project-dropdown-menu">
+        <div class="dropdown-menu-header">PILIH RUANG KERJA & TAMPILAN</div>
+        <div class="dropdown-menu-item active" id="pmenu-item-arch" data-action="arch">
+          <div class="dmenu-icon icon-arch">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          </div>
+          <div class="dmenu-text">
+            <div class="dmenu-title">General Architecture Canvas</div>
+            <div class="dmenu-desc">Topologi makro: Halaman UI, LLM AI, Dataset CSV, Core & Database (Live Packet Stream)</div>
+          </div>
+          <span class="dmenu-check">✓</span>
+        </div>
+        <div class="dropdown-menu-item" id="pmenu-item-exp" data-action="exp">
+          <div class="dmenu-icon icon-exp">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <div class="dmenu-text">
+            <div class="dmenu-title">Project File Explorer</div>
+            <div class="dmenu-desc">Navigasi hierarki folder dan berkas proyek real-time</div>
+          </div>
+          <span class="dmenu-check"></span>
+        </div>
+        <div class="dropdown-menu-item" id="pmenu-item-db" data-action="db">
+          <div class="dmenu-icon icon-db">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+          </div>
+          <div class="dmenu-text">
+            <div class="dmenu-title">Database &amp; Collections Canvas</div>
+            <div class="dmenu-desc">Eksplorasi visual entitas Firestore &amp; Dataset Lake</div>
+          </div>
+          <span class="dmenu-check"></span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a href="/app/riset" class="dropdown-menu-item">
+          <div class="dmenu-icon icon-riset">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </div>
+          <div class="dmenu-text">
+            <div class="dmenu-title">Studio Riset Neura</div>
+            <div class="dmenu-desc">Buka workspace riset & biomarker OASIS</div>
+          </div>
+        </a>
+        <a href="/app" class="dropdown-menu-item">
+          <div class="dmenu-icon icon-dash">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          </div>
+          <div class="dmenu-text">
+            <div class="dmenu-title">Dashboard Utama</div>
+            <div class="dmenu-desc">Kembali ke ringkasan diagnosis & analitik</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- CENTER: Search Box & Filter Chips -->
+    <div class="topbar-center">
       <!-- Search Field in Topbar -->
       <div class="canvas-search-box">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="topbar-search-input" placeholder="Cari modul atau berkas... (Ctrl+K)" autocomplete="off">
+        <input type="text" id="topbar-search-input" placeholder="Cari modul / berkas... (Ctrl+K)" autocomplete="off">
+        <button class="search-clear-btn" id="search-clear-btn" title="Hapus pencarian">✕</button>
         <kbd class="search-keycap">⌘K</kbd>
+      </div>
+
+      <!-- Filter Dropdown: MODE ARSITEKTUR GENERAL -->
+      <div class="filter-dropdown-wrap filter-bar--general" id="filter-bar-general">
+        <button class="filter-dropdown-btn" id="filter-dropdown-btn-general" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span class="filter-dropdown-label" id="filter-label-general">Semua</span>
+          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="filter-dropdown-menu" id="filter-menu-general" role="listbox">
+          <li class="filter-option active" data-filter="all" data-label="Semua" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Semua
+          </li>
+          <li class="filter-option" data-filter="page" data-label="Halaman UI" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
+            Halaman UI
+          </li>
+          <li class="filter-option" data-filter="llm" data-label="LLM &amp; AI" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>
+            LLM &amp; AI
+          </li>
+          <li class="filter-option" data-filter="csv" data-label="Dataset CSV" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Dataset CSV
+          </li>
+          <li class="filter-option" data-filter="folder" data-label="Subsystem" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            Subsystem
+          </li>
+          <li class="filter-option" data-filter="db" data-label="Basis Data" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Basis Data
+          </li>
+        </ul>
+      </div>
+
+      <!-- Filter Dropdown: MODE STRUKTUR FOLDER -->
+      <div class="filter-dropdown-wrap filter-bar--files" id="filter-bar-files" style="display:none;">
+        <button class="filter-dropdown-btn" id="filter-dropdown-btn-files" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span class="filter-dropdown-label" id="filter-label-files">Semua</span>
+          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="filter-dropdown-menu" id="filter-menu-files" role="listbox">
+          <li class="filter-option active" data-filter="all" data-label="Semua" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Semua
+          </li>
+          <li class="filter-option" data-filter="folder" data-label="Folder" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            Folder
+          </li>
+          <li class="filter-option" data-filter="file" data-label="File" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            File
+          </li>
+          <li class="filter-option" data-filter="python" data-label=".py" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v1H6a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v1a4 4 0 0 0 8 0v-1h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V6a4 4 0 0 0-4-4z"/></svg>
+            .py
+          </li>
+          <li class="filter-option" data-filter="javascript" data-label=".js" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            .js
+          </li>
+        </ul>
+      </div>
+
+      <!-- Filter Dropdown: MODE BASIS DATA & KOLEKSI -->
+      <div class="filter-dropdown-wrap filter-bar--db" id="filter-bar-db" style="display:none;">
+        <button class="filter-dropdown-btn filter-dropdown-btn--db" id="filter-dropdown-btn-db" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <span class="filter-dropdown-label" id="filter-label-db">Semua Koleksi</span>
+          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul class="filter-dropdown-menu filter-dropdown-menu--db" id="filter-menu-db" role="listbox">
+          <li class="filter-option active" data-filter="all" data-label="Semua Koleksi" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Semua Koleksi
+          </li>
+          <li class="filter-option" data-filter="firestore" data-label="Firestore" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Firestore
+          </li>
+          <li class="filter-option" data-filter="dataset" data-label="Dataset Lake" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Dataset Lake
+          </li>
+          <li class="filter-option" data-filter="auth" data-label="Auth &amp; Sesi" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Auth &amp; Sesi
+          </li>
+          <li class="filter-option" data-filter="clinical" data-label="Klinis &amp; ML" role="option">
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Klinis &amp; ML
+          </li>
+        </ul>
       </div>
     </div>
 
+    <!-- RIGHT: Collaborators, Tools & Navigation -->
     <div class="topbar-right">
       <!-- Collaborators Avatar Stack -->
-      <div class="collaborators-stack" title="Arsitek &amp; Peneliti Aktif">
-        <span class="avatar-chip chip-1" title="Dr. Sarah K. (Lead Clinical)">SK</span>
-        <span class="avatar-chip chip-2" title="Alex R. (ML Engine)">AR</span>
-        <span class="avatar-chip chip-3" title="Hanzz (Core Dev)">HZ</span>
-        <span class="avatar-chip chip-more">+2</span>
+      <div class="collaborators-wrapper">
+        <div class="collaborators-stack" id="collaborators-stack" title="5 Peneliti & Pengembang Aktif (Klik untuk detail)">
+          <span class="avatar-chip chip-1" title="Dr. Sarah K. (Lead Clinical)">SK</span>
+          <span class="avatar-chip chip-2" title="Alex R. (ML Engine)">AR</span>
+          <span class="avatar-chip chip-3" title="Hanzz (Core Dev)">HZ</span>
+          <span class="avatar-chip chip-more">+2</span>
+        </div>
+
+        <!-- Collaborators Popover -->
+        <div class="topbar-dropdown-menu collaborators-popup" id="collaborators-popup">
+          <div class="dropdown-menu-header">PENELITI & PENGEMBANG AKTIF (5 ONLINE)</div>
+          <div class="collab-item">
+            <div class="collab-avatar chip-3">HZ</div>
+            <div class="collab-info">
+              <div class="collab-name">Hanzz (Anda) <span class="collab-badge-you">Host</span></div>
+              <div class="collab-role">Core Architecture & Dev • <span class="status-live">Aktif di Kanvas</span></div>
+            </div>
+          </div>
+          <div class="collab-item">
+            <div class="collab-avatar chip-1">SK</div>
+            <div class="collab-info">
+              <div class="collab-name">Dr. Sarah K.</div>
+              <div class="collab-role">Lead Clinical Research • <span class="status-live">Analisis Biomarker</span></div>
+            </div>
+          </div>
+          <div class="collab-item">
+            <div class="collab-avatar chip-2">AR</div>
+            <div class="collab-info">
+              <div class="collab-name">Alex R.</div>
+              <div class="collab-role">ML & Deep Learning • <span class="status-live">Model ResNet-3D</span></div>
+            </div>
+          </div>
+          <div class="collab-item">
+            <div class="collab-avatar chip-more">BS</div>
+            <div class="collab-info">
+              <div class="collab-name">dr. Budi S., Sp.S</div>
+              <div class="collab-role">Consultant Neurologist • <span class="status-away">Online 12m lalu</span></div>
+            </div>
+          </div>
+          <div class="collab-item">
+            <div class="collab-avatar chip-more">MP</div>
+            <div class="collab-info">
+              <div class="collab-name">dr. Maya P., Sp.Rad</div>
+              <div class="collab-role">Neuroimaging Specialist • <span class="status-away">Online 35m lalu</span></div>
+            </div>
+          </div>
+          <div class="collab-footer">
+            <span class="pulse-dot"></span> Sinkronisasi multi-user WebSocket siap
+          </div>
+        </div>
       </div>
 
-      <!-- Quick Filter Chips -->
-      <div class="filter-bar" id="filter-bar">
-        <button class="filter-chip active" data-filter="all">Semua</button>
-        <button class="filter-chip" data-filter="folder">📁 Folder</button>
-        <button class="filter-chip" data-filter="file">📄 File</button>
-        <button class="filter-chip" data-filter="python">🐍 .py</button>
-        <button class="filter-chip" data-filter="javascript">☕ .js</button>
-      </div>
+      <div class="topbar-separator"></div>
 
+      <!-- Action Tools -->
       <div class="topbar-actions">
         <!-- Theme Toggle -->
-        <button class="topbar-btn" id="btn-theme-toggle" title="Ganti Tema (Gelap / Terang)">
+        <button class="topbar-btn topbar-btn-icon" id="btn-theme-toggle" title="Ganti Tema (Gelap / Terang)">
           <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -104,10 +300,13 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
+          <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
         </button>
 
         <!-- Toggle Grid / Background -->
-        <button class="topbar-btn" id="btn-toggle-grid" title="Ganti Pola Kanvas (Titik / Kotak / Polos)">
+        <button class="topbar-btn topbar-btn-icon" id="btn-toggle-grid" title="Ganti Pola Kanvas (Titik / Garis / Polos)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7"></rect>
             <rect x="14" y="3" width="7" height="7"></rect>
@@ -116,23 +315,71 @@
           </svg>
         </button>
 
-        <!-- Export Diagram -->
-        <button class="topbar-btn" id="btn-export-diagram" title="Ekspor Visual Kanvas">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          <span>Ekspor</span>
-        </button>
+        <!-- Export Diagram Wrapper -->
+        <div class="export-btn-wrapper">
+          <button class="topbar-btn" id="btn-export-diagram" title="Ekspor Snapshot Diagram / Tata Letak">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span class="btn-text-responsive">Ekspor</span>
+          </button>
 
-        <!-- Explorer Mode Toggle Button -->
-        <button class="topbar-btn topbar-btn--mode" id="btn-toggle-explorer" title="Beralih ke Explorer Mode (telusuri folder real)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span>Explorer</span>
-        </button>
+          <!-- Export Dropdown Menu -->
+          <div class="topbar-dropdown-menu export-dropdown-menu" id="export-dropdown-menu">
+            <div class="dropdown-menu-header">PILIH FORMAT EKSPOR</div>
+            <div class="dropdown-menu-item" id="export-opt-png">
+              <div class="dmenu-icon icon-png">📷</div>
+              <div class="dmenu-text">
+                <div class="dmenu-title">Gambar Snapshot (PNG)</div>
+                <div class="dmenu-desc">Simpan gambar resolusi tinggi diagram kanvas</div>
+              </div>
+            </div>
+            <div class="dropdown-menu-item" id="export-opt-svg">
+              <div class="dmenu-icon icon-svg">📐</div>
+              <div class="dmenu-text">
+                <div class="dmenu-title">Vektor Diagram (SVG)</div>
+                <div class="dmenu-desc">Simpan diagram dalam format vektor scalable</div>
+              </div>
+            </div>
+            <div class="dropdown-menu-item" id="export-opt-json">
+              <div class="dmenu-icon icon-json">💾</div>
+              <div class="dmenu-text">
+                <div class="dmenu-title">Konfigurasi Tata Letak (JSON)</div>
+                <div class="dmenu-desc">Unduh koordinat posisi node & relasi</div>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-menu-item" id="export-opt-copy">
+              <div class="dmenu-icon icon-copy">📋</div>
+              <div class="dmenu-text">
+                <div class="dmenu-title">Salin Ringkasan Struktur</div>
+                <div class="dmenu-desc">Salin daftar modul & relasi ke clipboard (Markdown)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Canvas Segmented Switcher (General -> Explorer -> Database) -->
+        <div class="canvas-mode-segmented" id="canvas-mode-segmented" title="Pilih Kanvas Sistem Neura">
+          <button class="mode-seg-btn active" id="btn-mode-general" data-mode="general" title="Kanvas 1: Diagram Arsitektur General (Topologi Makro & Jaringan Berjalan)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span class="btn-text-responsive">General</span>
+          </button>
+          <button class="mode-seg-btn" id="btn-mode-explorer" data-mode="explorer" title="Kanvas 2: Penelusuran Direktori & Berkas Proyek">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span class="btn-text-responsive">Explorer</span>
+          </button>
+          <button class="mode-seg-btn" id="btn-mode-database" data-mode="database" title="Kanvas 3: Koleksi Basis Data, Sesi & Dataset Lake">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+            <span class="btn-text-responsive">Database</span>
+          </button>
+        </div>
+
+        <!-- Hidden compat buttons for programmatic triggers -->
+        <button id="btn-toggle-explorer" style="display:none;"></button>
+        <button id="btn-toggle-db" style="display:none;"></button>
 
         <!-- Toggle Sidebar Folder -->
         <button class="topbar-btn" id="btn-topbar-sidebar" title="Buka / Tutup Sidebar Folder">
@@ -140,7 +387,7 @@
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="15" y1="3" x2="15" y2="21"></line>
           </svg>
-          <span>Sidebar</span>
+          <span class="btn-text-responsive">Sidebar</span>
         </button>
 
         <div class="topbar-divider"></div>
@@ -151,7 +398,7 @@
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
           </svg>
-          <span>Studio Riset</span>
+          <span class="btn-text-responsive">Studio Riset</span>
         </a>
 
         <!-- Link to Dashboard -->
@@ -415,7 +662,7 @@
     </div>
 
     <!-- ========================================================================
-         RIGHT SIDEBAR: STRUKTUR FOLDER EXPLORER (NORMAL TREE VIEW)
+         RIGHT SIDEBAR: ADAPTIVE (FOLDER / DATABASE MODE)
          ======================================================================== -->
     <aside class="struktur-tree-sidebar" id="struktur-tree-sidebar" aria-label="Struktur Folder Explorer">
       <!-- Toggle button attached to sidebar's edge -->
@@ -425,24 +672,30 @@
         </svg>
       </button>
 
-      <!-- Sidebar Header -->
+      <!-- SIDEBAR HEADER (adaptive title + icon + actions) -->
       <div class="tree-sidebar-header">
         <div class="tree-header-title-row">
           <div class="tree-title-left">
-            <div class="tree-header-icon-box">
-              <svg class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="tree-header-icon-box" id="sidebar-icon-box">
+              <svg id="sidebar-icon-folder" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <svg id="sidebar-icon-db" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
               </svg>
             </div>
             <div class="tree-title-texts">
-              <h2 class="tree-sidebar-title">Struktur Folder</h2>
+              <h2 class="tree-sidebar-title" id="sidebar-title">Struktur Folder</h2>
               <p class="tree-sidebar-desc">
                 <span class="tree-live-dot"></span>
                 <span id="tree-summary-stats">Memuat struktur direktori...</span>
               </p>
             </div>
           </div>
-          <div class="tree-header-actions" role="toolbar" aria-label="Aksi Struktur Folder">
+          <!-- Actions for FILES mode -->
+          <div class="tree-header-actions" id="sidebar-actions-files" role="toolbar" aria-label="Aksi Struktur Folder">
             <button class="tree-action-btn" id="btn-tree-expand-all" title="Buka Semua Folder">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="7 13 12 18 17 13"></polyline>
@@ -462,9 +715,18 @@
               </svg>
             </button>
           </div>
+          <!-- Actions for DATABASE mode -->
+          <div class="tree-header-actions" id="sidebar-actions-db" role="toolbar" aria-label="Aksi Basis Data" style="display:none;">
+            <button class="tree-action-btn" id="btn-db-sidebar-refresh" title="Muat Ulang Koleksi">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <!-- Search Bar in Right Sidebar -->
+        <!-- Search bar (placeholder swaps by mode via JS) -->
         <div class="tree-search-wrap">
           <svg class="tree-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
@@ -474,8 +736,8 @@
           <button class="tree-search-clear" id="tree-search-clear" style="display:none;" title="Bersihkan pencarian">&times;</button>
         </div>
 
-        <!-- Quick Access Folder Badges -->
-        <div class="tree-quick-access">
+        <!-- Quick Chips: FILES mode -->
+        <div class="tree-quick-access" id="quick-chips-files">
           <button class="quick-chip" data-target="public" title="Buka direktori public/">
             <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
             <span>public/</span>
@@ -497,20 +759,55 @@
             <span>server.py</span>
           </button>
         </div>
+
+        <!-- Quick Chips: DATABASE mode -->
+        <div class="tree-quick-access" id="quick-chips-db" style="display:none;">
+          <button class="quick-chip quick-chip--db" data-col="users" title="Koleksi users">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>users</span>
+          </button>
+          <button class="quick-chip quick-chip--db" data-col="consultations" title="Koleksi consultations">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>consultations</span>
+          </button>
+          <button class="quick-chip quick-chip--db" data-col="predictions" title="Koleksi predictions">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            <span>predictions</span>
+          </button>
+          <button class="quick-chip quick-chip--db" data-col="ml_logs" title="Koleksi ml_logs">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>ml_logs</span>
+          </button>
+          <button class="quick-chip quick-chip--db" data-col="sessions" title="Koleksi sessions">
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>sessions</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Recursive Folder Tree Container -->
+      <!-- Content Panes -->
       <div class="tree-sidebar-content" id="tree-sidebar-content">
-        <div class="tree-root-list" id="folder-tree-root" role="tree">
-          <!-- Populated by JavaScript -->
-          <div class="tree-loading-state">
-            <div class="tree-spinner"></div>
-            <span>Memindai direktori Neura...</span>
+        <!-- PANE 1: FILES TREE -->
+        <div class="sidebar-tab-pane active" id="pane-tab-files">
+          <div class="tree-root-list" id="folder-tree-root" role="tree">
+            <div class="tree-loading-state">
+              <div class="tree-spinner"></div>
+              <span>Memindai direktori Neura...</span>
+            </div>
+          </div>
+        </div>
+        <!-- PANE 2: DATABASE COLLECTIONS -->
+        <div class="sidebar-tab-pane" id="pane-tab-db" style="display:none;">
+          <div class="sidebar-db-list" id="sidebar-db-list">
+            <div class="tree-loading-state">
+              <div class="tree-spinner"></div>
+              <span>Memuat koleksi basis data...</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Selected File/Node Detail Card (Bottom of Right Sidebar) -->
+      <!-- Detail card (adaptive label) -->
       <div class="tree-sidebar-detail" id="tree-item-detail">
         <div class="detail-header">
           <span class="detail-type-badge" id="detail-type-badge">Direktori</span>
@@ -567,7 +864,7 @@
   </div>
 
   <!-- CODE PREVIEW DRAWER (SLIDING PANEL SISI KANAN) -->
-  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <div class="drawer-backdrop" id="drawer-backdrop" onclick="window.closeCodeDrawer && window.closeCodeDrawer(event); window.closeDatabaseDrawer && window.closeDatabaseDrawer(event);"></div>
   <aside class="code-preview-drawer" id="code-preview-drawer" aria-label="Pratinjau Kode Berkas">
     <div class="drawer-header">
       <span class="drawer-header-icon" id="drawer-file-icon">📄</span>
@@ -597,8 +894,12 @@
 
     <!-- Code Area with Line Numbers -->
     <div class="drawer-code-area" id="drawer-code-area">
-      <div class="drawer-line-numbers" id="drawer-line-numbers"></div>
-      <pre><code id="drawer-code-block" class="hljs"></code></pre>
+      <div class="code-editor-layout">
+        <div class="drawer-line-numbers" id="drawer-line-numbers" aria-hidden="true"></div>
+        <div class="code-content-wrapper">
+          <pre><code id="drawer-code-block" class="hljs"></code></pre>
+        </div>
+      </div>
     </div>
 
     <!-- Relation Summary -->
@@ -608,33 +909,78 @@
     </div>
   </aside>
 
-  <!-- NODE CONTEXT MENU (KLIK KANAN) -->
-  <div class="node-context-menu" id="node-context-menu" style="display:none">
-    <div class="ctx-item" id="ctx-view-code">
-      <span class="ctx-item-icon">👁️</span>
-      <span>Lihat Kode (Showcase)</span>
+  <!-- DATABASE SHOWCASE DRAWER (SLIDING PANEL SISI KANAN) -->
+  <aside class="db-showcase-drawer" id="db-showcase-drawer" aria-label="Pratinjau Koleksi Database">
+    <div class="drawer-header">
+      <span class="drawer-header-icon" id="db-drawer-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+        </svg>
+      </span>
+      <div class="drawer-header-info">
+        <h3 class="drawer-file-name" id="db-drawer-title">Pilih Koleksi...</h3>
+        <p class="drawer-file-path" id="db-drawer-subtitle">—</p>
+      </div>
+      <div class="drawer-header-actions">
+        <span class="drawer-lang-badge db-type-badge" id="db-drawer-type-badge">FIRESTORE</span>
+        <button class="drawer-copy-btn" id="btn-db-copy-json" title="Salin Data JSON Koleksi">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
+        <button class="drawer-close-btn" id="btn-db-drawer-close" title="Tutup Panel" onclick="window.closeDatabaseDrawer && window.closeDatabaseDrawer(event)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
     </div>
-    <div class="ctx-item" id="ctx-copy-path">
-      <span class="ctx-item-icon">📋</span>
-      <span>Salin Path Berkas</span>
-    </div>
-    <div class="ctx-item" id="ctx-focus-tree">
-      <span class="ctx-item-icon">📁</span>
-      <span>Tampilkan di Folder Tree</span>
-    </div>
-    <div class="ctx-separator"></div>
-    <div class="ctx-item" id="ctx-focus-node">
-      <span class="ctx-item-icon">🎯</span>
-      <span>Pusatkan Kanvas</span>
-    </div>
-    <div class="ctx-item danger" id="ctx-delete-node">
-      <span class="ctx-item-icon">🗑️</span>
-      <span>Hapus dari Kanvas</span>
-    </div>
-  </div>
 
-  <!-- SCRIPTS -->
-  <script src="/js/struktur.js?v=4.0"></script>
+    <!-- Quick Search & Stats Filter inside Drawer -->
+    <div class="db-drawer-toolbar">
+      <div class="db-drawer-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="db-drawer-search-input" placeholder="Cari dokumen, atribut, atau ID..." autocomplete="off">
+      </div>
+      <span class="db-drawer-count" id="db-drawer-count">0 Dokumen</span>
+    </div>
+
+    <!-- Schema Field Badges -->
+    <div class="db-drawer-schema-bar" id="db-drawer-schema-bar">
+      <span class="db-schema-label">Skema Field:</span>
+      <div class="db-schema-pills" id="db-schema-pills"></div>
+    </div>
+
+    <!-- Table of Documents -->
+    <div class="db-drawer-body" id="db-drawer-body">
+      <div class="db-table-scroll-container">
+        <table class="db-records-table" id="db-records-table">
+          <thead id="db-records-thead"></thead>
+          <tbody id="db-records-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Active Document JSON Payload Inspector -->
+    <div class="db-doc-inspector" id="db-doc-inspector" style="display:none;">
+      <div class="db-inspector-header">
+        <span class="db-inspector-id" id="db-inspector-id">Dokumen ID: -</span>
+        <button class="db-inspector-close" id="btn-close-inspector" title="Tutup Inspektor">&times;</button>
+      </div>
+      <pre class="db-inspector-json"><code id="db-inspector-code" class="hljs"></code></pre>
+    </div>
+  </aside>
+
+  <!-- CUSTOM CONTEXT MENU (KLIK KANAN KANVAS & NODE) -->
+  <div class="node-context-menu" id="node-context-menu" style="display:none"></div>
+
+  <!-- SCRIPTS: Firebase Client SDK & Core Canvas Engine -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js?v=4"></script>
+  <script src="/js/struktur.js?v=5.0"></script>
 </body>
 
 </html>
