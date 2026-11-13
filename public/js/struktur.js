@@ -26,132 +26,334 @@
      1A. GENERAL ARCHITECTURE TOPOLOGY (Living Network Data-Flow)
      5 Pillars: UI Pages, Subsystems & Routers, LLM & AI, CSV Lake, Database
      ===================================================================== */
-  const GENERAL_NODES = [
-    // --- COLUMN 1: CLIENT & UI PAGES (x = 100) ---
+      const GENERAL_NODES = [
+    // =========================================================================
+    // KOLOM 1: WEB & CLIENT ENTRY (x = 80)
+    // =========================================================================
     {
       id: 'page-welcome',
       kind: 'page',
-      category: 'LANDING & AUTH',
+      category: 'PUBLIC WEB ENTRY',
       title: 'welcome.html',
       path: 'public/welcome.html',
       routeUrl: '/',
       previewImage: '/assets/prev-landing.png',
-      desc: 'Halaman selamat datang, pengenalan sistem Neura, dan otentikasi onboarding pasien/dokter.',
+      desc: 'Pintu gerbang publik, landing page edukasi Alzheimer, dan portal onboarding akun pasien/dokter.',
       iconType: 'globe',
       borderVariant: 'card-border-cyan',
       ports: [{ side: 'right', type: 'green', symbol: '+' }],
-      x: 100, y: 120,
+      x: 80, y: 440,
+    },
+
+    // =========================================================================
+    // KOLOM 2: IDENTITY & AUTHENTICATION LIFECYCLE (x = 420)
+    // =========================================================================
+    {
+      id: 'auth-login',
+      kind: 'auth',
+      category: 'AUTH LIFECYCLE',
+      title: 'Login (Multi-Role)',
+      path: 'public/welcome.html',
+      subKind: 'login',
+      desc: 'Form autentikasi email/password dengan selector peran aktif: Pasien, Dokter Nakes, atau Admin.',
+      iconType: 'key',
+      borderVariant: 'card-border-purple',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' },
+        { side: 'bottom', type: 'green', symbol: '+' }
+      ],
+      x: 420, y: 120,
     },
     {
-      id: 'page-user',
-      kind: 'page',
-      category: 'PATIENT PORTAL',
+      id: 'auth-register',
+      kind: 'auth',
+      category: 'AUTH LIFECYCLE',
+      title: 'Register & Onboarding',
+      path: 'public/welcome.html',
+      subKind: 'register',
+      desc: 'Pendaftaran akun baru pasien umum atau dokter spesialis saraf dengan form STR.',
+      iconType: 'user-plus',
+      borderVariant: 'card-border-purple',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' },
+        { side: 'bottom', type: 'green', symbol: '+' }
+      ],
+      x: 420, y: 300,
+    },
+    {
+      id: 'auth-otp',
+      kind: 'auth',
+      category: 'AUTH LIFECYCLE',
+      title: 'Verify & OTP (6-Digit)',
+      path: 'api/admin/admin_auth.py',
+      subKind: 'otp',
+      desc: 'Verifikasi keamanan 6-digit One-Time Password via email SMTP dengan timer batas waktu 5 menit.',
+      iconType: 'lock',
+      borderVariant: 'card-border-purple',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 420, y: 480,
+    },
+    {
+      id: 'auth-forgot',
+      kind: 'auth',
+      category: 'AUTH LIFECYCLE',
+      title: 'Forgot Password & Reset',
+      path: 'public/js/auth-hero.js',
+      subKind: 'forgot',
+      desc: 'Permintaan reset kata sandi dan dispatch token tautan pemulihan ke email terdaftar.',
+      iconType: 'mail',
+      borderVariant: 'card-border-purple',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 420, y: 660,
+    },
+    {
+      id: 'auth-profile',
+      kind: 'auth',
+      category: 'AUTH LIFECYCLE',
+      title: 'Profile Setup & Data Diri',
+      path: 'api/user/user_profile.py',
+      subKind: 'profile',
+      desc: 'Form data demografi pasien (umur, jenis kelamin, edukasi) dan profil praktek dokter.',
+      iconType: 'user-check',
+      borderVariant: 'card-border-purple',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 420, y: 840,
+    },
+
+    // =========================================================================
+    // KOLOM 3: SECURITY GATES & VERIFICATION MIDDLEWARE (x = 760)
+    // =========================================================================
+    {
+      id: 'gate-auth-check',
+      kind: 'gate',
+      category: 'SECURITY GATE',
+      title: 'Auth Check (Token Session)',
+      path: 'core/auth_middleware.py',
+      subKind: 'auth-check',
+      desc: 'Validasi token sesi aktif (Bearer/Cookie), cek masa berlaku (expiry), dan integritas enkripsi.',
+      iconType: 'shield-check',
+      borderVariant: 'card-border-coral',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 760, y: 160,
+    },
+    {
+      id: 'gate-role-check',
+      kind: 'gate',
+      category: 'SECURITY GATE',
+      title: 'Role Check (RBAC Router)',
+      path: 'core/auth_middleware.py',
+      subKind: 'role-check',
+      desc: 'Pemeriksaan hak akses pengguna (RBAC) untuk merutekan akses ke Dashboard Pasien, Dokter, atau Admin.',
+      iconType: 'sliders',
+      borderVariant: 'card-border-coral',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 760, y: 380,
+    },
+    {
+      id: 'gate-email-verify',
+      kind: 'gate',
+      category: 'SECURITY GATE',
+      title: 'Email Verify & SMTP Check',
+      path: 'core/email_sender.py',
+      subKind: 'email-verify',
+      desc: 'Validasi status kepemilikan email aktif, handshake server SMTP, dan proteksi dari email palsu.',
+      iconType: 'mail-check',
+      borderVariant: 'card-border-coral',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 760, y: 600,
+    },
+    {
+      id: 'gate-license-check',
+      kind: 'gate',
+      category: 'SECURITY GATE',
+      title: 'License & STR Doctor Check',
+      path: 'api/admin/admin_verify.py',
+      subKind: 'license-check',
+      desc: 'Verifikasi nomor Surat Tanda Registrasi (STR) dokter spesialis saraf sebelum membuka ruang praktek.',
+      iconType: 'award',
+      borderVariant: 'card-border-coral',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 760, y: 820,
+    },
+
+    // =========================================================================
+    // KOLOM 4: DESTINATION DASHBOARDS (x = 1100)
+    // =========================================================================
+    {
+      id: 'dash-user',
+      kind: 'dash',
+      category: 'DESTINATION DASHBOARD',
       title: 'index.html (Pasien)',
       path: 'public/index.html',
       routeUrl: '/app',
       previewImage: '/assets/prev-dashboard.png',
-      desc: 'Portal skrining mandiri Alzheimer, input 35 biomarker, riwayat tes kognitif, dan booking telemedis.',
+      desc: 'Portal skrining mandiri Alzheimer: input 35 biomarker, tes suara, dan riwayat estimasi CDR.',
       iconType: 'user',
       borderVariant: 'card-border-emerald',
-      ports: [{ side: 'right', type: 'green', symbol: '+' }],
-      x: 100, y: 320,
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 1100, y: 160,
     },
     {
-      id: 'page-nakes',
-      kind: 'page',
-      category: 'TELEMEDICINE ROOM',
-      title: 'nakes (Dokter Room)',
+      id: 'dash-nakes',
+      kind: 'dash',
+      category: 'DESTINATION DASHBOARD',
+      title: 'nakes (Doctor Room)',
       path: 'api/nakes/',
       routeUrl: '/app#telemedicine',
       previewImage: '/assets/prev-dashboard.png',
-      desc: 'Ruang telekonsultasi dokter spesialis saraf, LiveKit video call terenkripsi, dan telaah hasil CDR.',
+      desc: 'Ruang telekonsultasi dokter saraf: telaah hasil CDR pasien, video call LiveKit, dan e-prescription.',
       iconType: 'doctor',
       borderVariant: 'card-border-teal',
-      ports: [{ side: 'right', type: 'green', symbol: '+' }],
-      x: 100, y: 520,
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 1100, y: 400,
     },
     {
-      id: 'page-admin',
-      kind: 'page',
-      category: 'ADMIN CONSOLE',
+      id: 'dash-admin',
+      kind: 'dash',
+      category: 'DESTINATION DASHBOARD',
       title: 'admin (Governance)',
       path: 'api/admin/',
       routeUrl: '/app#admin',
       previewImage: '/assets/prev-dashboard.png',
-      desc: 'Manajemen persetujuan lisensi dokter, audit RBAC, monitoring kuota inferensi & system logs.',
+      desc: 'Konsol manajemen lisensi dokter, persetujuan STR, audit RBAC pengguna, dan telemetri inferensi.',
       iconType: 'shield',
       borderVariant: 'card-border-coral',
-      ports: [{ side: 'right', type: 'green', symbol: '+' }],
-      x: 100, y: 720,
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 1100, y: 640,
     },
     {
-      id: 'page-riset',
-      kind: 'page',
-      category: 'RESEARCH STUDIO',
+      id: 'dash-riset',
+      kind: 'dash',
+      category: 'DESTINATION DASHBOARD',
       title: 'riset.html (Studio)',
       path: 'public/riset.html',
       routeUrl: '/riset',
       previewImage: '/assets/prev-riset.png',
-      desc: 'Editor manuskrip publikasi klinis Word-style, format jurnal kedokteran, dan AI text polish.',
+      desc: 'Editor naskah riset klinis Word-style, format jurnal medis, dan asistensi AI polish.',
       iconType: 'pen',
       borderVariant: 'card-border-purple',
-      ports: [{ side: 'right', type: 'green', symbol: '+' }],
-      x: 100, y: 920,
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 1100, y: 880,
     },
 
-    // --- COLUMN 2: SUBSYSTEMS & ROUTERS (x = 520) ---
+    // =========================================================================
+    // KOLOM 5: INPUT PROCESSING & COMPUTATIONAL AI ENGINES (x = 1480)
+    // =========================================================================
     {
-      id: 'subsys-core',
-      kind: 'folder',
-      category: 'CORE ENGINE',
-      title: 'Neura Core Hub',
-      path: 'core/ & server.py',
-      desc: 'Server Flask modular, life-cycle manager, pre-warming ML, auth session guard, dan logger.',
-      iconType: 'server',
-      borderVariant: 'card-border-emerald',
+      id: 'input-biomarkers',
+      kind: 'input',
+      category: 'INPUT PROCESSING',
+      title: 'Input: 35 Biomarker Data',
+      path: 'api/user/user_predict.py',
+      subKind: 'biomarkers',
+      desc: 'Data demografi, kognitif MMSE, CDRSB, FAQ, dan parameter volumetrik MRI (eTIV, nWBV, ASF).',
+      iconType: 'database',
+      borderVariant: 'card-border-amber',
       ports: [
         { side: 'left', type: 'green', symbol: '+' },
-        { side: 'right', type: 'green', symbol: '+' },
-        { side: 'bottom', type: 'green', symbol: '+' }
+        { side: 'right', type: 'green', symbol: '+' }
       ],
-      x: 520, y: 220,
+      x: 1480, y: 160,
     },
     {
-      id: 'subsys-api',
-      kind: 'folder',
-      category: 'REST API ROUTER',
-      title: 'API Endpoints & Routing',
-      path: 'api/',
-      desc: 'Blueprint modular pemisah rute user, nakes, admin, shared, status, dan LiveKit token generator.',
-      iconType: 'api',
-      borderVariant: 'card-border-blue',
+      id: 'input-voice',
+      kind: 'input',
+      category: 'INPUT PROCESSING',
+      title: 'Input: Audio Voice Recording',
+      path: 'features/voice_dataset.json',
+      subKind: 'voice',
+      desc: 'Aliran rekaman suara wawancara pasien untuk ekstraksi getaran tremor akustik dan jeda fonetik.',
+      iconType: 'waveform',
+      borderVariant: 'card-border-amber',
       ports: [
         { side: 'left', type: 'green', symbol: '+' },
-        { side: 'right', type: 'green', symbol: '+' },
-        { side: 'bottom', type: 'green', symbol: '+' }
+        { side: 'right', type: 'green', symbol: '+' }
       ],
-      x: 520, y: 520,
+      x: 1480, y: 380,
     },
     {
-      id: 'subsys-features',
-      kind: 'folder',
-      category: 'FEATURE PIPELINE',
-      title: 'Biomarker Feature Pipeline',
+      id: 'engine-biomarker-pipe',
+      kind: 'engine',
+      category: 'COMPUTATIONAL ENGINE',
+      title: 'Biomarker Feature Normalizer',
       path: 'features/',
-      desc: 'Ekstraksi & normalisasi 35 biomarker (MMSE, eTIV, nWBV, ASF, Age) ke format tensor siap inferensi.',
+      subKind: 'normalizer',
+      desc: 'Standarisasi dan imputasi 35 biomarker ke format tensor siap komputasi neural network.',
       iconType: 'pipeline',
       borderVariant: 'card-border-amber',
       ports: [
         { side: 'left', type: 'green', symbol: '+' },
-        { side: 'right', type: 'green', symbol: '+' },
-        { side: 'top', type: 'green', symbol: '+' }
+        { side: 'right', type: 'green', symbol: '+' }
       ],
-      x: 520, y: 720,
+      x: 1480, y: 600,
     },
-
-    // --- COLUMN 3: LLM & AI MULTIMODAL ENGINE (x = 940) ---
     {
-      id: 'ai-llm',
+      id: 'engine-voice-pipe',
+      kind: 'voice',
+      category: 'ACOUSTIC PIPELINE',
+      title: 'Voice Biomarker Pipeline',
+      path: 'features/voice_dataset.json',
+      desc: 'Ekstraksi 12 parameter akustik: jitter, shimmer, HNR, semantic hesitation, dan formant vowel.',
+      iconType: 'waveform',
+      borderVariant: 'card-border-amber',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 1480, y: 840,
+    },
+    {
+      id: 'engine-livekit-rtc',
+      kind: 'livekit',
+      category: 'REAL-TIME MEDIA',
+      title: 'LiveKit WebRTC Media Server',
+      path: 'api/user/user_livekit.py',
+      desc: 'Infrastruktur WebRTC mesh room terenkripsi E2EE untuk video konsultasi pasien & dokter.',
+      iconType: 'video',
+      borderVariant: 'card-border-teal',
+      ports: [
+        { side: 'left', type: 'green', symbol: '+' },
+        { side: 'right', type: 'green', symbol: '+' }
+      ],
+      x: 1860, y: 160,
+    },
+    {
+      id: 'engine-llm-clinical',
       kind: 'llm',
       category: 'CLINICAL LLM AGENT',
       title: 'LLM Clinical Reasoning (Gemma 2 2B)',
@@ -168,47 +370,45 @@
       hero: true,
       ports: [
         { side: 'left', type: 'green', symbol: '+' },
-        { side: 'right', type: 'green', symbol: '+' },
-        { side: 'bottom', type: 'green', symbol: '+' }
+        { side: 'right', type: 'green', symbol: '+' }
       ],
-      x: 940, y: 360,
+      x: 1860, y: 500,
     },
     {
-      id: 'ai-ml',
-      kind: 'ai',
+      id: 'engine-ml-alzheimer',
+      kind: 'engine',
       category: 'MULTIMODAL AI SINK',
       title: 'ML Models & Alzheimer Engine',
       path: 'training/',
+      subKind: 'ml',
       desc: 'Ensemble Deep Learning & PyTorch estimasi skor probabilitas CDR (Clinical Dementia Rating).',
       iconType: 'brain',
       borderVariant: 'card-border-cyan',
       ports: [
         { side: 'left', type: 'green', symbol: '+' },
-        { side: 'right', type: 'green', symbol: '+' },
-        { side: 'top', type: 'green', symbol: '+' }
+        { side: 'right', type: 'green', symbol: '+' }
       ],
-      x: 940, y: 680,
+      x: 1860, y: 760,
     },
-
-    // --- COLUMN 4: CSV TABULAR DATA LAKE (x = 1360) ---
     {
-      id: 'data-csv',
-      kind: 'csv',
-      category: 'TABULAR DATA LAKE',
-      title: 'alzheimers_disease_data.csv',
-      path: 'data/alzheimers_disease_data.csv',
-      desc: 'Kohort OASIS 2.149 baris rekaman klinis, 35 parameter kognitif & MRI untuk baseline verifikasi.',
-      iconType: 'database',
+      id: 'engine-report-sink',
+      kind: 'report',
+      category: 'DIAGNOSTIC REPORT SINK',
+      title: 'Clinical Diagnostic Report & PDF',
+      path: 'api/user/user_consultation.py',
+      desc: 'Generator ringkasan rekam medis: kalkulasi probabilitas CDR, visualisasi radar 35 biomarker, dan ekspor PDF.',
+      iconType: 'report',
       borderVariant: 'card-border-gold',
-      count: '2149 Baris',
       ports: [
         { side: 'left', type: 'green', symbol: '+' },
         { side: 'right', type: 'green', symbol: '+' }
       ],
-      x: 1360, y: 520,
+      x: 1860, y: 1040,
     },
 
-    // --- COLUMN 5: FIRESTORE DATABASE & STORAGE (x = 1780) ---
+    // =========================================================================
+    // KOLOM 6: PERSISTENCE & DATA LAKE LAYER (x = 1940)
+    // =========================================================================
     {
       id: 'db-users',
       kind: 'database',
@@ -220,33 +420,7 @@
       iconType: 'users',
       borderVariant: 'card-border-cyan',
       ports: [{ side: 'left', type: 'green', symbol: '+' }],
-      x: 1780, y: 160,
-    },
-    {
-      id: 'db-consultations',
-      kind: 'database',
-      category: 'TELEMEDICINE',
-      title: 'Firestore: consultations',
-      name: 'consultations',
-      path: 'firestore/consultations',
-      desc: 'Catatan rekam medis terenkripsi, transkrip telekonsultasi, rekomendasi obat & rujukan dokter.',
-      iconType: 'consultations',
-      borderVariant: 'card-border-cyan',
-      ports: [{ side: 'left', type: 'green', symbol: '+' }],
-      x: 1780, y: 340,
-    },
-    {
-      id: 'db-predictions',
-      kind: 'database',
-      category: 'AI INFERENCE SINK',
-      title: 'Firestore: predictions',
-      name: 'predictions',
-      path: 'firestore/predictions',
-      desc: 'Sink riwayat skor probabilitas CDR pasien, confidence level, dan rekomendasi tindak lanjut.',
-      iconType: 'predictions',
-      borderVariant: 'card-border-cyan',
-      ports: [{ side: 'left', type: 'green', symbol: '+' }],
-      x: 1780, y: 520,
+      x: 2240, y: 120,
     },
     {
       id: 'db-sessions',
@@ -259,7 +433,46 @@
       iconType: 'sessions',
       borderVariant: 'card-border-neutral',
       ports: [{ side: 'left', type: 'green', symbol: '+' }],
-      x: 1780, y: 700,
+      x: 2240, y: 280,
+    },
+    {
+      id: 'db-consultations',
+      kind: 'database',
+      category: 'TELEMEDICINE',
+      title: 'Firestore: consultations',
+      name: 'consultations',
+      path: 'firestore/consultations',
+      desc: 'Catatan rekam medis terenkripsi, transkrip telekonsultasi, rekomendasi obat & rujukan dokter.',
+      iconType: 'consultations',
+      borderVariant: 'card-border-cyan',
+      ports: [{ side: 'left', type: 'green', symbol: '+' }],
+      x: 2240, y: 440,
+    },
+    {
+      id: 'db-predictions',
+      kind: 'database',
+      category: 'AI INFERENCE SINK',
+      title: 'Firestore: predictions',
+      name: 'predictions',
+      path: 'firestore/predictions',
+      desc: 'Sink riwayat skor probabilitas CDR pasien, confidence level, dan rekomendasi tindak lanjut.',
+      iconType: 'predictions',
+      borderVariant: 'card-border-cyan',
+      ports: [{ side: 'left', type: 'green', symbol: '+' }],
+      x: 2240, y: 600,
+    },
+    {
+      id: 'db-csv-lake',
+      kind: 'csv',
+      category: 'TABULAR DATA LAKE',
+      title: 'alzheimers_disease_data.csv',
+      path: 'data/alzheimers_disease_data.csv',
+      desc: 'Kohort OASIS 2.149 baris rekaman klinis, 35 parameter kognitif & MRI untuk baseline verifikasi.',
+      iconType: 'database',
+      borderVariant: 'card-border-gold',
+      count: '2149 Baris',
+      ports: [{ side: 'left', type: 'green', symbol: '+' }],
+      x: 2240, y: 760,
     },
     {
       id: 'db-ml_logs',
@@ -268,41 +481,61 @@
       title: 'Firestore: ml_logs',
       name: 'ml_logs',
       path: 'firestore/ml_logs',
-      desc: 'Log performa inferensi real-time, latensi ms GPU/CPU, and audit trail komputasi model.',
+      desc: 'Log performa inferensi real-time, latensi ms GPU/CPU, dan audit trail komputasi model.',
       iconType: 'ml_logs',
       borderVariant: 'card-border-cyan',
       ports: [{ side: 'left', type: 'green', symbol: '+' }],
-      x: 1780, y: 880,
+      x: 2240, y: 920,
     },
   ];
+    const GENERAL_CONNECTIONS = [
+    // Tahap 1 -> Tahap 2: Web Entry ke Auth Lifecycle
+    ['page-welcome',          'auth-login',             'stream',   'Open Login Modal',          'onboarding'],
+    ['page-welcome',          'auth-register',          'stream',   'Create New Account',        'onboarding'],
 
-  const GENERAL_CONNECTIONS = [
-    // Halaman -> Subsystems (Fast real-time live packet stream)
-    ['page-welcome',     'subsys-core',      'stream',   'Auth Request'],
-    ['page-user',        'subsys-api',       'stream',   'Patient Screening'],
-    ['page-nakes',       'subsys-api',       'stream',   'Telemedicine Session'],
-    ['page-admin',       'subsys-core',      'stream',   'Governance RBAC'],
-    ['page-riset',       'ai-llm',           'stream',   'AI Manuskrip Polish'],
+    // Tahap 2: Hubungan Lifecycle Autentikasi
+    ['auth-login',            'auth-forgot',            'packet',   'Request Password Reset',    'onboarding'],
+    ['auth-register',         'auth-otp',               'packet',   'Issue 6-Digit OTP',         'onboarding'],
+    ['auth-register',         'auth-profile',           'packet',   'Fill Profile Details',      'onboarding'],
 
-    // Subsystems -> Feature Pipeline & AI
-    ['subsys-api',       'subsys-features',  'packet',   '35 Biomarkers Stream'],
-    ['subsys-api',       'ai-llm',           'stream',   'NLP Dialog Engine'],
-    ['subsys-features',  'ai-ml',            'packet',   'Tensor Normalization'],
-    ['subsys-core',      'ai-ml',            'core',     'Pre-warm Model Pipe'],
+    // Tahap 2 -> Tahap 3: Auth ke Security Guard Gates
+    ['auth-login',            'gate-auth-check',        'auth',     'Verify Credentials',        'onboarding'],
+    ['auth-otp',              'gate-email-verify',      'auth',     'Validate OTP Code',         'onboarding'],
+    ['auth-profile',          'gate-license-check',     'auth',     'Verify Doctor STR',         'onboarding'],
+    ['gate-auth-check',       'gate-role-check',        'stream',   'Session Validated',         'onboarding'],
 
-    // AI & Tabular Data Lake
-    ['data-csv',         'ai-ml',            'dataflow', 'OASIS Benchmark Feed'],
-    ['data-csv',         'subsys-features',  'dataflow', 'Baseline Imputation'],
+    // Tahap 3 -> Tahap 4: RBAC Routing ke Dashboards
+    ['gate-role-check',       'dash-user',              'stream',   'Route: Role Patient',       'screening'],
+    ['gate-role-check',       'dash-nakes',             'stream',   'Route: Role Doctor',        'telemed'],
+    ['gate-role-check',       'dash-admin',             'stream',   'Route: Role Admin',         'governance'],
+    ['page-welcome',          'dash-riset',             'stream',   'Open Studio Riset',         'research'],
 
-    // Subsystem & AI -> Database Sink
-    ['subsys-core',      'db-sessions',      'auth',     'Token Guard'],
-    ['subsys-api',       'db-users',         'packet',   'Profile & Credential'],
-    ['page-nakes',       'db-consultations', 'stream',   'E-Prescription & Notes'],
-    ['ai-ml',            'db-predictions',   'packet',   'Save CDR Probabilities'],
-    ['ai-llm',           'db-consultations', 'stream',   'Clinical Diagnosis Summary'],
-    ['ai-ml',            'db-ml_logs',       'core',     'GPU Latency & Telemetry'],
+    // Tahap 4 -> Tahap 5: Dashboards ke Input & Processing Engines
+    ['dash-user',             'input-biomarkers',       'stream',   'Fill 35 Biomarkers',        'screening'],
+    ['dash-user',             'input-voice',            'stream',   'Record Vocal Audio',        'screening'],
+    ['dash-user',             'engine-livekit-rtc',     'stream',   'Patient Video Call Stream', 'telemed'],
+    ['dash-nakes',            'engine-livekit-rtc',     'stream',   'Doctor Video Call Stream',  'telemed'],
+    ['dash-nakes',            'engine-llm-clinical',    'stream',   'Clinical Consultation Q&A', 'telemed'],
+    ['dash-riset',            'engine-llm-clinical',    'stream',   'Manuscript AI Polish',      'research'],
+    ['dash-admin',            'db-ml_logs',             'stream',   'Audit & Telemetry Trail',   'governance'],
+
+    // Tahap 5: Pemrosesan Komputasi & AI Pipeline
+    ['input-biomarkers',      'engine-biomarker-pipe',  'packet',   'Raw 35 Features',           'screening'],
+    ['input-voice',           'engine-voice-pipe',      'packet',   'Raw WAV Audio Stream',      'screening'],
+    ['engine-biomarker-pipe', 'engine-ml-alzheimer',    'packet',   'Normalized Tensor',         'screening'],
+    ['engine-voice-pipe',     'engine-ml-alzheimer',    'packet',   'Acoustic Tremor Tensor',    'screening'],
+    ['db-csv-lake',           'engine-ml-alzheimer',    'dataflow', 'OASIS Cohort Benchmark',    'screening'],
+    ['engine-ml-alzheimer',   'engine-report-sink',     'stream',   'CDR Risk Evaluation',       'screening'],
+    ['engine-llm-clinical',   'engine-report-sink',     'packet',   'Clinical Diagnosis Notes',  'screening'],
+
+    // Tahap 5 & 3 -> Tahap 6: Persistensi & Data Lake
+    ['gate-auth-check',       'db-sessions',            'auth',     'Token Cache & Expiry Guard','governance'],
+    ['auth-profile',          'db-users',               'dataflow', 'Save Verified Profile',     'onboarding'],
+    ['engine-livekit-rtc',    'db-consultations',       'dataflow', 'Save Call Records & Transcript','telemed'],
+    ['engine-report-sink',    'db-consultations',       'dataflow', 'Save Final Report PDF',     'screening'],
+    ['engine-ml-alzheimer',   'db-predictions',         'packet',   'Save CDR Probabilities',    'screening'],
+    ['engine-ml-alzheimer',   'db-ml_logs',             'core',     'GPU Latency & Telemetry',   'governance'],
   ];
-
   const INITIAL_NODES = [
     // --- COLUMN 1 (Frontend & Styles) ---
     {
@@ -1140,35 +1373,73 @@
 
   function getNodeSvgIcon(iconType) {
     switch (iconType) {
-      case 'cyclone':
-        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a10 10 0 0 0-7.07 2.93A10 10 0 0 1 12 7a5 5 0 0 1 5 5 10 10 0 0 1-2.93 7.07A10 10 0 0 0 22 12a10 10 0 0 0-10-10z"/><circle cx="12" cy="12" r="2"/></svg>`;
-      case 'email':
-        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="3 3 21 12 3 21 7 12 3 3"/><line x1="7" y1="12" x2="21" y2="12"/></svg>`;
+      case 'key':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-2 2 1.5 1.5L3 20v2h2l9-9 1.5 1.5 2-2-1.5-1.5L20 4.5 22 2.5z"/><circle cx="7.5" cy="7.5" r="2.5"/></svg>`;
+      case 'user-plus':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>`;
+      case 'user-check':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>`;
+      case 'lock':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+      case 'mail':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`;
+      case 'mail-check':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9"/><polyline points="22,6 12,13 2,6"/><polyline points="16 19 18 21 22 17"/></svg>`;
+      case 'shield-check':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`;
+      case 'award':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`;
+      case 'sliders':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`;
+      case 'globe':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`;
+      case 'user':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+      case 'doctor':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3s-3 1.34-3 3v6c0 1.66 1.34 3 3 3z"/><path d="M5 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S2 3.34 2 5v6c0 1.66 1.34 3 3 3z"/><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3s-3 1.34-3 3v6c0 1.66 1.34 3 3 3z"/><path d="M19 14v4a5 5 0 0 1-10 0v-4"/></svg>`;
+      case 'shield':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
       case 'server':
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="7" rx="2"/><rect x="2" y="14" width="20" height="7" rx="2"/><line x1="6" y1="6.5" x2="6.01" y2="6.5"/><line x1="6" y1="17.5" x2="6.01" y2="17.5"/></svg>`;
       case 'api':
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
-      case 'python':
-        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2c2.5 0 4.5.5 4.5 2.5v2H11V8h8.5c1.8 0 2.5 1.2 2.5 3.5 0 2.6-.9 3.5-2.5 3.5H18v-1.5c0-1.2-.8-2-2-2h-3v1h4a1 1 0 0 1 1 1v4c0 1.2-.8 2-2 2H9.5C7.8 21 7 19.8 7 17.5V16h5.5v-1.5H4c-1.8 0-2.5-1.2-2.5-3.5C1.5 8.4 2.4 7.5 4 7.5H6V9c0 1.2.8 2 2 2h3V10H7a1 1 0 0 1-1-1V5c0-1.2.8-2 2-2h4z"/><circle cx="9" cy="5" r=".8" fill="currentColor"/><circle cx="15" cy="19" r=".8" fill="currentColor"/></svg>`;
+      case 'pipeline':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+      case 'report':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`;
+      case 'video':
+      case 'livekit':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`;
+      case 'waveform':
+      case 'voice':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5v14M22 10v4M7 5v14M2 10v4"/></svg>`;
+      case 'brain':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`;
+      case 'database':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`;
+      case 'users':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+      case 'consultations':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+      case 'predictions':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`;
+      case 'sessions':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+      case 'ml_logs':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+      case 'pen':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
       case 'palette':
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7h2c3 0 5.5-2.5 5.5-5.5C22 6 17.5 2 12 2z"/></svg>`;
       case 'code':
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`;
-      case 'pen':
-        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
-      case 'database':
-        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`;
-      case 'brain':
-        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`;
       case 'terminal':
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`;
       case 'folder':
       default:
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`;
     }
-  }
-
-  function renderPortsHtml(node) {
+  }  function renderPortsHtml(node) {
     const ports = node.ports || [
       { side: 'top', type: 'green', symbol: '+' },
       { side: 'bottom', type: 'green', symbol: '+' },
@@ -1551,6 +1822,8 @@
       path.setAttribute('d', d);
       path.setAttribute('class', `connection-path type-${type}`);
       path.dataset.idx = idx;
+      path.dataset.src = srcId;
+      path.dataset.dst = dstId;
       pathsGroup.appendChild(path);
 
       if (label) {
@@ -2162,6 +2435,16 @@
     STATE.databaseMode = true;
     STATE.explorerMode = false;
     STATE.canvasView = 'database';
+    document.body.dataset.canvasView = 'database';
+    const cContainer = $('#canvas-container');
+    if (cContainer) cContainer.dataset.canvasView = 'database';
+
+    // Strictly hide General Interactive Bar & Reopen Button
+    const genBar = $('#general-interactive-bar');
+    if (genBar) genBar.style.setProperty('display', 'none', 'important');
+    const btnReopenGen = $('#btn-reopen-general-bar');
+    if (btnReopenGen) btnReopenGen.style.display = 'none';
+
     closeAllTopbarDropdowns();
 
     // Persist page mode to localStorage and sync URL for page refreshes
@@ -2432,73 +2715,360 @@
     nodesLayer.appendChild(el);
   }
 
-  function switchSidebarTab(tab) {
-    const isDb = (tab === 'database');
-    // --- Tabs ---
-    tabBtnFiles?.classList.toggle('active', !isDb);
-    tabBtnDb?.classList.add('active');
-    if (!isDb) tabBtnDb?.classList.remove('active');
-    if (paneTabFiles) paneTabFiles.style.display = isDb ? 'none' : 'flex';
-    if (paneTabDb) paneTabDb.style.display = isDb ? 'flex' : 'none';
+  /* =====================================================================
+     GENERAL CANVAS SIDEBAR: STAGES & ENTITIES EXPLORER
+     ===================================================================== */
+  const GENERAL_STAGES = [
+    {
+      id: 'stage-1',
+      num: '01',
+      title: 'Client & Public Entry',
+      catFilter: 'auth',
+      nodeIds: ['page-welcome']
+    },
+    {
+      id: 'stage-2',
+      num: '02',
+      title: 'Identity & Auth Lifecycle',
+      catFilter: 'auth',
+      nodeIds: ['auth-login', 'auth-register', 'auth-otp', 'auth-forgot', 'auth-profile']
+    },
+    {
+      id: 'stage-3',
+      num: '03',
+      title: 'Security Gates & Middleware',
+      catFilter: 'gate',
+      nodeIds: ['gate-auth-check', 'gate-role-check', 'gate-email-verify', 'gate-str-check']
+    },
+    {
+      id: 'stage-4',
+      num: '04',
+      title: 'Destination Dashboards',
+      catFilter: 'dashboard',
+      nodeIds: ['page-index', 'page-nakes', 'page-admin', 'page-riset']
+    },
+    {
+      id: 'stage-5',
+      num: '05',
+      title: 'Input & Computational AI Engines',
+      catFilter: 'engine',
+      nodeIds: ['proc-biomarker-input', 'proc-voice-input', 'proc-biomarker-normalizer', 'proc-voice-pipeline', 'node-llm', 'node-ml-models', 'hub-livekit', 'proc-report-generator']
+    },
+    {
+      id: 'stage-6',
+      num: '06',
+      title: 'Persistence & Data Lake Layer',
+      catFilter: 'storage',
+      nodeIds: ['node-dataset', 'store-firestore-users', 'store-firestore-consultations', 'store-firestore-predictions', 'store-local-sessions', 'store-firestore-logs']
+    }
+  ];
 
-    // --- Sidebar icon ---
+  let currentGeneralFilter = 'all';
+  let currentGeneralSearch = '';
+
+  function getGenNodeIconSvg(node) {
+    if (node.kind === 'page') {
+      if (node.id === 'page-welcome') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+      }
+      if (node.id === 'page-index') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+      }
+      if (node.id === 'page-nakes') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>';
+      }
+      if (node.id === 'page-admin') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>';
+      }
+      if (node.id === 'page-riset') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 2v7.31"/><path d="M14 2v7.31"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>';
+      }
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>';
+    }
+    if (node.kind === 'auth') {
+      if (node.id === 'auth-profile') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+      }
+      if (node.id === 'auth-otp') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>';
+      }
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+    }
+    if (node.kind === 'gate') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>';
+    }
+    if (node.kind === 'input') {
+      if (node.id === 'proc-voice-input') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+      }
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>';
+    }
+    if (node.kind === 'engine') {
+      if (node.id === 'proc-biomarker-normalizer') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
+      }
+      if (node.id === 'proc-voice-pipeline') {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>';
+      }
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>';
+    }
+    if (node.kind === 'llm') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>';
+    }
+    if (node.kind === 'multimodal') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/></svg>';
+    }
+    if (node.kind === 'hub') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
+    }
+    if (node.kind === 'report') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
+    }
+    if (node.kind === 'csv') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>';
+    }
+    if (node.kind === 'session') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>';
+    }
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>';
+  }
+
+  function getGenNodeBoxClass(node) {
+    if (node.kind === 'page') return 'sgen-box-cyan';
+    if (node.kind === 'auth') return 'sgen-box-violet';
+    if (node.kind === 'gate') return 'sgen-box-rose';
+    if (node.kind === 'input') return 'sgen-box-amber';
+    if (node.kind === 'engine') return 'sgen-box-green';
+    if (node.kind === 'llm') return 'sgen-box-purple';
+    if (node.kind === 'multimodal') return 'sgen-box-violet';
+    if (node.kind === 'hub') return 'sgen-box-teal';
+    if (node.kind === 'report') return 'sgen-box-purple';
+    if (node.kind === 'csv') return 'sgen-box-amber';
+    if (node.kind === 'session') return 'sgen-box-slate';
+    return 'sgen-box-cyan';
+  }
+
+  function renderSidebarGeneralList(filterCat = currentGeneralFilter, searchQuery = currentGeneralSearch) {
+    const listEl = $('#sidebar-gen-list');
+    if (!listEl) return;
+
+    currentGeneralFilter = filterCat;
+    currentGeneralSearch = (searchQuery || '').trim().toLowerCase();
+
+    const nodeMap = new Map();
+    GENERAL_NODES.forEach(n => nodeMap.set(n.id, n));
+
+    let totalVisible = 0;
+    const stagesHtml = [];
+
+    GENERAL_STAGES.forEach(stage => {
+      // Check filter category
+      if (filterCat !== 'all') {
+        if (filterCat === 'active' || filterCat === 'disabled') {
+          // Status filter handled inside matchingNodes
+        } else if (stage.catFilter !== filterCat && !(filterCat === 'auth' && (stage.id === 'stage-1' || stage.id === 'stage-2'))) {
+          return;
+        }
+      }
+
+      // Filter nodes in stage
+      const matchingNodes = stage.nodeIds.map(id => nodeMap.get(id)).filter(node => {
+        if (!node) return false;
+        // Status filters
+        if (filterCat === 'active' && node.enabled === false) return false;
+        if (filterCat === 'disabled' && node.enabled !== false) return false;
+        if (!currentGeneralSearch) return true;
+        const q = currentGeneralSearch;
+        return (
+          node.title.toLowerCase().includes(q) ||
+          (node.category && node.category.toLowerCase().includes(q)) ||
+          (node.desc && node.desc.toLowerCase().includes(q)) ||
+          (node.badge && node.badge.toLowerCase().includes(q)) ||
+          node.id.toLowerCase().includes(q)
+        );
+      });
+
+      if (!matchingNodes.length) return;
+      totalVisible += matchingNodes.length;
+
+      const itemsHtml = matchingNodes.map(node => {
+        const isActive = (STATE.activeNodeId === node.id);
+        const iconSvg = getGenNodeIconSvg(node);
+        const boxClass = getGenNodeBoxClass(node);
+        const badgeText = node.badge || node.kind || '';
+
+        const isNodeDisabled = (node.enabled === false);
+        const nodeSlug = node.slug || node.id.replace(/^page-/, '');
+        return `
+          <div class="sidebar-gen-item ${isActive ? 'active' : ''} ${isNodeDisabled ? 'is-disabled' : ''}" data-node-id="${node.id}">
+            <div class="sgen-icon-box ${boxClass}">${iconSvg}</div>
+            <div class="sgen-info">
+              <div class="sgen-name">${escapeHtml(node.title)}</div>
+              <div class="sgen-sub">${isNodeDisabled ? '<span style="color:#f59e0b">● Dinonaktifkan (Maintenance)</span>' : escapeHtml(node.category || node.desc || '')}</div>
+            </div>
+            ${badgeText ? `<span class="sgen-badge">${escapeHtml(badgeText)}</span>` : ''}
+            <button class="sgen-toggle-btn ${isNodeDisabled ? 'is-disabled' : 'is-active'}" data-toggle-slug="${nodeSlug}" data-node-id="${node.id}" title="${isNodeDisabled ? 'Klik untuk mengaktifkan kembali' : 'Klik untuk menonaktifkan modul'}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      stagesHtml.push(`
+        <div class="sidebar-stage-group" id="sgroup-${stage.id}">
+          <div class="sidebar-stage-header" data-stage-id="${stage.id}">
+            <div class="sidebar-stage-left">
+              <span class="stage-num-badge">${stage.num}</span>
+              <span class="stage-title">${stage.title}</span>
+            </div>
+            <div class="sidebar-stage-right">
+              <span class="stage-count-badge">${matchingNodes.length}</span>
+              <svg class="stage-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          <div class="sidebar-stage-items">
+            ${itemsHtml}
+          </div>
+        </div>
+      `);
+    });
+
+    if (!totalVisible) {
+      listEl.innerHTML = `
+        <div class="sidebar-gen-empty">
+          Tidak ada modul arsitektur yang cocok dengan "${escapeHtml(currentGeneralSearch)}".
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = stagesHtml.join('');
+
+    // Attach click events on stage headers (accordion collapse/expand)
+    $('.sidebar-stage-header').forEach(header => {
+      header.onclick = (e) => {
+        e.stopPropagation();
+        const group = header.closest('.sidebar-stage-group');
+        if (group) group.classList.toggle('collapsed');
+      };
+    });
+
+    // Attach click events on individual items
+    $('.sidebar-gen-item').forEach(item => {
+      item.onclick = (e) => {
+        e.stopPropagation();
+        const nodeId = item.dataset.nodeId;
+        const node = nodeMap.get(nodeId);
+        if (!node) return;
+
+        $('.sidebar-gen-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+
+        // Focus & pan on canvas
+        focusNode(nodeId, true);
+
+        // Update detail card
+        const badgeEl = $('#detail-type-badge');
+        const nameEl  = $('#detail-item-name');
+        const pathEl  = $('#detail-item-path');
+        const btnFocus = $('#btn-focus-in-canvas');
+
+        if (badgeEl) badgeEl.textContent = (node.category || node.kind || 'MODUL').toUpperCase();
+        if (nameEl)  nameEl.textContent = node.title;
+        if (pathEl)  pathEl.textContent = node.desc || (node.path ? `Path: ${node.path}` : 'Modul Terhubung di Arsitektur');
+
+        if (btnFocus) {
+          btnFocus.onclick = () => focusNode(nodeId, true);
+        }
+      };
+    });
+  }
+
+  function switchSidebarTab(tab) {
+    const isGen = (tab === 'general');
+    const isDb  = (tab === 'database');
+    const isFiles = (!isGen && !isDb);
+
+    // --- Panes ---
+    const paneGen = $('#pane-tab-gen');
+    if (paneGen)      paneGen.style.display      = isGen   ? 'flex' : 'none';
+    if (paneTabFiles) paneTabFiles.style.display = isFiles ? 'flex' : 'none';
+    if (paneTabDb)    paneTabDb.style.display    = isDb    ? 'flex' : 'none';
+
+    // --- Sidebar icons ---
+    const iconGen    = $('#sidebar-icon-gen');
     const iconFolder = $('#sidebar-icon-folder');
     const iconDb     = $('#sidebar-icon-db');
-    if (iconFolder) iconFolder.style.display = isDb ? 'none' : 'block';
-    if (iconDb)     iconDb.style.display     = isDb ? 'block' : 'none';
+    if (iconGen)    iconGen.style.display    = isGen   ? 'block' : 'none';
+    if (iconFolder) iconFolder.style.display = isFiles ? 'block' : 'none';
+    if (iconDb)     iconDb.style.display     = isDb    ? 'block' : 'none';
 
-    // --- Sidebar title ---
+    // --- Sidebar title & summary stats ---
     const sidebarTitle = $('#sidebar-title');
-    if (sidebarTitle) sidebarTitle.textContent = isDb ? 'Koleksi Basis Data' : 'Struktur Folder';
+    const treeStats    = $('#tree-summary-stats');
+    if (isGen) {
+      if (sidebarTitle) sidebarTitle.textContent = 'Arsitektur Sistem';
+      if (treeStats)    treeStats.textContent = '28 Node • 6 Kolom User Journey';
+    } else if (isDb) {
+      if (sidebarTitle) sidebarTitle.textContent = 'Koleksi Basis Data';
+      if (treeStats)    treeStats.textContent = '6 Koleksi Basis Data & Dataset';
+    } else {
+      if (sidebarTitle) sidebarTitle.textContent = 'Struktur Folder';
+      if (treeStats)    treeStats.textContent = 'Struktur Direktori Neura';
+    }
 
     // --- Actions ---
+    const actGen   = $('#sidebar-actions-gen');
     const actFiles = $('#sidebar-actions-files');
     const actDb    = $('#sidebar-actions-db');
-    if (actFiles) actFiles.style.display = isDb ? 'none' : 'flex';
-    if (actDb)    actDb.style.display    = isDb ? 'flex' : 'none';
+    if (actGen)   actGen.style.display   = isGen   ? 'flex' : 'none';
+    if (actFiles) actFiles.style.display = isFiles ? 'flex' : 'none';
+    if (actDb)    actDb.style.display    = isDb    ? 'flex' : 'none';
 
-    // --- Search placeholder ---
+    // --- Search placeholder & input value ---
     const searchInput = $('#tree-search-input');
-    if (searchInput) searchInput.placeholder = isDb ? 'Filter koleksi & field schema...' : 'Filter folder & berkas...';
+    if (searchInput) {
+      if (isGen) {
+        searchInput.placeholder = 'Filter modul & alur arsitektur...';
+        searchInput.value = currentGeneralSearch;
+      } else if (isDb) {
+        searchInput.placeholder = 'Filter koleksi & field schema...';
+      } else {
+        searchInput.placeholder = 'Filter folder & berkas...';
+      }
+    }
 
     // --- Quick chips ---
+    const chipsGen   = $('#quick-chips-gen');
     const chipsFiles = $('#quick-chips-files');
     const chipsDb    = $('#quick-chips-db');
-    if (chipsFiles) chipsFiles.style.display = isDb ? 'none' : 'flex';
-    if (chipsDb)    chipsDb.style.display    = isDb ? 'flex' : 'none';
+    if (chipsGen)   chipsGen.style.display   = isGen   ? 'flex' : 'none';
+    if (chipsFiles) chipsFiles.style.display = isFiles ? 'flex' : 'none';
+    if (chipsDb)    chipsDb.style.display    = isDb    ? 'flex' : 'none';
 
-    // --- Filter bar in topbar ---
-    const filterBarFiles = $('#filter-bar-files');
-    const filterBarDb    = $('#filter-bar-db');
-    if (filterBarFiles) filterBarFiles.style.display = isDb ? 'none' : 'flex';
-    if (filterBarDb)    filterBarDb.style.display    = isDb ? 'flex' : 'none';
-    // Reset dropdown label to "Semua" when switching modes (SVG icon stays fixed in HTML)
-    if (!isDb) {
-      const lbl = $('#filter-label-files');
-      if (lbl) lbl.textContent = 'Semua';
-      $('#filter-menu-files')?.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
-      $('#filter-menu-files')?.querySelector('.filter-option')?.classList.add('active');
+    // --- Detail card default label ---
+    const detailBadge = $('#detail-type-badge');
+    const detailName  = $('#detail-item-name');
+    const detailPath  = $('#detail-item-path');
+    if (isGen) {
+      if (detailBadge) detailBadge.textContent = 'ARSITEKTUR';
+      if (detailName)  detailName.textContent  = 'Pilih modul atau entitas';
+      if (detailPath)  detailPath.textContent  = 'Klik salah satu item untuk fokus & melihat detail di kanvas';
+    } else if (isDb) {
+      if (detailBadge) detailBadge.textContent = 'BASIS DATA';
+      if (detailName)  detailName.textContent  = 'Pilih koleksi atau dokumen';
+      if (detailPath)  detailPath.textContent  = 'Klik kartu koleksi untuk membuka Database Viewer';
     } else {
-      const lbl = $('#filter-label-db');
-      if (lbl) lbl.textContent = 'Semua Koleksi';
-      $('#filter-menu-db')?.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
-      $('#filter-menu-db')?.querySelector('.filter-option')?.classList.add('active');
-    }
-    STATE.activeFilter = 'all';
-    applyNodeFilter('all');
-
-    // --- Detail card label ---
-    const detailName = $('#detail-item-name');
-    const detailPath = $('#detail-item-path');
-    if (isDb) {
-      if (detailName) detailName.textContent = 'Pilih koleksi atau dokumen';
-      if (detailPath) detailPath.textContent = 'Klik kartu koleksi untuk membuka Database Viewer';
-    } else {
-      if (detailName) detailName.textContent = 'Pilih berkas atau folder';
-      if (detailPath) detailPath.textContent = 'Klik salah satu item untuk melihat detail & relasinya';
+      if (detailBadge) detailBadge.textContent = 'DIREKTORI';
+      if (detailName)  detailName.textContent  = 'Pilih berkas atau folder';
+      if (detailPath)  detailPath.textContent  = 'Klik salah satu item untuk melihat detail & relasinya';
     }
 
-    if (isDb) loadSidebarDatabaseCollections();
+    if (isGen) {
+      renderSidebarGeneralList();
+    } else if (isDb) {
+      loadSidebarDatabaseCollections();
+    }
   }
 
   async function loadSidebarDatabaseCollections() {
@@ -3338,31 +3908,37 @@
     const el = document.createElement('div');
 
     // Decide card class based on kind
-    const isFile = node.kind === 'file' || node.kind === 'llm' || node.kind === 'csv';
-    el.className = `${isFile ? 'file-card' : 'canvas-node'} ${node.borderVariant || 'card-border-neutral'} general-card`;
+    const isFile = node.kind === 'file' || node.kind === 'llm' || node.kind === 'csv' || node.kind === 'report' || node.kind === 'livekit' || node.kind === 'voice' || node.kind === 'auth' || node.kind === 'gate' || node.kind === 'input' || node.kind === 'engine';
+    const isNodeDisabled = (node.enabled === false);
+    el.className = `${isFile ? 'file-card' : 'canvas-node'} ${node.borderVariant || 'card-border-neutral'} general-card ${isNodeDisabled ? 'is-disabled' : ''}`;
     el.id        = node.id;
     el.style.left = `${node.x}px`;
     el.style.top  = `${node.y}px`;
-    if (node.kind === 'page') el.dataset.nodeKind = 'page';
-    if (node.kind === 'llm')  el.dataset.nodeKind = 'llm';
-    if (node.kind === 'csv')  el.dataset.nodeKind = 'csv';
-    if (node.kind === 'db')   el.dataset.nodeKind = 'db';
+    el.dataset.nodeKind = node.kind;
 
     const iconHtml  = getNodeSvgIcon(node.iconType || 'folder');
     const portsHtml = renderPortsHtml(node);
 
     // Build category + badge chips
     let badgeHtml = '';
-    if (node.kind === 'page')   badgeHtml = '<span class="gcard-badge gcard-badge-page">PAGE</span>';
-    else if (node.kind === 'llm') badgeHtml = '<span class="gcard-badge gcard-badge-llm">LLM</span>';
-    else if (node.kind === 'csv') badgeHtml = '<span class="gcard-badge gcard-badge-csv">CSV</span>';
-    else if (node.kind === 'db')  badgeHtml = '<span class="gcard-badge gcard-badge-db">DB</span>';
+    if (node.kind === 'page')       badgeHtml = '<span class="gcard-badge gcard-badge-page">WEB</span>';
+    else if (node.kind === 'auth')    badgeHtml = '<span class="gcard-badge gcard-badge-auth">AUTH</span>';
+    else if (node.kind === 'gate')    badgeHtml = '<span class="gcard-badge gcard-badge-gate">GUARD</span>';
+    else if (node.kind === 'dash')    badgeHtml = '<span class="gcard-badge gcard-badge-dash">DASHBOARD</span>';
+    else if (node.kind === 'input')   badgeHtml = '<span class="gcard-badge gcard-badge-input">INPUT</span>';
+    else if (node.kind === 'engine')  badgeHtml = '<span class="gcard-badge gcard-badge-engine">ENGINE</span>';
+    else if (node.kind === 'llm')     badgeHtml = '<span class="gcard-badge gcard-badge-llm">LLM</span>';
+    else if (node.kind === 'csv')     badgeHtml = '<span class="gcard-badge gcard-badge-csv">CSV</span>';
+    else if (node.kind === 'database')badgeHtml = '<span class="gcard-badge gcard-badge-db">DB</span>';
+    else if (node.kind === 'report')  badgeHtml = '<span class="gcard-badge gcard-badge-report">REPORT</span>';
+    else if (node.kind === 'livekit') badgeHtml = '<span class="gcard-badge gcard-badge-livekit">WEBRTC</span>';
+    else if (node.kind === 'voice')   badgeHtml = '<span class="gcard-badge gcard-badge-voice">VOICE</span>';
 
-    // Minimalist page preview thumbnail positioned right above the card
+    // Preview widgets
     let previewHtml = '';
-    if (node.kind === 'page' && node.previewImage) {
+    if ((node.kind === 'page' || node.kind === 'dash') && node.previewImage) {
       previewHtml = `
-        <div class="gcard-page-preview-top" data-target-url="${node.routeUrl || '#'}" title="Klik untuk membuka/pratinjau ${escapeHtml(node.title)}">
+        <div class="gcard-page-preview-top" data-target-url="${node.routeUrl || '#'}" title="Klik untuk membuka ${escapeHtml(node.title)}">
           <div class="gcard-preview-header-mini">
             <div class="gcard-preview-dots">
               <span class="preview-dot dot-red"></span>
@@ -3383,59 +3959,280 @@
           </div>
         </div>
       `;
+    } else if (node.kind === 'auth' && node.subKind === 'login') {
+      previewHtml = `
+        <div class="gcard-auth-preview-top">
+          <div class="gcard-preview-header-mini">
+            <div class="gcard-preview-dots">
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
+              <span class="preview-dot dot-green"></span>
+            </div>
+            <span class="gcard-preview-path">modal / auth_login</span>
+            <span class="gcard-auth-status-pill">LOGIN</span>
+          </div>
+          <div class="gcard-auth-body">
+            <div class="auth-role-tabs-mini">
+              <span class="auth-tab-pill active">Pasien</span>
+              <span class="auth-tab-pill">Nakes</span>
+              <span class="auth-tab-pill">Admin</span>
+            </div>
+            <div class="auth-field-sim">
+              <span class="auth-field-lbl">Email:</span>
+              <span class="auth-field-val">pasien@neura.dr.id</span>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (node.kind === 'auth' && node.subKind === 'otp') {
+      previewHtml = `
+        <div class="gcard-auth-preview-top">
+          <div class="gcard-preview-header-mini">
+            <div class="gcard-preview-dots">
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
+              <span class="preview-dot dot-green"></span>
+            </div>
+            <span class="gcard-preview-path">security / otp_challenge</span>
+            <span class="gcard-auth-status-pill">5:00</span>
+          </div>
+          <div class="gcard-auth-body">
+            <div class="otp-boxes-mini">
+              <span class="otp-box-digit filled">•</span>
+              <span class="otp-box-digit filled">•</span>
+              <span class="otp-box-digit filled">•</span>
+              <span class="otp-box-digit filled">•</span>
+              <span class="otp-box-digit filled">•</span>
+              <span class="otp-box-digit filled">•</span>
+            </div>
+            <div class="otp-sub-hint">6-Digit via SMTP Email Guard</div>
+          </div>
+        </div>
+      `;
+    } else if (node.kind === 'gate' && node.subKind === 'role-check') {
+      previewHtml = `
+        <div class="gcard-auth-preview-top">
+          <div class="gcard-preview-header-mini">
+            <div class="gcard-preview-dots">
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
+              <span class="preview-dot dot-green"></span>
+            </div>
+            <span class="gcard-preview-path">middleware / rbac_router</span>
+            <span class="gcard-auth-status-pill guard">RBAC</span>
+          </div>
+          <div class="gcard-auth-body">
+            <div class="rbac-branch-pills">
+              <span class="rbac-pill user">/app</span>
+              <span class="rbac-pill nakes">/app#telemed</span>
+              <span class="rbac-pill admin">/app#admin</span>
+            </div>
+          </div>
+        </div>
+      `;
     } else if (node.kind === 'llm') {
-      // Minimalist LLM streaming dialogue & engine preview positioned right above the card
+      // Minimalist Neura Theme LLM Card Preview: Models, Readiness, & Hardware Architecture
       const modelFile = node.modelFile || 'gemma-2-2b-it-q4_k_m.gguf';
       const quant = node.quantization || 'Q4_K_M';
       const speed = node.speed || '24 tok/s';
       const backend = node.backend || 'CPU Engine';
+
       previewHtml = `
         <div class="gcard-llm-preview-top" title="Klik untuk membuka sesi konsultasi Neura Clinical LLM">
           <div class="gcard-preview-header-mini gcard-llm-header">
             <div class="gcard-preview-dots">
-              <span class="preview-dot dot-purple"></span>
-              <span class="preview-dot dot-cyan"></span>
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
               <span class="preview-dot dot-green"></span>
             </div>
-            <span class="gcard-preview-path" id="gcard-llm-active-filename" title="${escapeHtml(modelFile)}">modelsLLM / ${escapeHtml(modelFile)}</span>
-            <span class="gcard-llm-quant-badge" id="gcard-llm-quant-badge">${escapeHtml(quant)}</span>
+            <span class="gcard-preview-path" title="Runtime modelsLLM">modelsLLM / runtime</span>
+            <span class="gcard-llm-ready-pill ready" id="gcard-llm-ready-pill">
+              <span class="ready-dot-pulse"></span> READY
+            </span>
           </div>
+
           <div class="gcard-llm-body">
-            <div class="gcard-llm-models-row" id="gcard-llm-models-row">
-              <span class="gcard-llm-model-pill active" title="Model Aktif: Gemma 2 2B Instruct (1.63 GB)">
-                <span class="model-status-dot"></span> Gemma 2 2B (Aktif)
+            <div class="gcard-llm-section-label">
+              <span>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                DAFTAR MODEL (modelsLLM)
               </span>
-              <span class="gcard-llm-model-pill" title="Model Tersedia: Llama 3.2 1B Instruct (770 MB)">
-                <span class="model-status-dot"></span> Llama 3.2 1B
-              </span>
+              <span class="llm-sec-badge" id="gcard-llm-count-badge">2 MODEL</span>
             </div>
-            <div class="gcard-llm-chat-snippet">
-              <div class="gcard-llm-bubble user">
-                <span class="llm-bubble-sender">Dokter:</span> Pasien MMSE 21, nWBV 0.72. Rekomendasi klinis?
+            <div class="gcard-llm-models-container" id="gcard-llm-models-container">
+              <div class="gcard-llm-model-row active" title="gemma-2-2b-it-q4_k_m.gguf">
+                <div class="llm-row-left">
+                  <span class="llm-model-status-bullet active"></span>
+                  <div class="llm-row-details">
+                    <span class="llm-model-name-title">Gemma 2 2B</span>
+                    <span class="llm-model-filename">gemma-2-2b-it-q4_k_m.gguf</span>
+                  </div>
+                </div>
+                <div class="llm-row-badges">
+                  <span class="llm-badge-size">1.63 GB</span>
+                  <span class="llm-badge-quant">Q4_K_M</span>
+                  <span class="llm-badge-status active">AKTIF</span>
+                </div>
               </div>
-              <div class="gcard-llm-bubble ai">
-                <span class="llm-bubble-sender" id="gcard-llm-sender-label">Gemma 2:</span> Indikasi awal Mild Cognitive Impairment. Disarankan evaluasi eTIV &amp; konfirmasi MRI.
-                <span class="llm-cursor-blink"></span>
+
+              <div class="gcard-llm-model-row" title="llama-3.2-1b-instruct-q4_k_m.gguf">
+                <div class="llm-row-left">
+                  <span class="llm-model-status-bullet idle"></span>
+                  <div class="llm-row-details">
+                    <span class="llm-model-name-title">Llama 3.2 1B</span>
+                    <span class="llm-model-filename">llama-3.2-1b-instruct-q4_k_m.gguf</span>
+                  </div>
+                </div>
+                <div class="llm-row-badges">
+                  <span class="llm-badge-size">770 MB</span>
+                  <span class="llm-badge-quant">Q4_K_M</span>
+                  <span class="llm-badge-status standby">STANDBY</span>
+                </div>
               </div>
             </div>
+
+            <div class="gcard-llm-info-grid">
+              <div class="gcard-llm-info-card">
+                <div class="llm-card-hdr">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>STATUS RENDER</span>
+                </div>
+                <div class="llm-card-val text-green" id="gcard-llm-render-val">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Ready (Siap Inferensi)</span>
+                </div>
+                <div class="llm-card-sub" id="gcard-llm-render-sub">State: Idle • 4096 Context</div>
+              </div>
+
+              <div class="gcard-llm-info-card">
+                <div class="llm-card-hdr">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+                  <span>AKSELERATOR ENGINE</span>
+                </div>
+                <div class="llm-card-val" id="gcard-llm-hw-val">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+                  <span style="color:#38BDF8">CPU (Direct RAM)</span>
+                </div>
+                <div class="llm-card-sub" id="gcard-llm-hw-sub">0 GPU Layers • ~24 tok/s</div>
+              </div>
+            </div>
+
             <div class="gcard-llm-footer-bar">
               <div class="gcard-llm-meta">
                 <span class="llm-meta-item">
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                  ${escapeHtml(speed)}
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v20M18 2v20M6 6h12M6 18h12M6 12h12"/></svg>
+                  RAM: 1.63 GB
                 </span>
-                <span class="llm-meta-item">${escapeHtml(backend)}</span>
+                <span class="llm-meta-sep">•</span>
+                <span class="llm-meta-item">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  GGUF Bridge
+                </span>
               </div>
               <span class="gcard-preview-zoom-btn llm-launch-btn">
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 Buka Chat
               </span>
             </div>
           </div>
         </div>
       `;
+    } else if (node.kind === 'report') {
+      previewHtml = `
+        <div class="gcard-report-preview-top" title="Hasil Evaluasi Diagnostik CDR & Rekomendasi Klinis">
+          <div class="gcard-preview-header-mini gcard-report-header">
+            <div class="gcard-preview-dots">
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
+              <span class="preview-dot dot-green"></span>
+            </div>
+            <span class="gcard-preview-path">export / clinical_summary.pdf</span>
+            <span class="gcard-report-status-pill">READY (PDF)</span>
+          </div>
+          <div class="gcard-report-body">
+            <div class="gcard-report-kpi-row">
+              <div class="report-kpi-box">
+                <span class="report-kpi-lbl">ESTIMASI CDR</span>
+                <span class="report-kpi-val text-amber">0.5 <small>(MCI)</small></span>
+              </div>
+              <div class="report-kpi-box">
+                <span class="report-kpi-lbl">KOGNITIF MMSE</span>
+                <span class="report-kpi-val text-cyan">21 <small>/ 30</small></span>
+              </div>
+              <div class="report-kpi-box">
+                <span class="report-kpi-lbl">VOLUMETRIK nWBV</span>
+                <span class="report-kpi-val text-purple">0.72 <small>cm³</small></span>
+              </div>
+            </div>
+            <div class="gcard-report-snippet">
+              <span class="report-diag-tag">DIAGNOSA:</span>
+              <span class="report-diag-text">Mild Cognitive Impairment risiko progresi demensia dini. Rekomendasi verifikasi MRI.</span>
+            </div>
+            <div class="gcard-report-footer">
+              <span class="report-meta">Terverifikasi 35 Param</span>
+              <span class="report-download-btn">Unduh PDF</span>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (node.kind === 'livekit') {
+      previewHtml = `
+        <div class="gcard-livekit-preview-top" title="Koneksi Ruang Telekonsultasi LiveKit Terenkripsi">
+          <div class="gcard-preview-header-mini gcard-livekit-header">
+            <div class="gcard-preview-dots">
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
+              <span class="preview-dot dot-green"></span>
+            </div>
+            <span class="gcard-preview-path">webrtc / room_gateway</span>
+            <span class="gcard-livekit-pill online"><span class="ready-dot-pulse"></span> E2EE ONLINE</span>
+          </div>
+          <div class="gcard-livekit-body">
+            <div class="livekit-stats-grid">
+              <div class="livekit-stat-item">
+                <span class="livekit-stat-lbl">PROTOCOL</span>
+                <span class="livekit-stat-val text-teal">WebRTC DTLS/SRTP</span>
+              </div>
+              <div class="livekit-stat-item">
+                <span class="livekit-stat-lbl">LATENCY</span>
+                <span class="livekit-stat-val text-green">18 ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (node.kind === 'voice') {
+      previewHtml = `
+        <div class="gcard-voice-preview-top" title="Fitur Akustik Suara untuk Skrining Tremor & Fonetik">
+          <div class="gcard-preview-header-mini gcard-voice-header">
+            <div class="gcard-preview-dots">
+              <span class="preview-dot dot-red"></span>
+              <span class="preview-dot dot-yellow"></span>
+              <span class="preview-dot dot-green"></span>
+            </div>
+            <span class="gcard-preview-path">features / voice_dataset.json</span>
+            <span class="gcard-voice-pill">12 FITUR</span>
+          </div>
+          <div class="gcard-voice-body">
+            <div class="voice-waveform-preview">
+              <span class="voice-wave-bar h-3"></span>
+              <span class="voice-wave-bar h-8"></span>
+              <span class="voice-wave-bar h-12"></span>
+              <span class="voice-wave-bar h-6"></span>
+              <span class="voice-wave-bar h-14"></span>
+              <span class="voice-wave-bar h-9"></span>
+              <span class="voice-wave-bar h-5"></span>
+              <span class="voice-wave-bar h-10"></span>
+            </div>
+            <div class="voice-metrics-row">
+              <span class="voice-chip">Jitter 0.42%</span>
+              <span class="voice-chip">Shimmer 1.8%</span>
+              <span class="voice-chip">HNR 22.4dB</span>
+            </div>
+          </div>
+        </div>
+      `;
     }
-
     el.innerHTML = `
       ${previewHtml}
       <div class="card-icon-slot">${iconHtml}</div>
@@ -3445,7 +4242,13 @@
         <div class="card-title-main" title="${node.path || node.title}">${node.title}</div>
       </div>
       <div class="file-card-meta-slot">
-        ${badgeHtml}
+        ${node.isCustom ? '<span class="sgen-badge" style="background:rgba(6,182,212,0.2);color:#06b6d4;border:1px solid #06b6d4;font-size:0.65rem;font-weight:700;margin-right:4px;">BARU</span>' : ''}
+        ${node.enabled === false ? '<span class="node-card-badge-disabled">⏸️ OFF</span>' : badgeHtml}
+        ${(node.routeUrl || node.isCustom || node.kind === 'page' || node.kind === 'dash') ? `
+          <button class="card-toggle-power ${node.enabled !== false ? 'power-on' : 'power-off'}" data-card-power="${node.slug || node.id}" title="${node.enabled !== false ? 'Klik untuk nonaktifkan modul' : 'Klik untuk aktifkan modul'}">
+            ${node.enabled !== false ? '⏻ ON' : '⏻ OFF'}
+          </button>
+        ` : ''}
       </div>
       ${portsHtml}
     `;
@@ -3459,21 +4262,91 @@
       });
     }
 
+    // Power toggle button click handler on card
+    const cardPowerBtn = el.querySelector('[data-card-power]');
+    if (cardPowerBtn) {
+      cardPowerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const slug = node.slug || node.id.replace(/^page-/, '');
+        const currentEnabled = (node.enabled !== false);
+        if (window.togglePageStatus) {
+          window.togglePageStatus(slug, !currentEnabled);
+        }
+      });
+    }
+
     // Click handler for opening chat session if LLM preview is clicked
-    // Dynamic sync with backend LLM status
+    // Dynamic sync with backend LLM status (/api/features/llm-status)
     if (node.kind === 'llm') {
       try {
         fetch('/api/features/llm-status')
           .then(r => r.json())
           .then(data => {
             if (!data) return;
-            const activeModel = (data.available_models || []).find(m => m.active) || 
-                                (data.model_name ? { filename: data.model_name, display_name: data.architecture || data.model_name } : null);
-            if (activeModel) {
-              const fileEl = el.querySelector('#gcard-llm-active-filename');
-              if (fileEl) fileEl.textContent = `modelsLLM / ${activeModel.filename}`;
-              const senderEl = el.querySelector('#gcard-llm-sender-label');
-              if (senderEl) senderEl.textContent = (activeModel.display_name ? activeModel.display_name.split(' ')[0] : 'Gemma') + ':';
+
+            // 1. Update Ready Badge & Render State
+            const readyPill = el.querySelector('#gcard-llm-ready-pill');
+            const renderVal = el.querySelector('#gcard-llm-render-val');
+            const renderSub = el.querySelector('#gcard-llm-render-sub');
+            if (readyPill && renderVal) {
+              if (data.ready) {
+                readyPill.className = 'gcard-llm-ready-pill ready';
+                readyPill.innerHTML = '<span class="ready-dot-pulse"></span> READY';
+                renderVal.className = 'llm-card-val text-green';
+                renderVal.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Ready (Siap Inferensi)</span>`;
+              } else {
+                readyPill.className = 'gcard-llm-ready-pill not-ready';
+                readyPill.innerHTML = '<span class="ready-dot-pulse stopped"></span> NOT READY';
+                renderVal.className = 'llm-card-val text-muted';
+                renderVal.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>Belum Siap</span>`;
+              }
+            }
+            if (renderSub) {
+              const st = (data.state || 'idle').toUpperCase();
+              renderSub.textContent = `State: ${st} • 4096 Context`;
+            }
+
+            // 2. Update CPU or GPU Hardware Acceleration (Themed SVG Icons, No Raw Emojis)
+            const hwVal = el.querySelector('#gcard-llm-hw-val');
+            const hwSub = el.querySelector('#gcard-llm-hw-sub');
+            if (data.device && hwVal && hwSub) {
+              const backend = (data.device.gpu_backend || 'cpu').toUpperCase();
+              const isGpu = backend !== 'CPU' && data.device.n_gpu_layers > 0;
+              if (isGpu) {
+                hwVal.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#C084FC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg><span style="color:#C084FC">GPU (${escapeHtml(backend)})</span>`;
+                hwSub.textContent = `${data.device.n_gpu_layers} Layers • ${data.device.vram_mb || 0} MB`;
+              } else {
+                hwVal.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg><span style="color:#38BDF8">CPU (Direct RAM)</span>`;
+                hwSub.textContent = '0 GPU Layers • ~24 tok/s';
+              }
+            }
+
+            // 3. Update Available Models List
+            const modelsCont = el.querySelector('#gcard-llm-models-container');
+            const countBadge = el.querySelector('#gcard-llm-count-badge');
+            if (modelsCont && data.available_models && data.available_models.length) {
+              if (countBadge) countBadge.textContent = `${data.available_models.length} MODEL`;
+              modelsCont.innerHTML = data.available_models.map(m => {
+                const isAct = !!m.active;
+                const sizeStr = m.size_mb ? (m.size_mb > 1000 ? (m.size_mb/1024).toFixed(2) + ' GB' : m.size_mb.toFixed(0) + ' MB') : '—';
+                const nameStr = m.display_name || m.filename.replace(/\.[^/.]+$/, '');
+                return `
+                  <div class="gcard-llm-model-row ${isAct ? 'active' : ''}" title="${escapeHtml(m.filename)}">
+                    <div class="llm-row-left">
+                      <span class="llm-model-status-bullet ${isAct ? 'active' : 'idle'}"></span>
+                      <div class="llm-row-details">
+                        <span class="llm-model-name-title">${escapeHtml(nameStr)}</span>
+                        <span class="llm-model-filename">${escapeHtml(m.filename)}</span>
+                      </div>
+                    </div>
+                    <div class="llm-row-badges">
+                      <span class="llm-badge-size">${sizeStr}</span>
+                      <span class="llm-badge-quant">Q4_K_M</span>
+                      <span class="llm-badge-status ${isAct ? 'active' : 'standby'}">${isAct ? 'AKTIF' : 'STANDBY'}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('');
             }
           })
           .catch(() => {});
@@ -3514,6 +4387,9 @@
     STATE.canvasView = 'general';
     STATE.explorerMode = false;
     STATE.databaseMode = false;
+    document.body.dataset.canvasView = 'general';
+    const cContainer = $('#canvas-container');
+    if (cContainer) cContainer.dataset.canvasView = 'general';
     closeAllTopbarDropdowns();
 
     try {
@@ -3556,13 +4432,23 @@
     STATE.nodes.forEach(node => renderGeneralCard(node));
     renderAllConnections();
 
-    // Hide breadcrumb
-    if (canvasBreadcrumb) canvasBreadcrumb.style.display = 'none';
+    // Strictly hide & clear breadcrumb & general interactive bar (General Canvas stays clean)
+    if (canvasBreadcrumb) {
+      canvasBreadcrumb.style.setProperty('display', 'none', 'important');
+      canvasBreadcrumb.innerHTML = '';
+    }
+    const genBar = $('#general-interactive-bar');
+    if (genBar) genBar.style.setProperty('display', 'none', 'important');
+    const btnReopenGen = $('#btn-reopen-general-bar');
+    if (btnReopenGen) btnReopenGen.style.display = 'none';
 
     // Update status bar
-    if (statusSyncText) statusSyncText.textContent = 'Topologi Sistem Neura: 5 Kolom End-to-End';
+    if (statusSyncText) statusSyncText.textContent = 'Topologi 7-Tahap User Journey: 28 Node Terstruktur & Bebas Tumpang Tindih';
     if (nodeCountEl) nodeCountEl.textContent = `${GENERAL_NODES.length} Entitas`;
     if (relCountEl) relCountEl.textContent = `${GENERAL_CONNECTIONS.length} Jalur Jaringan`;
+
+    // Switch sidebar tab to general architecture
+    switchSidebarTab('general');
 
     // Apply default filter
     applyNodeFilter('all');
@@ -3576,6 +4462,25 @@
 
   async function switchCanvasView(viewName, extraPath = []) {
     STATE.canvasView = viewName;
+    document.body.dataset.canvasView = viewName;
+    const cContainer = $('#canvas-container');
+    if (cContainer) cContainer.dataset.canvasView = viewName;
+
+    // Sync toolbar / breadcrumb visibility
+    const genBar = $('#general-interactive-bar');
+    const btnReopenGen = $('#btn-reopen-general-bar');
+    if (viewName === 'general') {
+      if (canvasBreadcrumb) {
+        canvasBreadcrumb.style.setProperty('display', 'none', 'important');
+        canvasBreadcrumb.innerHTML = '';
+      }
+      if (genBar) genBar.style.setProperty('display', 'none', 'important');
+      if (btnReopenGen) btnReopenGen.style.display = 'none';
+    } else {
+      if (genBar) genBar.style.setProperty('display', 'none', 'important');
+      if (btnReopenGen) btnReopenGen.style.display = 'none';
+      if (canvasBreadcrumb) canvasBreadcrumb.style.display = 'flex';
+    }
     try {
       localStorage.setItem('neura_active_canvas', viewName);
       const url = new URL(window.location);
@@ -4388,6 +5293,17 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         renderAllConnections();
       }
 
+      STATE.canvasView = 'explorer';
+      document.body.dataset.canvasView = 'explorer';
+      const cContainer = $('#canvas-container');
+      if (cContainer) cContainer.dataset.canvasView = 'explorer';
+
+      // Strictly hide General Interactive Bar & Reopen Button
+      const genBar = $('#general-interactive-bar');
+      if (genBar) genBar.style.setProperty('display', 'none', 'important');
+      const btnReopenGen = $('#btn-reopen-general-bar');
+      if (btnReopenGen) btnReopenGen.style.display = 'none';
+
       // Render breadcrumb navigation
       renderBreadcrumb();
 
@@ -4411,6 +5327,9 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       if (fBarGen) fBarGen.style.display = 'none';
       if (fBarFiles) fBarFiles.style.display = 'flex';
       if (fBarDb) fBarDb.style.display = 'none';
+
+      // Switch sidebar tab to files
+      switchSidebarTab('files');
 
       // Update status bar
       const pathStr = cleanPath.length ? `/${cleanPath.join('/')}` : '/ (Root Proyek)';
@@ -4680,18 +5599,56 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       switchSidebarTab('database');
     });
 
+    // --- General Sidebar Action Buttons ---
+    $('#btn-gen-expand-all')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      $('.sidebar-stage-group').forEach(g => g.classList.remove('collapsed'));
+    });
+    $('#btn-gen-collapse-all')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      $('.sidebar-stage-group').forEach(g => g.classList.add('collapsed'));
+    });
+    $('#btn-gen-fit-view')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      fitView(true);
+    });
+
+    // --- General Sidebar Quick Filter Chips ---
+    $('#quick-chips-gen .quick-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#quick-chips-gen .quick-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const f = chip.dataset.genFilter || 'all';
+        renderSidebarGeneralList(f, searchInput ? searchInput.value : '');
+      });
+    });
+
     const searchInput = $('#tree-search-input');
     const searchClear = $('#tree-search-clear');
     searchInput?.addEventListener('input', (e) => {
       const q = e.target.value.trim();
       if (searchClear) searchClear.style.display = q ? 'flex' : 'none';
-      filterTree(q);
+      if (STATE.canvasView === 'general') {
+        renderSidebarGeneralList(currentGeneralFilter, q);
+      } else if (STATE.databaseMode) {
+        filterDatabaseSidebar(q);
+      } else {
+        filterTree(q);
+      }
     });
     searchClear?.addEventListener('click', (e) => {
       e.preventDefault();
       if (searchInput) searchInput.value = '';
       if (searchClear) searchClear.style.display = 'none';
-      filterTree('');
+      if (STATE.canvasView === 'general') {
+        renderSidebarGeneralList(currentGeneralFilter, '');
+      } else if (STATE.databaseMode) {
+        filterDatabaseSidebar('');
+      } else {
+        filterTree('');
+      }
     });
 
     $$('.quick-chip').forEach(chip => {
@@ -5517,3 +6474,220 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
 
 
 
+
+  /* =====================================================================
+     INTERACTIVE FLOW TRACER & FLOW FILTER ENGINE (General Canvas)
+     ===================================================================== */
+  let activeSimulationTimer = null;
+
+  function initGeneralInteractiveBar() {
+    const bar = $('#general-interactive-bar');
+    const btnReopenBar = $('#btn-reopen-general-bar');
+    if (!bar) return;
+    bar.style.setProperty('display', 'none', 'important');
+    if (btnReopenBar) btnReopenBar.style.display = 'none';
+
+    // Toggle & Reopen handlers
+    const btnToggleBar = $('#btn-toggle-general-bar');
+    if (btnToggleBar) {
+      btnToggleBar.onclick = (e) => {
+        e.stopPropagation();
+        localStorage.setItem('neura_hide_general_bar', 'true');
+        bar.style.display = 'none';
+        if (btnReopenBar) btnReopenBar.style.display = 'inline-flex';
+      };
+    }
+    if (btnReopenBar) {
+      btnReopenBar.onclick = (e) => {
+        e.stopPropagation();
+        localStorage.setItem('neura_hide_general_bar', 'false');
+        bar.style.display = 'flex';
+        btnReopenBar.style.display = 'none';
+      };
+    }
+
+    // 1. Flow Filter Pills
+    $$('.gen-flow-pill').forEach(pill => {
+      pill.onclick = () => {
+        $$('.gen-flow-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const flowCategory = pill.dataset.flow || 'all';
+        applyFlowFilter(flowCategory);
+      };
+    });
+
+    // 2. Simulation Triggers
+    const btnSimOnboarding = $('#btn-trace-onboarding');
+    const btnSimScreening = $('#btn-trace-screening');
+    const btnSimTelemed = $('#btn-trace-telemed');
+    const btnSimReset = $('#btn-trace-reset');
+
+    if (btnSimOnboarding) {
+      btnSimOnboarding.onclick = () => runFlowSimulation('onboarding');
+    }
+    if (btnSimScreening) {
+      btnSimScreening.onclick = () => runFlowSimulation('screening');
+    }
+    if (btnSimTelemed) {
+      btnSimTelemed.onclick = () => runFlowSimulation('telemed');
+    }
+    if (btnSimReset) {
+      btnSimReset.onclick = () => resetFlowSimulation();
+    }
+  }
+
+  function applyFlowFilter(category) {
+    resetFlowSimulation(false);
+
+    const paths = $$('.connection-path');
+    const cards = $$('.general-card');
+
+    if (category === 'all') {
+      paths.forEach(p => { p.classList.remove('flow-dimmed', 'flow-active'); });
+      cards.forEach(c => { c.classList.remove('flow-dimmed', 'flow-focused'); });
+      if (statusSyncText) statusSyncText.textContent = 'Topologi 7-Tahap User Journey: 28 Node Terstruktur & Bebas Tumpang Tindih';
+      return;
+    }
+
+    const activeConnIndices = [];
+    const activeNodeIds = new Set();
+
+    STATE.connections.forEach(([src, dst, type, lbl, cat], idx) => {
+      if (cat === category || category === 'all') {
+        activeConnIndices.push(idx);
+        activeNodeIds.add(src);
+        activeNodeIds.add(dst);
+      }
+    });
+
+    paths.forEach(p => {
+      const idx = parseInt(p.dataset.idx, 10);
+      if (activeConnIndices.includes(idx)) {
+        p.classList.remove('flow-dimmed');
+        p.classList.add('flow-active');
+      } else {
+        p.classList.add('flow-dimmed');
+        p.classList.remove('flow-active');
+      }
+    });
+
+    cards.forEach(c => {
+      if (activeNodeIds.has(c.id)) {
+        c.classList.remove('flow-dimmed');
+        c.classList.add('flow-focused');
+      } else {
+        c.classList.add('flow-dimmed');
+        c.classList.remove('flow-focused');
+      }
+    });
+
+    const catLabels = {
+      onboarding: 'Alur Onboarding & Verifikasi OTP / STR Dokter',
+      screening: 'Alur Skrining AI Pasien & Ekstraksi Biomarker',
+      telemed: 'Alur Telekonsultasi LiveKit Dokter & Resep',
+      research: 'Alur Riset Manuskrip & Publikasi Ilmiah',
+      governance: 'Alur Tata Kelola RBAC, Token Sesi & Audit Log'
+    };
+    if (statusSyncText) statusSyncText.textContent = catLabels[category] || 'Filter Alur Aktif';
+  }
+
+  function runFlowSimulation(scenario) {
+    resetFlowSimulation(false);
+
+    const btnReset = $('#btn-trace-reset');
+    if (btnReset) btnReset.style.display = 'inline-flex';
+
+    let sequence = [];
+    if (scenario === 'onboarding') {
+      sequence = [
+        { nodes: ['page-welcome'], conns: ['page-welcome->auth-register'], msg: '1. Pengguna membuka modal pendaftaran di welcome.html...' },
+        { nodes: ['auth-register'], conns: ['auth-register->auth-profile', 'auth-register->auth-otp'], msg: '2. Pengisian identitas & pengiriman 6-digit kode OTP...' },
+        { nodes: ['auth-otp', 'auth-profile'], conns: ['auth-otp->gate-email-verify', 'auth-profile->gate-license-check'], msg: '3. Verifikasi kode OTP email & validasi STR konsil kedokteran...' },
+        { nodes: ['gate-email-verify', 'gate-license-check'], conns: ['auth-profile->db-users'], msg: '4. Profil kredensial terverifikasi tersimpan di Firestore: users!' }
+      ];
+    } else if (scenario === 'screening') {
+      sequence = [
+        { nodes: ['page-welcome'], conns: ['page-welcome->auth-login'], msg: '1. Pasien login melalui portal autentikasi...' },
+        { nodes: ['auth-login'], conns: ['auth-login->gate-auth-check'], msg: '2. Validasi kredensial & session token guard...' },
+        { nodes: ['gate-auth-check', 'gate-role-check'], conns: ['gate-auth-check->gate-role-check', 'gate-role-check->dash-user'], msg: '3. RBAC Router mengarahkan sesi pasien ke index.html...' },
+        { nodes: ['dash-user'], conns: ['dash-user->input-biomarkers', 'dash-user->input-voice'], msg: '4. Pasien mengisi 35 biomarker & merekam suara kognitif...' },
+        { nodes: ['input-biomarkers', 'input-voice'], conns: ['input-biomarkers->engine-biomarker-pipe', 'input-voice->engine-voice-pipe'], msg: '5. Ekstraksi tremor akustik & normalisasi tensor...' },
+        { nodes: ['engine-biomarker-pipe', 'engine-voice-pipe'], conns: ['engine-biomarker-pipe->engine-ml-alzheimer', 'engine-voice-pipe->engine-ml-alzheimer'], msg: '6. Ensemble PyTorch menghitung probabilitas skor CDR...' },
+        { nodes: ['engine-ml-alzheimer'], conns: ['engine-ml-alzheimer->engine-report-sink', 'engine-ml-alzheimer->db-predictions'], msg: '7. Laporan klinis PDF terbit & riwayat tersimpan di Firestore!' }
+      ];
+    } else if (scenario === 'telemed') {
+      sequence = [
+        { nodes: ['dash-user', 'dash-nakes'], conns: ['dash-user->engine-livekit-rtc', 'dash-nakes->engine-livekit-rtc'], msg: '1. Pasien dan dokter spesialis masuk ruang WebRTC LiveKit...' },
+        { nodes: ['engine-livekit-rtc'], conns: ['engine-livekit-rtc->db-consultations'], msg: '2. Enkripsi E2EE DTLS/SRTP aktif, audio-video latency 18ms...' },
+        { nodes: ['dash-nakes'], conns: ['dash-nakes->engine-llm-clinical'], msg: '3. Dokter berkonsultasi dengan LLM Clinical Reasoning...' },
+        { nodes: ['engine-llm-clinical'], conns: ['engine-llm-clinical->engine-report-sink'], msg: '4. Penerbitan ringkasan konsultasi & e-prescription!' }
+      ];
+    }
+
+    let step = 0;
+    function nextStep() {
+      if (step >= sequence.length) {
+        if (statusSyncText) statusSyncText.textContent = 'Simulasi Selesai: Seluruh alur lifecycle berhasil dijalankan!';
+        setTimeout(() => { resetFlowSimulation(); }, 4000);
+        return;
+      }
+
+      const cur = sequence[step];
+      if (statusSyncText) statusSyncText.textContent = cur.msg;
+
+      $$('.general-card').forEach(c => {
+        if (cur.nodes.includes(c.id)) {
+          c.classList.add('sim-pulse-active');
+        } else {
+          c.classList.remove('sim-pulse-active');
+        }
+      });
+
+      $$('.connection-path').forEach(p => {
+        p.classList.remove('sim-path-active');
+      });
+
+      cur.conns.forEach(pair => {
+        const [src, dst] = pair.split('->');
+        const pathEl = pathsGroup.querySelector(`[data-src="${src}"][data-dst="${dst}"]`);
+        if (pathEl) {
+          pathEl.classList.add('sim-path-active');
+        }
+      });
+
+      step++;
+      activeSimulationTimer = setTimeout(nextStep, 1700);
+    }
+
+    nextStep();
+  }
+
+  function resetFlowSimulation(resetFilter = true) {
+    if (activeSimulationTimer) {
+      clearTimeout(activeSimulationTimer);
+      activeSimulationTimer = null;
+    }
+
+    const btnReset = $('#btn-trace-reset');
+    if (btnReset) btnReset.style.display = 'none';
+
+    $$('.general-card').forEach(c => {
+      c.classList.remove('sim-pulse-active', 'flow-dimmed', 'flow-focused');
+    });
+
+    $$('.connection-path').forEach(p => {
+      p.classList.remove('sim-path-active', 'flow-dimmed', 'flow-active');
+    });
+
+    if (resetFilter) {
+      $$('.gen-flow-pill').forEach((p, idx) => {
+        p.classList.toggle('active', idx === 0);
+      });
+      if (statusSyncText) statusSyncText.textContent = 'Topologi 7-Tahap User Journey: 28 Node Terstruktur & Bebas Tumpang Tindih';
+    }
+  }
+
+  window.initGeneralInteractiveBar = initGeneralInteractiveBar;
+  window.applyFlowFilter = applyFlowFilter;
+  window.runFlowSimulation = runFlowSimulation;
+  window.resetFlowSimulation = resetFlowSimulation;

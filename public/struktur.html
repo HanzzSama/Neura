@@ -20,7 +20,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/welcome.css?v=68">
   <link rel="stylesheet" href="/css/template.css?v=1.5">
-  <link rel="stylesheet" href="/css/struktur.css?v=5.0">
+  <link rel="stylesheet" href="/css/struktur.css?v=7.0">
 
   <!-- highlight.js for syntax highlighting in code drawer -->
   <link rel="stylesheet" id="hljs-theme-link" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
@@ -603,9 +603,9 @@
     <!-- INTERACTIVE CANVAS CONTAINER -->
     <div class="canvas-container" id="canvas-container">
 
-      <!-- CANVAS BREADCRUMB (Explorer Mode Navigation) -->
+      <!-- CANVAS BREADCRUMB (Explorer Mode & Database Navigation) -->
       <nav class="canvas-breadcrumb" id="canvas-breadcrumb" style="display:none;" aria-label="Navigasi direktori explorer">
-        <!-- Populated dynamically by JS -->
+        <!-- Populated dynamically by JS in Explorer and Database modes -->
       </nav>
 
       <div class="canvas-viewport" id="canvas-viewport">
@@ -677,7 +677,12 @@
         <div class="tree-header-title-row">
           <div class="tree-title-left">
             <div class="tree-header-icon-box" id="sidebar-icon-box">
-              <svg id="sidebar-icon-folder" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg id="sidebar-icon-gen" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <svg id="sidebar-icon-folder" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
               </svg>
               <svg id="sidebar-icon-db" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
@@ -694,8 +699,37 @@
               </p>
             </div>
           </div>
+          <!-- Actions for GENERAL mode -->
+          <div class="tree-header-actions" id="sidebar-actions-gen" role="toolbar" aria-label="Aksi Arsitektur General">
+            <button class="tree-action-btn" id="btn-gen-expand-all" title="Buka Semua Tahap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="7 13 12 18 17 13"></polyline>
+                <polyline points="7 6 12 11 17 6"></polyline>
+              </svg>
+            </button>
+            <button class="tree-action-btn" id="btn-gen-collapse-all" title="Tutup Semua Tahap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="17 11 12 6 7 11"></polyline>
+                <polyline points="17 18 12 13 7 18"></polyline>
+              </svg>
+            </button>
+            <button class="tree-action-btn tree-action-add" id="btn-gen-add-page" title="Tambah Halaman Baru (Scaffold)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <button class="tree-action-btn" id="btn-gen-fit-view" title="Pusatkan Seluruh Kanvas">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </button>
+          </div>
           <!-- Actions for FILES mode -->
-          <div class="tree-header-actions" id="sidebar-actions-files" role="toolbar" aria-label="Aksi Struktur Folder">
+          <div class="tree-header-actions" id="sidebar-actions-files" role="toolbar" aria-label="Aksi Struktur Folder" style="display:none;">
             <button class="tree-action-btn" id="btn-tree-expand-all" title="Buka Semua Folder">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="7 13 12 18 17 13"></polyline>
@@ -736,8 +770,38 @@
           <button class="tree-search-clear" id="tree-search-clear" style="display:none;" title="Bersihkan pencarian">&times;</button>
         </div>
 
+        <!-- Quick Chips: GENERAL ARCHITECTURE mode -->
+        <div class="tree-quick-access" id="quick-chips-gen">
+          <button class="quick-chip active" data-gen-filter="all" title="Tampilkan Semua Modul">
+            <span>Semua</span>
+          </button>
+          <button class="quick-chip" data-gen-filter="auth" title="Halaman &amp; Alur Autentikasi">
+            <span>Auth &amp; Web</span>
+          </button>
+          <button class="quick-chip" data-gen-filter="gate" title="Security &amp; Verification Gateways">
+            <span>Gateways</span>
+          </button>
+          <button class="quick-chip" data-gen-filter="dashboard" title="Portal Dashboard Role-Based">
+            <span>Dashboard</span>
+          </button>
+          <button class="quick-chip" data-gen-filter="engine" title="AI, ML &amp; Pipelines">
+            <span>AI &amp; Engine</span>
+          </button>
+          <button class="quick-chip" data-gen-filter="storage" title="Database Firestore &amp; Dataset CSV">
+            <span>Data Lake</span>
+          </button>
+          <button class="quick-chip quick-chip--status" data-gen-filter="active" title="Modul Aktif Saja">
+            <span class="chip-status-dot active-dot"></span>
+            <span>Aktif</span>
+          </button>
+          <button class="quick-chip quick-chip--status" data-gen-filter="disabled" title="Modul Nonaktif / Pemeliharaan">
+            <span class="chip-status-dot disabled-dot"></span>
+            <span>Nonaktif</span>
+          </button>
+        </div>
+
         <!-- Quick Chips: FILES mode -->
-        <div class="tree-quick-access" id="quick-chips-files">
+        <div class="tree-quick-access" id="quick-chips-files" style="display:none;">
           <button class="quick-chip" data-target="public" title="Buka direktori public/">
             <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
             <span>public/</span>
@@ -787,8 +851,15 @@
 
       <!-- Content Panes -->
       <div class="tree-sidebar-content" id="tree-sidebar-content">
-        <!-- PANE 1: FILES TREE -->
-        <div class="sidebar-tab-pane active" id="pane-tab-files">
+        <!-- PANE 1: GENERAL ARCHITECTURE (Default for General Canvas) -->
+        <div class="sidebar-tab-pane active" id="pane-tab-gen">
+          <div class="sidebar-gen-list" id="sidebar-gen-list">
+            <!-- Rendered dynamically by renderSidebarGeneralList() -->
+          </div>
+        </div>
+
+        <!-- PANE 2: FILES TREE -->
+        <div class="sidebar-tab-pane" id="pane-tab-files" style="display:none;">
           <div class="tree-root-list" id="folder-tree-root" role="tree">
             <div class="tree-loading-state">
               <div class="tree-spinner"></div>
@@ -972,6 +1043,190 @@
     </div>
   </aside>
 
+  <!-- MODAL: SCAFFOLD HALAMAN BARU (LIVE ENVIRONMENT WIZARD) -->
+  <div class="scaffold-modal-backdrop" id="scaffold-modal-backdrop" style="display:none;">
+    <div class="scaffold-modal-card" id="scaffold-modal-card" role="dialog" aria-modal="true" aria-labelledby="scaffold-modal-title">
+      <!-- Modal Header -->
+      <div class="scaffold-modal-header">
+        <div class="scaffold-header-left">
+          <div class="scaffold-header-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <div>
+            <h3 class="scaffold-modal-title" id="scaffold-modal-title">Tambah Halaman / Modul Baru</h3>
+            <p class="scaffold-modal-subtitle">Buat berkas HTML, CSS, JS &amp; integrasikan langsung ke canvas</p>
+          </div>
+        </div>
+        <button class="scaffold-close-btn" id="btn-close-scaffold-modal" title="Tutup Modal" aria-label="Tutup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Step Indicator -->
+      <div class="scaffold-steps-nav">
+        <div class="scaffold-step-pill active" id="step-pill-1" data-step="1">
+          <span class="step-num">1</span>
+          <span class="step-text">Identitas &amp; URL</span>
+        </div>
+        <div class="scaffold-step-sep"></div>
+        <div class="scaffold-step-pill" id="step-pill-2" data-step="2">
+          <span class="step-num">2</span>
+          <span class="step-text">Tipe &amp; Role</span>
+        </div>
+        <div class="scaffold-step-sep"></div>
+        <div class="scaffold-step-pill" id="step-pill-3" data-step="3">
+          <span class="step-num">3</span>
+          <span class="step-text">Template &amp; Scaffold</span>
+        </div>
+      </div>
+
+      <!-- Modal Body (Steps) -->
+      <div class="scaffold-modal-body">
+        <!-- STEP 1: Identitas -->
+        <div class="scaffold-step-pane active" id="scaffold-step-1">
+          <div class="scaffold-form-group">
+            <label for="scaffold-page-name">Nama Halaman / Modul <span class="req">*</span></label>
+            <input type="text" id="scaffold-page-name" class="scaffold-input" placeholder="Contoh: Jadwal Dokter Spesialis" autocomplete="off">
+            <span class="scaffold-help">Nama yang akan tampil pada judul halaman dan label kartu kanvas.</span>
+          </div>
+
+          <div class="scaffold-form-group">
+            <label for="scaffold-page-slug">Slug URL Route <span class="req">*</span></label>
+            <div class="scaffold-slug-input-wrap">
+              <span class="scaffold-slug-prefix">http://localhost:5000/</span>
+              <input type="text" id="scaffold-page-slug" class="scaffold-input scaffold-input-slug" placeholder="jadwal-dokter" autocomplete="off">
+            </div>
+            <div class="scaffold-slug-feedback" id="scaffold-slug-feedback">Endpoint: <strong id="scaffold-preview-route">/jadwal-dokter</strong></div>
+          </div>
+
+          <div class="scaffold-form-group">
+            <label for="scaffold-page-desc">Deskripsi Singkat (Opsional)</label>
+            <textarea id="scaffold-page-desc" class="scaffold-textarea" rows="2" placeholder="Jelaskan tujuan atau fungsi modul ini..."></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 2: Tipe Node & Role Akses -->
+        <div class="scaffold-step-pane" id="scaffold-step-2" style="display:none;">
+          <div class="scaffold-form-group">
+            <label>Pilih Tipe Node Arsitektur <span class="req">*</span></label>
+            <div class="scaffold-type-grid" id="scaffold-type-grid">
+              <label class="scaffold-type-card active" data-type="page">
+                <input type="radio" name="scaffold-node-type" value="page" checked hidden>
+                <div class="type-icon type-icon-cyan">🌐</div>
+                <div class="type-info">
+                  <div class="type-title">Page (UI Web)</div>
+                  <div class="type-desc">Halaman publik / interaktif umum</div>
+                </div>
+              </label>
+              <label class="scaffold-type-card" data-type="dashboard">
+                <input type="radio" name="scaffold-node-type" value="dashboard" hidden>
+                <div class="type-icon type-icon-blue">📊</div>
+                <div class="type-info">
+                  <div class="type-title">Dashboard</div>
+                  <div class="type-desc">Portal kerja dengan metrik</div>
+                </div>
+              </label>
+              <label class="scaffold-type-card" data-type="auth">
+                <input type="radio" name="scaffold-node-type" value="auth" hidden>
+                <div class="type-icon type-icon-violet">🔐</div>
+                <div class="type-info">
+                  <div class="type-title">Auth &amp; Keamanan</div>
+                  <div class="type-desc">Login, register, verifikasi</div>
+                </div>
+              </label>
+              <label class="scaffold-type-card" data-type="engine">
+                <input type="radio" name="scaffold-node-type" value="engine" hidden>
+                <div class="type-icon type-icon-amber">⚙️</div>
+                <div class="type-info">
+                  <div class="type-title">Engine / Pipeline</div>
+                  <div class="type-desc">Kalkulasi data atau ML hub</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="scaffold-form-group">
+            <label>Role yang Memiliki Akses</label>
+            <div class="scaffold-role-chips" id="scaffold-role-chips">
+              <label class="role-chip active"><input type="checkbox" value="user" checked hidden><span>Pasien / User</span></label>
+              <label class="role-chip active"><input type="checkbox" value="nakes" checked hidden><span>Dokter / Nakes</span></label>
+              <label class="role-chip"><input type="checkbox" value="admin" hidden><span>Administrator</span></label>
+              <label class="role-chip"><input type="checkbox" value="public" hidden><span>Publik (Tanpa Login)</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Template & Preview -->
+        <div class="scaffold-step-pane" id="scaffold-step-3" style="display:none;">
+          <div class="scaffold-form-group">
+            <label>Pilih Template Boilerplate <span class="req">*</span></label>
+            <div class="scaffold-template-grid" id="scaffold-template-grid">
+              <label class="scaffold-tmpl-card" data-template="blank">
+                <input type="radio" name="scaffold-template" value="blank" hidden>
+                <div class="tmpl-badge">MINIMAL</div>
+                <div class="tmpl-title">Blank Starter</div>
+                <div class="tmpl-desc">HTML minimal, styling dasar, siap dikembangkan bebas.</div>
+              </label>
+              <label class="scaffold-tmpl-card active" data-template="dashboard">
+                <input type="radio" name="scaffold-template" value="dashboard" checked hidden>
+                <div class="tmpl-badge tmpl-badge-blue">POPULER</div>
+                <div class="tmpl-title">Dashboard Portal</div>
+                <div class="tmpl-desc">Layout topbar, kartu ringkasan metrik, dan tabel kerja.</div>
+              </label>
+              <label class="scaffold-tmpl-card" data-template="auth-required">
+                <input type="radio" name="scaffold-template" value="auth-required" hidden>
+                <div class="tmpl-badge tmpl-badge-violet">SECURE</div>
+                <div class="tmpl-title">Auth Guard</div>
+                <div class="tmpl-desc">Verifikasi token Firebase &amp; validasi role otomatis.</div>
+              </label>
+              <label class="scaffold-tmpl-card" data-template="api-consumer">
+                <input type="radio" name="scaffold-template" value="api-consumer" hidden>
+                <div class="tmpl-badge tmpl-badge-amber">CLIENT</div>
+                <div class="tmpl-title">API Consumer</div>
+                <div class="tmpl-desc">Fetch handler terintegrasi ke backend Neura /api.</div>
+              </label>
+            </div>
+          </div>
+
+          <!-- File Scaffolding Preview Summary -->
+          <div class="scaffold-summary-box">
+            <div class="summary-title">Berkas yang Akan Dibuat Otomatis:</div>
+            <ul class="summary-file-list" id="scaffold-summary-file-list">
+              <li><span class="file-tag tag-html">HTML</span> public/<strong class="sum-slug">jadwal-dokter</strong>.html</li>
+              <li><span class="file-tag tag-css">CSS</span> public/css/<strong class="sum-slug">jadwal-dokter</strong>.css</li>
+              <li><span class="file-tag tag-js">JS</span> public/js/<strong class="sum-slug">jadwal-dokter</strong>.js</li>
+              <li><span class="file-tag tag-py">ROUTE</span> Daftarkan route <code class="sum-route">/jadwal-dokter</code> ke Flask</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PROGRESS / LOADING STATE -->
+        <div class="scaffold-step-pane" id="scaffold-step-loading" style="display:none; text-align:center; padding: 2.5rem 1rem;">
+          <div class="scaffold-spinner"></div>
+          <h4 id="scaffold-loading-title" style="margin-top: 1.25rem; font-size: 1.15rem;">Membuat Berkas &amp; Menyiapkan Node...</h4>
+          <p id="scaffold-loading-desc" style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">Sistem sedang men-generate HTML, CSS, JS, dan mendaftarkan route ke server.</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="scaffold-modal-footer">
+        <button class="scaffold-btn scaffold-btn-ghost" id="btn-scaffold-prev" style="display:none;">&larr; Kembali</button>
+        <div style="flex:1;"></div>
+        <button class="scaffold-btn scaffold-btn-ghost" id="btn-scaffold-cancel">Batal</button>
+        <button class="scaffold-btn scaffold-btn-primary" id="btn-scaffold-next">Lanjut &rarr;</button>
+        <button class="scaffold-btn scaffold-btn-success" id="btn-scaffold-submit" style="display:none;">🚀 Buat Halaman Sekarang</button>
+      </div>
+    </div>
+  </div>
+
   <!-- CUSTOM CONTEXT MENU (KLIK KANAN KANVAS & NODE) -->
   <div class="node-context-menu" id="node-context-menu" style="display:none"></div>
 
@@ -980,7 +1235,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=4"></script>
-  <script src="/js/struktur.js?v=5.0"></script>
+  <script src="/js/struktur.js?v=7.0"></script>
 </body>
 
 </html>

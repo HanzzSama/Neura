@@ -111,8 +111,54 @@ app.register_blueprint(user_livekit_bp, url_prefix="/api/livekit")
 app.register_blueprint(user_profile_bp, url_prefix="/api/user")
 app.register_blueprint(user_session_bp, url_prefix="/api/user")
 
+# 5. Scaffold & Live Environment Routes
+from api.shared.scaffold_routes import scaffold_bp
+app.register_blueprint(scaffold_bp)
+
 
 # -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Live Environment Route Guard (Maintenance & Disabled Page Interceptor)
+# -----------------------------------------------------------------------
+@app.before_request
+def check_maintenance_and_page_guard():
+    from flask import request, jsonify
+    path = request.path.strip("/")
+    if not path:
+        return None
+    
+    # Jangan cegat file statis, aset, dan endpoint API
+    if path.startswith(("api/", "css/", "js/", "assets/", "uploads/", "maintenance")):
+        return None
+    
+    # Ambil slug utama (misal: "jadwal-dokter" atau "riset.html" -> "riset")
+    raw_slug = path.split("/")[0]
+    slug = raw_slug.replace(".html", "").lower()
+    
+    # Cek registry status
+    try:
+        from api.shared.scaffold_routes import load_registry
+        reg = load_registry()
+        
+        # 1. Cek di custom pages
+        for p in reg.get("pages", []):
+            if p.get("slug") == slug:
+                if not p.get("enabled", True):
+                    if "text/html" in request.headers.get("Accept", ""):
+                        return send_from_directory("public", "maintenance.html"), 503
+                    return jsonify(success=False, error="PAGE_DISABLED", message=f"Halaman '{slug}' sedang dinonaktifkan sementara."), 503
+                break
+        
+        # 2. Cek di system overrides (misal: riset, dsb)
+        overrides = reg.get("system_overrides", {})
+        if slug in overrides and not overrides[slug].get("enabled", True):
+            if "text/html" in request.headers.get("Accept", ""):
+                return send_from_directory("public", "maintenance.html"), 503
+            return jsonify(success=False, error="PAGE_DISABLED", message=f"Halaman '{slug}' sedang dinonaktifkan sementara."), 503
+    except Exception as e:
+        logger.error(f"Error in page guard: {e}")
+        return None
+
 # Static & SPA Page Routes
 # -----------------------------------------------------------------------
 
@@ -585,6 +631,17 @@ def serve_uploads(filename):
 
 
 # -----------------------------------------------------------------------
+@app.route("/<slug>", strict_slashes=False)
+def serve_custom_page(slug):
+    """Dynamic router untuk melayani halaman scaffold kustom tanpa ekstensi .html."""
+    html_name = f"{slug}.html"
+    public_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "public", html_name)
+    if os.path.isfile(public_file):
+        return send_from_directory("public", html_name)
+    from flask import abort
+    abort(404)
+
+
 # Server Entrypoint
 # -----------------------------------------------------------------------
 
