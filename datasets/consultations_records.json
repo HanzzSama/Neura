@@ -1894,5 +1894,377 @@
       "validated_at": "02 November 2026, 10:15 WIB",
       "signature_hash": "SIG-NKS-26-7114-ALZ-2611021015"
     }
+  },
+  "NKS-26-7385-ALZ": {
+    "doc_id": "DOC-NEURA-2026-7385",
+    "nakes_code": "NKS-26-7385-ALZ",
+    "created_at": "14 November 2026, 11:46 WIB",
+    "timestamp_iso": "2026-11-14T11:46:43.127030",
+    "source": "user_profile",
+    "patient": {
+      "name": "Hanzz",
+      "patient_id": "Hanzz",
+      "age": 21,
+      "gender": "Laki-laki",
+      "bmi": 17.0,
+      "bmi_category": "Perlu Perhatian",
+      "systolic_bp": 120,
+      "diastolic_bp": 80,
+      "family_history": false,
+      "cardiovascular": false,
+      "diabetes": false
+    },
+    "cognitive_scores": {
+      "mmse": 25.0,
+      "adl": 7.0,
+      "functional_assessment": 7.0,
+      "memory_complaints": "Tidak",
+      "behavioral_problems": "Tidak"
+    },
+    "prediction": {
+      "diagnosis_label": "Non-Alzheimer's",
+      "is_positive": false,
+      "risk_level": "Low Risk (Negative)",
+      "probability": 1.24,
+      "probability_negative": 98.76,
+      "confidence": "98.8%",
+      "model_name": "Alzheimer",
+      "accuracy_reference": "95.35%"
+    },
+    "biomarkers_breakdown": [
+      {
+        "category": "Demografi & Fisik",
+        "items": [
+          {
+            "name": "Usia",
+            "value": "21 Tahun",
+            "normal": "Usia Lanjut: >60 Thn"
+          },
+          {
+            "name": "Jenis Kelamin",
+            "value": "Laki-laki",
+            "normal": "Semua Gender"
+          },
+          {
+            "name": "BMI",
+            "value": "17.0 kg/m²",
+            "normal": "18.5 - 24.9"
+          },
+          {
+            "name": "Tekanan Darah",
+            "value": "120/80 mmHg",
+            "normal": "< 120/80 mmHg"
+          }
+        ]
+      },
+      {
+        "category": "Penilaian Kognitif & Fungsional",
+        "items": [
+          {
+            "name": "Skor MMSE",
+            "value": "25.0 / 30",
+            "normal": "24 - 30 (Normal)"
+          },
+          {
+            "name": "Skor ADL",
+            "value": "7.0 / 10",
+            "normal": "> 6.0 (Mandiri)"
+          },
+          {
+            "name": "Functional Assessment",
+            "value": "7.0 / 10",
+            "normal": "> 6.0 (Normal)"
+          },
+          {
+            "name": "Keluhan Memori",
+            "value": "Tidak Ada",
+            "normal": "Tidak Ada"
+          },
+          {
+            "name": "Gangguan Perilaku",
+            "value": "Tidak Ada",
+            "normal": "Tidak Ada"
+          }
+        ]
+      },
+      {
+        "category": "Biomarker Kardiovaskular & Lab",
+        "items": [
+          {
+            "name": "Kolesterol Total",
+            "value": "200.0 mg/dL",
+            "normal": "< 200 mg/dL"
+          },
+          {
+            "name": "Kolesterol LDL",
+            "value": "100.0 mg/dL",
+            "normal": "< 100 mg/dL"
+          },
+          {
+            "name": "Kolesterol HDL",
+            "value": "50.0 mg/dL",
+            "normal": "> 40 mg/dL"
+          },
+          {
+            "name": "Trigliserida",
+            "value": "150.0 mg/dL",
+            "normal": "< 150 mg/dL"
+          }
+        ]
+      },
+      {
+        "category": "Gaya Hidup & Kualitas Tidur",
+        "items": [
+          {
+            "name": "Aktivitas Fisik",
+            "value": "5.0 / 10",
+            "normal": "Skor 5-10"
+          },
+          {
+            "name": "Kualitas Diet",
+            "value": "5.0 / 10",
+            "normal": "Skor 5-10 (MIND Diet)"
+          },
+          {
+            "name": "Kualitas Tidur",
+            "value": "7.0 / 10",
+            "normal": "Skor 7-10 (7-8 Jam)"
+          },
+          {
+            "name": "Status Merokok",
+            "value": "Tidak Merokok",
+            "normal": "Bebas Rokok"
+          }
+        ]
+      }
+    ],
+    "recommendations": [
+      "Lakukan pemantauan fungsi kognitif berkala minimal 1 kali setiap 6 bulan.",
+      "Terapkan diet neuroprotektif (Mediterranean-DASH Diet Intervention for Neurodegenerative Delay / MIND Diet).",
+      "Rutin melakukan stimulasi otak (membaca kritis, teka-teki, interaksi sosial aktif) minimal 30 menit sehari.",
+      "Bawa dan serahkan Kode Konsultasi Nakes ini ke Dokter Spesialis Saraf / Neurologi di Faskes rujukan untuk pemeriksaan lanjutan (MoCA, MRI Brain, atau PET Scan jika diindikasikan)."
+    ],
+    "raw_features": {
+      "Age": 21.0,
+      "Gender": 0.0,
+      "Ethnicity": 0.0,
+      "EducationLevel": 2.0,
+      "BMI": 17.0,
+      "Smoking": 0.0,
+      "AlcoholConsumption": 5.0,
+      "PhysicalActivity": 5.0,
+      "DietQuality": 5.0,
+      "SleepQuality": 7.0,
+      "FamilyHistoryAlzheimers": 0.0,
+      "CardiovascularDisease": 0.0,
+      "Diabetes": 0.0,
+      "Depression": 1.0,
+      "HeadInjury": 1.0,
+      "Hypertension": 0.0,
+      "SystolicBP": 120.0,
+      "DiastolicBP": 80.0,
+      "CholesterolTotal": 200.0,
+      "CholesterolLDL": 100.0,
+      "CholesterolHDL": 50.0,
+      "CholesterolTriglycerides": 150.0,
+      "MMSE": 25.0,
+      "FunctionalAssessment": 7.0,
+      "MemoryComplaints": 0.0,
+      "BehavioralProblems": 0.0,
+      "ADL": 7.0,
+      "Confusion": 0.0,
+      "Disorientation": 0.0,
+      "PersonalityChanges": 0.0,
+      "DifficultyCompletingTasks": 0.0,
+      "Forgetfulness": 0.0
+    },
+    "verification_hash": "SHA256-899F250FCDAF4293",
+    "status": "VALID_ACTIVE"
+  },
+  "DOC-NEURA-2026-7385": {
+    "doc_id": "DOC-NEURA-2026-7385",
+    "nakes_code": "NKS-26-7385-ALZ",
+    "created_at": "14 November 2026, 11:46 WIB",
+    "timestamp_iso": "2026-11-14T11:46:43.127030",
+    "source": "user_profile",
+    "patient": {
+      "name": "Hanzz",
+      "patient_id": "Hanzz",
+      "age": 21,
+      "gender": "Laki-laki",
+      "bmi": 17.0,
+      "bmi_category": "Perlu Perhatian",
+      "systolic_bp": 120,
+      "diastolic_bp": 80,
+      "family_history": false,
+      "cardiovascular": false,
+      "diabetes": false
+    },
+    "cognitive_scores": {
+      "mmse": 25.0,
+      "adl": 7.0,
+      "functional_assessment": 7.0,
+      "memory_complaints": "Tidak",
+      "behavioral_problems": "Tidak"
+    },
+    "prediction": {
+      "diagnosis_label": "Non-Alzheimer's",
+      "is_positive": false,
+      "risk_level": "Low Risk (Negative)",
+      "probability": 1.24,
+      "probability_negative": 98.76,
+      "confidence": "98.8%",
+      "model_name": "Alzheimer",
+      "accuracy_reference": "95.35%"
+    },
+    "biomarkers_breakdown": [
+      {
+        "category": "Demografi & Fisik",
+        "items": [
+          {
+            "name": "Usia",
+            "value": "21 Tahun",
+            "normal": "Usia Lanjut: >60 Thn"
+          },
+          {
+            "name": "Jenis Kelamin",
+            "value": "Laki-laki",
+            "normal": "Semua Gender"
+          },
+          {
+            "name": "BMI",
+            "value": "17.0 kg/m²",
+            "normal": "18.5 - 24.9"
+          },
+          {
+            "name": "Tekanan Darah",
+            "value": "120/80 mmHg",
+            "normal": "< 120/80 mmHg"
+          }
+        ]
+      },
+      {
+        "category": "Penilaian Kognitif & Fungsional",
+        "items": [
+          {
+            "name": "Skor MMSE",
+            "value": "25.0 / 30",
+            "normal": "24 - 30 (Normal)"
+          },
+          {
+            "name": "Skor ADL",
+            "value": "7.0 / 10",
+            "normal": "> 6.0 (Mandiri)"
+          },
+          {
+            "name": "Functional Assessment",
+            "value": "7.0 / 10",
+            "normal": "> 6.0 (Normal)"
+          },
+          {
+            "name": "Keluhan Memori",
+            "value": "Tidak Ada",
+            "normal": "Tidak Ada"
+          },
+          {
+            "name": "Gangguan Perilaku",
+            "value": "Tidak Ada",
+            "normal": "Tidak Ada"
+          }
+        ]
+      },
+      {
+        "category": "Biomarker Kardiovaskular & Lab",
+        "items": [
+          {
+            "name": "Kolesterol Total",
+            "value": "200.0 mg/dL",
+            "normal": "< 200 mg/dL"
+          },
+          {
+            "name": "Kolesterol LDL",
+            "value": "100.0 mg/dL",
+            "normal": "< 100 mg/dL"
+          },
+          {
+            "name": "Kolesterol HDL",
+            "value": "50.0 mg/dL",
+            "normal": "> 40 mg/dL"
+          },
+          {
+            "name": "Trigliserida",
+            "value": "150.0 mg/dL",
+            "normal": "< 150 mg/dL"
+          }
+        ]
+      },
+      {
+        "category": "Gaya Hidup & Kualitas Tidur",
+        "items": [
+          {
+            "name": "Aktivitas Fisik",
+            "value": "5.0 / 10",
+            "normal": "Skor 5-10"
+          },
+          {
+            "name": "Kualitas Diet",
+            "value": "5.0 / 10",
+            "normal": "Skor 5-10 (MIND Diet)"
+          },
+          {
+            "name": "Kualitas Tidur",
+            "value": "7.0 / 10",
+            "normal": "Skor 7-10 (7-8 Jam)"
+          },
+          {
+            "name": "Status Merokok",
+            "value": "Tidak Merokok",
+            "normal": "Bebas Rokok"
+          }
+        ]
+      }
+    ],
+    "recommendations": [
+      "Lakukan pemantauan fungsi kognitif berkala minimal 1 kali setiap 6 bulan.",
+      "Terapkan diet neuroprotektif (Mediterranean-DASH Diet Intervention for Neurodegenerative Delay / MIND Diet).",
+      "Rutin melakukan stimulasi otak (membaca kritis, teka-teki, interaksi sosial aktif) minimal 30 menit sehari.",
+      "Bawa dan serahkan Kode Konsultasi Nakes ini ke Dokter Spesialis Saraf / Neurologi di Faskes rujukan untuk pemeriksaan lanjutan (MoCA, MRI Brain, atau PET Scan jika diindikasikan)."
+    ],
+    "raw_features": {
+      "Age": 21.0,
+      "Gender": 0.0,
+      "Ethnicity": 0.0,
+      "EducationLevel": 2.0,
+      "BMI": 17.0,
+      "Smoking": 0.0,
+      "AlcoholConsumption": 5.0,
+      "PhysicalActivity": 5.0,
+      "DietQuality": 5.0,
+      "SleepQuality": 7.0,
+      "FamilyHistoryAlzheimers": 0.0,
+      "CardiovascularDisease": 0.0,
+      "Diabetes": 0.0,
+      "Depression": 1.0,
+      "HeadInjury": 1.0,
+      "Hypertension": 0.0,
+      "SystolicBP": 120.0,
+      "DiastolicBP": 80.0,
+      "CholesterolTotal": 200.0,
+      "CholesterolLDL": 100.0,
+      "CholesterolHDL": 50.0,
+      "CholesterolTriglycerides": 150.0,
+      "MMSE": 25.0,
+      "FunctionalAssessment": 7.0,
+      "MemoryComplaints": 0.0,
+      "BehavioralProblems": 0.0,
+      "ADL": 7.0,
+      "Confusion": 0.0,
+      "Disorientation": 0.0,
+      "PersonalityChanges": 0.0,
+      "DifficultyCompletingTasks": 0.0,
+      "Forgetfulness": 0.0
+    },
+    "verification_hash": "SHA256-899F250FCDAF4293",
+    "status": "VALID_ACTIVE"
   }
 }
