@@ -464,7 +464,7 @@ def determine_connections(node_type):
 # API Endpoints
 # -------------------------------------------------------------------------
 
-@scaffold_bp.route("/api/scaffold/pages", methods=["GET"])
+@scaffold_bp.route("/api/scaffold/pages", methods=["GET"], strict_slashes=False)
 def list_scaffold_pages():
     """Mengembalikan daftar semua custom scaffolded pages dan system status overrides."""
     registry = load_registry()
@@ -475,7 +475,7 @@ def list_scaffold_pages():
     )
 
 
-@scaffold_bp.route("/api/scaffold/page", methods=["POST"])
+@scaffold_bp.route("/api/scaffold/page", methods=["POST"], strict_slashes=False)
 def create_page():
     """Scaffold halaman baru: buat HTML, CSS, JS, dan daftarkan ke registry."""
     data = request.get_json(silent=True) or {}
@@ -585,7 +585,7 @@ def create_page():
     ), 201
 
 
-@scaffold_bp.route("/api/scaffold/page/<slug>/status", methods=["PATCH"])
+@scaffold_bp.route("/api/scaffold/page/<slug>/status", methods=["PATCH"], strict_slashes=False)
 def toggle_page_status(slug):
     """Aktifkan atau nonaktifkan halaman (Maintenance toggle)."""
     slug = (slug or "").strip().lower()
@@ -628,7 +628,7 @@ def toggle_page_status(slug):
     )
 
 
-@scaffold_bp.route("/api/scaffold/page/<slug>", methods=["DELETE"])
+@scaffold_bp.route("/api/scaffold/page/<slug>", methods=["DELETE"], strict_slashes=False)
 def delete_page(slug):
     """Hapus halaman scaffold beserta berkas HTML, CSS, dan JS fisiknya."""
     slug = (slug or "").strip().lower()

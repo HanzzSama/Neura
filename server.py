@@ -642,6 +642,45 @@ def serve_custom_page(slug):
     abort(404)
 
 
+# Error Handlers
+# -----------------------------------------------------------------------
+
+@app.errorhandler(404)
+def handle_404(e):
+    from flask import request, jsonify
+    if request.path.startswith("/api/"):
+        return jsonify(
+            success=False,
+            error="API_NOT_FOUND",
+            message=f"Endpoint API '{request.path}' tidak ditemukan. Pastikan server telah direstart dengan kode terbaru."
+        ), 404
+    return send_from_directory("public", "welcome.html"), 404
+
+
+@app.errorhandler(405)
+def handle_405(e):
+    from flask import request, jsonify
+    if request.path.startswith("/api/"):
+        return jsonify(
+            success=False,
+            error="METHOD_NOT_ALLOWED",
+            message=f"Metode {request.method} tidak diizinkan untuk endpoint '{request.path}'."
+        ), 405
+    return "Method Not Allowed", 405
+
+
+@app.errorhandler(500)
+def handle_500(e):
+    from flask import request, jsonify
+    if request.path.startswith("/api/"):
+        return jsonify(
+            success=False,
+            error="INTERNAL_ERROR",
+            message=f"Terjadi kesalahan internal server pada endpoint '{request.path}'."
+        ), 500
+    return "Internal Server Error", 500
+
+
 # Server Entrypoint
 # -----------------------------------------------------------------------
 

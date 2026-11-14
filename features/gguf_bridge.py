@@ -34,6 +34,22 @@ DEFAULT_SYSTEM_PROMPT = (
     "Pastikan selalu menyelesaikan kalimat dan penjelasan dengan utuh tanpa terpotong."
 )
 
+DEFAULT_SISTEM_CONSTRAINT = (
+    "BATASAN EKSKLUSIF TOPIK & PROTOKOL KEAMANAN:\n"
+    "1. FOKUS EKSKLUSIF: Anda HANYA diizinkan menjawab pertanyaan yang berkaitan dengan penyakit Alzheimer, "
+    "gejala penurunan fungsi kognitif, demensia, skrining daya ingat, dan kesehatan otak.\n"
+    "2. LARANGAN KERAS: Jangan sampai Anda memberi jawaban yang tidak sesuai dengan penyakit Alzheimer. "
+    "Batasan yang harus Anda terapkan adalah di saat pengguna mulai membahas topik di luar konsultasi gejala Alzheimer. "
+    "Dilarang melayani konsultasi penyakit umum lainnya (seperti flu, batuk, demam, maag, diabetes, penyakit jantung, patah tulang, luka fisik, dll) "
+    "maupun topik non-medis (seperti pemrograman komputer, matematika, politik, resep masakan, obrolan umum, dsb).\n"
+    "3. PROTOKOL PERMINTAAN MAAF: Beri jawaban permintaan maaf bila konsultasi pengguna menanyakan penyakit di luar gejala Alzheimer. "
+    "Tolak dengan sopan dan santun, sebutkan nama {user_name}, dan nyatakan dengan jelas bahwa fokus layanan Anda khusus untuk penyakit Alzheimer dan kesehatan daya ingat. "
+    "Gunakan format penolakan dan permintaan maaf berikut:\n"
+    "'Mohon maaf {user_name}, saya adalah Neura AI yang secara khusus berfokus pada konsultasi seputar gejala, deteksi dini, dan pencegahan penyakit Alzheimer serta kesehatan daya ingat. "
+    "Saya tidak dapat memberikan jawaban atau konsultasi mengenai penyakit atau topik di luar gejala Alzheimer. "
+    "Apakah ada keluhan seputar daya ingat, konsentrasi, atau gejala Alzheimer yang ingin Anda tanyakan?'"
+)
+
 
 # ---------------------------------------------------------------------------
 # Architecture Parser — auto-generate label dari nama file .gguf
@@ -412,19 +428,58 @@ def generate_gguf_response(
     _llm_state = "generating"
 
     name = user_name.strip() if user_name and user_name.strip() else "Hanzz"
-    sys_prompt = system_prompt or DEFAULT_SYSTEM_PROMPT
-    if "{user_name}" in sys_prompt:
-        sys_prompt = sys_prompt.format(user_name=name)
+    base_prompt = system_prompt or DEFAULT_SYSTEM_PROMPT
+    
+    # Integrasikan DEFAULT_SISTEM_CONSTRAINT agar LLM selalu memiliki batasan topik Alzheimer & protokol penolakan
+    if "BATASAN EKSKLUSIF TOPIK" not in base_prompt and "gejala alzheimer" not in base_prompt.lower():
+        sys_prompt = f"{base_prompt}\n\n{DEFAULT_SISTEM_CONSTRAINT}"
+    else:
+        sys_prompt = base_prompt
 
-    # Format Llama 3.2 Instruct Prompt
-    formatted_prompt = (
-        f"<|start_header_id|>system<|end_header_id|>\n\n"
-        f"{sys_prompt}\n"
-        f"Nama pengguna yang sedang berkonsultasi: {name}."
-        f"<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n"
-        f"{prompt.strip()}"
-        f"<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
-    )
+    if "{user_name}" in sys_prompt:
+        sys_prompt = sys_prompt.replace("{user_name}", name)
+
+    # Deteksi arsitektur model aktif (Llama vs Gemma)
+    active_fn = (_active_gguf_filename or "").lower()
+    is_gemma = "gemma" in active_fn
+
+    if is_gemma:
+        # Template Instruksi Gemma 2
+        formatted_prompt = (
+            f"<start_of_turn>user\n"
+            f"{sys_prompt}\n\n"
+            f"Nama pengguna yang berkonsultasi: {name}.\n\n"
+            f"Pertanyaan pengguna:\n{prompt.strip()}<end_of_turn>\n"
+            f"<start_of_turn>model\n"
+        )
+        stop_tokens = [
+            "<end_of_turn>",
+            "<eos>",
+            "<start_of_turn>",
+            "User:",
+            "\nUser:",
+            "Model:",
+            "\nModel:",
+        ]
+    else:
+        # Template Instruksi Llama 3.2 Instruct Prompt
+        formatted_prompt = (
+            f"<|start_header_id|>system<|end_header_id|>\n\n"
+            f"{sys_prompt}\n"
+            f"Nama pengguna yang sedang berkonsultasi: {name}."
+            f"<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n"
+            f"{prompt.strip()}"
+            f"<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+        )
+        stop_tokens = [
+            "<|eot_id|>",
+            "<|end_of_text|>",
+            "<|start_header_id|>",
+            "User:",
+            "\nUser:",
+            "Assistant:",
+            "\nAssistant:",
+        ]
 
     try:
         _llm_state = "generating"
@@ -433,14 +488,7 @@ def generate_gguf_response(
             max_tokens=max_tokens,
             temperature=temperature,
             top_p=top_p,
-            stop=[
-                "<|eot_id|>",
-                "<|end_of_text|>",
-                "<|start_header_id|>",
-                "User:",
-                "\nUser:",
-                "Assistant:",
-            ],
+            stop=stop_tokens,
             echo=False
         )
 
@@ -448,8 +496,15 @@ def generate_gguf_response(
         _llm_state = "idle"
         if choices and len(choices) > 0:
             raw_text = choices[0].get("text", "").strip()
-            # Bersihkan jika ada artefak stop token
-            cleaned = raw_text.replace("<|eot_id|>", "").replace("<|end_of_text|>", "").strip()
+            # Bersihkan jika ada artefak stop token (Llama & Gemma)
+            cleaned = (
+                raw_text
+                .replace("<|eot_id|>", "")
+                .replace("<|end_of_text|>", "")
+                .replace("<end_of_turn>", "")
+                .replace("<eos>", "")
+                .strip()
+            )
             # Bersihkan jika ada kalimat yang terpotong di akhir karena token limit
             if cleaned and cleaned[-1] not in ('.', '!', '?', '"', "'", '*'):
                 matches = list(re.finditer(r'[.!?](\s+|$|\n)', cleaned))

@@ -994,6 +994,7 @@
       ['attachLassoEvents', attachLassoEvents],
       ['initUndoRedo', initUndoRedo],
       ['loadFolderTree', loadFolderTree],
+      ['initScaffoldModule', initScaffoldModule],
       // Launch into persisted page mode (Database Canvas or Explorer Mode)
       ['initPageMode', initPageMode],
     ];
@@ -1002,7 +1003,7 @@
     }
   });
 
-  function initPageMode() {
+  async function initPageMode() {
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view') || urlParams.get('mode');
     const colParam  = urlParams.get('col');
@@ -1013,6 +1014,15 @@
 
     const target = viewParam || savedCanvas || 'explorer';
 
+    // Muat custom pages dari registry sebelum kanvas di-render agar kartu tidak hilang saat refresh
+    try {
+      if (typeof loadScaffoldPagesAndOverrides === 'function') {
+        await loadScaffoldPagesAndOverrides();
+      }
+    } catch (e) {
+      console.warn('Scaffold init warning:', e);
+    }
+
     if (target === 'database') {
       enterDatabaseMode().then(() => {
         if (colParam) setTimeout(() => openDatabaseDrawer(colParam), 250);
@@ -1022,6 +1032,611 @@
     } else {
       enterExplorerMode([]);
     }
+  }
+
+  /* =====================================================================
+     SCAFFOLD & LIVE ENVIRONMENT MODULE
+     ===================================================================== */
+  let scaffoldCurrentStep = 1;
+
+  function slugify(text) {
+    return (text || '').toString().toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  function openScaffoldModal() {
+    const backdrop = document.getElementById('scaffold-modal-backdrop');
+    if (!backdrop) {
+      console.error('Modal backdrop not found');
+      return;
+    }
+    scaffoldCurrentStep = 1;
+    updateScaffoldStepUI();
+
+    const nameInput = document.getElementById('scaffold-page-name');
+    const slugInput = document.getElementById('scaffold-page-slug');
+    const descInput = document.getElementById('scaffold-page-desc');
+    if (nameInput) nameInput.value = '';
+    if (slugInput) slugInput.value = '';
+    if (descInput) descInput.value = '';
+    updateScaffoldPreview('halaman-baru');
+
+    // Re-sync role chips visual state
+    document.querySelectorAll('.scaffold-role-chips .role-chip').forEach(chip => {
+      const chk = chip.querySelector('input[type="checkbox"]');
+      if (chk) chip.classList.toggle('active', chk.checked);
+    });
+
+    backdrop.style.display = 'flex';
+    if (nameInput) setTimeout(() => nameInput.focus(), 50);
+  }
+  window.openScaffoldModal = openScaffoldModal;
+
+  function closeScaffoldModal() {
+    const backdrop = document.getElementById('scaffold-modal-backdrop');
+    if (backdrop) backdrop.style.display = 'none';
+  }
+  window.closeScaffoldModal = closeScaffoldModal;
+
+  function updateScaffoldStepUI() {
+    const p1 = document.getElementById('scaffold-step-1');
+    const p2 = document.getElementById('scaffold-step-2');
+    const p3 = document.getElementById('scaffold-step-3');
+    const pLoad = document.getElementById('scaffold-step-loading');
+
+    if (p1) p1.style.display = (scaffoldCurrentStep === 1) ? 'block' : 'none';
+    if (p2) p2.style.display = (scaffoldCurrentStep === 2) ? 'block' : 'none';
+    if (p3) p3.style.display = (scaffoldCurrentStep === 3) ? 'block' : 'none';
+    if (pLoad) pLoad.style.display = 'none';
+
+    for (let s = 1; s <= 3; s++) {
+      const pill = document.getElementById('step-pill-' + s);
+      if (pill) {
+        pill.classList.toggle('active', s === scaffoldCurrentStep);
+        pill.classList.toggle('completed', s < scaffoldCurrentStep);
+      }
+    }
+
+    const btnPrev = document.getElementById('btn-scaffold-prev');
+    const btnNext = document.getElementById('btn-scaffold-next');
+    const btnSubmit = document.getElementById('btn-scaffold-submit');
+
+    if (btnPrev) btnPrev.style.display = (scaffoldCurrentStep > 1) ? 'inline-flex' : 'none';
+    if (btnNext) btnNext.style.display = (scaffoldCurrentStep < 3) ? 'inline-flex' : 'none';
+    if (btnSubmit) btnSubmit.style.display = (scaffoldCurrentStep === 3) ? 'inline-flex' : 'none';
+  }
+
+  function updateScaffoldPreview(slug) {
+    const safeSlug = slug || 'halaman-baru';
+    const previewRoute = document.getElementById('scaffold-preview-route');
+    if (previewRoute) previewRoute.textContent = '/' + safeSlug;
+    document.querySelectorAll('.sum-slug').forEach(el => el.textContent = safeSlug);
+    document.querySelectorAll('.sum-route').forEach(el => el.textContent = '/' + safeSlug);
+  }
+
+  async function submitScaffoldPage() {
+    const nameInput = document.getElementById('scaffold-page-name');
+    const slugInput = document.getElementById('scaffold-page-slug');
+    const descInput = document.getElementById('scaffold-page-desc');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const slug = slugInput ? slugInput.value.trim().toLowerCase() : '';
+    const desc = descInput ? descInput.value.trim() : '';
+
+    if (!name || !slug) {
+      alert('Nama halaman dan slug URL wajib diisi.');
+      scaffoldCurrentStep = 1;
+      updateScaffoldStepUI();
+      return;
+    }
+
+    // Get selected type
+    const activeTypeCard = document.querySelector('.scaffold-type-card.active');
+    const nodeType = activeTypeCard ? activeTypeCard.dataset.type : 'page';
+
+    // Get selected roles
+    const roles = [];
+    document.querySelectorAll('.scaffold-role-chips .role-chip input[type="checkbox"]:checked').forEach(inp => roles.push(inp.value));
+
+    // Get selected template
+    const activeTmplCard = document.querySelector('.scaffold-tmpl-card.active');
+    const template = activeTmplCard ? activeTmplCard.dataset.template : 'dashboard';
+
+    // Show loading state
+    const p1 = document.getElementById('scaffold-step-1');
+    const p2 = document.getElementById('scaffold-step-2');
+    const p3 = document.getElementById('scaffold-step-3');
+    const pLoad = document.getElementById('scaffold-step-loading');
+    if (p1) p1.style.display = 'none';
+    if (p2) p2.style.display = 'none';
+    if (p3) p3.style.display = 'none';
+    if (pLoad) pLoad.style.display = 'block';
+
+    const btnPrev = document.getElementById('btn-scaffold-prev');
+    const btnNext = document.getElementById('btn-scaffold-next');
+    const btnSubmit = document.getElementById('btn-scaffold-submit');
+    if (btnPrev) btnPrev.style.display = 'none';
+    if (btnNext) btnNext.style.display = 'none';
+    if (btnSubmit) btnSubmit.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/scaffold/page', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          slug: slug,
+          description: desc,
+          type: nodeType,
+          role: roles.length ? roles : ['user'],
+          template: template
+        })
+      });
+
+      const contentType = res.headers.get('content-type') || '';
+      let data = null;
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        if (res.status === 404 || res.status === 405) {
+          throw new Error('Server backend (server.py) di terminal Anda belum menjalankan rute baru (HTTP ' + res.status + ').\n\nSilakan matikan server di terminal (Ctrl+C), lalu jalankan ulang: python server.py');
+        }
+        throw new Error(`Respon server bukan JSON (HTTP ${res.status}): ${text.substring(0, 100)}...`);
+      }
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || `Gagal membuat halaman scaffold (HTTP ${res.status}).`);
+      }
+
+      // Add to GENERAL_NODES
+      const newNode = {
+        id: data.node.id,
+        kind: data.node.type,
+        category: (nodeType === 'dashboard' ? 'PORTAL DASHBOARD' : 'CUSTOM UI MODULE'),
+        title: data.node.label,
+        slug: data.node.slug,
+        path: data.node.files.html,
+        routeUrl: data.node.url,
+        desc: data.node.description,
+        iconType: (nodeType === 'dashboard' ? 'grid' : (nodeType === 'auth' ? 'key' : 'globe')),
+        borderVariant: (nodeType === 'dashboard' ? 'card-border-blue' : 'card-border-cyan'),
+        ports: [{ side: 'right', type: 'green', symbol: '+' }, { side: 'left', type: 'cyan', symbol: '+' }],
+        enabled: true,
+        isCustom: true,
+        x: 80,
+        y: 440
+      };
+
+      // Auto layout
+      const colX = (nodeType === 'dashboard' ? 1040 : (nodeType === 'engine' ? 1420 : 80));
+      newNode.x = colX;
+      const sameColNodes = GENERAL_NODES.filter(n => Math.abs((n.x || 0) - colX) < 180);
+      const maxY = sameColNodes.reduce((max, n) => Math.max(max, n.y || 0), 200);
+      newNode.y = maxY + 170;
+
+      GENERAL_NODES.push(newNode);
+      if (STATE.nodes) STATE.nodes.push(newNode);
+
+      // Connect to gateways
+      (data.connections || []).forEach(targetId => {
+        const edge = [newNode.id, targetId, 'default', 'Route Call', 'custom'];
+        GENERAL_CONNECTIONS.push(edge);
+        if (STATE.connections) STATE.connections.push(edge);
+      });
+
+      // Add to stage
+      const targetStageId = (nodeType === 'dashboard' ? 'stage-3' : 'stage-1');
+      const targetStage = GENERAL_STAGES.find(s => s.id === targetStageId) || GENERAL_STAGES[0];
+      if (targetStage && !targetStage.nodeIds.includes(newNode.id)) {
+        targetStage.nodeIds.push(newNode.id);
+      }
+
+      // Render if in general view
+      if (nodesLayer && STATE.canvasView === 'general') {
+        renderGeneralCard(newNode);
+        renderAllConnections();
+      }
+      renderSidebarGeneralList();
+
+      closeScaffoldModal();
+
+      if (statusSyncText) {
+        statusSyncText.textContent = 'Halaman "' + name + '" berhasil dibuat & ditambahkan ke canvas!';
+      }
+
+      setTimeout(() => {
+        focusNode(newNode.id, true);
+      }, 100);
+
+    } catch (err) {
+      console.error('Scaffold failed:', err);
+      const pLoad = document.getElementById('scaffold-step-loading');
+      if (pLoad) pLoad.style.display = 'none';
+
+      alert('Error Scaffolding: ' + err.message);
+      scaffoldCurrentStep = 3;
+      updateScaffoldStepUI();
+    }
+  }
+
+  async function togglePageStatus(slug, targetStatus) {
+    if (!slug) return;
+    const cleanSlug = slug.replace(/^page-/, '').toLowerCase();
+
+    try {
+      const res = await fetch('/api/scaffold/page/' + cleanSlug + '/status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: targetStatus })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Gagal mengubah status halaman.');
+      }
+
+      GENERAL_NODES.forEach(n => {
+        const nSlug = n.slug || n.id.replace(/^page-/, '');
+        if (nSlug === cleanSlug || n.id === slug || n.id === ('page-' + cleanSlug)) {
+          n.enabled = targetStatus;
+        }
+      });
+
+      if (STATE.nodes) {
+        STATE.nodes.forEach(n => {
+          const nSlug = n.slug || n.id.replace(/^page-/, '');
+          if (nSlug === cleanSlug || n.id === slug || n.id === ('page-' + cleanSlug)) {
+            n.enabled = targetStatus;
+          }
+        });
+      }
+
+      const cardEl = document.getElementById('page-' + cleanSlug) || document.getElementById(slug);
+      if (cardEl) {
+        cardEl.classList.toggle('is-disabled', !targetStatus);
+        const pBtn = cardEl.querySelector('[data-card-power]');
+        if (pBtn) {
+          pBtn.className = 'card-toggle-power ' + (targetStatus ? 'power-on' : 'power-off');
+          pBtn.textContent = targetStatus ? '⏻ ON' : '⏻ OFF';
+        }
+      }
+
+      renderSidebarGeneralList();
+
+      if (statusSyncText) {
+        statusSyncText.textContent = 'Modul "' + cleanSlug + '" diubah menjadi: ' + (targetStatus ? 'AKTIF (ONLINE)' : 'NONAKTIF (MAINTENANCE)');
+      }
+    } catch (err) {
+      alert('Gagal toggle status: ' + err.message);
+    }
+  }
+  window.togglePageStatus = togglePageStatus;
+
+  async function deleteScaffoldPage(slugOrId) {
+    if (!slugOrId) return;
+    const cleanSlug = slugOrId.replace(/^page-/, '').toLowerCase();
+
+    // Cari node di GENERAL_NODES
+    const node = GENERAL_NODES.find(n => (n.slug === cleanSlug || n.id === slugOrId || n.id === ('page-' + cleanSlug)));
+    const pageTitle = node ? (node.title || cleanSlug) : cleanSlug;
+
+    // Dialog konfirmasi
+    const ok = confirm(
+      `🗑️ Hapus Halaman & Berkas?\n\nApakah Anda yakin ingin menghapus modul "${pageTitle}" (/${cleanSlug})?\n\nBerkas fisik berikut akan DIHAPUS PERMANEN dari disk:\n• public/${cleanSlug}.html\n• public/css/${cleanSlug}.css\n• public/js/${cleanSlug}.js\n\nTindakan ini tidak dapat dibatalkan.`
+    );
+    if (!ok) return;
+
+    if (statusSyncText) {
+      statusSyncText.textContent = `Menghapus halaman "${pageTitle}"...`;
+    }
+
+    try {
+      const res = await fetch('/api/scaffold/page/' + cleanSlug, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const contentType = res.headers.get('content-type') || '';
+      let data = null;
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Respon server bukan JSON (HTTP ${res.status}): ${text.substring(0, 80)}`);
+      }
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || `Gagal menghapus halaman (HTTP ${res.status}).`);
+      }
+
+      const targetId = node ? node.id : ('page-' + cleanSlug);
+
+      // Hapus dari GENERAL_NODES
+      const gIdx = GENERAL_NODES.findIndex(n => n.id === targetId || n.slug === cleanSlug);
+      if (gIdx !== -1) GENERAL_NODES.splice(gIdx, 1);
+
+      // Hapus dari STATE.nodes
+      if (STATE.nodes) {
+        const sIdx = STATE.nodes.findIndex(n => n.id === targetId || n.slug === cleanSlug);
+        if (sIdx !== -1) STATE.nodes.splice(sIdx, 1);
+      }
+
+      // Hapus sambungan/connections yang terhubung ke node ini
+      for (let i = GENERAL_CONNECTIONS.length - 1; i >= 0; i--) {
+        const conn = GENERAL_CONNECTIONS[i];
+        if (conn[0] === targetId || conn[1] === targetId) {
+          GENERAL_CONNECTIONS.splice(i, 1);
+        }
+      }
+      if (STATE.connections) {
+        for (let i = STATE.connections.length - 1; i >= 0; i--) {
+          const conn = STATE.connections[i];
+          if (conn[0] === targetId || conn[1] === targetId) {
+            STATE.connections.splice(i, 1);
+          }
+        }
+      }
+
+      // Hapus dari stages
+      GENERAL_STAGES.forEach(st => {
+        if (st.nodeIds) {
+          st.nodeIds = st.nodeIds.filter(id => id !== targetId);
+        }
+      });
+
+      // Animasi hapus kartu dari DOM kanvas
+      const cardEl = document.getElementById(targetId) || document.getElementById('page-' + cleanSlug) || document.querySelector(`[data-node-id="${targetId}"]`);
+      if (cardEl && cardEl.parentNode) {
+        cardEl.style.transition = 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)';
+        cardEl.style.transform = 'scale(0.85) translateY(12px)';
+        cardEl.style.opacity = '0';
+        setTimeout(() => {
+          if (cardEl.parentNode) cardEl.parentNode.removeChild(cardEl);
+          renderAllConnections();
+        }, 280);
+      } else {
+        renderAllConnections();
+      }
+
+      // Refresh daftar di sidebar
+      renderSidebarGeneralList();
+
+      if (statusSyncText) {
+        statusSyncText.textContent = `✓ Halaman "${pageTitle}" beserta berkas fisiknya berhasil dihapus.`;
+      }
+      showToast(`✓ Halaman "${pageTitle}" berhasil dihapus`, 2500);
+
+    } catch (err) {
+      console.error('Delete page failed:', err);
+      alert('Gagal Menghapus Halaman: ' + err.message);
+      if (statusSyncText) {
+        statusSyncText.textContent = 'Gagal menghapus halaman: ' + err.message;
+      }
+    }
+  }
+  window.deleteScaffoldPage = deleteScaffoldPage;
+
+  async function loadScaffoldPagesAndOverrides() {
+    try {
+      const res = await fetch('/api/scaffold/pages');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data.success) return;
+
+      const customPages = data.pages || [];
+      const overrides = data.system_overrides || {};
+
+      customPages.forEach((p, idx) => {
+        let node = GENERAL_NODES.find(n => n.id === p.id);
+        const nodeType = p.type || 'page';
+
+        if (!node) {
+          const colX = (nodeType === 'dashboard' ? 1040 : (nodeType === 'engine' ? 1420 : 80));
+          const sameColNodes = GENERAL_NODES.filter(n => Math.abs((n.x || 0) - colX) < 180);
+          const maxY = sameColNodes.reduce((max, n) => Math.max(max, n.y || 0), 200);
+
+          const newNode = {
+            id: p.id,
+            kind: nodeType,
+            category: (nodeType === 'dashboard' ? 'PORTAL DASHBOARD' : 'CUSTOM UI MODULE'),
+            title: p.label || p.slug,
+            slug: p.slug,
+            path: p.files ? p.files.html : ('public/' + p.slug + '.html'),
+            routeUrl: p.url || ('/' + p.slug),
+            desc: p.description || '',
+            iconType: (nodeType === 'dashboard' ? 'grid' : (nodeType === 'auth' ? 'key' : 'globe')),
+            borderVariant: (nodeType === 'dashboard' ? 'card-border-blue' : 'card-border-cyan'),
+            ports: [{ side: 'right', type: 'green', symbol: '+' }, { side: 'left', type: 'cyan', symbol: '+' }],
+            enabled: (p.enabled !== false),
+            isCustom: true,
+            x: colX,
+            y: maxY + 170
+          };
+          GENERAL_NODES.push(newNode);
+          node = newNode;
+
+          const stageId = (nodeType === 'dashboard' ? 'stage-3' : 'stage-1');
+          const stage = GENERAL_STAGES.find(s => s.id === stageId) || GENERAL_STAGES[0];
+          if (stage && !stage.nodeIds.includes(newNode.id)) {
+            stage.nodeIds.push(newNode.id);
+          }
+
+          // Hubungkan edge default ke gateway
+          const targetGate = (nodeType === 'dashboard' ? 'dash-user' : 'gate-auth-check');
+          const edge = [newNode.id, targetGate, 'default', 'Route Call', 'custom'];
+          if (!GENERAL_CONNECTIONS.some(c => c[0] === newNode.id && c[1] === targetGate)) {
+            GENERAL_CONNECTIONS.push(edge);
+          }
+        }
+
+        // Jika kanvas General sudah aktif, pastikan kartu dirender ke canvas & STATE
+        if (STATE.canvasView === 'general') {
+          if (STATE.nodes && !STATE.nodes.some(n => n.id === node.id)) {
+            STATE.nodes.push(node);
+          }
+          if (STATE.connections) {
+            const targetGate = (node.kind === 'dashboard' ? 'dash-user' : 'gate-auth-check');
+            if (!STATE.connections.some(c => c[0] === node.id && c[1] === targetGate)) {
+              STATE.connections.push([node.id, targetGate, 'default', 'Route Call', 'custom']);
+            }
+          }
+          if (nodesLayer && !document.getElementById(node.id)) {
+            renderGeneralCard(node);
+          }
+        }
+      });
+
+      Object.keys(overrides).forEach(slugKey => {
+        const oData = overrides[slugKey];
+        GENERAL_NODES.forEach(n => {
+          const nSlug = n.slug || n.id.replace(/^page-/, '');
+          if (nSlug === slugKey || n.id === slugKey) {
+            n.enabled = (oData.enabled !== false);
+          }
+        });
+        if (STATE.nodes) {
+          STATE.nodes.forEach(n => {
+            const nSlug = n.slug || n.id.replace(/^page-/, '');
+            if (nSlug === slugKey || n.id === slugKey) {
+              n.enabled = (oData.enabled !== false);
+            }
+          });
+        }
+      });
+
+      if (STATE.canvasView === 'general') {
+        renderAllConnections();
+        renderSidebarGeneralList();
+      }
+    } catch (e) {
+      console.warn('Scaffold registry load warning:', e);
+    }
+  }
+  window.loadScaffoldPagesAndOverrides = loadScaffoldPagesAndOverrides;
+
+  function initScaffoldModule() {
+    const btnAdd = document.getElementById('btn-gen-add-page');
+    if (btnAdd) {
+      btnAdd.onclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        openScaffoldModal();
+      };
+    }
+
+    const btnClose = document.getElementById('btn-close-scaffold-modal');
+    const btnCancel = document.getElementById('btn-scaffold-cancel');
+    const btnNext = document.getElementById('btn-scaffold-next');
+    const btnPrev = document.getElementById('btn-scaffold-prev');
+    const btnSubmit = document.getElementById('btn-scaffold-submit');
+
+    if (btnClose) btnClose.onclick = closeScaffoldModal;
+    if (btnCancel) btnCancel.onclick = closeScaffoldModal;
+
+    if (btnNext) {
+      btnNext.onclick = (e) => {
+        e.preventDefault();
+        if (scaffoldCurrentStep === 1) {
+          const nameInput = document.getElementById('scaffold-page-name');
+          const slugInput = document.getElementById('scaffold-page-slug');
+          if (!nameInput || !nameInput.value.trim()) {
+            alert('Silakan masukkan nama halaman terlebih dahulu.');
+            nameInput?.focus();
+            return;
+          }
+          if (!slugInput || !slugInput.value.trim()) {
+            alert('Silakan masukkan slug URL terlebih dahulu.');
+            slugInput?.focus();
+            return;
+          }
+        }
+        if (scaffoldCurrentStep < 3) {
+          scaffoldCurrentStep++;
+          updateScaffoldStepUI();
+        }
+      };
+    }
+
+    if (btnPrev) {
+      btnPrev.onclick = (e) => {
+        e.preventDefault();
+        if (scaffoldCurrentStep > 1) {
+          scaffoldCurrentStep--;
+          updateScaffoldStepUI();
+        }
+      };
+    }
+
+    if (btnSubmit) {
+      btnSubmit.onclick = (e) => {
+        e.preventDefault();
+        submitScaffoldPage();
+      };
+    }
+
+    const nameInput = document.getElementById('scaffold-page-name');
+    const slugInput = document.getElementById('scaffold-page-slug');
+    if (nameInput && slugInput) {
+      nameInput.oninput = () => {
+        const genSlug = slugify(nameInput.value);
+        slugInput.value = genSlug;
+        updateScaffoldPreview(genSlug);
+      };
+      slugInput.oninput = () => {
+        const clean = slugify(slugInput.value);
+        updateScaffoldPreview(clean);
+      };
+    }
+
+    document.querySelectorAll('.scaffold-type-card').forEach(card => {
+      const r = card.querySelector('input[type="radio"]');
+      if (r) {
+        card.classList.toggle('active', r.checked);
+        r.addEventListener('change', () => {
+          document.querySelectorAll('.scaffold-type-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+        });
+      }
+    });
+
+    // Role selection chips (Checkboxes)
+    document.querySelectorAll('.scaffold-role-chips .role-chip').forEach(chip => {
+      const chk = chip.querySelector('input[type="checkbox"]');
+      if (chk) {
+        // Sync initial state
+        chip.classList.toggle('active', chk.checked);
+
+        // Native <label> click automatically toggles the nested checkbox!
+        // We listen to the change event on the checkbox to update the active class cleanly without double-toggling.
+        chk.addEventListener('change', () => {
+          chip.classList.toggle('active', chk.checked);
+        });
+      }
+    });
+
+    document.querySelectorAll('.scaffold-tmpl-card').forEach(card => {
+      const r = card.querySelector('input[type="radio"]');
+      if (r) {
+        card.classList.toggle('active', r.checked);
+        r.addEventListener('change', () => {
+          document.querySelectorAll('.scaffold-tmpl-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+        });
+      }
+    });
+
+    const backdrop = document.getElementById('scaffold-modal-backdrop');
+    if (backdrop) {
+      backdrop.onclick = (e) => {
+        if (e.target === backdrop) closeScaffoldModal();
+      };
+    }
+
+    loadScaffoldPagesAndOverrides();
   }
 
   function cacheDOMRefs() {
@@ -2910,6 +3525,11 @@
             <button class="sgen-toggle-btn ${isNodeDisabled ? 'is-disabled' : 'is-active'}" data-toggle-slug="${nodeSlug}" data-node-id="${node.id}" title="${isNodeDisabled ? 'Klik untuk mengaktifkan kembali' : 'Klik untuk menonaktifkan modul'}">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
             </button>
+            ${node.isCustom ? `
+              <button class="sgen-delete-btn" data-delete-slug="${nodeSlug}" data-node-id="${node.id}" title="Hapus modul & berkas ${escapeHtml(node.title)}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            ` : ''}
           </div>
         `;
       }).join('');
@@ -2945,7 +3565,7 @@
     listEl.innerHTML = stagesHtml.join('');
 
     // Attach click events on stage headers (accordion collapse/expand)
-    $('.sidebar-stage-header').forEach(header => {
+    $$('.sidebar-stage-header').forEach(header => {
       header.onclick = (e) => {
         e.stopPropagation();
         const group = header.closest('.sidebar-stage-group');
@@ -2954,14 +3574,14 @@
     });
 
     // Attach click events on individual items
-    $('.sidebar-gen-item').forEach(item => {
+    $$('.sidebar-gen-item').forEach(item => {
       item.onclick = (e) => {
         e.stopPropagation();
         const nodeId = item.dataset.nodeId;
         const node = nodeMap.get(nodeId);
         if (!node) return;
 
-        $('.sidebar-gen-item').forEach(el => el.classList.remove('active'));
+        $$('.sidebar-gen-item').forEach(el => el.classList.remove('active'));
         item.classList.add('active');
 
         // Focus & pan on canvas
@@ -2980,6 +3600,29 @@
         if (btnFocus) {
           btnFocus.onclick = () => focusNode(nodeId, true);
         }
+      };
+    });
+
+    // Attach click events on toggle power buttons in sidebar
+    $$('.sgen-toggle-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const slug = btn.dataset.toggleSlug;
+        const nodeId = btn.dataset.nodeId;
+        const node = nodeMap.get(nodeId);
+        const currentEnabled = node ? (node.enabled !== false) : true;
+        if (window.togglePageStatus) {
+          window.togglePageStatus(slug, !currentEnabled);
+        }
+      };
+    });
+
+    // Attach click events on delete buttons in sidebar
+    $$('.sgen-delete-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const slug = btn.dataset.deleteSlug || btn.dataset.nodeId;
+        deleteScaffoldPage(slug);
       };
     });
   }
@@ -3008,7 +3651,11 @@
     const treeStats    = $('#tree-summary-stats');
     if (isGen) {
       if (sidebarTitle) sidebarTitle.textContent = 'Arsitektur Sistem';
-      if (treeStats)    treeStats.textContent = '28 Node • 6 Kolom User Journey';
+      if (treeStats) {
+        const total = GENERAL_NODES.length;
+        const active = GENERAL_NODES.filter(n => n.enabled !== false).length;
+        treeStats.innerHTML = `${total} Modul &bull; ${active} Aktif`;
+      }
     } else if (isDb) {
       if (sidebarTitle) sidebarTitle.textContent = 'Koleksi Basis Data';
       if (treeStats)    treeStats.textContent = '6 Koleksi Basis Data & Dataset';
@@ -3272,6 +3919,13 @@
             <span class="ctx-item-icon">${getCtxSvg('trash')}</span>
             <span class="ctx-item-label">Sembunyikan dari Kanvas</span>
           </div>
+          ${node.isCustom ? `
+          <div class="ctx-separator"></div>
+          <div class="ctx-item danger" data-action="delete-page">
+            <span class="ctx-item-icon">${getCtxSvg('trash')}</span>
+            <span class="ctx-item-label">Hapus Halaman & Berkas (Permanen)</span>
+          </div>
+          ` : ''}
         `;
       }
     } 
@@ -3508,6 +4162,9 @@
             updateMinimap();
             showToast('Node disembunyikan dari kanvas', 1500);
           }
+          break;
+        case 'delete-page':
+          if (node) deleteScaffoldPage(node.slug || node.id);
           break;
 
         // Folder actions
@@ -4249,6 +4906,11 @@
             ${node.enabled !== false ? '⏻ ON' : '⏻ OFF'}
           </button>
         ` : ''}
+        ${node.isCustom ? `
+          <button class="card-btn-delete" data-card-delete="${node.slug || node.id}" title="Hapus modul & berkas ${node.title}">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        ` : ''}
       </div>
       ${portsHtml}
     `;
@@ -4271,6 +4933,18 @@
         const currentEnabled = (node.enabled !== false);
         if (window.togglePageStatus) {
           window.togglePageStatus(slug, !currentEnabled);
+        }
+      });
+    }
+
+    // Delete button click handler on custom page card
+    const cardDeleteBtn = el.querySelector('[data-card-delete]');
+    if (cardDeleteBtn) {
+      cardDeleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const slug = node.slug || node.id.replace(/^page-/, '');
+        if (window.deleteScaffoldPage) {
+          window.deleteScaffoldPage(slug);
         }
       });
     }
@@ -5602,11 +6276,11 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     // --- General Sidebar Action Buttons ---
     $('#btn-gen-expand-all')?.addEventListener('click', (e) => {
       e.preventDefault();
-      $('.sidebar-stage-group').forEach(g => g.classList.remove('collapsed'));
+      $$('.sidebar-stage-group').forEach(g => g.classList.remove('collapsed'));
     });
     $('#btn-gen-collapse-all')?.addEventListener('click', (e) => {
       e.preventDefault();
-      $('.sidebar-stage-group').forEach(g => g.classList.add('collapsed'));
+      $$('.sidebar-stage-group').forEach(g => g.classList.add('collapsed'));
     });
     $('#btn-gen-fit-view')?.addEventListener('click', (e) => {
       e.preventDefault();
@@ -5614,11 +6288,11 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     });
 
     // --- General Sidebar Quick Filter Chips ---
-    $('#quick-chips-gen .quick-chip').forEach(chip => {
+    $$('#quick-chips-gen .quick-chip').forEach(chip => {
       chip.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        $('#quick-chips-gen .quick-chip').forEach(c => c.classList.remove('active'));
+        $$('#quick-chips-gen .quick-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         const f = chip.dataset.genFilter || 'all';
         renderSidebarGeneralList(f, searchInput ? searchInput.value : '');
@@ -5725,7 +6399,15 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       else files++;
     });
     count(tree);
-    if (treeSummaryStats) treeSummaryStats.textContent = `${dirs} folder &bull; ${files} berkas di root`;
+    if (STATE.canvasView === 'explorer' || STATE.explorerMode) {
+      if (treeSummaryStats) treeSummaryStats.innerHTML = `${dirs} folder &bull; ${files} berkas`;
+    } else if (STATE.canvasView === 'general') {
+      if (treeSummaryStats) {
+        const total = GENERAL_NODES.length;
+        const active = GENERAL_NODES.filter(n => n.enabled !== false).length;
+        treeSummaryStats.innerHTML = `${total} Modul &bull; ${active} Aktif`;
+      }
+    }
   }
 
   function renderTree(items, containerEl, depth) {
