@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="12.1.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="12.1.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_csv" compatibility="12.1.001" expanded="true" height="68" name="Read CSV" width="90" x="45" y="34">
+        <parameter key="csv_file" value="C:\Users\Andika\Documents\Data Training\alzheimers_disease_data.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="multiline_text" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="true"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="use_header_row" value="true"/>
+        <parameter key="header_row" value="1"/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="Asia/Jakarta"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="windows-1252"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="PatientID.false.integer.attribute"/>
+          <parameter key="1" value="Age.true.integer.attribute"/>
+          <parameter key="2" value="Gender.true.integer.attribute"/>
+          <parameter key="3" value="Ethnicity.true.integer.attribute"/>
+          <parameter key="4" value="EducationLevel.true.integer.attribute"/>
+          <parameter key="5" value="BMI.true.real.attribute"/>
+          <parameter key="6" value="Smoking.true.integer.attribute"/>
+          <parameter key="7" value="AlcoholConsumption.true.real.attribute"/>
+          <parameter key="8" value="PhysicalActivity.true.real.attribute"/>
+          <parameter key="9" value="DietQuality.true.real.attribute"/>
+          <parameter key="10" value="SleepQuality.true.real.attribute"/>
+          <parameter key="11" value="FamilyHistoryAlzheimers.true.integer.attribute"/>
+          <parameter key="12" value="CardiovascularDisease.true.integer.attribute"/>
+          <parameter key="13" value="Diabetes.true.integer.attribute"/>
+          <parameter key="14" value="Depression.true.integer.attribute"/>
+          <parameter key="15" value="HeadInjury.true.integer.attribute"/>
+          <parameter key="16" value="Hypertension.true.integer.attribute"/>
+          <parameter key="17" value="SystolicBP.true.integer.attribute"/>
+          <parameter key="18" value="DiastolicBP.true.integer.attribute"/>
+          <parameter key="19" value="CholesterolTotal.true.real.attribute"/>
+          <parameter key="20" value="CholesterolLDL.true.real.attribute"/>
+          <parameter key="21" value="CholesterolHDL.true.real.attribute"/>
+          <parameter key="22" value="CholesterolTriglycerides.true.real.attribute"/>
+          <parameter key="23" value="MMSE.true.real.attribute"/>
+          <parameter key="24" value="FunctionalAssessment.true.real.attribute"/>
+          <parameter key="25" value="MemoryComplaints.true.integer.attribute"/>
+          <parameter key="26" value="BehavioralProblems.true.integer.attribute"/>
+          <parameter key="27" value="ADL.true.real.attribute"/>
+          <parameter key="28" value="Confusion.true.integer.attribute"/>
+          <parameter key="29" value="Disorientation.true.integer.attribute"/>
+          <parameter key="30" value="PersonalityChanges.true.integer.attribute"/>
+          <parameter key="31" value="DifficultyCompletingTasks.true.integer.attribute"/>
+          <parameter key="32" value="Forgetfulness.true.integer.attribute"/>
+          <parameter key="33" value="Diagnosis.true.binominal.label"/>
+          <parameter key="34" value="DoctorInCharge.false.polynominal.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="false"/>
+      </operator>
+      <operator activated="true" class="concurrency:optimize_parameters_grid" compatibility="12.1.001" expanded="true" height="124" name="Optimize Parameters" width="90" x="179" y="34">
+        <list key="parameters">
+          <parameter key="XGBoost (2).learning_rate" value="[0.1;0.2;10;linear]"/>
+          <parameter key="XGBoost (2).max_depth" value="[4;5;2;linear]"/>
+        </list>
+        <parameter key="error_handling" value="fail on error"/>
+        <parameter key="log_performance" value="true"/>
+        <parameter key="log_all_criteria" value="false"/>
+        <parameter key="synchronize" value="false"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="concurrency:cross_validation" compatibility="12.1.001" expanded="true" height="145" name="Cross Validation (2)" width="90" x="45" y="34">
+            <parameter key="split_on_batch_attribute" value="false"/>
+            <parameter key="leave_one_out" value="false"/>
+            <parameter key="number_of_folds" value="10"/>
+            <parameter key="sampling_type" value="automatic"/>
+            <parameter key="use_local_random_seed" value="false"/>
+            <parameter key="local_random_seed" value="1992"/>
+            <parameter key="enable_parallel_execution" value="true"/>
+            <process expanded="true">
+              <operator activated="true" class="xgboost:xgboost" compatibility="0.1.003" expanded="true" height="103" name="XGBoost (2)" width="90" x="179" y="34">
+                <parameter key="booster" value="tree booster"/>
+                <parameter key="rounds" value="25"/>
+                <parameter key="early_stopping" value="none"/>
+                <parameter key="early_stopping_rounds" value="10"/>
+                <parameter key="learning_rate" value="0.3"/>
+                <parameter key="min_split_loss" value="0.0"/>
+                <parameter key="max_depth" value="6"/>
+                <parameter key="min_child_weight" value="1.0"/>
+                <parameter key="subsample" value="1.0"/>
+                <parameter key="tree_method" value="auto"/>
+                <parameter key="lambda" value="1.0"/>
+                <parameter key="alpha" value="0.0"/>
+                <parameter key="sample_type" value="uniform"/>
+                <parameter key="normalize_type" value="tree"/>
+                <parameter key="rate_drop" value="0.0"/>
+                <parameter key="skip_drop" value="0.0"/>
+                <parameter key="updater" value="shotgun"/>
+                <parameter key="feature_selector" value="cyclic"/>
+                <parameter key="top_k" value="0"/>
+                <enumeration key="expert_parameters"/>
+              </operator>
+              <connect from_port="training set" to_op="XGBoost (2)" to_port="training set"/>
+              <connect from_op="XGBoost (2)" from_port="model" to_port="model"/>
+              <portSpacing port="source_training set" spacing="0"/>
+              <portSpacing port="sink_model" spacing="0"/>
+              <portSpacing port="sink_through 1" spacing="0"/>
+            </process>
+            <process expanded="true">
+              <operator activated="true" class="apply_model" compatibility="12.1.001" expanded="true" height="82" name="Apply Model" width="90" x="45" y="34">
+                <list key="application_parameters"/>
+              </operator>
+              <operator activated="true" class="performance_classification" compatibility="12.1.001" expanded="true" height="82" name="Performance (2)" width="90" x="179" y="34">
+                <parameter key="main_criterion" value="first"/>
+                <parameter key="accuracy" value="true"/>
+                <parameter key="classification_error" value="false"/>
+                <parameter key="kappa" value="false"/>
+                <parameter key="weighted_mean_recall" value="false"/>
+                <parameter key="weighted_mean_precision" value="false"/>
+                <parameter key="spearman_rho" value="false"/>
+                <parameter key="kendall_tau" value="false"/>
+                <parameter key="absolute_error" value="false"/>
+                <parameter key="relative_error" value="false"/>
+                <parameter key="relative_error_lenient" value="false"/>
+                <parameter key="relative_error_strict" value="false"/>
+                <parameter key="normalized_absolute_error" value="false"/>
+                <parameter key="root_mean_squared_error" value="false"/>
+                <parameter key="root_relative_squared_error" value="false"/>
+                <parameter key="squared_error" value="false"/>
+                <parameter key="correlation" value="false"/>
+                <parameter key="squared_correlation" value="false"/>
+                <parameter key="cross-entropy" value="false"/>
+                <parameter key="margin" value="false"/>
+                <parameter key="soft_margin_loss" value="false"/>
+                <parameter key="logistic_loss" value="false"/>
+                <parameter key="skip_undefined_labels" value="true"/>
+                <parameter key="use_example_weights" value="true"/>
+                <list key="class_weights"/>
+              </operator>
+              <connect from_port="model" to_op="Apply Model" to_port="model"/>
+              <connect from_port="test set" to_op="Apply Model" to_port="unlabelled data"/>
+              <connect from_op="Apply Model" from_port="labelled data" to_op="Performance (2)" to_port="labelled data"/>
+              <connect from_op="Performance (2)" from_port="performance" to_port="performance 1"/>
+              <portSpacing port="source_model" spacing="0"/>
+              <portSpacing port="source_test set" spacing="0"/>
+              <portSpacing port="source_through 1" spacing="0"/>
+              <portSpacing port="sink_test set results" spacing="0"/>
+              <portSpacing port="sink_performance 1" spacing="0"/>
+              <portSpacing port="sink_performance 2" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="input 1" to_op="Cross Validation (2)" to_port="example set"/>
+          <connect from_op="Cross Validation (2)" from_port="model" to_port="model"/>
+          <connect from_op="Cross Validation (2)" from_port="performance 1" to_port="performance"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_performance" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+        </process>
+      </operator>
+      <connect from_op="Read CSV" from_port="output" to_op="Optimize Parameters" to_port="input 1"/>
+      <connect from_op="Optimize Parameters" from_port="performance" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>

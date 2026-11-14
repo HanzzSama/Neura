@@ -91,7 +91,7 @@ def api_train():
             y        = df_clean["Diagnosis"]
 
             X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=0.20, random_state=42, stratify=y
+                X, y, test_size=0.20, random_state=2001, stratify=y
             )
 
             class ProgressCallback(xgb.callback.TrainingCallback):
@@ -111,15 +111,15 @@ def api_train():
 
             model = xgb.XGBClassifier(
                 n_estimators=epochs,
-                learning_rate=0.08,
-                max_depth=4,
+                learning_rate=0.2,
+                max_depth=5,
                 min_child_weight=3,
                 subsample=0.85,
                 colsample_bytree=0.85,
                 scale_pos_weight=1.83,
                 gamma=0.2,
                 eval_metric="logloss",
-                random_state=42,
+                random_state=2001,
                 n_jobs=-1,
                 callbacks=[ProgressCallback()],
             )

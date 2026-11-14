@@ -1,4 +1,4 @@
-/**
+﻿/**
  * public/js/app-user-profile.js
  * =============================
  * Role: User (Pasien)
@@ -1244,10 +1244,36 @@ function renderSavedProfileCard(p) {
 }
 
 async function startPersonalizedConsultation(profile) {
-  setDynamicIslandState('generating', {
-    sub: `Konsultasi Klinis \u2022 ${profile.name}`,
-    main: 'Generating'
-  });
+  if (typeof addTypingIndicator === 'function') {
+    addTypingIndicator('neura-auto-predict');
+  }
+  if (typeof setDynamicIslandState === 'function') {
+    setDynamicIslandState('predicting', {
+      sub: `Menganalisis 32 Biomarker \u2022 ${profile.name}`,
+      main: 'Diagnosing'
+    });
+  }
+
+  let predictData = null;
+  try {
+    const res = await fetch('/api/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: profile, source: 'user_profile' })
+    });
+    if (res.ok) {
+      predictData = await res.json();
+    }
+  } catch (err) {
+    console.warn('Auto predict error:', err);
+  }
+
+  if (typeof removeTypingIndicator === 'function') {
+    removeTypingIndicator('neura-auto-predict');
+  }
+  if (typeof setDynamicIslandState === 'function') {
+    setDynamicIslandState('idle', {});
+  }
 
   const ageRisk = profile.age >= 65
     ? 'kategori usia risiko tinggi (>65 tahun)'
@@ -1266,27 +1292,132 @@ async function startPersonalizedConsultation(profile) {
       ? 'Riwayat keluarga belum terkonfirmasi'
       : 'Tidak ada riwayat keluarga';
 
-  const replyHtml = `
-    <p>Terima kasih, <strong>${escapeHtml(profile.name)}</strong>! Profil kesehatan klinis Anda telah tersimpan dan siap digunakan untuk konsultasi.</p>
-    
-    <p><strong>Ringkasan Parameter Klinis Anda:</strong></p>
-    <ul>
-      <li><strong>Faktor Usia (${profile.age} tahun):</strong> Berada pada <em>${ageRisk}</em>.</li>
-      <li><strong>Indeks Massa Tubuh (BMI ${profile.bmi || '—'}):</strong> Status <strong>${escapeHtml(profile.bmiCategory)}</strong>.</li>
-      <li><strong>Riwayat Komorbiditas:</strong> ${escapeHtml(comorbText)}.</li>
-      <li><strong>Keluhan yang Dirasakan:</strong> ${escapeHtml(sympText)}.</li>
-      <li><strong>Riwayat Keluarga:</strong> ${escapeHtml(famText)}.</li>
-    </ul>
+  // JIKA PREDIKSI MODEL BERHASIL DIJALANKAN (Diagnosis 0 or 1)
+  if (predictData && !predictData.error) {
+    const isPos = !!predictData.is_positive;
+    const diagCode = isPos ? 1 : 0;
+    const prob = parseFloat(predictData.probability || 0);
+    const riskLevel = predictData.risk_level || (isPos ? 'High Risk (Positive)' : 'Low Risk (Negative)');
+    const markers = predictData.key_markers || {};
 
-    <p>💡 <strong>Analisis & Saran Awal Neura:</strong><br>
-    Berdasarkan data di atas, keluhan fungsi memori yang Anda alami dapat diperiksa lebih dalam dengan pemodelan biomarker (skor MMSE, Functional Assessment, dan biomarker darah). Model machine learning Neura dapat melakukan estimasi komprehensif terhadap kemungkinan risiko Alzheimer.</p>
+    const diagTitle = isPos ? 'TERINDIKASI RISIKO ALZHEIMER' : 'TIDAK TERINDIKASI ALZHEIMER';
+    const diagSub = isPos
+      ? 'Hasil evaluasi model machine learning mengindikasikan adanya tanda atau kecenderungan risiko Alzheimer pada profil Anda.'
+      : 'Hasil evaluasi model machine learning menunjukkan biomarker dan parameter klinis Anda berada dalam batas aman (Negatif).';
 
-    <p>Apakah Anda ingin menjalankan prediksi biomarker lengkap dengan perintah <code>/predict</code> sekarang?</p>
-  `;
+    const cardBadgeColor = isPos ? '#ef4444' : '#10b981';
+    const cardBgColor = isPos ? 'rgba(239, 68, 68, 0.08)' : 'rgba(16, 185, 129, 0.08)';
+    const cardBorderColor = isPos ? 'rgba(239, 68, 68, 0.35)' : 'rgba(16, 185, 129, 0.35)';
 
-  appendAssistantMessage(replyHtml, {
-    stream: true,
-    suggestions: ['/predict', 'Bagaimana cara mencegah Alzheimer?', 'Gejala awal demensia', 'Ubah data diri']
-  });
+    const replyHtml = `
+      <div style="margin-bottom:12px;">
+        <p>Terima kasih, <strong>${escapeHtml(profile.name)}</strong>! Data diri klinis Anda telah diproses oleh model Machine Learning Neura (XGBoost 32 Biomarker).</p>
+      </div>
+
+      <!-- KARTU HASIL DIAGNOSIS MODEL (0 atau 1) -->
+      <div class="neura-card" style="border:1.5px solid ${cardBorderColor}; background:${cardBgColor}; border-radius:12px; padding:16px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${cardBadgeColor}; box-shadow:0 0 8px ${cardBadgeColor};"></span>
+            <strong style="color:${cardBadgeColor}; font-size:1.05rem; letter-spacing:0.5px;">${diagTitle}</strong>
+          </div>
+          <span style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; padding:3px 8px; border-radius:6px; background:${isPos ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}; color:${cardBadgeColor}; font-weight:700;">
+            Diagnosis: ${diagCode} (${isPos ? 'Positif' : 'Negatif'})
+          </span>
+        </div>
+
+        <p style="margin:0 0 12px 0; font-size:0.92rem; line-height:1.5; color:var(--text-secondary, #cbd5e1);">
+          ${diagSub}
+        </p>
+
+        <!-- STAT METRICS -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:12px;">
+          <div style="background:rgba(255,255,255,0.04); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="font-size:0.75rem; color:var(--text-muted, #94a3b8); margin-bottom:2px;">Kode Prediksi</div>
+            <div style="font-size:1.2rem; font-weight:700; color:${cardBadgeColor}; font-family:'JetBrains Mono', monospace;">
+              Diagnosis = ${diagCode}
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="font-size:0.75rem; color:var(--text-muted, #94a3b8); margin-bottom:2px;">Probabilitas Model</div>
+            <div style="font-size:1.2rem; font-weight:700; color:${cardBadgeColor}; font-family:'JetBrains Mono', monospace;">
+              ${prob.toFixed(1)}%
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="font-size:0.75rem; color:var(--text-muted, #94a3b8); margin-bottom:2px;">Tingkat Risiko</div>
+            <div style="font-size:0.95rem; font-weight:600; color:${cardBadgeColor};">
+              ${escapeHtml(riskLevel)}
+            </div>
+          </div>
+        </div>
+
+        <!-- KEY BIOMARKERS SUMMARY -->
+        <div style="font-size:0.8rem; color:var(--text-muted, #94a3b8); margin-bottom:4px;">
+          Parameter Evaluasi Utama:
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; font-size:0.82rem;">
+          <span class="profile-summary-tag">MMSE: ${markers.MMSE ?? 24} / 30</span>
+          <span class="profile-summary-tag">ADL: ${markers.ADL ?? 7} / 10</span>
+          <span class="profile-summary-tag">Fungsi Kognitif: ${markers.FunctionalAssessment ?? 7} / 10</span>
+          <span class="profile-summary-tag">Keluhan Memori: ${markers.MemoryComplaints ?? 'Tidak'}</span>
+          <span class="profile-summary-tag">BMI: ${profile.bmi || markers.BMI || '—'}</span>
+        </div>
+      </div>
+
+      <!-- REKOMENDASI KLINIS -->
+      <div style="margin-top:10px; font-size:0.92rem; line-height:1.5;">
+        <p><strong>Rekomendasi Tindak Lanjut:</strong></p>
+        ${isPos ? `
+          <ul style="margin:6px 0 10px 20px; padding:0;">
+            <li>Segera lakukan konsultasi dengan dokter spesialis neurologi untuk pemeriksaan neurokognitif mendalam.</li>
+            <li>Pertimbangkan pemeriksaan penunjang struktural otak (MRI / CT Brain scan) untuk verifikasi klinis.</li>
+            <li>Pantau keluhan memori harian dan jalani asesmen skrining berkala di Neura.</li>
+          </ul>
+        ` : `
+          <ul style="margin:6px 0 10px 20px; padding:0;">
+            <li>Biomarker Anda berada dalam rentang normal; pertahankan stimulasi otak aktif (membaca, teka-teki, belajar hal baru).</li>
+            <li>Jaga aktivitas fisik kardiovaskular secara teratur (minimal 150 menit/minggu) dan pola makan gizi seimbang.</li>
+            <li>Lakukan skrining klinis preventif ulang secara berkala setiap 6–12 bulan.</li>
+          </ul>
+        `}
+      </div>
+
+      <p style="margin-top:8px;">Silakan ajukan pertanyaan atau pilih salah satu menu di bawah ini untuk konsultasi lebih lanjut.</p>
+    `;
+
+    appendAssistantMessage(replyHtml, {
+      stream: false,
+      suggestions: [
+        isPos ? 'Konsultasi dengan Dokter' : 'Tips Menjaga Kesehatan Otak',
+        '/dokumen',
+        'Gejala awal Alzheimer',
+        'Ubah data diri'
+      ]
+    });
+
+  } else {
+    // FALLBACK JIKA API MODEL SEDANG OFFLINE ATAU GAGAL
+    const replyHtml = `
+      <p>Terima kasih, <strong>${escapeHtml(profile.name)}</strong>! Profil kesehatan klinis Anda telah tersimpan.</p>
+      
+      <p><strong>Ringkasan Parameter Klinis Anda:</strong></p>
+      <ul>
+        <li><strong>Faktor Usia (${profile.age} tahun):</strong> Berada pada <em>${ageRisk}</em>.</li>
+        <li><strong>Indeks Massa Tubuh (BMI ${profile.bmi || '—'}):</strong> Status <strong>${escapeHtml(profile.bmiCategory)}</strong>.</li>
+        <li><strong>Riwayat Komorbiditas:</strong> ${escapeHtml(comorbText)}.</li>
+        <li><strong>Keluhan yang Dirasakan:</strong> ${escapeHtml(sympText)}.</li>
+        <li><strong>Riwayat Keluarga:</strong> ${escapeHtml(famText)}.</li>
+      </ul>
+
+      <p>💡 <strong>Status Diagnosis:</strong><br>
+      Koneksi ke mesin prediksi model XGBoost sedang disiapkan. Anda dapat memicu prediksi biomarker lengkap kapan saja dengan perintah <code>/predict</code>.</p>
+    `;
+
+    appendAssistantMessage(replyHtml, {
+      stream: true,
+      suggestions: ['/predict', 'Bagaimana cara mencegah Alzheimer?', 'Gejala awal demensia', 'Ubah data diri']
+    });
+  }
 }
 

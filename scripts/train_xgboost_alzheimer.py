@@ -44,10 +44,10 @@ def train_alzheimers_xgboost(
     data_path: str = "datasets/alzheimers_disease_data.csv",
     output_dir: str = "public/checkpoints",
     reports_dir: str = "public/reports",
-    random_state: int = 42,
+    random_state: int = 2001,
 ):
     print("=" * 70)
-    print("🧠 NEURA AI — XGBOOST ALZHEIMER'S DISEASE CLASSIFICATION TRAINING")
+    print("🧠 NEURA AI — XGBOOST ALZHEIMER'S CLASSIFICATION (10-FOLD CV & MODELML ALIGNMENT)")
     print("=" * 70)
 
     # 1. Verify Dataset Path
@@ -88,20 +88,74 @@ def train_alzheimers_xgboost(
     print(f"       Class 1 (Alzheimer): {pos_count:,} ({pos_count/len(y)*100:.1f}%)")
     print(f"       Calculated scale_pos_weight: {scale_pos_weight:.2f}")
 
-    # 3. Stratified Train / Test Split (80% Train, 20% Test)
-    print("\n[3/6] ✂️  Splitting data (80% Train, 20% Test, Stratified)...")
+    # 3. 10-Fold Stratified Cross Validation Grid Search (Alignment with modelML.rmp)
+    print("\n[3/6] 🔄 Running 10-Fold Stratified Cross-Validation & Grid Search...")
+    param_grid = [
+        {"learning_rate": 0.1, "max_depth": 4},
+        {"learning_rate": 0.15, "max_depth": 4},
+        {"learning_rate": 0.2, "max_depth": 4},
+        {"learning_rate": 0.1, "max_depth": 5},
+        {"learning_rate": 0.15, "max_depth": 5},
+        {"learning_rate": 0.2, "max_depth": 5},
+    ]
+
+    skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=random_state)
+    best_params = None
+    best_mean_auc = -1.0
+    cv_records = []
+
+    for p in param_grid:
+        fold_aucs = []
+        fold_accs = []
+        for train_idx, val_idx in skf.split(X, y):
+            X_tr, X_val = X.iloc[train_idx], X.iloc[val_idx]
+            y_tr, y_val = y.iloc[train_idx], y.iloc[val_idx]
+
+            fold_model = xgb.XGBClassifier(
+                n_estimators=100,
+                learning_rate=p["learning_rate"],
+                max_depth=p["max_depth"],
+                min_child_weight=3,
+                subsample=0.85,
+                colsample_bytree=0.85,
+                scale_pos_weight=scale_pos_weight,
+                gamma=0.2,
+                eval_metric="logloss",
+                random_state=random_state,
+                n_jobs=-1,
+                early_stopping_rounds=25,
+            )
+            fold_model.fit(
+                X_tr, y_tr,
+                eval_set=[(X_val, y_val)],
+                verbose=False,
+            )
+            val_probs = fold_model.predict_proba(X_val)[:, 1]
+            val_preds = fold_model.predict(X_val)
+            fold_aucs.append(roc_auc_score(y_val, val_probs))
+            fold_accs.append(accuracy_score(y_val, val_preds))
+
+        mean_auc = np.mean(fold_aucs)
+        mean_acc = np.mean(fold_accs)
+        cv_records.append({"params": p, "mean_auc": mean_auc, "mean_acc": mean_acc})
+        print(f"       LR: {p['learning_rate']:.2f} | Depth: {p['max_depth']} -> 10-Fold Mean AUC: {mean_auc*100:.2f}%, Accuracy: {mean_acc*100:.2f}%")
+
+        if mean_auc > best_mean_auc:
+            best_mean_auc = mean_auc
+            best_params = p
+
+    print(f"\n       🏆 Best Hyperparameters: {best_params} (10-Fold CV AUC: {best_mean_auc*100:.2f}%)")
+
+    # 4. Train Final Model on Stratified Train/Test Split (80/20) with Early Stopping
+    print("\n[4/6] 🚀 Training Final Production Model with Optimal Parameters...")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.20, random_state=random_state, stratify=y
     )
-    print(f"       Train set: {len(X_train):,} samples")
-    print(f"       Test set:  {len(X_test):,} samples")
 
-    # 4. XGBoost Classifier Configuration & Training
-    print("\n[4/6] 🚀 Training XGBoost Classifier...")
     model = xgb.XGBClassifier(
-        n_estimators=300,
-        learning_rate=0.08,
-        max_depth=4,
+        n_estimators=150,
+        learning_rate=best_params["learning_rate"],
+        max_depth=best_params["max_depth"],
         min_child_weight=3,
         subsample=0.85,
         colsample_bytree=0.85,
@@ -122,7 +176,7 @@ def train_alzheimers_xgboost(
     )
 
     best_iteration = getattr(model, "best_iteration", model.n_estimators)
-    print(f"       Best iteration reached at epoch: {best_iteration}")
+    print(f"       Best iteration reached at round: {best_iteration}")
 
     # 5. Model Evaluation
     print("\n[5/6] 📊 Evaluating Model Performance on Test Data...")
@@ -174,6 +228,15 @@ def train_alzheimers_xgboost(
         "n_samples": len(df),
         "n_features": len(feature_names),
         "features": feature_names,
+        "hyperparameters": {
+            "learning_rate": best_params["learning_rate"],
+            "max_depth": best_params["max_depth"],
+            "random_seed": random_state,
+            "cv_folds": 10,
+            "scale_pos_weight": round(scale_pos_weight, 2),
+            "best_iteration": int(best_iteration),
+        },
+        "cv_10fold_auc": round(float(best_mean_auc), 4),
         "metrics": {
             "accuracy": round(float(acc), 4),
             "precision": round(float(prec), 4),
