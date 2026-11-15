@@ -29,6 +29,7 @@ def _get_store():
 
 def _find_doc(code):
     """Cari dokumen berdasarkan kode (case-insensitive)."""
+    import re
     store      = _get_store()
     clean_code = str(code).strip().upper()
     if clean_code in store:
@@ -36,6 +37,19 @@ def _find_doc(code):
     for k, v in store.items():
         if k.upper() == clean_code:
             return v
+
+    # Auto-resolve valid code format (e.g. NKS-26-8279-ALZ or DOC-NEURA-2026-8279)
+    # Allows Nakes to load any patient document deterministically from the clinical dataset
+    match = re.search(r"(?:NKS-\d{2}-|DOC-NEURA-\d{4}-)(\d{3,5})(?:-ALZ)?", clean_code)
+    if match:
+        suffix = match.group(1)
+        try:
+            from api.user.user_consultation import _build_consultation_document
+            doc = _build_consultation_document(mode="dataset", override_suffix=suffix)
+            return doc
+        except Exception as e:
+            logger.error(f"Error auto-resolving consultation document for {clean_code}: {e}")
+
     return None
 
 

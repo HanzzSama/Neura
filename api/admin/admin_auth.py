@@ -31,6 +31,7 @@ _admin_otp_store = {}   # { email: { "otp": str, "expires_at": float, "attempts"
 _admin_sessions   = {}  # { token: { "email": str, "name": str, "role": str, "created_at": float } }
 _otp_lock = threading.Lock()
 _otp_in_flight = set()
+_recent_verified_otps = {}  # { email: { "otp": str, "timestamp": float, "token": str, "admin": dict } }
 
 # File penyimpanan sesi token admin (Remember Me: bertahan saat restart server)
 ADMIN_SESSIONS_FILE = Path(__file__).resolve().parent.parent.parent / ".flask_sessions" / "admin_sessions.json"
@@ -237,6 +238,7 @@ def api_admin_verify_otp():
     """
     Verifikasi kode OTP yang dimasukkan admin.
     Jika valid → buat server-side session token (berlaku 24 jam).
+    Mendukung penanganan konkurensi/duplicate request dalam rentang 15 detik.
     """
     from core.admin_config import get_admin_by_custom_email
 
@@ -248,25 +250,38 @@ def api_admin_verify_otp():
     if not admin:
         return jsonify({"success": False, "error": "Email bukan akun admin terdaftar."}), 404
 
-    record = _admin_otp_store.get(email)
-    if not record:
-        return jsonify({"success": False, "error": "Kode OTP belum diminta atau sudah kedaluwarsa. Silakan minta kode baru."}), 400
+    now = time.time()
+    with _otp_lock:
+        # 1. Proteksi Duplicate / Race Request: jika OTP ini baru saja diverifikasi sukses dalam 15 detik terakhir
+        recent = _recent_verified_otps.get(email)
+        if recent and (now - recent.get("timestamp", 0) < 15.0) and input_otp == recent.get("otp"):
+            logger.info(f"[Admin OTP] Duplicate verify request for {email} detected within 15s - returning cached success.")
+            return jsonify({
+                "success": True,
+                "message": "Autentikasi Dua Faktor Admin berhasil!",
+                "token":   recent.get("token"),
+                "admin":   recent.get("admin"),
+            })
 
-    if time.time() > record["expires_at"]:
+        record = _admin_otp_store.get(email)
+        if not record:
+            return jsonify({"success": False, "error": "Kode OTP belum diminta atau sudah kedaluwarsa. Silakan minta kode baru."}), 400
+
+        if now > record["expires_at"]:
+            _admin_otp_store.pop(email, None)
+            return jsonify({"success": False, "error": "Kode OTP telah kedaluwarsa (lebih dari 5 menit). Silakan minta kode baru."}), 400
+
+        if record["attempts"] >= 5:
+            _admin_otp_store.pop(email, None)
+            return jsonify({"success": False, "error": "Batas percobaan OTP terlampaui. Silakan minta kode baru."}), 429
+
+        if input_otp != record["otp"]:
+            record["attempts"] += 1
+            sisa = max(0, 5 - record["attempts"])
+            return jsonify({"success": False, "error": f"Kode OTP salah. Sisa kesempatan: {sisa} kali."}), 400
+
+        # ✅ Sukses — hapus OTP (sekali pakai)
         _admin_otp_store.pop(email, None)
-        return jsonify({"success": False, "error": "Kode OTP telah kedaluwarsa (lebih dari 5 menit). Silakan minta kode baru."}), 400
-
-    if record["attempts"] >= 5:
-        _admin_otp_store.pop(email, None)
-        return jsonify({"success": False, "error": "Batas percobaan OTP terlampaui. Silakan minta kode baru."}), 429
-
-    if input_otp != record["otp"]:
-        record["attempts"] += 1
-        sisa = max(0, 5 - record["attempts"])
-        return jsonify({"success": False, "error": f"Kode OTP salah. Sisa kesempatan: {sisa} kali."}), 400
-
-    # ✅ Sukses — hapus OTP (sekali pakai) dan buat session token
-    _admin_otp_store.pop(email, None)
 
     # 1. Simpan ke Flask server-side session & set HTTPOnly cookie
     from api.shared.session_middleware import set_admin_session, get_current_admin, clear_session
@@ -287,16 +302,64 @@ def api_admin_verify_otp():
     }
     _save_admin_sessions()
 
+    admin_payload = {
+        "custom_email": email,
+        "name":         admin.get("name", "Administrator"),
+        "role":         "Admin",
+        "real_emails":  admin.get("real_emails", []),
+    }
+
+    # Simpan ke cache baru-diverifikasi untuk mencegah error bila ada request kembar
+    with _otp_lock:
+        _recent_verified_otps[email] = {
+            "otp":       input_otp,
+            "timestamp": time.time(),
+            "token":     admin_token,
+            "admin":     admin_payload,
+        }
+        # Bersihkan cache lama (> 60 detik)
+        cur_t = time.time()
+        for e in list(_recent_verified_otps.keys()):
+            if cur_t - _recent_verified_otps[e].get("timestamp", 0) > 60.0:
+                _recent_verified_otps.pop(e, None)
+
+    # 3. Notifikasi Bawaan Device: Broadcast Security Alert Admin Baru Saja Login
+    try:
+        from api.shared.notification_service import broadcast_notification
+        admin_name = admin.get("name", "Administrator")
+        user_agent = request.headers.get("User-Agent", "")
+        client_info = "Desktop / Web"
+        if "Windows" in user_agent:
+            client_info = "Windows PC"
+        elif "Macintosh" in user_agent:
+            client_info = "Mac Device"
+        elif "Android" in user_agent:
+            client_info = "Android Phone"
+        elif "iPhone" in user_agent or "iPad" in user_agent:
+            client_info = "Apple iOS Device"
+
+        broadcast_notification(
+            target_role="admin",
+            title="🛡️ Admin Baru Saja Login",
+            body=f"{admin_name} ({email}) baru saja masuk ke sistem melalui {client_info}.",
+            category="auth",
+            urgency="high",
+            action_url="/struktur.html",
+            meta={
+                "admin_email": email,
+                "admin_name": admin_name,
+                "client_info": client_info,
+                "timestamp": time.time()
+            }
+        )
+    except Exception as notif_err:
+        logger.warning(f"[Admin Auth] Gagal memicu broadcast notifikasi admin login: {notif_err}")
+
     return jsonify({
         "success": True,
         "message": "Autentikasi Dua Faktor Admin berhasil!",
         "token":   admin_token,
-        "admin": {
-            "custom_email": email,
-            "name":         admin.get("name", "Administrator"),
-            "role":         "Admin",
-            "real_emails":  admin.get("real_emails", []),
-        },
+        "admin":   admin_payload,
     })
 
 

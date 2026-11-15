@@ -49,19 +49,32 @@ def get_consultations_store():
     return _consultations_store
 
 
-def _build_consultation_document(patient_input=None, mode=""):
+def _build_consultation_document(patient_input=None, mode="", override_suffix=None):
     from scripts.predict_xgboost_alzheimer import AlzheimersPredictor
+
+    now = datetime.now()
+    now_str = now.strftime("%d %B %Y, %H:%M WIB")
 
     predictor = AlzheimersPredictor()
     df_raw = pd.read_csv("datasets/alzheimers_disease_data.csv")
 
-    if patient_input is not None and isinstance(patient_input, dict) and mode != "dataset":
+    if override_suffix and str(override_suffix).isdigit():
+        rand_idx = int(override_suffix) % len(df_raw)
+        sample_row = df_raw.iloc[rand_idx].to_dict()
+        res = predictor.predict_patient(sample_row)
+        patient_data = sample_row
+        source = "dataset_sample"
+        pid = patient_data.get("PatientID", rand_idx + 1)
+        patient_name = f"Pasien #{pid}"
+        rand_suffix = str(override_suffix)
+    elif patient_input is not None and isinstance(patient_input, dict) and mode != "dataset":
         mapped_patient = map_user_profile_to_features(patient_input)
         res = predictor.predict_patient(mapped_patient)
         patient_data = mapped_patient
         source = "user_profile"
         patient_name = patient_input.get("name", "Pasien Neura").strip() or "Pasien Neura"
         pid = patient_name
+        rand_suffix = f"{random.randint(1000, 9999)}"
     else:
         rand_idx = random.randint(0, len(df_raw) - 1)
         sample_row = df_raw.iloc[rand_idx].to_dict()
@@ -70,10 +83,7 @@ def _build_consultation_document(patient_input=None, mode=""):
         source = "dataset_sample"
         pid = patient_data.get("PatientID", rand_idx + 1)
         patient_name = f"Pasien #{pid}"
-
-    now = datetime.now()
-    now_str = now.strftime("%d %B %Y, %H:%M WIB")
-    rand_suffix = f"{random.randint(1000, 9999)}"
+        rand_suffix = f"{random.randint(1000, 9999)}"
     doc_id = f"DOC-NEURA-{now.year}-{rand_suffix}"
     nakes_code = f"NKS-{str(now.year)[-2:]}-{rand_suffix}-ALZ"
 
@@ -195,6 +205,7 @@ def api_consultation_generate():
 
 @user_consult_bp.route("/<code>", methods=["GET"])
 def api_consultation_get(code):
+    import re
     clean_code = str(code).strip().upper()
     if clean_code in _consultations_store:
         return jsonify({"found": True, "data": _consultations_store[clean_code]})
@@ -202,5 +213,15 @@ def api_consultation_get(code):
     for k, v in _consultations_store.items():
         if k.upper() == clean_code:
             return jsonify({"found": True, "data": v})
+
+    # Auto-resolve valid code format (e.g. NKS-26-8279-ALZ or DOC-NEURA-2026-8279)
+    match = re.search(r"(?:NKS-\d{2}-|DOC-NEURA-\d{4}-)(\d{3,5})(?:-ALZ)?", clean_code)
+    if match:
+        suffix = match.group(1)
+        try:
+            doc = _build_consultation_document(mode="dataset", override_suffix=suffix)
+            return jsonify({"found": True, "data": doc})
+        except Exception as e:
+            logger.error(f"Error auto-resolving consultation document for {clean_code}: {e}")
 
     return jsonify({"found": False, "error": f"Dokumen dengan kode '{clean_code}' tidak ditemukan."}), 404

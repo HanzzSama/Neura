@@ -2460,47 +2460,60 @@
   justify-content: flex-start !important;
 }
 
-/* 3 White Pill Tabs in Top Right - Apple Dynamic Elongating Tabs */
+/* 3 White Pill Tabs in Top Right - Segmented Pill Buttons with Function Labels */
 .auth-top-pills {
   position: absolute !important;
-  top: 32px !important;
-  right: 36px !important;
+  top: 28px !important;
+  right: 32px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   z-index: 15 !important;
 }
 
 .top-pill-btn {
-  width: 28px !important;
-  height: 14px !important;
+  height: 24px !important;
+  width: auto !important;
+  padding: 0 10px !important;
   border-radius: 9999px !important;
-  background: rgba(255, 255, 255, 0.45) !important;
-  border: none !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
   cursor: pointer !important;
-  padding: 0 !important;
-  opacity: 0.65 !important;
-  transition: width 0.34s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.24s ease,
-    background 0.24s ease,
-    box-shadow 0.3s ease,
-    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   outline: none !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+  user-select: none !important;
 }
 
 .top-pill-btn:hover {
-  opacity: 0.95 !important;
-  background: rgba(255, 255, 255, 0.8) !important;
-  transform: scale(1.06) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) scale(1.03) !important;
 }
 
-/* Elongated Active Pill (Apple Dynamic Pill indicator) */
+/* Active Pill (Highlighted Function) */
 .top-pill-btn.active {
-  opacity: 1 !important;
-  width: 48px !important;
   background: #ffffff !important;
+  color: #0b0b0d !important;
+  border-color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.75), 0 2px 6px rgba(0, 0, 0, 0.4) !important;
   transform: scale(1) !important;
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.7), 0 0 4px rgba(255, 255, 255, 0.9) !important;
+  cursor: default !important;
+}
+
+.top-pill-tooltip {
+  display: none !important;
 }
 
 /* Dynamic Card Header */
@@ -3491,7 +3504,7 @@
   overflow: visible !important;
 }
 
-/* 5. Apple Premium Button Loading State */
+/* 5. Apple Premium Button Loading State (Desain Gambar 2: Dark Capsule with Centered Orange Spinner) */
 .neura-auth-submit-btn,
 .sub-stack-capsule-btn,
 .otp-submit-btn {
@@ -3510,58 +3523,119 @@
     transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* When loading: Smooth label fade & elevation */
+/* When loading: Match Gambar 2 Pixel-Perfect */
 .neura-auth-submit-btn.is-loading,
 .otp-submit-btn.is-loading {
   cursor: wait !important;
   pointer-events: none !important;
-  transform: scale(0.98) !important;
-  opacity: 0.88 !important;
+  background: #181818 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+  transform: none !important;
+  opacity: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.neura-auth-submit-btn.is-loading:hover,
+.neura-auth-submit-btn.is-loading:active,
+.otp-submit-btn.is-loading:hover,
+.otp-submit-btn.is-loading:active {
+  background: #181818 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  transform: none !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
 }
 
 .neura-auth-submit-btn.is-loading .submit-btn-label,
 .otp-submit-btn.is-loading .submit-btn-label {
+  display: none !important;
+  visibility: hidden !important;
   opacity: 0 !important;
-  transform: translateY(-4px) scale(0.94) !important;
+  pointer-events: none !important;
 }
 
-/* Apple-style Smooth Circular Spinner */
+/* Apple-style Smooth Circular Spinner (Gambar 2: Subtle grey ring with warm coral #D97757 arc) */
 .neura-auth-submit-btn .auth-btn-spinner,
 .otp-submit-btn .auth-btn-spinner {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  margin-top: -10px !important;
-  margin-left: -10px !important;
-  width: 20px !important;
-  height: 20px !important;
+  display: none !important;
+  box-sizing: border-box !important;
+  width: 22px !important;
+  height: 22px !important;
   border-radius: 50% !important;
-  border: 2.2px solid rgba(255, 255, 255, 0.2) !important;
+  border: 2.5px solid rgba(255, 255, 255, 0.18) !important;
   border-top-color: #D97757 !important;
-  border-right-color: rgba(217, 119, 87, 0.8) !important;
-  display: block !important;
-  opacity: 0 !important;
-  transform: scale(0.6) rotate(0deg) !important;
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border-right-color: rgba(217, 119, 87, 0.85) !important;
   pointer-events: none !important;
 }
 
 .neura-auth-submit-btn.is-loading .auth-btn-spinner,
 .otp-submit-btn.is-loading .auth-btn-spinner {
+  display: block !important;
+  position: static !important;
+  margin: 0 auto !important;
   opacity: 1 !important;
-  transform: scale(1) rotate(0deg) !important;
   animation: appleSmoothSpin 0.75s linear infinite !important;
 }
 
 @keyframes appleSmoothSpin {
   0% {
-    transform: scale(1) rotate(0deg);
+    transform: rotate(0deg);
   }
 
   100% {
-    transform: scale(1) rotate(360deg);
+    transform: rotate(360deg);
   }
+}
+
+/* ==========================================================================
+   NEURA ADMIN 2FA OTP BUTTON LOADING & PROCESSING (Gambar 2: Dark Capsule with Centered Orange Spinner)
+   ========================================================================== */
+.neura-auth-submit-btn.is-loading,
+.otp-submit-btn.is-loading,
+.otp-submit-btn.is-verified-success {
+  cursor: wait !important;
+  pointer-events: none !important;
+  background: #181818 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+  transform: none !important;
+  opacity: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.neura-auth-submit-btn.is-loading:hover,
+.neura-auth-submit-btn.is-loading:active,
+.otp-submit-btn.is-loading:hover,
+.otp-submit-btn.is-loading:active,
+.otp-submit-btn.is-verified-success:hover,
+.otp-submit-btn.is-verified-success:active {
+  background: #181818 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  transform: none !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+}
+
+.neura-auth-submit-btn.is-loading .submit-btn-label,
+.otp-submit-btn.is-loading .submit-btn-label,
+.otp-submit-btn.is-verified-success .submit-btn-label {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.neura-auth-submit-btn.is-loading .auth-btn-spinner,
+.otp-submit-btn.is-loading .auth-btn-spinner,
+.otp-submit-btn.is-verified-success .auth-btn-spinner {
+  display: block !important;
+  position: static !important;
+  margin: 0 auto !important;
+  opacity: 1 !important;
+  animation: appleSmoothSpin 0.75s linear infinite !important;
 }
 
 /* Google Capsule Loading Effect */
@@ -4376,6 +4450,12 @@ html.auth-drawer-open {
     top: 20px !important;
     right: 20px !important;
     gap: 5px !important;
+  }
+
+  .top-pill-btn {
+    height: 22px !important;
+    padding: 0 8px !important;
+    font-size: 10px !important;
   }
 
   /* Close button */

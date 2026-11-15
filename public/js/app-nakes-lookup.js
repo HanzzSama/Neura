@@ -9,7 +9,10 @@
 // Nakes Clinical Functions: Lookup, Prediction Review & Validation
 // --------------------------------------------------------------------------
 
+var _nakesLookupLoadingLock = false;
+
 function renderNakesLookupPromptCard() {
+  const cardId = 'nakes_lookup_' + Date.now();
   let sampleHint = '';
   try {
     const raw = localStorage.getItem('neura_last_consultation');
@@ -20,7 +23,7 @@ function renderNakesLookupPromptCard() {
         sampleHint = `
           <div style="margin-top:10px;font-size:12px;color:var(--text-muted)">
             <span>Dokumen terakhir tersimpan: </span>
-            <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="submitNakesLookup('${escapeHtml(c)}')">
+            <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="submitNakesLookup('${escapeHtml(c)}', '${cardId}_input')">
               ${escapeHtml(c)}
             </button>
           </div>
@@ -36,11 +39,17 @@ function renderNakesLookupPromptCard() {
         Sebagai <strong>Tenaga Kesehatan (Nakes)</strong>, masukkan <strong>Kode Konsultasi Rujukan Nakes</strong> (contoh: <code>NKS-26-8812-ALZ</code>) atau <strong>No. Dokumen</strong> pasien untuk menelaah profil biomarker, menguji prediksi klinis, dan menerbitkan validasi resmi:
       </p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        <input type="text" id="nakes-code-input" class="nakes-validation-input" placeholder="Contoh: NKS-26-8812-ALZ" style="flex:1;min-width:220px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;" onkeydown="if(event.key==='Enter')submitNakesLookup()">
-        <button type="button" class="claude-btn primary" onclick="submitNakesLookup()" style="display:inline-flex;align-items:center;gap:6px">
+        <input type="text" id="${cardId}_input" class="nakes-validation-input" placeholder="Contoh: NKS-26-8279-ALZ" style="flex:1;min-width:220px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;" onkeydown="if(event.key==='Enter' && !_nakesLookupLoadingLock)submitNakesLookup(null, '${cardId}_input')">
+        <button type="button" id="${cardId}_btn" class="claude-btn primary" onclick="submitNakesLookup(null, '${cardId}_input')" style="display:inline-flex;align-items:center;gap:6px">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <span>Cari &amp; Buka Rekam Medis</span>
         </button>
+      </div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px;color:var(--text-muted)">
+        <span>Rujukan cepat:</span>
+        <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="submitNakesLookup('NKS-26-8279-ALZ', '${cardId}_input')">NKS-26-8279-ALZ</button>
+        <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="submitNakesLookup('NKS-26-4102-ALZ', '${cardId}_input')">NKS-26-4102-ALZ</button>
+        <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="submitNakesLookup('NKS-26-7385-ALZ', '${cardId}_input')">NKS-26-7385-ALZ</button>
       </div>
       ${sampleHint}
     </div>
@@ -50,17 +59,51 @@ function renderNakesLookupPromptCard() {
   });
 }
 
-function submitNakesLookup(overrideCode = null) {
+async function submitNakesLookup(overrideCode, inputId) {
+  if (_nakesLookupLoadingLock) return; // prevent multiple calls
+
   let code = overrideCode;
   if (!code) {
-    const input = document.getElementById('nakes-code-input');
-    code = input ? input.value.trim() : '';
+    // Try inputId first, then fall back to any visible nakes-validation-input
+    const inputEl = inputId ? document.getElementById(inputId) : null;
+    if (inputEl) {
+      code = inputEl.value.trim();
+    } else {
+      // Legacy fallback: get last visible nakes-validation-input
+      const inputs = document.querySelectorAll('.nakes-validation-input');
+      if (inputs.length > 0) {
+        code = inputs[inputs.length - 1].value.trim();
+      }
+    }
   }
+  code = code ? code.trim().toUpperCase() : '';
+
   if (!code) {
     showToast('Masukkan kode dokumen konsultasi pasien terlebih dahulu.', 'warning');
     return;
   }
-  submitCommand(`/periksa ${code}`);
+
+  _nakesLookupLoadingLock = true;
+
+  // Disable button while loading
+  const btn = inputId ? document.getElementById(inputId.replace('_input', '_btn')) : null;
+  const inp = inputId ? document.getElementById(inputId) : null;
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<span>Mencari...</span>'; }
+  if (inp) { inp.disabled = true; inp.style.opacity = '0.6'; }
+
+  try {
+    submitCommand(`/periksa ${code}`);
+  } finally {
+    // Re-enable after a short delay (command is async)
+    setTimeout(function() {
+      _nakesLookupLoadingLock = false;
+      if (btn && btn.isConnected) {
+        btn.disabled = false; btn.style.opacity = '';
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Cari &amp; Buka Rekam Medis</span>';
+      }
+      if (inp && inp.isConnected) { inp.disabled = false; inp.style.opacity = ''; }
+    }, 2500);
+  }
 }
 window.submitNakesLookup = submitNakesLookup;
 

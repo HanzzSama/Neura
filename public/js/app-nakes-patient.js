@@ -100,12 +100,18 @@ function renderNakesPatientRequiredPrompt(targetCmd, cmdTitle) {
       <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">
         Silakan masukkan <strong>Kode Dokumen / Konsultasi Pasien</strong> (contoh: <code>NKS-26-XXXX-ALZ</code> atau <code>DOC-NEURA-2026-XXXX</code>) untuk membuka berkas pasien dan menjalankan analisis klinis:
       </p>
-      <div class="nakes-lookup-form" style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
-        <input type="text" id="${promptId}_input" class="nakes-validation-input" placeholder="Contoh: NKS-26-8812-ALZ" style="flex:1;min-width:200px;font-family:'JetBrains Mono',monospace;text-transform:uppercase" onkeydown="if(event.key==='Enter') submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">
+      <div class="nakes-lookup-form" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <input type="text" id="${promptId}_input" class="nakes-validation-input" placeholder="Contoh: NKS-26-8279-ALZ" style="flex:1;min-width:200px;font-family:'JetBrains Mono',monospace;text-transform:uppercase" onkeydown="if(event.key==='Enter') submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">
         <button type="button" class="claude-btn primary" onclick="submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <span>Buka Berkas Pasien</span>
         </button>
+      </div>
+      <div style="margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px;color:var(--text-muted)">
+        <span>Contoh kode aktif:</span>
+        <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="document.getElementById('${promptId}_input').value='NKS-26-8279-ALZ';submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">NKS-26-8279-ALZ</button>
+        <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="document.getElementById('${promptId}_input').value='NKS-26-4102-ALZ';submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">NKS-26-4102-ALZ</button>
+        <button type="button" class="claude-btn secondary" style="padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace" onclick="document.getElementById('${promptId}_input').value='NKS-26-7385-ALZ';submitNakesPatientPrompt('${promptId}_input', '${escapeHtml(targetCmd)}')">NKS-26-7385-ALZ</button>
       </div>
       <div style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px dashed var(--border-subtle)">
         <span>Belum memiliki kode pasien untuk diuji?</span>
@@ -121,14 +127,32 @@ function renderNakesPatientRequiredPrompt(targetCmd, cmdTitle) {
 }
 window.renderNakesPatientRequiredPrompt = renderNakesPatientRequiredPrompt;
 
+var _nakesPatientLoadingLock = false;
+
 async function submitNakesPatientPrompt(inputId, thenCmd) {
+  if (_nakesPatientLoadingLock) return; // prevent double-submit
+
   const el = document.getElementById(inputId);
-  const code = el ? el.value.trim() : '';
+  const code = el ? el.value.trim().toUpperCase() : '';
   if (!code) {
     if (typeof showToast === 'function') showToast('Masukkan kode dokumen pasien terlebih dahulu.', 'warning');
     return;
   }
-  await loadAndActivatePatient(code, thenCmd);
+
+  // Disable input + button during loading
+  var btn = el ? el.closest('.nakes-lookup-form')?.querySelector('button') : null;
+  if (el) { el.disabled = true; el.style.opacity = '0.6'; }
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = 'Memuat...'; }
+
+  _nakesPatientLoadingLock = true;
+  try {
+    await loadAndActivatePatient(code, thenCmd);
+  } finally {
+    _nakesPatientLoadingLock = false;
+    // Re-enable UI only if still in DOM (might have navigated away)
+    if (el && el.isConnected) { el.disabled = false; el.style.opacity = ''; }
+    if (btn && btn.isConnected) { btn.disabled = false; btn.style.opacity = ''; btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Buka Berkas Pasien</span>'; }
+  }
 }
 window.submitNakesPatientPrompt = submitNakesPatientPrompt;
 
@@ -154,6 +178,8 @@ async function loadSamplePatientForNakes(thenCmd) {
 window.loadSamplePatientForNakes = loadSamplePatientForNakes;
 
 async function loadAndActivatePatient(code, thenCmd) {
+  if (!code || typeof code !== 'string') return;
+  code = code.trim().toUpperCase();
   try {
     const res = await fetchJSON(`/api/consultation/${encodeURIComponent(code)}`);
     if (res && res.found && res.data) {
@@ -167,7 +193,24 @@ async function loadAndActivatePatient(code, thenCmd) {
         renderPatientClinicalReviewCard(res.data);
       }
     } else {
-      if (typeof showToast === 'function') showToast(`Dokumen dengan kode '${code}' tidak ditemukan.`, 'error');
+      // Show inline error — do NOT show toast (reduces repeated toast spam)
+      if (typeof appendAssistantMessage === 'function') {
+        appendAssistantMessage(`
+          <div class="claude-card" style="margin-top:4px">
+            <p style="color:var(--accent-red);font-weight:600;margin:0">
+              ❌ Dokumen dengan kode "<code>${escapeHtml ? escapeHtml(code) : code}</code>" tidak ditemukan.
+            </p>
+            <p style="font-size:12px;color:var(--text-secondary);margin:6px 0 0">
+              Pastikan kode sesuai format <code>NKS-26-XXXX-ALZ</code>. Gunakan tombol "Coba Kode Lain" untuk mencoba ulang.
+            </p>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="claude-btn secondary" style="padding:4px 10px;font-size:12px" onclick="submitCommand('/periksa')">🔄 Coba Kode Lain</button>
+            </div>
+          </div>
+        `, { stream: false });
+      } else {
+        if (typeof showToast === 'function') showToast(`Dokumen dengan kode '${code}' tidak ditemukan.`, 'error');
+      }
     }
   } catch (e) {
     if (typeof showToast === 'function') showToast('Error memuat dokumen: ' + e.message, 'error');

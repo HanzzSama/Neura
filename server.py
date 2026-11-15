@@ -74,9 +74,11 @@ Session(app)
 # 1. Shared Routes
 from api.shared.firebase_routes import shared_bp
 from api.shared.status_routes import status_bp
+from api.shared.notification_service import notification_bp
 
 app.register_blueprint(shared_bp)
 app.register_blueprint(status_bp)
+app.register_blueprint(notification_bp)
 
 # 2. Admin Role Routes
 from api.admin.admin_auth import admin_auth_bp

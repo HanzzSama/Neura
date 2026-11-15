@@ -342,7 +342,7 @@
       if (pill) pill.classList.remove('active');
     });
 
-    if (viewName === 'welcome' || viewName === 'login') {
+    if (viewName === 'welcome' || viewName === 'login' || viewName === 'admin-verify' || viewName === 'verify') {
       if (pillLogin) pillLogin.classList.add('active');
     } else if (viewName === 'register') {
       if (pillRegister) pillRegister.classList.add('active');
@@ -686,6 +686,8 @@
   function showAdminVerifySlide(customEmail, name, maskedEmails, devOtp) {
     isInOnboardingStep = true;
     currentAdminEmail = customEmail;
+    _isVerifyingAdminOtp = false;
+    _isAdminOtpVerifiedSuccess = false;
     hideAlert();
 
     switchAuthView('admin-verify');
@@ -704,9 +706,10 @@
     if (statusBanner) statusBanner.style.display = 'none';
 
     if (btnSubmitAdminOtp) {
-      setButtonLoading(btnSubmitAdminOtp, false);
-      btnSubmitAdminOtp.classList.remove('is-verified-success');
-      var btnLabel = btnSubmitAdminOtp.querySelector('.auth-btn-text');
+      btnSubmitAdminOtp.disabled = false;
+      btnSubmitAdminOtp.style.pointerEvents = '';
+      btnSubmitAdminOtp.classList.remove('is-verified-success', 'is-verifying', 'is-loading', 'is-error');
+      var btnLabel = btnSubmitAdminOtp.querySelector('.submit-btn-label') || btnSubmitAdminOtp.querySelector('.auth-btn-text');
       if (btnLabel) btnLabel.textContent = 'Verifikasi & Masuk sebagai Admin';
     }
 
@@ -759,7 +762,7 @@
         if (adminFullOtp) adminFullOtp.value = full;
 
         // Auto login saat 6 digit terisi lengkap tanpa perlu klik tombol!
-        if (full.length === 6) {
+        if (full.length === 6 && !_isVerifyingAdminOtp && !_isAdminOtpVerifiedSuccess) {
           handleAdminOtpVerification();
         }
       });
@@ -779,7 +782,7 @@
             }
           }
           if (adminFullOtp) adminFullOtp.value = cleanDigits;
-          if (cleanDigits.length === 6) {
+          if (cleanDigits.length === 6 && !_isVerifyingAdminOtp && !_isAdminOtpVerifiedSuccess) {
             handleAdminOtpVerification();
           } else {
             var nextEmpty = Math.min(cleanDigits.length, adminOtpDigits.length - 1);
@@ -790,7 +793,15 @@
     });
   }
 
+  var _isVerifyingAdminOtp = false;
+  var _isAdminOtpVerifiedSuccess = false;
+
   function handleAdminOtpVerification() {
+    if (_isVerifyingAdminOtp || _isAdminOtpVerifiedSuccess) {
+      console.log('[Admin OTP] Verifikasi sedang berjalan atau telah sukses, abaikan panggilan berulang.');
+      return;
+    }
+
     var otp = '';
     if (adminOtpDigits) {
       adminOtpDigits.forEach(function (d) { otp += d.value; });
@@ -800,13 +811,14 @@
       return;
     }
 
+    _isVerifyingAdminOtp = true;
     hideAlert();
 
     var boxesWrap = document.getElementById('admin-otp-boxes-wrap');
     var statusBanner = document.getElementById('admin-verify-status-banner');
     var statusText = document.getElementById('admin-verify-status-text');
 
-    // 1. Mulai Animasi Verifikasi (Wave / Pulse pada kotak digit)
+    // 1. Mulai Animasi Verifikasi (Persis seperti button Kirim OTP)
     if (boxesWrap) {
       boxesWrap.classList.remove('is-error', 'is-success');
       boxesWrap.classList.add('is-verifying');
@@ -818,7 +830,9 @@
       statusBanner.className = 'verify-status-banner admin-status-banner is-verifying';
       if (statusText) statusText.textContent = 'Memverifikasi kode OTP 2FA...';
     }
-    setButtonLoading(btnSubmitAdminOtp, true);
+    if (btnSubmitAdminOtp) {
+      setButtonLoading(btnSubmitAdminOtp, true);
+    }
 
     fetch('/api/admin/verify-otp', {
       method: 'POST',
@@ -842,6 +856,10 @@
     })
     .then(function (data) {
       if (data && data.success) {
+        _isAdminOtpVerifiedSuccess = true;
+        _isVerifyingAdminOtp = false;
+        hideAlert(); // Pastikan alert error ditutup permanen
+
         // 2. Animasi Sukses: Kotak-kotak berubah hijau berkilau
         if (boxesWrap) {
           boxesWrap.classList.remove('is-verifying', 'is-error');
@@ -851,11 +869,10 @@
           statusBanner.className = 'verify-status-banner admin-status-banner is-success';
           if (statusText) statusText.innerHTML = '&#10003;&nbsp; Kode OTP Valid! Mengalihkan ke Workspace...';
         }
+        // Button verifikasi tetap mempertahankan desain Gambar 2 (dark capsule + centered orange spinner)
         if (btnSubmitAdminOtp) {
-          setButtonLoading(btnSubmitAdminOtp, false);
-          btnSubmitAdminOtp.classList.add('is-verified-success');
-          var btnText = btnSubmitAdminOtp.querySelector('.auth-btn-text');
-          if (btnText) btnText.innerHTML = '&#10003; Terverifikasi!';
+          setButtonLoading(btnSubmitAdminOtp, true);
+          btnSubmitAdminOtp.classList.remove('is-verified-success');
         }
 
         // 3. Auto login dengan delay animasi verify (1.2 detik)
@@ -864,6 +881,9 @@
           localStorage.setItem('neura_user_role', 'Admin');
           localStorage.setItem('neura_admin_authenticated', 'true');
           sessionStorage.setItem('neura_admin_session', 'true');
+          if (window.NeuraNotification) {
+            window.NeuraNotification.requestPermission();
+          }
           if (data && data.token) {
             localStorage.setItem('neura_admin_token', data.token);
             sessionStorage.setItem('neura_admin_token', data.token);
@@ -883,8 +903,21 @@
         }, 1200);
 
       } else {
+        // Jika sudah terverifikasi sukses sebelumnya, abaikan pesan kegagalan dari request duplikat
+        if (_isAdminOtpVerifiedSuccess) {
+          return;
+        }
+        _isVerifyingAdminOtp = false;
+
         // Error / OTP Salah
-        setButtonLoading(btnSubmitAdminOtp, false);
+        if (btnSubmitAdminOtp) {
+          setButtonLoading(btnSubmitAdminOtp, false);
+          btnSubmitAdminOtp.classList.remove('is-verified-success');
+          var label = btnSubmitAdminOtp.querySelector('.submit-btn-label') || btnSubmitAdminOtp.querySelector('.auth-btn-text');
+          if (label) {
+            label.textContent = 'Verifikasi & Masuk sebagai Admin';
+          }
+        }
         if (boxesWrap) {
           boxesWrap.classList.remove('is-verifying');
           boxesWrap.classList.add('is-error');
@@ -895,6 +928,7 @@
         showAlert(data.error || 'Verifikasi OTP gagal. Silakan periksa kembali kode Anda.', true);
 
         setTimeout(function () {
+          if (_isAdminOtpVerifiedSuccess) return;
           if (boxesWrap) boxesWrap.classList.remove('is-error');
           if (adminOtpDigits) {
             adminOtpDigits.forEach(function (d) {
@@ -909,7 +943,18 @@
       }
     })
     .catch(function (err) {
-      setButtonLoading(btnSubmitAdminOtp, false);
+      if (_isAdminOtpVerifiedSuccess) {
+        return;
+      }
+      _isVerifyingAdminOtp = false;
+      if (btnSubmitAdminOtp) {
+        setButtonLoading(btnSubmitAdminOtp, false);
+        btnSubmitAdminOtp.classList.remove('is-verified-success');
+        var label = btnSubmitAdminOtp.querySelector('.submit-btn-label') || btnSubmitAdminOtp.querySelector('.auth-btn-text');
+        if (label) {
+          label.textContent = 'Verifikasi & Masuk sebagai Admin';
+        }
+      }
       if (boxesWrap) boxesWrap.classList.remove('is-verifying');
       if (adminOtpDigits) {
         adminOtpDigits.forEach(function (d) { d.disabled = false; });
@@ -921,6 +966,8 @@
   var _isResendingAdminOtp = false;
   function handleAdminOtpResend() {
     if (!currentAdminEmail || _isResendingAdminOtp) return;
+    _isVerifyingAdminOtp = false;
+    _isAdminOtpVerifiedSuccess = false;
     _isResendingAdminOtp = true;
     setButtonLoading(btnResendAdminOtp, true);
     fetch('/api/admin/send-otp', {
@@ -1977,19 +2024,25 @@
     initAdminOtpDigitInputs();
 
     if (btnSubmitAdminOtp) {
-      btnSubmitAdminOtp.addEventListener('click', function () {
+      btnSubmitAdminOtp.addEventListener('click', function (e) {
+        if (e) e.preventDefault();
+        if (_isVerifyingAdminOtp || _isAdminOtpVerifiedSuccess) return;
         handleAdminOtpVerification();
       });
     }
 
     if (btnResendAdminOtp) {
-      btnResendAdminOtp.addEventListener('click', function () {
+      btnResendAdminOtp.addEventListener('click', function (e) {
+        if (e) e.preventDefault();
         handleAdminOtpResend();
       });
     }
 
     if (btnCancelAdminVerify) {
-      btnCancelAdminVerify.addEventListener('click', function () {
+      btnCancelAdminVerify.addEventListener('click', function (e) {
+        if (e) e.preventDefault();
+        _isVerifyingAdminOtp = false;
+        _isAdminOtpVerifiedSuccess = false;
         stopAdminOtpTimer();
         switchTab('login');
       });

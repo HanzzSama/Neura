@@ -1,0 +1,14 @@
+[
+  {
+    "id": "notif_1794635052354",
+    "target_role": "admin",
+    "title": "🛡️ Admin Baru Saja Login",
+    "body": "hanzz@neura.dr.id baru saja login melalui Windows PC.",
+    "category": "auth",
+    "urgency": "high",
+    "action_url": "",
+    "meta": {},
+    "created_at": "2026-11-14 12:44:12",
+    "read": false
+  }
+]
