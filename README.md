@@ -1,4 +1,4 @@
-# 🧠 Neura AI — Platform Klinis Deteksi Dini Alzheimer
+# 🧠 Neura AI — Website pendeteksi gejala Alzheimer
 
 <div align="center">
 
