@@ -154,7 +154,9 @@
 
     <!-- Right Column: Neural Precision Mapping Visual (Interactive Particle Brain Network) -->
     <div class="hero-right" id="hero-right">
-      <canvas id="hero-brain-canvas" class="hero-brain-canvas" aria-label="Jaringan Partikel Otak Neura — Neural Precision Mapping" style="transform:translateZ(0);will-change:transform;contain:paint layout;"></canvas>
+      <canvas id="hero-brain-canvas" class="hero-brain-canvas"
+        aria-label="Jaringan Partikel Otak Neura — Neural Precision Mapping"
+        style="transform:translateZ(0);will-change:transform;contain:paint layout;"></canvas>
       <!-- Interactive Brain Region Tooltip HUD -->
       <div class="brain-tooltip" id="brain-tooltip" aria-hidden="true">
         <div class="bt-badge">
@@ -173,7 +175,7 @@
   <div class="auth-drawer-overlay" id="auth-drawer-overlay" aria-hidden="true"></div>
 
   <!-- Neura Clinical Auth Drawer (Height 100vh, Width 50%, Slide-In dari Kanan Layar ke Kiri) -->
-    <aside class="hero-auth-drawer" id="hero-auth-card" aria-hidden="true" role="dialog" aria-modal="true"
+  <aside class="hero-auth-drawer" id="hero-auth-card" aria-hidden="true" role="dialog" aria-modal="true"
     aria-label="Portal Masuk Klinis Neura">
     <!-- Close button (x) -->
     <button type="button" class="auth-card-close-btn" id="auth-card-close-btn" title="Tutup Form Masuk"
@@ -198,8 +200,10 @@
           <canvas class="auth-card-particles" id="auth-card-particles"></canvas>
 
           <!-- Back to Welcome Button (Apple Circular Glass Button - Top Left) -->
-          <button type="button" class="auth-back-to-welcome-btn" id="auth-back-to-welcome-btn" title="Kembali ke Welcome" aria-label="Kembali ke Welcome">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" class="auth-back-to-welcome-btn" id="auth-back-to-welcome-btn"
+            title="Kembali ke Welcome" aria-label="Kembali ke Welcome">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
@@ -207,15 +211,18 @@
           <!-- Top Right 3 Pill Tabs Indicator with Apple Floating Tooltips -->
           <div class="auth-top-pills" id="auth-top-pills">
             <div class="top-pill-item">
-              <button type="button" class="top-pill-btn active" id="top-pill-login" aria-label="Login" data-pane="login"></button>
+              <button type="button" class="top-pill-btn active" id="top-pill-login" aria-label="Login"
+                data-pane="login"></button>
               <div class="top-pill-tooltip">Login</div>
             </div>
             <div class="top-pill-item">
-              <button type="button" class="top-pill-btn" id="top-pill-register" aria-label="Register" data-pane="register"></button>
+              <button type="button" class="top-pill-btn" id="top-pill-register" aria-label="Register"
+                data-pane="register"></button>
               <div class="top-pill-tooltip">Register</div>
             </div>
             <div class="top-pill-item">
-              <button type="button" class="top-pill-btn" id="top-pill-forgot" aria-label="Forgot Password" data-pane="forgot"></button>
+              <button type="button" class="top-pill-btn" id="top-pill-forgot" aria-label="Forgot Password"
+                data-pane="forgot"></button>
               <div class="top-pill-tooltip">Forgot Pass</div>
             </div>
           </div>
@@ -252,15 +259,19 @@
               <!-- Pill Input 1: Email -->
               <div class="neura-pill-input-row" id="login-email-pill">
                 <span class="pill-leading-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                   </svg>
                 </span>
-                <input type="email" class="neura-pill-input" id="login-email" placeholder="e-mail address" required autocomplete="email" />
+                <input type="email" class="neura-pill-input" id="login-email" placeholder="e-mail address" required
+                  autocomplete="email" />
                 <span class="pill-domain-badge">Gmail.com</span>
-                <span class="admin-verified-indicator" id="login-email-admin-icon" style="display: none;" title="Akun Terverifikasi">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <span class="admin-verified-indicator" id="login-email-admin-icon" style="display: none;"
+                  title="Akun Terverifikasi">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </span>
@@ -269,14 +280,18 @@
               <!-- Pill Input 2: Password -->
               <div class="neura-pill-input-row" id="login-password-pill">
                 <span class="pill-leading-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
                 </span>
-                <input type="password" class="neura-pill-input" id="login-password" placeholder="password" required autocomplete="current-password" />
-                <button type="button" class="pill-eye-btn auth-eye-btn" data-target="login-password" aria-label="Lihat kata sandi">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <input type="password" class="neura-pill-input" id="login-password" placeholder="password" required
+                  autocomplete="current-password" />
+                <button type="button" class="pill-eye-btn auth-eye-btn" data-target="login-password"
+                  aria-label="Lihat kata sandi">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -284,11 +299,13 @@
               </div>
 
               <!-- Admin Security Identity Card (Replaces Password in Admin Mode) -->
-              <div class="admin-identity-card" id="admin-detected-notice" style="display:none;" role="status" aria-live="polite">
+              <div class="admin-identity-card" id="admin-detected-notice" style="display:none;" role="status"
+                aria-live="polite">
                 <div class="admin-identity-badge">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <path d="m9 12 2 2 4-4"/>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="m9 12 2 2 4-4" />
                   </svg>
                 </div>
                 <div class="admin-identity-info">
@@ -305,9 +322,11 @@
 
               <!-- Bottom Controls Row: Remember Me & Submit Button -->
               <div class="neura-form-bottom-row">
-                <button type="button" class="comp-remember-btn is-active" id="login-remember-btn" role="switch" aria-checked="true" title="Simpan sesi login 30 hari">
+                <button type="button" class="comp-remember-btn is-active" id="login-remember-btn" role="switch"
+                  aria-checked="true" title="Simpan sesi login 30 hari">
                   <span class="remember-btn-check">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"
+                      stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                   </span>
@@ -331,37 +350,45 @@
               <!-- Name Input -->
               <div class="neura-pill-input-row" id="register-name-pill">
                 <span class="pill-leading-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
                 </span>
-                <input type="text" class="neura-pill-input" id="register-name" placeholder="Full name" required autocomplete="name" />
+                <input type="text" class="neura-pill-input" id="register-name" placeholder="Full name" required
+                  autocomplete="name" />
               </div>
 
               <!-- Email Input -->
               <div class="neura-pill-input-row" id="register-email-pill">
                 <span class="pill-leading-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                   </svg>
                 </span>
-                <input type="email" class="neura-pill-input" id="register-email" placeholder="e-mail address" required autocomplete="email" />
+                <input type="email" class="neura-pill-input" id="register-email" placeholder="e-mail address" required
+                  autocomplete="email" />
                 <span class="pill-domain-badge">Gmail.com</span>
               </div>
 
               <!-- Password Input -->
               <div class="neura-pill-input-row" id="register-password-pill">
                 <span class="pill-leading-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
                 </span>
-                <input type="password" class="neura-pill-input" id="register-password" placeholder="password" required autocomplete="new-password" />
-                <button type="button" class="pill-eye-btn auth-eye-btn" data-target="register-password" aria-label="Lihat kata sandi">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <input type="password" class="neura-pill-input" id="register-password" placeholder="password" required
+                  autocomplete="new-password" />
+                <button type="button" class="pill-eye-btn auth-eye-btn" data-target="register-password"
+                  aria-label="Lihat kata sandi">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -386,12 +413,14 @@
               <!-- Email Input -->
               <div class="neura-pill-input-row" id="forgot-email-pill">
                 <span class="pill-leading-icon">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                   </svg>
                 </span>
-                <input type="email" class="neura-pill-input" id="forgot-email" placeholder="e-mail address" required autocomplete="email" />
+                <input type="email" class="neura-pill-input" id="forgot-email" placeholder="e-mail address" required
+                  autocomplete="email" />
                 <span class="pill-domain-badge">Gmail.com</span>
               </div>
 
@@ -400,7 +429,8 @@
 
               <!-- Bottom Row: Submit Button (Verify) -->
               <div class="neura-form-bottom-row" style="justify-content: flex-end;">
-                <button type="submit" class="neura-auth-submit-btn" id="forgot-submit-btn" title="Kirim Tautan Verifikasi">
+                <button type="submit" class="neura-auth-submit-btn" id="forgot-submit-btn"
+                  title="Kirim Tautan Verifikasi">
                   <span class="submit-btn-label">Verify</span>
                   <span class="auth-btn-spinner"></span>
                 </button>
@@ -414,7 +444,8 @@
           <div class="auth-view-pane" id="pane-view-profile">
             <div class="profile-card-box">
               <div class="profile-card-avatar-wrap">
-                <img src="/assets/hero_brain_wireframe.png" alt="Avatar" class="profile-card-avatar" id="welcome-user-avatar" />
+                <img src="/assets/hero_brain_wireframe.png" alt="Avatar" class="profile-card-avatar"
+                  id="welcome-user-avatar" />
               </div>
               <div class="profile-card-info">
                 <div class="profile-card-name-row">
@@ -432,15 +463,19 @@
 
             <!-- Profile Action Pills -->
             <div class="profile-actions-stack">
-              <button type="button" class="profile-action-pill" id="btn-logged-workspace" onclick="window.location.href='/app';">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <button type="button" class="profile-action-pill" id="btn-logged-workspace"
+                onclick="window.location.href='/app';">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="9" y1="3" x2="9" y2="21"></line>
                 </svg>
                 <span>Buka Workspace Klinis</span>
               </button>
-              <button type="button" class="profile-action-pill profile-action-pill--logout" id="btn-logged-logout" onclick="window.logoutCurrentSession && window.logoutCurrentSession();">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <button type="button" class="profile-action-pill profile-action-pill--logout" id="btn-logged-logout"
+                onclick="window.logoutCurrentSession && window.logoutCurrentSession();">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
                   <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -464,7 +499,8 @@
 
               <!-- 6 Squircle Digit Boxes -->
               <div class="admin-otp-boxes-wrap" id="admin-otp-boxes-wrap">
-                <input type="text" maxlength="1" class="admin-otp-digit" data-idx="0" inputmode="numeric" autocomplete="one-time-code" />
+                <input type="text" maxlength="1" class="admin-otp-digit" data-idx="0" inputmode="numeric"
+                  autocomplete="one-time-code" />
                 <input type="text" maxlength="1" class="admin-otp-digit" data-idx="1" inputmode="numeric" />
                 <input type="text" maxlength="1" class="admin-otp-digit" data-idx="2" inputmode="numeric" />
                 <input type="text" maxlength="1" class="admin-otp-digit" data-idx="3" inputmode="numeric" />
@@ -481,14 +517,17 @@
 
               <!-- Bottom Actions Row -->
               <div class="neura-form-bottom-row otp-bottom-actions">
-                <button type="button" class="otp-cancel-btn" id="btn-cancel-admin-verify" title="Kembali ke Login">Batal</button>
-                <button type="button" class="neura-auth-submit-btn otp-submit-btn" id="btn-submit-admin-otp" title="Verifikasi kode OTP">
+                <button type="button" class="otp-cancel-btn" id="btn-cancel-admin-verify"
+                  title="Kembali ke Login">Batal</button>
+                <button type="button" class="neura-auth-submit-btn otp-submit-btn" id="btn-submit-admin-otp"
+                  title="Verifikasi kode OTP">
                   <span class="submit-btn-label">Verifikasi & Masuk sebagai Admin</span>
                   <span class="auth-btn-spinner"></span>
                 </button>
               </div>
             </div>
-          </div></div> <!-- /neura-auth-main-card -->
+          </div>
+        </div> <!-- /neura-auth-main-card -->
 
 
         <!-- ========================================================================
@@ -498,7 +537,8 @@
           <!-- Button 1: Login With Email (Visible on Welcome Screen - Image 1) -->
           <button type="button" class="sub-stack-capsule-btn" id="btn-goto-login-email" title="Masuk dengan Email">
             <span class="capsule-leading-circle">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
               </svg>
@@ -513,10 +553,14 @@
           <button type="button" class="sub-stack-capsule-btn" id="auth-google-btn" title="Masuk dengan Akun Google">
             <span class="capsule-leading-circle capsule-leading-circle--google">
               <svg class="comp1-google-icon" viewBox="0 0 24 24" width="20" height="20">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                <path fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                <path fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
               </svg>
             </span>
             <div class="capsule-text-group">
@@ -561,8 +605,10 @@
       </div>
 
       <!-- Video Preview Player with Magnetic Smooth Cursor Play Follower (Image 1 & 2) -->
-      <div class="showcase-video-wrap" id="showcase-video-wrap" role="region" aria-label="Pemutar Pratinjau Video Neura AI">
-        <video id="showcase-video" class="showcase-video" data-src="/assets/NeuraVideo.mp4" playsinline loop muted preload="none" disablepictureinpicture aria-label="Pratinjau Video Neura AI"></video>
+      <div class="showcase-video-wrap" id="showcase-video-wrap" role="region"
+        aria-label="Pemutar Pratinjau Video Neura AI">
+        <video id="showcase-video" class="showcase-video" data-src="/assets/NeuraVideo.mp4" playsinline loop muted
+          preload="none" disablepictureinpicture aria-label="Pratinjau Video Neura AI"></video>
 
         <!-- Magnetic Smooth Cursor Play Pill (Image 2) -->
         <div class="video-cursor-pill" id="video-cursor-pill" aria-hidden="true">
@@ -580,13 +626,16 @@
         </div>
 
         <!-- Mute / Unmute Corner Toggle Button -->
-        <button type="button" class="video-sound-btn" id="video-sound-btn" aria-label="Beralih Suara" title="Beralih Suara">
-          <svg class="v-sound-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button type="button" class="video-sound-btn" id="video-sound-btn" aria-label="Beralih Suara"
+          title="Beralih Suara">
+          <svg class="v-sound-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <line x1="23" y1="9" x2="17" y2="15"></line>
             <line x1="17" y1="9" x2="23" y2="15"></line>
           </svg>
-          <svg class="v-sound-unmuted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <svg class="v-sound-unmuted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
           </svg>
@@ -767,7 +816,7 @@
         <p class="statement-paragraph" data-i18n="statement_p2">
           Didukung oleh arsitektur machine learning <strong>XGBoost</strong> berkecepatan tinggi yang telah dilatih
           menggunakan parameter biomarker klinis komprehensif, Neura mampu memetakan gejala memori, fungsi eksekutif,
-          dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>95.8%</strong>.
+          dan faktor risiko neurologis secara presisi dengan akurasi mencapai <strong>94.7%</strong>.
         </p>
         <p class="statement-paragraph" data-i18n="statement_p3">
           Tidak seperti pemeriksaan konvensional yang mahal dan lambat, Neura memberikan analisis terstruktur dalam
@@ -1087,12 +1136,15 @@
           <div class="neurapet-preview-visual">
             <!-- NeuraPet Face — Duplicated from Dynamic Island (app page) -->
             <div class="neurapet-demo-face" id="neurapet-demo-face">
-              <svg width="180" height="134" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" class="neurapet-demo-svg" id="neurapet-demo-svg">
-                <path id="neurapet-demo-head" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF"/>
+              <svg width="180" height="134" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg"
+                class="neurapet-demo-svg" id="neurapet-demo-svg">
+                <path id="neurapet-demo-head"
+                  d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z"
+                  fill="#FFFFFF" />
                 <g class="neurapet-demo-eyes-wrapper" id="neurapet-demo-eyes-wrapper">
                   <g class="neurapet-demo-eyes-track" id="neurapet-demo-eyes-track">
-                    <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000"/>
-                    <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000"/>
+                    <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000" />
+                    <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000" />
                   </g>
                 </g>
               </svg>
@@ -1571,281 +1623,281 @@
 
   <!-- NeuraPet Welcome Preview Interactions (eye tracking, blink, squish) -->
   <script>
-  (function() {
-    const face = document.getElementById('neurapet-demo-face');
-    const eyesTrack = document.getElementById('neurapet-demo-eyes-track');
-    const eyesWrap = document.getElementById('neurapet-demo-eyes-wrapper');
-    const head = document.getElementById('neurapet-demo-head');
-    if (!face || !eyesTrack || !eyesWrap || !head) return;
+    (function () {
+      const face = document.getElementById('neurapet-demo-face');
+      const eyesTrack = document.getElementById('neurapet-demo-eyes-track');
+      const eyesWrap = document.getElementById('neurapet-demo-eyes-wrapper');
+      const head = document.getElementById('neurapet-demo-head');
+      if (!face || !eyesTrack || !eyesWrap || !head) return;
 
-    /* ── Eye Gaze Tracking ── */
-    const MAX_EYE = 5.8, MAX_HEAD = 2.2;
-    document.addEventListener('mousemove', function(e) {
-      const r = face.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      const dx = (e.clientX - cx) / (window.innerWidth / 2);
-      const dy = (e.clientY - cy) / (window.innerHeight / 2);
-      const clamp = (v, m) => Math.max(-m, Math.min(m, v));
-      eyesTrack.style.transform = 'translate(' + clamp(dx * MAX_EYE, MAX_EYE) + 'px,' + clamp(dy * MAX_EYE, MAX_EYE) + 'px)';
-      head.style.transform = 'rotate(' + clamp(dx * MAX_HEAD, MAX_HEAD) + 'deg)';
-    });
+      /* ── Eye Gaze Tracking ── */
+      const MAX_EYE = 5.8, MAX_HEAD = 2.2;
+      document.addEventListener('mousemove', function (e) {
+        const r = face.getBoundingClientRect();
+        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        const dx = (e.clientX - cx) / (window.innerWidth / 2);
+        const dy = (e.clientY - cy) / (window.innerHeight / 2);
+        const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+        eyesTrack.style.transform = 'translate(' + clamp(dx * MAX_EYE, MAX_EYE) + 'px,' + clamp(dy * MAX_EYE, MAX_EYE) + 'px)';
+        head.style.transform = 'rotate(' + clamp(dx * MAX_HEAD, MAX_HEAD) + 'deg)';
+      });
 
-    /* ── Periodic Blink ── */
-    function blink() {
-      eyesWrap.classList.add('is-blinking');
-      setTimeout(function() { eyesWrap.classList.remove('is-blinking'); }, 120);
-      // occasional double-blink
-      if (Math.random() < 0.28) {
-        setTimeout(function() {
-          eyesWrap.classList.add('is-blinking');
-          setTimeout(function() { eyesWrap.classList.remove('is-blinking'); }, 100);
-        }, 220);
+      /* ── Periodic Blink ── */
+      function blink() {
+        eyesWrap.classList.add('is-blinking');
+        setTimeout(function () { eyesWrap.classList.remove('is-blinking'); }, 120);
+        // occasional double-blink
+        if (Math.random() < 0.28) {
+          setTimeout(function () {
+            eyesWrap.classList.add('is-blinking');
+            setTimeout(function () { eyesWrap.classList.remove('is-blinking'); }, 100);
+          }, 220);
+        }
       }
-    }
-    function scheduleBlink() {
-      var delay = 2000 + Math.random() * 2200;
-      setTimeout(function() { blink(); scheduleBlink(); }, delay);
-    }
-    scheduleBlink();
+      function scheduleBlink() {
+        var delay = 2000 + Math.random() * 2200;
+        setTimeout(function () { blink(); scheduleBlink(); }, delay);
+      }
+      scheduleBlink();
 
-    /* ── Squish on Click ── */
-    face.addEventListener('click', function() {
-      face.classList.remove('neurapet-squish');
-      void face.offsetWidth; // reflow
-      face.classList.add('neurapet-squish');
-      setTimeout(function() { face.classList.remove('neurapet-squish'); }, 700);
-    });
-  })();
+      /* ── Squish on Click ── */
+      face.addEventListener('click', function () {
+        face.classList.remove('neurapet-squish');
+        void face.offsetWidth; // reflow
+        face.classList.add('neurapet-squish');
+        setTimeout(function () { face.classList.remove('neurapet-squish'); }, 700);
+      });
+    })();
   </script>
 
 
   <!-- Antigravity Particle Dots Effect (Welcome Card) -->
   <script>
-  (function() {
-    'use strict';
-    var canvas, ctx, cardEl, particles = [], mouseX = -999, mouseY = -999, raf;
-    var PARTICLE_COUNT = 110;
-    var MAX_RADIUS = 2.6;
-    var MIN_RADIUS = 0.8;
-    var MOUSE_RADIUS = 200;       // Jarak deteksi magnet kursor
-    var CONNECT_DIST = 115;       // Jarak garis koneksi
-    var BASE_SPEED = 0.3;
-    var ATTRACT_FORCE = 0.08;     // Tarikan halus ke kursor (tanpa putaran)
-    var MIN_CURSOR_DIST = 32;     // Jarak henti aman dengan kursor (agar tidak menempel mati)
-    var REPULSION_DIST = 26;      // Jarak minimum antar sesama partikel (personal space)
-    var REPULSION_FORCE = 0.14;   // Daya tolak antar partikel agar tidak tumpuk-menumpuk
-    var DAMPING = 0.88;           // Gesekan lembut agar partikel tenang & stabil
-    var MAX_SPEED = 3.2;
+    (function () {
+      'use strict';
+      var canvas, ctx, cardEl, particles = [], mouseX = -999, mouseY = -999, raf;
+      var PARTICLE_COUNT = 110;
+      var MAX_RADIUS = 2.6;
+      var MIN_RADIUS = 0.8;
+      var MOUSE_RADIUS = 200;       // Jarak deteksi magnet kursor
+      var CONNECT_DIST = 115;       // Jarak garis koneksi
+      var BASE_SPEED = 0.3;
+      var ATTRACT_FORCE = 0.08;     // Tarikan halus ke kursor (tanpa putaran)
+      var MIN_CURSOR_DIST = 32;     // Jarak henti aman dengan kursor (agar tidak menempel mati)
+      var REPULSION_DIST = 26;      // Jarak minimum antar sesama partikel (personal space)
+      var REPULSION_FORCE = 0.14;   // Daya tolak antar partikel agar tidak tumpuk-menumpuk
+      var DAMPING = 0.88;           // Gesekan lembut agar partikel tenang & stabil
+      var MAX_SPEED = 3.2;
 
-    function initParticles() {
-      canvas = document.getElementById('auth-card-particles');
-      cardEl = document.getElementById('neura-auth-main-card');
-      if (!canvas || !cardEl) return;
-      ctx = canvas.getContext('2d');
-      resize();
+      function initParticles() {
+        canvas = document.getElementById('auth-card-particles');
+        cardEl = document.getElementById('neura-auth-main-card');
+        if (!canvas || !cardEl) return;
+        ctx = canvas.getContext('2d');
+        resize();
 
-      particles = [];
-      for (var i = 0; i < PARTICLE_COUNT; i++) {
-        var baseA = 0.16 + Math.random() * 0.38;
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * BASE_SPEED,
-          vy: (Math.random() - 0.5) * BASE_SPEED,
-          r: MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS),
-          baseAlpha: baseA,
-          alpha: baseA,
-          drawR: MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS)
+        particles = [];
+        for (var i = 0; i < PARTICLE_COUNT; i++) {
+          var baseA = 0.16 + Math.random() * 0.38;
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * BASE_SPEED,
+            vy: (Math.random() - 0.5) * BASE_SPEED,
+            r: MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS),
+            baseAlpha: baseA,
+            alpha: baseA,
+            drawR: MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS)
+          });
+        }
+
+        cardEl.addEventListener('mousemove', function (e) {
+          var rect = cardEl.getBoundingClientRect();
+          mouseX = e.clientX - rect.left;
+          mouseY = e.clientY - rect.top;
         });
+
+        cardEl.addEventListener('mouseenter', function (e) {
+          var rect = cardEl.getBoundingClientRect();
+          mouseX = e.clientX - rect.left;
+          mouseY = e.clientY - rect.top;
+        });
+
+        cardEl.addEventListener('mouseleave', function () {
+          mouseX = -999;
+          mouseY = -999;
+        });
+
+        window.addEventListener('resize', resize);
+        loop();
       }
 
-      cardEl.addEventListener('mousemove', function(e) {
-        var rect = cardEl.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
-      });
+      function resize() {
+        if (!canvas || !cardEl) return;
+        canvas.width = cardEl.offsetWidth;
+        canvas.height = cardEl.offsetHeight;
+      }
 
-      cardEl.addEventListener('mouseenter', function(e) {
-        var rect = cardEl.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
-      });
+      function loop() {
+        if (!canvas || !ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      cardEl.addEventListener('mouseleave', function() {
-        mouseX = -999;
-        mouseY = -999;
-      });
+        var welcomePane = document.getElementById('pane-view-welcome');
+        var isWelcome = welcomePane && welcomePane.classList.contains('active');
+        var isMouseActive = mouseX > 0 && mouseY > 0 && mouseX <= canvas.width && mouseY <= canvas.height;
 
-      window.addEventListener('resize', resize);
-      loop();
-    }
+        // 1. Gaya Tarik Magnet ke Kursor (Langsung Lurus, Tanpa Orbit/Putaran)
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
 
-    function resize() {
-      if (!canvas || !cardEl) return;
-      canvas.width = cardEl.offsetWidth;
-      canvas.height = cardEl.offsetHeight;
-    }
+          if (isMouseActive) {
+            var dx = mouseX - p.x;
+            var dy = mouseY - p.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
 
-    function loop() {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (dist < MOUSE_RADIUS && dist > 1) {
+              var normX = dx / dist;
+              var normY = dy / dist;
+              var factor = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
 
-      var welcomePane = document.getElementById('pane-view-welcome');
-      var isWelcome = welcomePane && welcomePane.classList.contains('active');
-      var isMouseActive = mouseX > 0 && mouseY > 0 && mouseX <= canvas.width && mouseY <= canvas.height;
+              if (dist > MIN_CURSOR_DIST) {
+                // Menarik lurus ke arah kursor tanpa efek rotasi/lingkaran
+                var pull = factor * ATTRACT_FORCE;
+                p.vx += normX * pull;
+                p.vy += normY * pull;
+              } else {
+                // Jika terlalu dekat dengan ujung kursor, tahan posisinya dengan lembut
+                var pushBack = (MIN_CURSOR_DIST - dist) / MIN_CURSOR_DIST * 0.12;
+                p.vx -= normX * pushBack;
+                p.vy -= normY * pushBack;
+              }
 
-      // 1. Gaya Tarik Magnet ke Kursor (Langsung Lurus, Tanpa Orbit/Putaran)
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-
-        if (isMouseActive) {
-          var dx = mouseX - p.x;
-          var dy = mouseY - p.y;
-          var dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < MOUSE_RADIUS && dist > 1) {
-            var normX = dx / dist;
-            var normY = dy / dist;
-            var factor = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
-
-            if (dist > MIN_CURSOR_DIST) {
-              // Menarik lurus ke arah kursor tanpa efek rotasi/lingkaran
-              var pull = factor * ATTRACT_FORCE;
-              p.vx += normX * pull;
-              p.vy += normY * pull;
+              p.alpha = p.baseAlpha + (0.9 - p.baseAlpha) * factor;
+              p.drawR = p.r * (1 + factor * 0.4);
             } else {
-              // Jika terlalu dekat dengan ujung kursor, tahan posisinya dengan lembut
-              var pushBack = (MIN_CURSOR_DIST - dist) / MIN_CURSOR_DIST * 0.12;
-              p.vx -= normX * pushBack;
-              p.vy -= normY * pushBack;
+              p.alpha += (p.baseAlpha - p.alpha) * 0.05;
+              p.drawR += (p.r - p.drawR) * 0.05;
+              p.vx += (Math.random() - 0.5) * 0.02;
+              p.vy += (Math.random() - 0.5) * 0.02;
             }
-
-            p.alpha = p.baseAlpha + (0.9 - p.baseAlpha) * factor;
-            p.drawR = p.r * (1 + factor * 0.4);
           } else {
             p.alpha += (p.baseAlpha - p.alpha) * 0.05;
             p.drawR += (p.r - p.drawR) * 0.05;
-            p.vx += (Math.random() - 0.5) * 0.02;
-            p.vy += (Math.random() - 0.5) * 0.02;
-          }
-        } else {
-          p.alpha += (p.baseAlpha - p.alpha) * 0.05;
-          p.drawR += (p.r - p.drawR) * 0.05;
-          p.vx += (Math.random() - 0.5) * 0.015;
-          p.vy += (Math.random() - 0.5) * 0.015;
-        }
-      }
-
-      // 2. Inter-Particle Repulsion (Menjaga Jarak Antar Partikel agar Tidak Saling Menumpuk)
-      for (var i = 0; i < particles.length; i++) {
-        var pi = particles[i];
-        for (var j = i + 1; j < particles.length; j++) {
-          var pj = particles[j];
-          var pdx = pj.x - pi.x;
-          var pdy = pj.y - pi.y;
-          var pdist = Math.sqrt(pdx * pdx + pdy * pdy);
-
-          if (pdist < REPULSION_DIST && pdist > 0.001) {
-            var pnormX = pdx / pdist;
-            var pnormY = pdy / pdist;
-            var repFactor = (REPULSION_DIST - pdist) / REPULSION_DIST;
-            var repForce = repFactor * REPULSION_FORCE;
-
-            // Tolak menjauh satu sama lain
-            pi.vx -= pnormX * repForce;
-            pi.vy -= pnormY * repForce;
-            pj.vx += pnormX * repForce;
-            pj.vy += pnormY * repForce;
+            p.vx += (Math.random() - 0.5) * 0.015;
+            p.vy += (Math.random() - 0.5) * 0.015;
           }
         }
-      }
 
-      // 3. Update Posisi & Render Partikel
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-
-        p.vx *= DAMPING;
-        p.vy *= DAMPING;
-
-        var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > MAX_SPEED) {
-          p.vx = (p.vx / speed) * MAX_SPEED;
-          p.vy = (p.vy / speed) * MAX_SPEED;
-        }
-
-        if (!isMouseActive && speed < BASE_SPEED * 0.2) {
-          p.vx += (Math.random() - 0.5) * 0.05;
-          p.vy += (Math.random() - 0.5) * 0.05;
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Boundaries wrap
-        if (p.x < -12) p.x = canvas.width + 12;
-        if (p.x > canvas.width + 12) p.x = -12;
-        if (p.y < -12) p.y = canvas.height + 12;
-        if (p.y > canvas.height + 12) p.y = -12;
-
-        var drawAlpha = isWelcome ? p.alpha : p.alpha * 0.15;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.drawR, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, ' + drawAlpha + ')';
-        ctx.fill();
-      }
-
-      // 4. Hubungkan Partikel dengan Garis Terakota yang Elegan
-      if (isWelcome) {
+        // 2. Inter-Particle Repulsion (Menjaga Jarak Antar Partikel agar Tidak Saling Menumpuk)
         for (var i = 0; i < particles.length; i++) {
+          var pi = particles[i];
           for (var j = i + 1; j < particles.length; j++) {
-            var a = particles[i], b = particles[j];
-            var ddx = a.x - b.x, ddy = a.y - b.y;
-            var d = Math.sqrt(ddx * ddx + ddy * ddy);
-            if (d < CONNECT_DIST) {
-              var lineAlpha;
-              if (isMouseActive) {
-                var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-                var md = Math.sqrt((mx - mouseX) * (mx - mouseX) + (my - mouseY) * (my - mouseY));
-                if (md < MOUSE_RADIUS * 1.1) {
-                  lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / (MOUSE_RADIUS * 1.1)) * 0.42;
+            var pj = particles[j];
+            var pdx = pj.x - pi.x;
+            var pdy = pj.y - pi.y;
+            var pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+
+            if (pdist < REPULSION_DIST && pdist > 0.001) {
+              var pnormX = pdx / pdist;
+              var pnormY = pdy / pdist;
+              var repFactor = (REPULSION_DIST - pdist) / REPULSION_DIST;
+              var repForce = repFactor * REPULSION_FORCE;
+
+              // Tolak menjauh satu sama lain
+              pi.vx -= pnormX * repForce;
+              pi.vy -= pnormY * repForce;
+              pj.vx += pnormX * repForce;
+              pj.vy += pnormY * repForce;
+            }
+          }
+        }
+
+        // 3. Update Posisi & Render Partikel
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+
+          p.vx *= DAMPING;
+          p.vy *= DAMPING;
+
+          var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+          if (speed > MAX_SPEED) {
+            p.vx = (p.vx / speed) * MAX_SPEED;
+            p.vy = (p.vy / speed) * MAX_SPEED;
+          }
+
+          if (!isMouseActive && speed < BASE_SPEED * 0.2) {
+            p.vx += (Math.random() - 0.5) * 0.05;
+            p.vy += (Math.random() - 0.5) * 0.05;
+          }
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Boundaries wrap
+          if (p.x < -12) p.x = canvas.width + 12;
+          if (p.x > canvas.width + 12) p.x = -12;
+          if (p.y < -12) p.y = canvas.height + 12;
+          if (p.y > canvas.height + 12) p.y = -12;
+
+          var drawAlpha = isWelcome ? p.alpha : p.alpha * 0.15;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.drawR, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, ' + drawAlpha + ')';
+          ctx.fill();
+        }
+
+        // 4. Hubungkan Partikel dengan Garis Terakota yang Elegan
+        if (isWelcome) {
+          for (var i = 0; i < particles.length; i++) {
+            for (var j = i + 1; j < particles.length; j++) {
+              var a = particles[i], b = particles[j];
+              var ddx = a.x - b.x, ddy = a.y - b.y;
+              var d = Math.sqrt(ddx * ddx + ddy * ddy);
+              if (d < CONNECT_DIST) {
+                var lineAlpha;
+                if (isMouseActive) {
+                  var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+                  var md = Math.sqrt((mx - mouseX) * (mx - mouseX) + (my - mouseY) * (my - mouseY));
+                  if (md < MOUSE_RADIUS * 1.1) {
+                    lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / (MOUSE_RADIUS * 1.1)) * 0.42;
+                  } else {
+                    lineAlpha = (1 - d / CONNECT_DIST) * 0.04;
+                  }
                 } else {
                   lineAlpha = (1 - d / CONNECT_DIST) * 0.04;
                 }
-              } else {
-                lineAlpha = (1 - d / CONNECT_DIST) * 0.04;
-              }
 
-              if (lineAlpha > 0.005) {
-                ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
-                ctx.strokeStyle = 'rgba(217, 119, 87, ' + lineAlpha + ')';
-                ctx.lineWidth = 0.65;
-                ctx.stroke();
+                if (lineAlpha > 0.005) {
+                  ctx.beginPath();
+                  ctx.moveTo(a.x, a.y);
+                  ctx.lineTo(b.x, b.y);
+                  ctx.strokeStyle = 'rgba(217, 119, 87, ' + lineAlpha + ')';
+                  ctx.lineWidth = 0.65;
+                  ctx.stroke();
+                }
               }
             }
           }
         }
+
+        raf = requestAnimationFrame(loop);
       }
 
-      raf = requestAnimationFrame(loop);
-    }
-
-    if (typeof ResizeObserver !== 'undefined') {
-      document.addEventListener('DOMContentLoaded', function() {
-        var card = document.getElementById('neura-auth-main-card');
-        if (card) {
-          new ResizeObserver(resize).observe(card);
-        }
-        initParticles();
-      });
-    } else {
-      document.addEventListener('DOMContentLoaded', initParticles);
-    }
-  })();
+      if (typeof ResizeObserver !== 'undefined') {
+        document.addEventListener('DOMContentLoaded', function () {
+          var card = document.getElementById('neura-auth-main-card');
+          if (card) {
+            new ResizeObserver(resize).observe(card);
+          }
+          initParticles();
+        });
+      } else {
+        document.addEventListener('DOMContentLoaded', initParticles);
+      }
+    })();
   </script>
   <script src="/js/hero-brain-canvas.js?v=2.0"></script>
   <script src="/js/showcase-video.js?v=1.2"></script>
-  </body>
+</body>
 
 </html>
