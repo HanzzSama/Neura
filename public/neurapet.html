@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuraPet — Interactive AI Companion · Neura</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 76'><path d='M50 6C78 6 95 18 95 39C95 60 78 71 50 71C22 71 5 60 5 39C5 18 22 6 50 6Z' fill='%23FFFFFF'/><ellipse cx='33' cy='44' rx='5.5' ry='8' fill='%23000000'/><ellipse cx='67' cy='44' rx='5.5' ry='8' fill='%23000000'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. Global Resets & Theme Variables
+       ========================================================================== */
+    :root {
+      --bg-base: #0a0a0c;
+      --bg-surface: #121216;
+      --bg-surface-elevated: #18181f;
+      --bg-glass: rgba(18, 18, 24, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.15);
+      --border-glow: rgba(217, 119, 87, 0.4);
+
+      --coral: #D97757;
+      --coral-light: #ea8d6f;
+      --coral-glow: rgba(217, 119, 87, 0.25);
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --blue: #38bdf8;
+      --purple: #a855f7;
+      --pink: #ec4899;
+
+      --text-primary: #f4f4f6;
+      --text-secondary: #9e9ea8;
+      --text-muted: #646470;
+
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Ambient Background Orbs */
+    .ambient-mesh {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.35;
+      transition: background 1.2s ease, transform 1.2s ease;
+    }
+    .ambient-orb-1 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, var(--coral) 0%, transparent 70%);
+      top: -140px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .ambient-orb-2 {
+      width: 440px;
+      height: 440px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%);
+      bottom: -100px;
+      right: 5%;
+    }
+
+    /* Grid pattern overlay */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ==========================================================================
+       2. Top Bar Navigation
+       ========================================================================== */
+    .top-nav {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(10, 10, 12, 0.85);
+      backdrop-filter: blur(18px);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(217, 119, 87, 0.25), rgba(217, 119, 87, 0.05));
+      border: 1px solid rgba(217, 119, 87, 0.4);
+    }
+    .nav-logo-badge svg {
+      width: 20px;
+      height: 16px;
+    }
+    .nav-brand-title {
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-brand-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      background: rgba(217, 119, 87, 0.18);
+      color: var(--coral);
+      border: 1px solid rgba(217, 119, 87, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      font-size: 12.5px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .nav-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--border-medium);
+      transform: translateY(-1px);
+    }
+    .nav-pill-btn.active {
+      background: var(--coral);
+      color: #fff;
+      border-color: var(--coral);
+    }
+
+    /* ==========================================================================
+       3. Main Layout Container
+       ========================================================================== */
+    .main-wrapper {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    /* Hero Header */
+    .hero-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(217, 119, 87, 0.1);
+      border: 1px solid rgba(217, 119, 87, 0.3);
+      color: var(--coral-light);
+      margin-bottom: 14px;
+    }
+    .hero-badge .pulsing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .hero-title {
+      font-size: clamp(30px, 4vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      background: linear-gradient(180deg, #FFFFFF 20%, #A0A0B0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       4. NeuraPet Dynamic Island Pill Mockup
+       ========================================================================== */
+    .island-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .island-pill {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      border-radius: 9999px;
+      height: 52px;
+      padding: 0 18px 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .island-pill:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.02);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.8), 0 0 20px rgba(217, 119, 87, 0.2);
+    }
+    .island-pet-mini {
+      width: 44px;
+      height: 33px;
+      flex-shrink: 0;
+    }
+    .island-status-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: left;
+    }
+    .island-status-sub {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .island-status-main {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .island-status-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.18);
+      color: var(--emerald);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       5. Interactive NeuraPet Stage / Card Centerpiece
+       ========================================================================== */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 900px) {
+      .stage-grid {
+        grid-template-columns: 1.3fr 1fr;
+        align-items: start;
+      }
+    }
+
+    .pet-stage-card {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 440px;
+      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    /* Stage Glow */
+    .pet-stage-glow {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--coral-glow) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: background 0.8s ease, transform 0.6s ease;
+      z-index: 1;
+    }
+
+    /* Speech Bubble */
+    .pet-speech-bubble {
+      position: relative;
+      z-index: 5;
+      background: rgba(24, 24, 32, 0.95);
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: 18px;
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+      animation: bubble-float 3s ease-in-out infinite alternate;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .pet-speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: rgba(24, 24, 32, 0.95);
+      border-right: 1px solid var(--border-medium);
+      border-bottom: 1px solid var(--border-medium);
+      transform: translateX(-50%) rotate(45deg);
+    }
+    @keyframes bubble-float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+
+    /* ── NeuraPet Character Body ── */
+    .neurapet-character {
+      position: relative;
+      z-index: 5;
+      width: 220px;
+      height: 168px;
+      cursor: pointer;
+      user-select: none;
+      animation: pet-breathe 3.6s ease-in-out infinite;
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .neurapet-character:hover {
+      filter: drop-shadow(0 14px 28px rgba(255, 255, 255, 0.18));
+    }
+
+    /* Organic breathing */
+    @keyframes pet-breathe {
+      0%, 100% {
+        transform: translateY(0) scale(1, 1);
+      }
+      50% {
+        transform: translateY(-8px) scale(1.025, 0.975);
+      }
+    }
+
+    /* Jelly Squish on Click / Pet */
+    .neurapet-character.is-squished {
+      animation: pet-squish 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    }
+    @keyframes pet-squish {
+      0%   { transform: scale(1, 1); }
+      20%  { transform: scale(1.24, 0.74) translateY(12px); }
+      45%  { transform: scale(0.88, 1.16) translateY(-14px); }
+      70%  { transform: scale(1.06, 0.95) translateY(3px); }
+      85%  { transform: scale(0.98, 1.02) translateY(-2px); }
+      100% { transform: scale(1, 1) translateY(0); }
+    }
+
+    /* Happy Dance Animation */
+    .neurapet-character.is-dancing {
+      animation: pet-dance 0.85s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
+    }
+    @keyframes pet-dance {
+      0%   { transform: translateY(0) rotate(0deg) scale(1); }
+      25%  { transform: translateY(-16px) rotate(-8deg) scale(1.08, 0.94); }
+      50%  { transform: translateY(-4px) rotate(0deg) scale(0.95, 1.05); }
+      75%  { transform: translateY(-16px) rotate(8deg) scale(1.08, 0.94); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); }
+    }
+
+    /* SVG Character Parts */
+    .pet-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    #neurapet-head {
+      fill: #FFFFFF;
+      transition: transform 0.14s ease-out;
+      transform-origin: 50px 38px;
+    }
+    .neurapet-eyes-wrapper {
+      transform-origin: 50px 44px;
+      transition: transform 0.12s ease-out;
+    }
+    .neurapet-eyes-wrapper.is-blinking {
+      transform: scaleY(0.06);
+    }
+    .neurapet-eyes-track {
+      transition: transform 0.08s ease-out;
+    }
+
+    /* Particles Container */
+    .particle-cloud {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      overflow: hidden;
+    }
+    .floating-heart {
+      position: absolute;
+      font-size: 20px;
+      animation: float-up 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      pointer-events: none;
+    }
+    @keyframes float-up {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(0.6) rotate(0deg);
+      }
+      50% {
+        opacity: 0.9;
+        transform: translate(calc(-50% + var(--dx, 0px)), -40px) scale(1.2) rotate(var(--rot, 12deg));
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx, 0px)), -90px) scale(0.8) rotate(var(--rot, 24deg));
+      }
+    }
+
+    /* Stage Footer / Interaction Bar */
+    .stage-footer {
+      position: relative;
+      z-index: 5;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .stage-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .stage-action-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    .stage-action-btn.btn-primary {
+      background: var(--coral);
+      border-color: var(--coral);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(217, 119, 87, 0.35);
+    }
+    .stage-action-btn.btn-primary:hover {
+      background: var(--coral-light);
+      box-shadow: 0 6px 20px rgba(217, 119, 87, 0.5);
+    }
+
+    /* ==========================================================================
+       6. Right Controls & Customization Panel
+       ========================================================================== */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .control-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+    .card-heading {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-desc {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    /* Mood Chips Grid */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+    }
+    .mood-btn {
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .mood-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+    }
+    .mood-btn.is-active {
+      background: rgba(217, 119, 87, 0.18);
+      border-color: var(--coral);
+      color: #fff;
+    }
+    .mood-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--coral);
+      flex-shrink: 0;
+    }
+    .mood-btn[data-mood="ready"] .mood-dot { background: var(--emerald); }
+    .mood-btn[data-mood="predicting"] .mood-dot { background: var(--blue); }
+    .mood-btn[data-mood="thinking"] .mood-dot { background: var(--purple); }
+    .mood-btn[data-mood="happy"] .mood-dot { background: var(--coral); }
+    .mood-btn[data-mood="sleepy"] .mood-dot { background: var(--text-muted); }
+    .mood-btn[data-mood="warning"] .mood-dot { background: var(--amber); }
+
+    /* Eye Expression Switcher */
+    .expr-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .expr-btn {
+      padding: 10px 8px;
+      border-radius: 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .expr-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-medium);
+    }
+    .expr-btn.is-active {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Toggle Option Row */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .toggle-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .toggle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .toggle-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Switch Component */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      transition: 0.3s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    input:checked + .slider {
+      background-color: var(--coral);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* ==========================================================================
+       7. Code Snippet Section
+       ========================================================================== */
+    .snippet-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 24px;
+    }
+    .snippet-pre {
+      background: #000;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       8. Footer
+       ========================================================================== */
+    .page-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 24px 28px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: auto;
+      position: relative;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient background glow & grid -->
+  <div class="ambient-mesh">
+    <div class="ambient-orb ambient-orb-1" id="ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+  </div>
+  <div class="grid-overlay"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <a href="/welcome.html" class="nav-brand">
+      <div class="nav-logo-badge">
+        <svg viewBox="0 0 100 76" fill="none">
+          <path d="M50 6C78 6 95 18 95 39C95 60 78 71 50 71C22 71 5 60 5 39C5 18 22 6 50 6Z" fill="#FFFFFF"/>
+          <ellipse cx="33" cy="44" rx="5.5" ry="8" fill="#000000"/>
+          <ellipse cx="67" cy="44" rx="5.5" ry="8" fill="#000000"/>
+        </svg>
+      </div>
+      <span class="nav-brand-title">
+        NeuraPet
+        <span class="nav-brand-tag">Companion AI</span>
+      </span>
+    </a>
+
+    <div class="nav-actions">
+      <button type="button" class="nav-pill-btn" id="sound-toggle-btn" title="Aktifkan/Matikan Suara Pet">
+        <span id="sound-icon">🔊</span>
+        <span id="sound-text">Suara: Aktif</span>
+      </button>
+      <a href="/index.html" class="nav-pill-btn active">Buka Dashboard &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+
+    <!-- Hero Header -->
+    <section class="hero-header">
+      <div class="hero-badge">
+        <span class="pulsing-dot"></span>
+        <span>Interactive AI Mascot Engine v2.4</span>
+      </div>
+      <h1 class="hero-title">Teman Klinis AI Anda</h1>
+      <p class="hero-subtitle">
+        NeuraPet hidup di Dynamic Island sistem Neura AI. Mengikuti arah kursor, berkedip alami, bereaksi saat dielus, dan mengekspresikan status komputasi model klinis.
+      </p>
+    </section>
+
+    <!-- Dynamic Island Pill Mockup -->
+    <div class="island-container">
+      <div class="island-pill" id="demo-island-pill" title="Klik untuk menguji reaksi kapsul pulau dinamis">
+        <div class="island-pet-mini">
+          <svg viewBox="0 0 100 76" fill="none">
+            <path d="M50 6C78 6 95 18 95 39C95 60 78 71 50 71C22 71 5 60 5 39C5 18 22 6 50 6Z" fill="#FFFFFF"/>
+            <ellipse cx="33" cy="44" rx="5" ry="7" fill="#000000"/>
+            <ellipse cx="67" cy="44" rx="5" ry="7" fill="#000000"/>
+          </svg>
+        </div>
+        <div class="island-status-group">
+          <span class="island-status-sub" id="island-sub">XGBoost &bull; 32 Biomarkers</span>
+          <span class="island-status-main">
+            <span id="island-main">Ready</span>
+            <span class="island-status-tag" id="island-badge">Active</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Stage Grid -->
+    <div class="stage-grid">
+
+      <!-- Left: NeuraPet Interactive Stage Card -->
+      <div class="pet-stage-card" id="pet-stage">
+        <div class="pet-stage-glow" id="pet-glow"></div>
+        <div class="particle-cloud" id="particle-cloud"></div>
+
+        <!-- Speech Bubble -->
+        <div class="pet-speech-bubble" id="pet-speech">
+          Halo! Aku NeuraPet, asisten AI kamu. Elus aku ya! ✨
+        </div>
+
+        <!-- NeuraPet Character Body -->
+        <div class="neurapet-character" id="neurapet-body" title="Klik 1x untuk mengelus, klik 3x cepat untuk joget!">
+          <svg viewBox="0 0 100 76" fill="none" class="pet-svg" id="neurapet-svg">
+            <!-- Ghost Body / Head -->
+            <path id="neurapet-head" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" />
+            <!-- Eyes Container -->
+            <g class="neurapet-eyes-wrapper" id="neurapet-eyes-wrapper">
+              <g class="neurapet-eyes-track" id="neurapet-eyes-track">
+                <!-- Regular Oval Eyes -->
+                <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000" />
+                <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000" />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Stage Interaction Buttons -->
+        <div class="stage-footer">
+          <button type="button" class="stage-action-btn btn-primary" id="btn-pet-action">
+            <span>✨</span>
+            <span>Elus NeuraPet</span>
+          </button>
+          <button type="button" class="stage-action-btn" id="btn-dance-action">
+            <span>🎵</span>
+            <span>Joget Bersama</span>
+          </button>
+          <button type="button" class="stage-action-btn" id="btn-feed-action">
+            <span>💊</span>
+            <span>Beri Biomarker</span>
+          </button>
+          <button type="button" class="stage-action-btn" id="btn-talk-action">
+            <span>💬</span>
+            <span>Ajak Bicara</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Controls & Mood Studio -->
+      <div class="controls-panel">
+
+        <!-- Card 1: Status & Mood Presets -->
+        <div class="control-card">
+          <div class="card-heading">
+            <span>Kondisi &amp; Mood Klinis</span>
+            <span style="font-size:11px;font-family:var(--font-mono);color:var(--coral);" id="current-mood-text">READY</span>
+          </div>
+          <p class="card-desc">Pilih status kerja Neura AI untuk melihat perubahan ekspresi dan ambient aura NeuraPet.</p>
+          <div class="mood-grid">
+            <button type="button" class="mood-btn is-active" data-mood="ready">
+              <span class="mood-dot"></span>
+              <span>Ready</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="predicting">
+              <span class="mood-dot"></span>
+              <span>Diagnosing</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="thinking">
+              <span class="mood-dot"></span>
+              <span>Thinking</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="happy">
+              <span class="mood-dot"></span>
+              <span>Happy</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="sleepy">
+              <span class="mood-dot"></span>
+              <span>Sleepy</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="warning">
+              <span class="mood-dot"></span>
+              <span>Attention</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2: Manual Eye Expression Selector -->
+        <div class="control-card">
+          <div class="card-heading">
+            <span>Bentuk Mata &amp; Ekspresi</span>
+          </div>
+          <p class="card-desc">Ganti bentuk mata SVG secara instan untuk menciptakan ekspresi unik.</p>
+          <div class="expr-grid">
+            <button type="button" class="expr-btn is-active" data-expr="normal">Normal (• •)</button>
+            <button type="button" class="expr-btn" data-expr="happy">Senang (^ ^)</button>
+            <button type="button" class="expr-btn" data-expr="sleepy">Tidur (- -)</button>
+            <button type="button" class="expr-btn" data-expr="love">Cinta (&hearts; &hearts;)</button>
+            <button type="button" class="expr-btn" data-expr="curious">Kepo (o O)</button>
+            <button type="button" class="expr-btn" data-expr="wink">Kedip (^ •)</button>
+          </div>
+        </div>
+
+        <!-- Card 3: Interactive Physics & Features Toggles -->
+        <div class="control-card">
+          <div class="card-heading">
+            <span>Sensor &amp; Fitur Interaktif</span>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-label">Pelacak Gerakan Tetikus</span>
+              <span class="toggle-sub">Bola mata dan kepala mengikuti posisi kursor</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-tracking" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-label">Kedipan Alami Otonom</span>
+              <span class="toggle-sub">NeuraPet berkedip otomatis secara acak</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-blink" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-label">Efek Suara Web Audio (SFX)</span>
+              <span class="toggle-sub">Synthesizer nada lucu saat dielus atau joget</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-sound" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Integration Code Snippet -->
+    <section class="snippet-card">
+      <div class="card-heading">
+        <span>Cara Mengintegrasikan NeuraPet ke Web Anda</span>
+      </div>
+      <p class="card-desc">
+        NeuraPet dibuat murni dengan SVG + CSS + Vanilla JS tanpa library eksternal. Sangat ringan (~8KB) dan dapat disematkan di komponen apa pun.
+      </p>
+      <pre class="snippet-pre"><code>&lt;!-- 1. SVG Avatar Markup --&gt;
+&lt;div class="neurapet-container" id="my-neurapet"&gt;
+  &lt;svg viewBox="0 0 100 76" fill="none" width="120" height="90"&gt;
+    &lt;path id="pet-head" d="M 50 6 C 78 6 95 18 95 39 C 95 60 78 71 50 71 C 22 71 5 60 5 39 C 5 18 22 6 50 6 Z" fill="#FFFFFF"/&gt;
+    &lt;g id="pet-eyes-wrap"&gt;
+      &lt;g id="pet-eyes-track"&gt;
+        &lt;ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000"/&gt;
+        &lt;ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000"/&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+  &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;!-- 2. Hubungkan ke mousemove untuk melacak kursor secara organik --&gt;
+&lt;script&gt;
+  document.addEventListener('mousemove', (e) => {
+    // Eye tracking logic
+  });
+&lt;/script&gt;</code></pre>
+    </section>
+
+  </main>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    Neura AI Diagnostic System &bull; NeuraPet Interactive Showcase &bull; 2026 Neura Health
+  </footer>
+
+  <!-- ==========================================================================
+       9. Interactive NeuraPet Engine JavaScript
+       ========================================================================== -->
+  <script>
+  (function () {
+    'use strict';
+
+    // ── DOM References ──
+    const petBody = document.getElementById('neurapet-body');
+    const petHead = document.getElementById('neurapet-head');
+    const eyesWrapper = document.getElementById('neurapet-eyes-wrapper');
+    const eyesTrack = document.getElementById('neurapet-eyes-track');
+    const petGlow = document.getElementById('pet-glow');
+    const ambientOrb = document.getElementById('ambient-orb-1');
+    const petSpeech = document.getElementById('pet-speech');
+    const particleCloud = document.getElementById('particle-cloud');
+    const currentMoodText = document.getElementById('current-mood-text');
+    const islandMain = document.getElementById('island-main');
+    const islandSub = document.getElementById('island-sub');
+    const islandBadge = document.getElementById('island-badge');
+
+    // Controls
+    const toggleTracking = document.getElementById('toggle-tracking');
+    const toggleBlink = document.getElementById('toggle-blink');
+    const toggleSound = document.getElementById('toggle-sound');
+    const soundToggleBtn = document.getElementById('sound-toggle-btn');
+    const soundIcon = document.getElementById('sound-icon');
+    const soundText = document.getElementById('sound-text');
+
+    // Action buttons
+    const btnPet = document.getElementById('btn-pet-action');
+    const btnDance = document.getElementById('btn-dance-action');
+    const btnFeed = document.getElementById('btn-feed-action');
+    const btnTalk = document.getElementById('btn-talk-action');
+    const demoIslandPill = document.getElementById('demo-island-pill');
+
+    // ── State Variables ──
+    let isTrackingEnabled = true;
+    let isBlinkEnabled = true;
+    let isSoundEnabled = true;
+    let isPetting = false;
+    let isDancing = false;
+    let clickCount = 0;
+    let clickTimer = null;
+    let currentMood = 'ready';
+    let currentExpression = 'normal';
+    let lastMouseMoveTime = Date.now();
+    let speechTimer = null;
+
+    // ── Web Audio Synthesizer (Cute Chimes, Purrs & Bleeps) ──
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx && AudioCtx) {
+        audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSoundChirp(freq1 = 520, freq2 = 780, type = 'sine', duration = 0.15) {
+      if (!isSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = type;
+        const now = ctx.currentTime;
+        osc.frequency.setValueAtTime(freq1, now);
+        osc.frequency.exponentialRampToValueAtTime(freq2, now + duration);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration);
+      } catch (e) { }
+    }
+
+    function playHappyArpeggio() {
+      if (!isSoundEnabled) return;
+      const notes = [440, 554.37, 659.25, 880];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => {
+          playSoundChirp(freq, freq * 1.05, 'triangle', 0.12);
+        }, idx * 65);
+      });
+    }
+
+    function playPurrSound() {
+      if (!isSoundEnabled) return;
+      playSoundChirp(280, 420, 'sine', 0.22);
+    }
+
+    // ── Eye Expressions Library ──
+    const EYE_TEMPLATES = {
+      normal: `
+        <ellipse cx="33" cy="44" rx="5.5" ry="8" transform="rotate(6 33 44)" fill="#000000" />
+        <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000" />
+      `,
+      happy: `
+        <path d="M 27 44 Q 33 36 39 44" stroke="#000000" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <path d="M 61 44 Q 67 36 73 44" stroke="#000000" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+      `,
+      sleepy: `
+        <line x1="27" y1="44" x2="39" y2="44" stroke="#000000" stroke-width="3.4" stroke-linecap="round"/>
+        <line x1="61" y1="44" x2="73" y2="44" stroke="#000000" stroke-width="3.4" stroke-linecap="round"/>
+      `,
+      love: `
+        <path d="M 33 40 C 31 37 27 37 27 40 C 27 44 33 48 33 48 C 33 48 39 44 39 40 C 39 37 35 37 33 40 Z" fill="#e11d48"/>
+        <path d="M 67 40 C 65 37 61 37 61 40 C 61 44 67 48 67 48 C 67 48 73 44 73 40 C 73 37 69 37 67 40 Z" fill="#e11d48"/>
+      `,
+      curious: `
+        <ellipse cx="33" cy="43" rx="4.5" ry="6" transform="rotate(6 33 43)" fill="#000000" />
+        <circle cx="67" cy="42" r="7.5" fill="#000000" />
+      `,
+      wink: `
+        <path d="M 27 44 Q 33 37 39 44" stroke="#000000" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <ellipse cx="67" cy="44" rx="5.5" ry="8" transform="rotate(-6 67 44)" fill="#000000" />
+      `
+    };
+
+    function setEyeExpression(exprName) {
+      currentExpression = exprName;
+      if (EYE_TEMPLATES[exprName] && eyesTrack) {
+        eyesTrack.innerHTML = EYE_TEMPLATES[exprName];
+      }
+      // Update UI active button
+      document.querySelectorAll('.expr-btn').forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.expr === exprName);
+      });
+    }
+
+    // ── Mood Configurations ──
+    const MOOD_CONFIG = {
+      ready: {
+        label: 'READY',
+        color: 'var(--coral)',
+        glow: 'rgba(217, 119, 87, 0.28)',
+        islandMain: 'Ready',
+        islandSub: 'XGBoost • 32 Biomarkers',
+        speech: 'Siap membantu! Sistem ML dan 32 biomarker dalam status prima.',
+        expr: 'normal'
+      },
+      predicting: {
+        label: 'DIAGNOSING',
+        color: 'var(--blue)',
+        glow: 'rgba(56, 189, 248, 0.28)',
+        islandMain: 'Diagnosing',
+        islandSub: 'Neural Processing Active',
+        speech: 'Sedang menganalisis skor MMSE, ADL, dan fitur biomarker...',
+        expr: 'curious'
+      },
+      thinking: {
+        label: 'THINKING',
+        color: 'var(--purple)',
+        glow: 'rgba(168, 85, 247, 0.28)',
+        islandMain: 'Thinking',
+        islandSub: 'Calculating Probabilities',
+        speech: 'Hmm... memproses pohon keputusan XGBoost secara mendalam.',
+        expr: 'wink'
+      },
+      happy: {
+        label: 'HAPPY',
+        color: 'var(--coral)',
+        glow: 'rgba(217, 119, 87, 0.4)',
+        islandMain: 'Happy',
+        islandSub: 'Patient Verified',
+        speech: 'Hore! Analisis tervalidasi dengan akurasi 95.35%!',
+        expr: 'happy'
+      },
+      sleepy: {
+        label: 'SLEEPY',
+        color: 'var(--text-muted)',
+        glow: 'rgba(100, 100, 112, 0.2)',
+        islandMain: 'Sleepy',
+        islandSub: 'Idle Low Power Mode',
+        speech: 'Zzz... kursor sepi nih. Ketuk aku dong kalau mau mulai lagi.',
+        expr: 'sleepy'
+      },
+      warning: {
+        label: 'ATTENTION',
+        color: 'var(--amber)',
+        glow: 'rgba(245, 158, 11, 0.35)',
+        islandMain: 'Attention',
+        islandSub: 'High Risk Alert (85%)',
+        speech: 'Perhatian: Terdeteksi probabilitas risiko Alzheimer di atas ambang normal.',
+        expr: 'curious'
+      }
+    };
+
+    function setMood(moodKey) {
+      const cfg = MOOD_CONFIG[moodKey];
+      if (!cfg) return;
+      currentMood = moodKey;
+
+      if (currentMoodText) currentMoodText.textContent = cfg.label;
+      if (islandMain) islandMain.textContent = cfg.islandMain;
+      if (islandSub) islandSub.textContent = cfg.islandSub;
+
+      // Update ambient glows
+      if (petGlow) petGlow.style.background = `radial-gradient(circle, ${cfg.glow} 0%, transparent 70%)`;
+      if (ambientOrb) ambientOrb.style.background = `radial-gradient(circle, ${cfg.color} 0%, transparent 70%)`;
+
+      // Speech & Expression
+      sayMessage(cfg.speech);
+      setEyeExpression(cfg.expr);
+
+      // Buttons UI state
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.mood === moodKey);
+      });
+    }
+
+    // ── Speech Bubble Message Animator ──
+    function sayMessage(text) {
+      if (!petSpeech) return;
+      clearTimeout(speechTimer);
+      petSpeech.style.opacity = '0';
+      petSpeech.style.transform = 'translateY(6px)';
+
+      setTimeout(() => {
+        petSpeech.textContent = text;
+        petSpeech.style.opacity = '1';
+        petSpeech.style.transform = 'translateY(0)';
+      }, 160);
+
+      // Auto revert to greeting after 8 seconds
+      speechTimer = setTimeout(() => {
+        petSpeech.textContent = 'Aku NeuraPet, selalu siap memantau biomarker klinis Anda! 🧠';
+      }, 8500);
+    }
+
+    // ── Floating Heart / Sparkle Particle Generator ──
+    function spawnParticles(x, y, count = 5, emoji = '💖') {
+      if (!particleCloud) return;
+      const emojis = ['💖', '✨', '⭐', '🌸', '💫'];
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'floating-heart';
+        p.textContent = emoji === 'random' ? emojis[Math.floor(Math.random() * emojis.length)] : emoji;
+
+        const offsetX = (Math.random() - 0.5) * 80;
+        const offsetY = (Math.random() - 0.5) * 40;
+        const rot = (Math.random() - 0.5) * 45;
+        const dx = (Math.random() - 0.5) * 60;
+
+        p.style.left = `${x + offsetX}px`;
+        p.style.top = `${y + offsetY}px`;
+        p.style.setProperty('--dx', `${dx}px`);
+        p.style.setProperty('--rot', `${rot}deg`);
+
+        particleCloud.appendChild(p);
+
+        setTimeout(() => {
+          if (p.parentNode) p.parentNode.removeChild(p);
+        }, 1250);
+      }
+    }
+
+    // ── Mouse Tracking (Organic Eye & Head Following) ──
+    let trackingRaf = null;
+
+    document.addEventListener('mousemove', function (e) {
+      lastMouseMoveTime = Date.now();
+      if (!isTrackingEnabled || isPetting || isDancing) return;
+
+      if (trackingRaf) cancelAnimationFrame(trackingRaf);
+      trackingRaf = requestAnimationFrame(() => {
+        updateTracking(e.clientX, e.clientY);
+      });
+    });
+
+    function updateTracking(targetX, targetY) {
+      if (!petBody || !eyesTrack || !petHead) return;
+
+      const rect = petBody.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = targetX - centerX;
+      const deltaY = targetY - centerY;
+      const dist = Math.hypot(deltaX, deltaY);
+
+      if (dist === 0) {
+        eyesTrack.style.transform = 'translate(0px, 0px)';
+        petHead.style.transform = 'translate(0px, 0px) rotate(0deg)';
+        return;
+      }
+
+      // Max eye displacement limit: ±6.8px horizontal, ±5.2px vertical
+      const maxRadius = 450;
+      const factor = Math.min(dist / maxRadius, 1);
+      const offsetX = (deltaX / dist) * factor * 6.8;
+      const offsetY = (deltaY / dist) * factor * 5.2;
+
+      eyesTrack.style.transform = `translate(${offsetX.toFixed(2)}px, ${offsetY.toFixed(2)}px)`;
+
+      // Subtle organic head tilt (±4.5 deg) & shift
+      const tiltAngle = (deltaX / dist) * factor * 4.5;
+      const headShiftX = (deltaX / dist) * factor * 2.5;
+      petHead.style.transform = `translate(${headShiftX.toFixed(2)}px, 0px) rotate(${tiltAngle.toFixed(2)}deg)`;
+    }
+
+    // ── Autonomous Blinking Engine ──
+    function performBlink() {
+      if (!isBlinkEnabled || isPetting) return;
+      if (!eyesWrapper) return;
+
+      eyesWrapper.classList.add('is-blinking');
+      setTimeout(() => {
+        eyesWrapper.classList.remove('is-blinking');
+      }, 120);
+
+      // 30% chance for rapid double-blink
+      if (Math.random() < 0.3) {
+        setTimeout(() => {
+          eyesWrapper.classList.add('is-blinking');
+          setTimeout(() => {
+            eyesWrapper.classList.remove('is-blinking');
+          }, 100);
+        }, 220);
+      }
+    }
+
+    function scheduleBlinkLoop() {
+      const delay = 2200 + Math.random() * 2600;
+      setTimeout(() => {
+        performBlink();
+        scheduleBlinkLoop();
+      }, delay);
+    }
+    scheduleBlinkLoop();
+
+    // ── Petting Interaction (Click / Touch) ──
+    function triggerPetInteraction(e) {
+      if (!petBody) return;
+      isPetting = true;
+
+      // Squish animation reflow
+      petBody.classList.remove('is-squished', 'is-dancing');
+      void petBody.offsetWidth; // force reflow
+      petBody.classList.add('is-squished');
+
+      // Purr sound
+      playPurrSound();
+
+      // Spawn hearts
+      const rect = petBody.getBoundingClientRect();
+      const clickX = e && e.clientX ? e.clientX - rect.left : rect.width / 2;
+      const clickY = e && e.clientY ? e.clientY - rect.top : rect.height / 2;
+      spawnParticles(clickX + rect.left, clickY + rect.top, 6, '💖');
+
+      // Cheerful expression
+      setEyeExpression('happy');
+
+      const happyQuotes = [
+        'Hehe, geli tapi nyaman! 😊',
+        'Elusan kamu bikin akurasi model naik! ✨',
+        'Purr purr... senangnya ditemani dokter ramah! 🩺',
+        'Biomarker kebahagiaan terdeteksi 100%! 💖'
+      ];
+      sayMessage(happyQuotes[Math.floor(Math.random() * happyQuotes.length)]);
+
+      setTimeout(() => {
+        isPetting = false;
+        petBody.classList.remove('is-squished');
+        // Revert to normal or current mood expression
+        const defaultExpr = MOOD_CONFIG[currentMood] ? MOOD_CONFIG[currentMood].expr : 'normal';
+        setEyeExpression(defaultExpr);
+      }, 750);
+    }
+
+    // ── Happy Dance ──
+    function triggerHappyDance() {
+      if (!petBody || isDancing) return;
+      isDancing = true;
+
+      petBody.classList.remove('is-squished', 'is-dancing');
+      void petBody.offsetWidth;
+      petBody.classList.add('is-dancing');
+
+      playHappyArpeggio();
+
+      const rect = petBody.getBoundingClientRect();
+      spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 12, 'random');
+      setEyeExpression('love');
+      sayMessage('Yaaaay! Mari berjoget merayakan diagnosis sehat! 🎶💃');
+
+      setTimeout(() => {
+        isDancing = false;
+        petBody.classList.remove('is-dancing');
+        setEyeExpression('happy');
+      }, 1800);
+    }
+
+    // ── Event Listeners: Pet Body Clicks ──
+    if (petBody) {
+      petBody.addEventListener('click', function (e) {
+        clickCount++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => { clickCount = 0; }, 380);
+
+        if (clickCount >= 3) {
+          clickCount = 0;
+          triggerHappyDance();
+        } else {
+          triggerPetInteraction(e);
+        }
+      });
+    }
+
+    // ── Action Buttons ──
+    if (btnPet) btnPet.addEventListener('click', (e) => triggerPetInteraction(e));
+    if (btnDance) btnDance.addEventListener('click', triggerHappyDance);
+
+    if (btnFeed) {
+      btnFeed.addEventListener('click', () => {
+        playSoundChirp(600, 950, 'triangle', 0.2);
+        const rect = petBody.getBoundingClientRect();
+        spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 7, '💊');
+        setEyeExpression('curious');
+        sayMessage('Nyam! 32 data biomarker berhasil diserap ke memori XGBoost! 📊');
+        setTimeout(() => setEyeExpression('happy'), 800);
+      });
+    }
+
+    if (btnTalk) {
+      btnTalk.addEventListener('click', () => {
+        playSoundChirp(450, 680, 'sine', 0.15);
+        const dialogues = [
+          'Tahukah Anda? Skor MMSE di bawah 24 mengindikasikan perlunya evaluasi kognitif lanjut.',
+          'Fitur Functional Assessment dan riwayat keluarga merupakan prediktor penting dalam model kami.',
+          'Model XGBoost Neura dilatih dengan 2.149 rekam medis pasien terverifikasi.',
+          'Saya siap menerbitkan kode dokumen Nakes untuk konsultasi klinis Anda!'
+        ];
+        sayMessage(dialogues[Math.floor(Math.random() * dialogues.length)]);
+      });
+    }
+
+    // Island Pill Demo Click
+    if (demoIslandPill) {
+      demoIslandPill.addEventListener('click', () => {
+        playSoundChirp(520, 780, 'sine', 0.14);
+        demoIslandPill.style.transform = 'scale(0.95)';
+        setTimeout(() => { demoIslandPill.style.transform = ''; }, 180);
+        sayMessage('Dynamic Island Neura: Menampilkan status AI di seluruh halaman! 🏝️');
+      });
+    }
+
+    // ── Mood Buttons ──
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const mood = this.dataset.mood;
+        if (mood) {
+          playSoundChirp(500, 700, 'sine', 0.1);
+          setMood(mood);
+        }
+      });
+    });
+
+    // ── Expression Buttons ──
+    document.querySelectorAll('.expr-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const expr = this.dataset.expr;
+        if (expr) {
+          playSoundChirp(480, 620, 'triangle', 0.08);
+          setEyeExpression(expr);
+        }
+      });
+    });
+
+    // ── Settings Toggles ──
+    if (toggleTracking) {
+      toggleTracking.addEventListener('change', function () {
+        isTrackingEnabled = this.checked;
+        if (!isTrackingEnabled && eyesTrack && petHead) {
+          eyesTrack.style.transform = 'translate(0px, 0px)';
+          petHead.style.transform = 'translate(0px, 0px) rotate(0deg)';
+        }
+      });
+    }
+
+    if (toggleBlink) {
+      toggleBlink.addEventListener('change', function () {
+        isBlinkEnabled = this.checked;
+      });
+    }
+
+    function updateSoundUi(state) {
+      isSoundEnabled = state;
+      if (toggleSound) toggleSound.checked = state;
+      if (soundIcon) soundIcon.textContent = state ? '🔊' : '🔇';
+      if (soundText) soundText.textContent = state ? 'Suara: Aktif' : 'Suara: Hening';
+      if (soundToggleBtn) soundToggleBtn.classList.toggle('active', state);
+    }
+
+    if (toggleSound) {
+      toggleSound.addEventListener('change', function () {
+        updateSoundUi(this.checked);
+      });
+    }
+
+    if (soundToggleBtn) {
+      soundToggleBtn.addEventListener('click', function () {
+        updateSoundUi(!isSoundEnabled);
+        if (isSoundEnabled) playSoundChirp(600, 800, 'sine', 0.1);
+      });
+    }
+
+    // Initialize Default Mood
+    setMood('ready');
+
+  })();
+  </script>
+
+</body>
+</html>
