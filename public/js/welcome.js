@@ -244,7 +244,7 @@
       sync_consent: 'Saya menyetujui <a href="/app">Kebijakan Privasi</a> dan perlindungan data medis Neura. Berhenti langganan kapan saja.',
 
       // Bottom CTA
-      bottom_headline: 'Mulai Deteksi Dini<br />dengan Neura AI<span class="blinking-google-cursor"></span>',
+      bottom_headline: 'Mulai Deteksi Dini<br />dengan Neura AI',
       bottom_btn_white: 'Buka Neura Workspace',
       bottom_btn_dark: 'Unduh Aplikasi Klinis',
 
@@ -343,7 +343,7 @@
       sync_consent: 'I agree to the <a href="/app">Privacy Policy</a> and medical data safeguards of Neura. Unsubscribe at any time.',
 
       // Bottom CTA
-      bottom_headline: 'Experience Early Detection<br />with Neura AI<span class="blinking-google-cursor"></span>',
+      bottom_headline: 'Experience Early<br />Detection<br />with Neura AI',
       bottom_btn_white: 'Open Neura Workspace',
       bottom_btn_dark: 'Download Clinical Suite',
 
@@ -477,163 +477,183 @@
   };
 
   // -------------------------------------------------------------------------
-  // 7. Celestial Orbit Particles Canvas for Download Card
+  // 7. Interactive Magnetic Particles & Celestial Nebula for Download CTA Card
+  // (Duplicated & adapted from Welcome Login Card Antigravity Particle Engine)
   // -------------------------------------------------------------------------
   function initCtaStarsCanvas() {
     const canvas = document.getElementById('cta-stars-canvas');
-    if (!canvas) return;
+    const container = document.getElementById('bottom-cta-container') || (canvas ? canvas.parentElement : null);
+    if (!canvas || !container) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let width = 0;
     let height = 0;
     let particles = [];
+    let mouseX = -999;
+    let mouseY = -999;
     let animTime = 0;
+    let rafId = null;
 
-    // 3 Blurred Gradient Bubbles with distinct vibrant colors rotating in celestial harmony
+    // Physics parameters matching Welcome Login Card
+    const PARTICLE_COUNT = 96;
+    const MAX_RADIUS = 2.8;
+    const MIN_RADIUS = 0.8;
+    const MOUSE_RADIUS = 240;       // Jarak deteksi magnet kursor
+    const CONNECT_DIST = 105;       // Jarak garis koneksi konstelasi
+    const BASE_SPEED = 0.28;
+    const ATTRACT_FORCE = 0.07;     // Tarikan halus ke kursor
+    const MIN_CURSOR_DIST = 34;     // Jarak henti aman dengan kursor
+    const REPULSION_DIST = 24;      // Jarak minimum antar sesama partikel
+    const REPULSION_FORCE = 0.12;   // Daya tolak antar partikel agar tidak tumpuk-menumpuk
+    const DAMPING = 0.89;           // Gesekan lembut agar partikel tenang & stabil
+    const MAX_SPEED = 3.2;
+
+    // 3 Blurred Gradient Bubbles (Luminous Aurora Nebulae positioned on the center-right)
     const blurBubbles = [
       {
-        name: 'Terracotta Core',
-        angle: 0,
-        speed: 0.0035,
-        orbitX: 190,
-        orbitY: 130,
-        baseRadius: 220,
-        // Neura signature terracotta / warm amber
+        name: 'Electric Azure',
+        angle: 0.2,
+        speed: 0.0024,
+        orbitX: 160,
+        orbitY: 90,
+        baseRadius: 260,
         stops: [
-          [0.0,  'rgba(217, 119, 87, 0.46)'],
-          [0.25, 'rgba(235, 130, 85, 0.32)'],
-          [0.55, 'rgba(249, 115, 22, 0.16)'],
-          [0.80, 'rgba(217, 119, 87, 0.05)'],
-          [1.0,  'rgba(217, 119, 87, 0)']
+          [0.0,  'rgba(59, 130, 246, 0.45)'],
+          [0.25, 'rgba(96, 165, 250, 0.30)'],
+          [0.55, 'rgba(56, 189, 248, 0.14)'],
+          [0.80, 'rgba(59, 130, 246, 0.04)'],
+          [1.0,  'rgba(59, 130, 246, 0)']
         ],
         phase: 0
       },
       {
-        name: 'Electric Azure',
-        angle: (Math.PI * 2) / 3, // 120° offset
+        name: 'Soft Cyan Horizon',
+        angle: 2.1,
         speed: 0.0028,
-        orbitX: 220,
-        orbitY: 150,
-        baseRadius: 240,
-        // Royal Sky Blue / Cyan
+        orbitX: 190,
+        orbitY: 110,
+        baseRadius: 230,
         stops: [
-          [0.0,  'rgba(59, 130, 246, 0.44)'],
-          [0.25, 'rgba(96, 165, 250, 0.30)'],
-          [0.55, 'rgba(56, 189, 248, 0.15)'],
-          [0.80, 'rgba(59, 130, 246, 0.04)'],
-          [1.0,  'rgba(59, 130, 246, 0)']
+          [0.0,  'rgba(56, 189, 248, 0.40)'],
+          [0.30, 'rgba(34, 211, 238, 0.22)'],
+          [0.60, 'rgba(14, 165, 233, 0.10)'],
+          [0.85, 'rgba(56, 189, 248, 0.03)'],
+          [1.0,  'rgba(56, 189, 248, 0)']
         ],
-        phase: 2.09
+        phase: 1.8
       },
       {
-        name: 'Cosmic Violet',
-        angle: (Math.PI * 4) / 3, // 240° offset
-        speed: 0.0032,
-        orbitX: 180,
-        orbitY: 125,
-        baseRadius: 210,
-        // Deep Violet / Magenta
+        name: 'Cosmic Violet Terracotta',
+        angle: 4.2,
+        speed: 0.0020,
+        orbitX: 140,
+        orbitY: 80,
+        baseRadius: 220,
         stops: [
-          [0.0,  'rgba(168, 85, 247, 0.42)'],
-          [0.25, 'rgba(192, 132, 252, 0.28)'],
-          [0.55, 'rgba(236, 72, 153, 0.14)'],
-          [0.80, 'rgba(168, 85, 247, 0.04)'],
-          [1.0,  'rgba(168, 85, 247, 0)']
+          [0.0,  'rgba(147, 51, 234, 0.32)'],
+          [0.25, 'rgba(217, 119, 87, 0.22)'],
+          [0.55, 'rgba(168, 85, 247, 0.10)'],
+          [0.80, 'rgba(147, 51, 234, 0.03)'],
+          [1.0,  'rgba(147, 51, 234, 0)']
         ],
-        phase: 4.18
+        phase: 3.6
       }
     ];
 
+    const particleColors = [
+      'rgba(255, 255, 255, ',   // Pure White
+      'rgba(147, 197, 253, ',  // Sky Blue
+      'rgba(56, 189, 248, ',   // Vivid Cyan
+      'rgba(96, 165, 250, '    // Electric Azure
+    ];
+
     function resize() {
-      const parent = canvas.parentElement;
-      if (!parent) return;
-      width = canvas.width = parent.clientWidth;
-      height = canvas.height = parent.clientHeight;
+      if (!canvas || !container) return;
+      width = canvas.width = container.offsetWidth;
+      height = canvas.height = container.offsetHeight;
 
-      const scale = Math.max(0.65, Math.min(width / 1100, 1.25));
       const isMobile = width < 768;
+      const scale = Math.max(0.65, Math.min(width / 1100, 1.25));
 
-      blurBubbles[0].orbitX = (isMobile ? 120 : 220) * scale;
-      blurBubbles[0].orbitY = (isMobile ? 60 : 95) * scale;
-      blurBubbles[0].baseRadius = (isMobile ? 150 : 230) * scale;
+      blurBubbles[0].orbitX = (isMobile ? 90 : 160) * scale;
+      blurBubbles[0].orbitY = (isMobile ? 50 : 90) * scale;
+      blurBubbles[0].baseRadius = (isMobile ? 160 : 260) * scale;
 
-      blurBubbles[1].orbitX = (isMobile ? 140 : 250) * scale;
-      blurBubbles[1].orbitY = (isMobile ? 70 : 110) * scale;
-      blurBubbles[1].baseRadius = (isMobile ? 160 : 250) * scale;
+      blurBubbles[1].orbitX = (isMobile ? 110 : 190) * scale;
+      blurBubbles[1].orbitY = (isMobile ? 60 : 110) * scale;
+      blurBubbles[1].baseRadius = (isMobile ? 140 : 230) * scale;
 
-      blurBubbles[2].orbitX = (isMobile ? 110 : 205) * scale;
-      blurBubbles[2].orbitY = (isMobile ? 55 : 90) * scale;
-      blurBubbles[2].baseRadius = (isMobile ? 140 : 220) * scale;
+      blurBubbles[2].orbitX = (isMobile ? 80 : 140) * scale;
+      blurBubbles[2].orbitY = (isMobile ? 45 : 80) * scale;
+      blurBubbles[2].baseRadius = (isMobile ? 130 : 220) * scale;
 
-      createParticles();
+      initParticles();
     }
 
-    function createParticles() {
+    function initParticles() {
       particles = [];
-      const particleCount = Math.min(220, Math.floor(width * 0.16));
-      // Tepat di tengah bawah
-      const centerX = width * 0.5;
-      const centerY = height * 0.85;
-
-      const colors = [
-        'rgba(96, 165, 250, ',  // Sky Blue
-        'rgba(147, 197, 253, ', // Light Blue
-        'rgba(56, 189, 248, ',  // Cyan
-        'rgba(255, 255, 255, '  // Pure White
-      ];
-
-      for (let i = 0; i < particleCount; i++) {
-        const dist = 30 + Math.pow(Math.random(), 0.8) * Math.min(width * 0.45, 420);
-        const angle = Math.random() * Math.PI * 2;
-        const speed = (0.0006 + Math.random() * 0.0012) * (Math.random() < 0.5 ? 1 : -1);
-        const radius = 1.0 + Math.random() * 2.2;
-        const baseAlpha = 0.35 + Math.random() * 0.55;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const twinkleSpeed = 0.02 + Math.random() * 0.04;
-
+      const count = Math.min(PARTICLE_COUNT, Math.max(48, Math.floor(width * 0.1)));
+      for (let i = 0; i < count; i++) {
+        const baseA = 0.20 + Math.random() * 0.45;
+        const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+        const r = MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS);
         particles.push({
-          dist,
-          angle,
-          speed,
-          radius,
-          baseAlpha,
-          color,
-          twinkle: Math.random() * Math.PI * 2,
-          twinkleSpeed
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * BASE_SPEED,
+          vy: (Math.random() - 0.5) * BASE_SPEED,
+          r: r,
+          drawR: r,
+          baseAlpha: baseA,
+          alpha: baseA,
+          color: color,
+          twinkleSpeed: 0.02 + Math.random() * 0.035,
+          twinkle: Math.random() * Math.PI * 2
         });
       }
     }
 
-    function animate() {
+    container.addEventListener('mousemove', function (e) {
+      const rect = container.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    container.addEventListener('mouseenter', function (e) {
+      const rect = container.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    container.addEventListener('mouseleave', function () {
+      mouseX = -999;
+      mouseY = -999;
+    });
+
+    function loop() {
+      if (!canvas || !ctx) return;
       ctx.clearRect(0, 0, width, height);
 
-      // Tepat di tengah bawah
-      const centerX = width * 0.5;
-      const centerY = height * 0.85;
       animTime += 0.015;
 
       // ---------------------------------------------------------------------
-      // 1. Draw 3 Rotating Blurred Gradient Bubbles (Chromatic Ambient Layer)
+      // 1. Draw 3 Chromatic Ambient Aurora Orbs (Center-Right positioning)
       // ---------------------------------------------------------------------
       ctx.save();
-      // 'screen' blend mode allows the overlapping bubbles to blend into a vivid luminous glow
       ctx.globalCompositeOperation = 'screen';
 
+      const nebulaCenterX = width < 768 ? width * 0.6 : width * 0.68;
+      const nebulaCenterY = height * 0.62;
+
       blurBubbles.forEach(b => {
-        // Continuous rotation around orbit
         b.angle += b.speed;
+        const curOrbitX = b.orbitX * (1 + 0.08 * Math.sin(animTime * 1.1 + b.phase));
+        const curOrbitY = b.orbitY * (1 + 0.08 * Math.cos(animTime * 0.9 + b.phase));
+        const bx = nebulaCenterX + Math.cos(b.angle) * curOrbitX;
+        const by = nebulaCenterY + Math.sin(b.angle) * curOrbitY;
+        const br = Math.max(30, b.baseRadius + Math.sin(animTime * 1.3 + b.phase) * 16);
 
-        // Subtle fluid undulation in orbit
-        const curOrbitX = b.orbitX * (1 + 0.09 * Math.sin(animTime * 1.1 + b.phase));
-        const curOrbitY = b.orbitY * (1 + 0.09 * Math.cos(animTime * 0.9 + b.phase));
-        const bx = centerX + Math.cos(b.angle) * curOrbitX;
-        const by = centerY + Math.sin(b.angle) * curOrbitY;
-
-        // Subtle breathing radius
-        const br = Math.max(25, b.baseRadius + Math.sin(animTime * 1.4 + b.phase) * 18);
-
-        // Gaussian-like radial gradient falloff produces authentic blur effect
         const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br);
         for (let s = 0; s < b.stops.length; s++) {
           grad.addColorStop(b.stops[s][0], b.stops[s][1]);
@@ -648,30 +668,171 @@
       ctx.restore();
 
       // ---------------------------------------------------------------------
-      // 2. Draw Celestial Star Particles on Top of the Blurred Bubbles
+      // 2. Interactive Magnetic Physics on Particles (Welcome Card Duplicate)
       // ---------------------------------------------------------------------
-      particles.forEach(p => {
-        p.angle += p.speed;
+      const isMouseActive = mouseX > 0 && mouseY > 0 && mouseX <= width && mouseY <= height;
+
+      // 2a. Magnetic Attraction to Cursor
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.twinkle += p.twinkleSpeed;
 
-        const alpha = Math.max(0.15, Math.min(1, p.baseAlpha + Math.sin(p.twinkle) * 0.25));
-        const x = centerX + Math.cos(p.angle) * p.dist * 1.08;
-        const y = centerY + Math.sin(p.angle) * p.dist * 0.88;
+        if (isMouseActive) {
+          const dx = mouseX - p.x;
+          const dy = mouseY - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < MOUSE_RADIUS && dist > 1) {
+            const normX = dx / dist;
+            const normY = dy / dist;
+            const factor = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+
+            if (dist > MIN_CURSOR_DIST) {
+              const pull = factor * ATTRACT_FORCE;
+              p.vx += normX * pull;
+              p.vy += normY * pull;
+            } else {
+              const pushBack = ((MIN_CURSOR_DIST - dist) / MIN_CURSOR_DIST) * 0.12;
+              p.vx -= normX * pushBack;
+              p.vy -= normY * pushBack;
+            }
+
+            p.alpha = p.baseAlpha + (0.95 - p.baseAlpha) * factor;
+            p.drawR = p.r * (1 + factor * 0.45);
+          } else {
+            p.alpha += (p.baseAlpha - p.alpha) * 0.05;
+            p.drawR += (p.r - p.drawR) * 0.05;
+            p.vx += (Math.random() - 0.5) * 0.02;
+            p.vy += (Math.random() - 0.5) * 0.02;
+          }
+        } else {
+          p.alpha = Math.max(0.12, Math.min(0.85, p.baseAlpha + Math.sin(p.twinkle) * 0.18));
+          p.drawR += (p.r - p.drawR) * 0.05;
+          p.vx += (Math.random() - 0.5) * 0.012;
+          p.vy += (Math.random() - 0.5) * 0.012;
+        }
+      }
+
+      // 2b. Inter-Particle Repulsion (Personal Space)
+      for (let i = 0; i < particles.length; i++) {
+        const pi = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const pj = particles[j];
+          const pdx = pj.x - pi.x;
+          const pdy = pj.y - pi.y;
+          const pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+
+          if (pdist < REPULSION_DIST && pdist > 0.001) {
+            const pnormX = pdx / pdist;
+            const pnormY = pdy / pdist;
+            const repFactor = (REPULSION_DIST - pdist) / REPULSION_DIST;
+            const repForce = repFactor * REPULSION_FORCE;
+
+            pi.vx -= pnormX * repForce;
+            pi.vy -= pnormY * repForce;
+            pj.vx += pnormX * repForce;
+            pj.vy += pnormY * repForce;
+          }
+        }
+      }
+
+      // 2c. Update Positions & Render Particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        p.vx *= DAMPING;
+        p.vy *= DAMPING;
+
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > MAX_SPEED) {
+          p.vx = (p.vx / speed) * MAX_SPEED;
+          p.vy = (p.vy / speed) * MAX_SPEED;
+        }
+
+        if (!isMouseActive && speed < BASE_SPEED * 0.2) {
+          p.vx += (Math.random() - 0.5) * 0.04;
+          p.vy += (Math.random() - 0.5) * 0.04;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around boundaries with comfortable margins
+        if (p.x < -14) p.x = width + 14;
+        if (p.x > width + 14) p.x = -14;
+        if (p.y < -14) p.y = height + 14;
+        if (p.y > height + 14) p.y = -14;
 
         ctx.beginPath();
-        ctx.arc(x, y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + alpha + ')';
-        ctx.shadowColor = p.color + '0.8)';
-        ctx.shadowBlur = p.radius > 2 ? 8 : 4;
+        ctx.arc(p.x, p.y, p.drawR, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + p.alpha + ')';
+        ctx.shadowColor = p.color + '0.7)';
+        ctx.shadowBlur = p.drawR > 2 ? 8 : 4;
         ctx.fill();
-      });
+        ctx.shadowBlur = 0; // reset
+      }
 
-      requestAnimationFrame(animate);
+      // 2d. Draw Dynamic Constellation Connecting Lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const ddx = a.x - b.x, ddy = a.y - b.y;
+          const d = Math.sqrt(ddx * ddx + ddy * ddy);
+          if (d < CONNECT_DIST) {
+            let lineAlpha;
+            if (isMouseActive) {
+              const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+              const md = Math.sqrt((mx - mouseX) * (mx - mouseX) + (my - mouseY) * (my - mouseY));
+              if (md < MOUSE_RADIUS * 1.1) {
+                lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / (MOUSE_RADIUS * 1.1)) * 0.38;
+              } else {
+                lineAlpha = (1 - d / CONNECT_DIST) * 0.04;
+              }
+            } else {
+              lineAlpha = (1 - d / CONNECT_DIST) * 0.035;
+            }
+
+            if (lineAlpha > 0.005) {
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = 'rgba(147, 197, 253, ' + lineAlpha + ')';
+              ctx.lineWidth = 0.75;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      rafId = requestAnimationFrame(loop);
+    }
+
+    // Attach click handler to Download Clinical Suite button for smooth feedback
+    const btnSuite = document.getElementById('btn-download-suite');
+    if (btnSuite) {
+      btnSuite.addEventListener('click', function (e) {
+        const specSection = document.getElementById('specification');
+        if (specSection) {
+          e.preventDefault();
+          specSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const cliCard = specSection.querySelector('.cli-card-preview');
+          if (cliCard) {
+            cliCard.style.transition = 'box-shadow 0.4s ease, transform 0.4s ease';
+            cliCard.style.boxShadow = '0 0 32px rgba(217, 119, 87, 0.45)';
+            cliCard.style.transform = 'scale(1.01)';
+            setTimeout(() => {
+              cliCard.style.boxShadow = '';
+              cliCard.style.transform = '';
+            }, 1200);
+          }
+        }
+      });
     }
 
     window.addEventListener('resize', resize);
     resize();
-    requestAnimationFrame(animate);
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(loop);
   }
 
   if (document.readyState === 'loading') {

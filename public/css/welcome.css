@@ -3778,7 +3778,7 @@ a {
 }
 
 /* ==========================================================================
-   Bottom CTA: Download Google Antigravity (Dark Cosmic Celestial Card)
+   Bottom CTA: Experience Early Detection with Neura AI (Celestial Glass Card)
    ========================================================================== */
 .bottom-cta-section {
   max-width: 1280px;
@@ -3787,18 +3787,24 @@ a {
 }
 
 .bottom-cta-container {
-  background: radial-gradient(circle at 80% 20%, #2E2923 0%, #21201C 60%, #191815 100%);
-  border-radius: 40px;
-  height: 680px;
-  min-height: 680px;
-  padding: 80px 84px;
+  background: #111114;
+  border-radius: 44px;
+  height: 560px;
+  min-height: 560px;
+  padding: 72px 84px;
   color: #EDEBE6;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 32px 80px rgba(15, 14, 12, 0.5);
-  border: 1px solid #38352F;
+  box-shadow: 0 32px 80px -16px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.bottom-cta-container:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), 0 0 32px rgba(59, 130, 246, 0.15);
 }
 
 .cta-stars-canvas {
@@ -3807,28 +3813,30 @@ a {
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 1;
 }
 
 .download-card-content {
   position: relative;
   z-index: 2;
-  max-width: 600px;
+  max-width: 580px;
   display: flex;
   flex-direction: column;
   gap: 36px;
   text-align: left;
+  pointer-events: auto;
 }
 
 .download-card-title {
   font-family: var(--font-serif);
-  font-size: clamp(40px, 4.6vw, 58px);
+  font-size: clamp(38px, 4.6vw, 60px);
   font-weight: 500;
-  line-height: 1.14;
+  line-height: 1.12;
   letter-spacing: -0.03em;
-  color: #EDEBE6;
+  color: #FFFFFF;
   margin: 0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
 }
 
 .blinking-google-cursor {
@@ -3868,25 +3876,30 @@ a {
 }
 
 .btn-download-white {
-  background: var(--accent-primary);
+  background: #D97757;
   color: #ffffff;
   font-family: inherit;
   font-size: 14.5px;
-  font-weight: 500;
-  padding: 12px 28px;
+  font-weight: 600;
+  padding: 13px 28px;
   border-radius: var(--radius-pill);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 6px 20px rgba(217, 119, 87, 0.35);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(217, 119, 87, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .btn-download-white:hover {
-  background: var(--accent-primary-hover);
+  background: #ea8d6f;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(217, 119, 87, 0.45);
+  box-shadow: 0 12px 30px rgba(217, 119, 87, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+.btn-download-white:active {
+  transform: translateY(0);
 }
 
 .btn-download-dark {
@@ -3895,21 +3908,29 @@ a {
   font-family: inherit;
   font-size: 14.5px;
   font-weight: 500;
-  padding: 12px 28px;
+  padding: 13px 26px;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .btn-download-dark:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.32);
   transform: translateY(-2px);
+  color: #FFFFFF;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+}
+
+.btn-download-dark:active {
+  transform: translateY(0);
 }
 
 /* ==========================================================================
