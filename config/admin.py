@@ -1,7 +1,7 @@
 """
 config/admin.py
 ===============
-Konfigurasi Pemetaan Akun dan Email Administrator Khusus Neura AI (Laravel v13 style).
+Konfigurasi Pemetaan Akun dan Email Administrator Khusus Neura AI (Neura Clean Architecture).
 """
 
 import os

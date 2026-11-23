@@ -1,22 +1,28 @@
 #!/usr/bin/env python3
 """
-artisan.py
-==========
-Neura AI CLI Management Tool (Laravel Artisan inspired).
+nterli.py
+=========
+Neura AI CLI Management Tool (Nterli CLI Engine).
 Usage:
-  python artisan.py serve [--host 0.0.0.0] [--port 5000] [--debug]
-  python artisan.py migrate
-  python artisan.py db:seed
-  python artisan.py train:xgboost
-  python artisan.py status
+  python nterli.py serve [--host 0.0.0.0] [--port 5000] [--debug]
+  python nterli.py migrate
+  python nterli.py db:seed
+  python nterli.py train:xgboost
+  python nterli.py status
 """
 
+import os
 import sys
 import argparse
+import subprocess
 from pathlib import Path
 
-# Add project root to sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent
+VENV_PY_WIN = PROJECT_ROOT / "venv" / "Scripts" / "python.exe"
+VENV_PY_NIX = PROJECT_ROOT / "venv" / "bin" / "python"
+VENV_PY = VENV_PY_WIN if VENV_PY_WIN.exists() else VENV_PY_NIX
+
+# Add project root to sys.path
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -26,14 +32,14 @@ def cmd_serve(args):
     app = create_app()
     print("=" * 65)
     print("🧠 NEURA AI — CLINICAL ALZHEIMER'S INTELLIGENCE PLATFORM")
-    print("   Architecture: Laravel v13 Clean Modern Architecture")
+    print("   CLI Engine:   Nterli CLI (Neura Clean Architecture)")
     print(f"   Environment:  http://{args.host}:{args.port}")
     print("=" * 65)
     app.run(host=args.host, port=args.port, debug=args.debug, threaded=True)
 
 
 def cmd_migrate(args):
-    print("\n[Artisan] Running Database Migrations...")
+    print("\n[Nterli] Running Database Migrations...")
     from app.Services.Database.DatabaseManager import init_database
     success, msg = init_database()
     if success:
@@ -44,7 +50,7 @@ def cmd_migrate(args):
 
 
 def cmd_seed(args):
-    print("\n[Artisan] Seeding Database...")
+    print("\n[Nterli] Seeding Database...")
     try:
         from database.seeders.DatabaseSeeder import run_seeder
         run_seeder()
@@ -56,7 +62,7 @@ def cmd_seed(args):
 
 
 def cmd_train_xgboost(args):
-    print("\n[Artisan] Starting XGBoost Training Pipeline (modelML.rmp spec)...")
+    print("\n[Nterli] Starting XGBoost Training Pipeline (modelML.rmp spec)...")
     from app.Services.ML.XGBoostTrainerService import XGBoostTrainerService
     metrics = XGBoostTrainerService.train()
     print("\n✅ Training Complete!")
@@ -66,7 +72,7 @@ def cmd_train_xgboost(args):
 
 def cmd_status(args):
     print("\n" + "=" * 60)
-    print("📊 NEURA SYSTEM STATUS CHECK")
+    print("📊 NEURA SYSTEM STATUS CHECK (NTERLI)")
     print("=" * 60)
     # Check MySQL
     from app.Services.Database.DatabaseManager import test_connection
@@ -92,8 +98,8 @@ def cmd_status(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Neura AI Artisan CLI")
-    subparsers = parser.add_subparsers(dest="command", help="Artisan command")
+    parser = argparse.ArgumentParser(description="Neura AI Nterli CLI")
+    subparsers = parser.add_subparsers(dest="command", help="Nterli command")
 
     # serve
     serve_parser = subparsers.add_parser("serve", help="Run the Neura Web Server")
@@ -130,4 +136,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # Auto-activate / re-spawn into local virtualenv if invoked from global python
+    if VENV_PY.exists() and Path(sys.executable).resolve() != VENV_PY.resolve():
+        sys.exit(subprocess.call([str(VENV_PY), str(PROJECT_ROOT / "nterli.py")] + sys.argv[1:]))
     main()

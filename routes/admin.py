@@ -1,7 +1,7 @@
 """
 routes/admin.py
 ===============
-Admin API Routes definition in Neura AI (Laravel v13 style).
+Admin API Routes definition in Neura AI (Neura Clean Architecture).
 """
 
 from flask import Flask

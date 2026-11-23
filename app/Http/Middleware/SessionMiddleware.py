@@ -1,7 +1,7 @@
 """
 app/Http/Middleware/SessionMiddleware.py
 ========================================
-Session and cookie authentication middleware for Neura AI (Laravel-style).
+Session and cookie authentication middleware for Neura AI (Clean Architecture).
 Provides helper decorators and session state management for Admin, Nakes, and User roles.
 """
 

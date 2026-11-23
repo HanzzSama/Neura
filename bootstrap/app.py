@@ -1,7 +1,7 @@
 """
 bootstrap/app.py
 ================
-Application Bootstrap & Factory for Neura AI (Laravel v13 style).
+Application Bootstrap & Factory for Neura AI (Neura Clean Architecture).
 """
 
 import os
@@ -87,5 +87,5 @@ def create_app() -> Flask:
     # Run non-blocking background initialization
     threading.Thread(target=_run_background_checks, daemon=True).start()
 
-    logger.info(f"[Bootstrap] {APP_NAME} initialized successfully (Laravel v13 Clean Architecture).")
+    logger.info(f"[Bootstrap] {APP_NAME} initialized successfully (Neura Clean Architecture).")
     return app

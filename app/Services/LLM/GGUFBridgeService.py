@@ -2,7 +2,7 @@
 app/Services/LLM/GGUFBridgeService.py
 ====================================
 Bridge penghubung model LLM format GGUF (Llama 3.2 1B Instruct, Gemma, Mistral, dll.)
-dengan engine percakapan Neura AI (Laravel Architecture).
+dengan engine percakapan Neura AI (Neura Architecture).
 """
 
 import os

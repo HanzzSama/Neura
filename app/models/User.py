@@ -1,7 +1,7 @@
 """
 app/Models/User.py
 ==================
-Data Model representing the 'users' table in MySQL (Laravel v13 style).
+Data Model representing the 'users' table in MySQL (Neura Clean Architecture).
 """
 
 from typing import Optional, Dict, Any, List

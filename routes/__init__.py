@@ -1,7 +1,7 @@
 """
 routes/__init__.py
 ==================
-Central Route Registry for Neura AI (Laravel v13 style).
+Central Route Registry for Neura AI (Neura Clean Architecture).
 """
 
 from flask import Flask

@@ -1,7 +1,7 @@
 """
 app/Models/__init__.py
 ======================
-Laravel v13 Style Model Definitions for MySQL neura_db.
+Neura Clean Architecture Model Definitions for MySQL neura_db.
 """
 
 from app.Models.User import User

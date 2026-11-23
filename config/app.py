@@ -1,7 +1,7 @@
 """
 config/app.py
 =============
-Central Application & Environment Configurations (Laravel v13 style).
+Central Application & Environment Configurations (Neura Clean Architecture).
 """
 
 import os

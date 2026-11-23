@@ -1,7 +1,7 @@
 """
 app/Services/Notification/NotificationService.py
 ================================================
-Notification Hub & SSE Broadcaster untuk Neura AI (Laravel-style).
+Notification Hub & SSE Broadcaster untuk Neura AI (Clean Architecture).
 Mendukung SSE stream, filtering peran (Admin, Nakes, User), dan persistence histori.
 """
 
