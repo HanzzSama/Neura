@@ -1,4 +1,4 @@
-# 🧠 Neura AI — Website pendeteksi gejala Alzheimer
+# 🧠 Neura AI — Website Pendeteksi Gejala Alzheimer
 
 <div align="center">
 
