@@ -13,7 +13,7 @@ import re
 import json
 from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify, render_template_string, send_from_directory
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 

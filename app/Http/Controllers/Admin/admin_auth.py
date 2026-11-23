@@ -18,7 +18,7 @@ import threading
 import json
 from pathlib import Path
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 
@@ -79,7 +79,7 @@ def get_admin_sessions():
 @admin_auth_bp.route("/emails", methods=["GET"])
 def api_admin_emails():
     """Daftar email custom admin terdaftar untuk deteksi instan (0ms) di browser."""
-    from core.admin_config import get_all_admin_custom_emails
+    from config.admin import get_all_admin_custom_emails
     return jsonify({
         "admin_emails":  get_all_admin_custom_emails(),
         "admin_domains": ["neura.dr.id"],
@@ -89,7 +89,7 @@ def api_admin_emails():
 @admin_auth_bp.route("/all-admins", methods=["GET"])
 def api_admin_all():
     """Mengembalikan seluruh daftar akun admin terdaftar (beserta deskripsi & real_emails)."""
-    from core.admin_config import ADMIN_ACCOUNTS
+    from config.admin import ADMIN_ACCOUNTS
     admins_list = []
     for email_addr, data in ADMIN_ACCOUNTS.items():
         admins_list.append({
@@ -111,7 +111,7 @@ def api_admin_check_email():
     Periksa apakah email yang dimasukkan adalah email custom admin
     (contoh: hanzz@neura.dr.id).
     """
-    from core.admin_config import get_admin_by_custom_email, mask_email
+    from config.admin import get_admin_by_custom_email, mask_email
 
     body  = request.get_json(silent=True) or {}
     email = (body.get("email") or "").strip().lower()
@@ -139,8 +139,8 @@ def api_admin_send_otp():
     Generate kode OTP 6-digit dan kirim ke seluruh alamat email asli
     yang ada dalam array real_emails admin (dengan proteksi rate-limit & anti-duplikasi).
     """
-    from core.admin_config import get_admin_by_custom_email, mask_email
-    from core.email_sender import send_admin_otp_email, is_smtp_configured
+    from config.admin import get_admin_by_custom_email, mask_email
+    from app.Services.Notification.EmailService import send_admin_otp_email, is_smtp_configured
 
     body  = request.get_json(silent=True) or {}
     email = (body.get("email") or "").strip().lower()
@@ -240,7 +240,7 @@ def api_admin_verify_otp():
     Jika valid → buat server-side session token (berlaku 24 jam).
     Mendukung penanganan konkurensi/duplicate request dalam rentang 15 detik.
     """
-    from core.admin_config import get_admin_by_custom_email
+    from config.admin import get_admin_by_custom_email
 
     body      = request.get_json(silent=True) or {}
     email     = (body.get("email") or "").strip().lower()
@@ -284,7 +284,7 @@ def api_admin_verify_otp():
         _admin_otp_store.pop(email, None)
 
     # 1. Simpan ke Flask server-side session & set HTTPOnly cookie
-    from api.shared.session_middleware import set_admin_session, get_current_admin, clear_session
+    from app.Http.Controllers.Shared.session_middleware import set_admin_session, get_current_admin, clear_session
     set_admin_session(
         email=email,
         name=admin.get("name", "Administrator"),
@@ -325,7 +325,7 @@ def api_admin_verify_otp():
 
     # 3. Notifikasi Bawaan Device: Broadcast Security Alert Admin Baru Saja Login
     try:
-        from api.shared.notification_service import broadcast_notification
+        from app.Http.Controllers.Shared.notification_service import broadcast_notification
         admin_name = admin.get("name", "Administrator")
         user_agent = request.headers.get("User-Agent", "")
         client_info = "Desktop / Web"
@@ -366,7 +366,7 @@ def api_admin_verify_otp():
 @admin_auth_bp.route("/verify-session", methods=["POST", "GET"])
 def api_admin_verify_session():
     """Validasi sesi admin via HTTPOnly cookie atau token yang dikirim (berlaku 24 jam)."""
-    from api.shared.session_middleware import get_current_admin, set_admin_session
+    from app.Http.Controllers.Shared.session_middleware import get_current_admin, set_admin_session
 
     # 1. Cek sesi HTTPOnly cookie terlebih dahulu (metode paling aman)
     current_admin = get_current_admin()
@@ -421,7 +421,7 @@ def api_admin_verify_session():
 @admin_auth_bp.route("/logout", methods=["POST"])
 def api_admin_logout():
     """Hapus sesi admin di server dan hapus cookie HTTPOnly."""
-    from api.shared.session_middleware import clear_session
+    from app.Http.Controllers.Shared.session_middleware import clear_session
     clear_session()
 
     body  = request.get_json(silent=True) or {}

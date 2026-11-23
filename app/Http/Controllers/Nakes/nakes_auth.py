@@ -6,7 +6,7 @@ Nakes Authentication route:
 """
 
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 import json
 from pathlib import Path
 
@@ -86,7 +86,7 @@ def api_nakes_login():
 
     # Inisialisasi sesi HTTPOnly cookie server untuk nakes (Remember Me: 30 hari aktif)
     try:
-        from api.shared.session_middleware import set_user_session
+        from app.Http.Controllers.Shared.session_middleware import set_user_session
         set_user_session(
             uid=matched.get("id"),
             email=matched.get("nakes_email"),

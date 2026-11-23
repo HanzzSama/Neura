@@ -11,7 +11,7 @@ Nakes Consultation routes:
 import traceback
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 
@@ -23,7 +23,7 @@ def _get_store():
     Ambil consultation store dari user_consultation blueprint.
     Lazy import untuk hindari circular dependency.
     """
-    from api.user.user_consultation import get_consultations_store
+    from app.Http.Controllers.User.user_consultation import get_consultations_store
     return get_consultations_store()
 
 
@@ -44,7 +44,7 @@ def _find_doc(code):
     if match:
         suffix = match.group(1)
         try:
-            from api.user.user_consultation import _build_consultation_document
+            from app.Http.Controllers.User.user_consultation import _build_consultation_document
             doc = _build_consultation_document(mode="dataset", override_suffix=suffix)
             return doc
         except Exception as e:
@@ -249,7 +249,7 @@ def api_consultation_validate(code_or_id):
             store[doc_id] = doc
 
         try:
-            from api.user.user_consultation import save_consultations_store
+            from app.Http.Controllers.User.user_consultation import save_consultations_store
             save_consultations_store()
         except Exception:
             pass

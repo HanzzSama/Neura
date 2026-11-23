@@ -64,7 +64,7 @@ def get_chat_mgr():
     global _chat_mgr
     if _chat_mgr is None:
         try:
-            from features.chat_manager import ChatDatasetManager
+            from app.Services.LLM.ChatManagerService import ChatDatasetManager
             _chat_mgr = ChatDatasetManager()
             logger.info("ChatDatasetManager loaded successfully for voice agent.")
         except Exception as e:

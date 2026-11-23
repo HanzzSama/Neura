@@ -1,17 +1,7 @@
 """
-core/admin_config.py
-====================
-Konfigurasi Pemetaan Email Custom Khusus Admin Neura AI.
-
-Struktur Pemetaan:
-- Key (kiri): Email custom admin yang digunakan saat login di form (contoh: "hanzz@neura.dr.id").
-- Value (kanan):
-    - "real_emails": Array alamat email asli tujuan pengiriman kode OTP 2FA (contoh: ["haidarandrianno@gmail.com"]).
-    - "name": Nama tampilan admin.
-    - "role": Role sistem ("Admin").
-    - "description": Keterangan hak akses.
-
-Admin dapat mendaftarkan beberapa email asli sekaligus dalam array `real_emails`.
+config/admin.py
+===============
+Konfigurasi Pemetaan Akun dan Email Administrator Khusus Neura AI (Laravel v13 style).
 """
 
 import os

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "notif_1795446027561",
+    "target_role": "admin",
+    "title": "🛡️ Admin Baru Saja Login",
+    "body": "Haidar Rifky A (hanzz@neura.dr.id) baru saja masuk ke sistem melalui Windows PC.",
+    "category": "auth",
+    "urgency": "high",
+    "action_url": "/struktur.html",
+    "meta": {
+      "admin_email": "hanzz@neura.dr.id",
+      "admin_name": "Haidar Rifky A",
+      "client_info": "Windows PC",
+      "timestamp": 1795446027.5616896
+    },
+    "created_at": "2026-11-23 22:00:27",
+    "read": false
+  }
+]

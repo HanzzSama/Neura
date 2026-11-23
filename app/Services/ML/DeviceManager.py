@@ -81,3 +81,18 @@ def get_llm_compute_config() -> Dict[str, Any]:
         "use_mlock": False,
         "verbose": False,
     }
+
+
+def get_device_summary() -> Dict[str, Any]:
+    """Mengembalikan ringkasan status komputasi GPU/CPU sistem."""
+    tier_info = detect_gpu_tier()
+    compute_cfg = get_llm_compute_config()
+    return {
+        "tier": tier_info.get("tier", "cpu"),
+        "device_name": tier_info.get("device_name", "CPU"),
+        "backend": tier_info.get("backend", "cpu"),
+        "vram_mb": tier_info.get("vram_mb", 0),
+        "reason": tier_info.get("reason", ""),
+        "xgboost_compute": "CPU-only (Dedicated to ML PureTreeEvaluator)",
+        "llm_compute": compute_cfg,
+    }

@@ -8,13 +8,13 @@ User session management endpoints:
 """
 
 from flask import Blueprint, request, jsonify
-from api.shared.session_middleware import (
+from app.Http.Controllers.Shared.session_middleware import (
     set_user_session,
     get_current_user,
     clear_session,
 )
-from api.shared.firebase_routes import get_firebase_admin_auth
-from core.logger import get_logger
+from app.Http.Controllers.Shared.firebase_routes import get_firebase_admin_auth
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 

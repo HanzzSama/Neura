@@ -9,11 +9,11 @@ Shared routes:
 import traceback
 from pathlib import Path
 from flask import Blueprint, jsonify
-from core.config import Config
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
+from config.app import APP_ENV
+from config.ml import XGBOOST_MODEL_FILE
 
 logger = get_logger(__name__)
-config = Config()
 
 status_bp = Blueprint("status", __name__)
 
@@ -23,14 +23,12 @@ def api_status():
     """Status model XGBoost, training state, dan jumlah dataset."""
     # Import training state dari admin_ml (lazy import untuk hindari circular)
     try:
-        from api.admin.admin_ml import get_training_status
+        from app.Http.Controllers.Admin.admin_ml import get_training_status
         training_running = get_training_status()["running"]
     except Exception:
         training_running = False
 
-    checkpoint_path = (
-        Path(config.get("paths.checkpoints", "public/checkpoints")) / "xgboost_alzheimers.json"
-    )
+    checkpoint_path = XGBOOST_MODEL_FILE
     model_ready = checkpoint_path.exists()
 
     metrics = {}
@@ -45,16 +43,16 @@ def api_status():
 
     intents_count = 241
     try:
-        from features.chat_manager import ChatDatasetManager
+        from app.Services.LLM.ChatManagerService import ChatDatasetManager
         mgr = ChatDatasetManager()
         intents_count = mgr.get_statistics().get("total_percakapan", 241)
     except Exception:
         pass
 
     return jsonify({
-        "model_name":       config.get("model.name", "Alzheimer"),
+        "model_name":       "Alzheimer",
         "algorithm":        "XGBoost Classifier",
-        "environment":      config.get("project.environment", "development"),
+        "environment":      APP_ENV,
         "model_ready":      model_ready,
         "checkpoint":       str(checkpoint_path) if model_ready else None,
         "training_running": training_running,
@@ -75,7 +73,7 @@ def api_device_status():
       - LLM (GGUF Llama/Gemma):    GPU dedicated → iGPU → CPU (fallback)
     """
     try:
-        from core.device_manager import get_device_summary
+        from app.Services.ML.DeviceManager import get_device_summary
         summary = get_device_summary()
         return jsonify({"ok": True, **summary})
     except Exception as e:

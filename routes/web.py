@@ -7,7 +7,7 @@ Web, static assets, SPA landing pages, and explorer endpoints for Neura AI.
 import os
 from pathlib import Path
 from flask import Flask, send_from_directory, jsonify, request, abort
-from config.app import PUBLIC_DIR, BASE_DIR
+from config.app import PUBLIC_DIR, BASE_DIR, STORAGE_DIR
 from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
@@ -185,6 +185,14 @@ def register_web_routes(app: Flask):
     @app.route("/uploads/<path:filename>")
     def serve_uploads(filename):
         return send_from_directory(PUBLIC_DIR / "uploads", filename)
+
+    @app.route("/checkpoints/<path:filename>")
+    def serve_checkpoints(filename):
+        return send_from_directory(STORAGE_DIR / "checkpoints", filename)
+
+    @app.route("/reports/<path:filename>")
+    def serve_reports(filename):
+        return send_from_directory(STORAGE_DIR / "reports", filename)
 
     @app.route("/<slug>", strict_slashes=False)
     def serve_custom_page(slug):

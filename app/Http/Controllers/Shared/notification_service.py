@@ -14,15 +14,17 @@ import time
 import queue
 import threading
 from datetime import datetime
+from pathlib import Path
 from flask import Blueprint, Response, request, jsonify, session
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
+from config.app import STORAGE_DIR
 
 logger = get_logger(__name__)
 
 notification_bp = Blueprint("notification_bp", __name__)
 
-NOTIFICATIONS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "notifications.json")
-os.makedirs(os.path.dirname(NOTIFICATIONS_FILE), exist_ok=True)
+NOTIFICATIONS_FILE = str(STORAGE_DIR / "app" / "notifications.json")
+Path(NOTIFICATIONS_FILE).parent.mkdir(parents=True, exist_ok=True)
 
 # In-Memory Subscribers: dict role -> set of Queues
 _subscribers_lock = threading.Lock()

@@ -9,7 +9,7 @@ User Chat & Dataset endpoints:
 
 import traceback
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 
@@ -19,7 +19,7 @@ user_chat_bp = Blueprint("user_chat", __name__)
 @user_chat_bp.route("/features/categories", methods=["GET"])
 def api_chat_categories():
     try:
-        from features.chat_manager import ChatDatasetManager
+        from app.Services.LLM.ChatManagerService import ChatDatasetManager
         mgr = ChatDatasetManager()
         return jsonify({
             "categories": mgr.get_categories(),
@@ -33,7 +33,7 @@ def api_chat_categories():
 @user_chat_bp.route("/features/chat-dataset", methods=["GET"])
 def api_chat_dataset():
     try:
-        from features.chat_manager import ChatDatasetManager
+        from app.Services.LLM.ChatManagerService import ChatDatasetManager
         mgr = ChatDatasetManager()
         category = request.args.get("category", None)
         query = request.args.get("q", None)
@@ -58,7 +58,7 @@ def api_chat_dataset():
 @user_chat_bp.route("/chat", methods=["POST"])
 def api_chat_message():
     try:
-        from features.chat_manager import ChatDatasetManager
+        from app.Services.LLM.ChatManagerService import ChatDatasetManager
         body = request.get_json(silent=True) or {}
         message = body.get("message", "").strip()
         user_name = (body.get("user_name") or body.get("name") or "").strip()
@@ -88,7 +88,7 @@ def api_chat_message():
 @user_chat_bp.route("/features/llm-status", methods=["GET"])
 def api_llm_status():
     try:
-        from features.gguf_bridge import get_llm_status
+        from app.Services.LLM.GGUFBridgeService import get_llm_status
         return jsonify(get_llm_status())
     except Exception as e:
         logger.error(f"Error in api_llm_status: {traceback.format_exc()}")
@@ -99,7 +99,7 @@ def api_llm_status():
 def api_llm_select():
     """Ganti model .gguf aktif. Body: { "filename": "nama-file.gguf" }"""
     try:
-        from features.gguf_bridge import set_active_gguf_model, get_llm_status
+        from app.Services.LLM.GGUFBridgeService import set_active_gguf_model, get_llm_status
         data = request.get_json(silent=True) or {}
         filename = (data.get("filename") or "").strip()
         if not filename:

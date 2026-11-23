@@ -14,11 +14,9 @@ import threading
 import traceback
 from pathlib import Path
 from flask import Blueprint, request, jsonify
-from core.config import Config
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger   = get_logger(__name__)
-config   = Config()
 
 admin_ml_bp = Blueprint("admin_ml", __name__)
 
@@ -62,7 +60,7 @@ def api_train():
             "error": "Akses ditolak: Hanya Administrator / ML Engineer yang berwenang melatih ulang model."
         }), 403
 
-    epochs = int(body.get("epochs", config.get("training.epochs", 50)))
+    epochs = int(body.get("epochs", 50))
 
     _training_status = {
         "running":      True,
@@ -219,9 +217,9 @@ def api_evaluate():
 def api_admin_count_user():
     """Mengembalikan statistik jumlah pengguna terdaftar dan rincian perannya."""
     try:
-        from core.admin_config import ADMIN_ACCOUNTS
-        from api.admin.admin_nakes import _load_nakes_db
-        from api.shared.firebase_routes import get_firebase_admin_auth
+        from config.admin import ADMIN_ACCOUNTS
+        from app.Http.Controllers.Admin.admin_nakes import _load_nakes_db
+        from app.Http.Controllers.Shared.firebase_routes import get_firebase_admin_auth
 
         fb_auth = get_firebase_admin_auth()
         firebase_users = []
@@ -270,7 +268,7 @@ def api_admin_count_user():
 def api_admin_count_doc():
     """Mengembalikan statistik jumlah dokumen konsultasi & rekam medis klinis."""
     try:
-        from api.user.user_consultation import get_consultations_store
+        from app.Http.Controllers.User.user_consultation import get_consultations_store
 
         store = get_consultations_store()
         unique_docs = {}
@@ -318,7 +316,7 @@ def api_admin_count_doc():
 def api_admin_count_nakes():
     """Mengembalikan statistik dan direktori tenaga kesehatan terdaftar."""
     try:
-        from api.admin.admin_nakes import _load_nakes_db
+        from app.Http.Controllers.Admin.admin_nakes import _load_nakes_db
 
         nakes_list = _load_nakes_db()
         total = len(nakes_list)
@@ -426,9 +424,9 @@ def api_admin_data_summary():
 def api_admin_platform_stats():
     """Mengembalikan dashboard statistik komprehensif platform Neura AI."""
     try:
-        from core.admin_config import ADMIN_ACCOUNTS
-        from api.admin.admin_nakes import _load_nakes_db
-        from api.user.user_consultation import get_consultations_store
+        from config.admin import ADMIN_ACCOUNTS
+        from app.Http.Controllers.Admin.admin_nakes import _load_nakes_db
+        from app.Http.Controllers.User.user_consultation import get_consultations_store
 
         # 1. User stats
         total_admins = len(ADMIN_ACCOUNTS)

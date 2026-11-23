@@ -11,7 +11,7 @@ import re
 import time
 import base64
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 

@@ -84,7 +84,7 @@ def require_admin_session(f):
             from app.Http.Controllers.Admin.AdminAuthController import get_admin_sessions
             sessions = get_admin_sessions()
         except ImportError:
-            from api.admin.admin_auth import get_admin_sessions
+            from app.Http.Controllers.Admin.admin_auth import get_admin_sessions
             sessions = get_admin_sessions()
 
         token = (

@@ -11,7 +11,7 @@ import os
 import json
 from pathlib import Path
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 # Resolve BASE_DIR ke root project (tiga level di atas file ini: app/Http/Controllers/Shared/ → root)
 _BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
@@ -118,7 +118,7 @@ def api_send_verification_email():
 
     Body JSON: { "email": str, "displayName": str, "continueUrl": str (optional), "idToken": str (optional) }
     """
-    from core.email_sender import send_verification_email, is_smtp_configured
+    from app.Services.Notification.EmailService import send_verification_email, is_smtp_configured
 
     body         = request.get_json(silent=True) or {}
     email        = (body.get("email") or "").strip()

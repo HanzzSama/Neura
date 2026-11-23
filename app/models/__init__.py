@@ -1,10 +1,21 @@
 """
-app/models/__init__.py
+app/Models/__init__.py
 ======================
-Model layer exports.
+Laravel v13 Style Model Definitions for MySQL neura_db.
 """
 
-from app.models.base_model import BaseModel
-from app.models.neural_network import NeuralNetwork
+from app.Models.User import User
+from app.Models.UserProfile import UserProfile
+from app.Models.Nakes import Nakes
+from app.Models.Consultation import Consultation
+from app.Models.PredictionRecord import PredictionRecord
+from app.Models.ResearchDispatch import ResearchDispatch
 
-__all__ = ["BaseModel", "NeuralNetwork"]
+__all__ = [
+    "User",
+    "UserProfile",
+    "Nakes",
+    "Consultation",
+    "PredictionRecord",
+    "ResearchDispatch",
+]

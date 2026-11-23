@@ -8,7 +8,7 @@ Provides helper decorators and session state management for Admin and User roles
 import time
 from functools import wraps
 from flask import session, jsonify, request
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 
@@ -80,7 +80,7 @@ def require_admin_session(f):
             return f(*args, **kwargs)
 
         # Legacy fallback check (token in headers or body)
-        from api.admin.admin_auth import get_admin_sessions
+        from app.Http.Controllers.Admin.admin_auth import get_admin_sessions
         token = (
             request.headers.get("X-Admin-Token")
             or request.args.get("token")

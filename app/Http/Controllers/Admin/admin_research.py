@@ -13,10 +13,10 @@ import time
 import json
 from pathlib import Path
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+from app.Services.Logger.LoggerService import get_logger
 
 try:
-    from core.database import execute_query, execute_insert, execute_update
+    from app.Services.Database.DatabaseManager import execute_query, execute_insert, execute_update
 except Exception:
     execute_query = execute_insert = execute_update = None
 
