@@ -17,7 +17,7 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=69">
+  <link rel="stylesheet" href="/css/welcome.css?v=70">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=44">
@@ -1139,7 +1139,7 @@
     </div>
 
     <!-- 3. NeuraPet Interactive AI Companion -->
-    <div class="product-row">
+    <div class="product-row" id="neurapet">
       <div class="product-info">
         <h2 class="product-title" data-i18n="sdk_title">NeuraPet</h2>
         <p class="product-description" data-i18n="sdk_desc">
@@ -1559,45 +1559,47 @@
 
         <!-- Col 1: Platform -->
         <div class="footer-col">
-          <div class="footer-col-title"><span class="col-num">01</span> Platform</div>
+          <div class="footer-col-title"><span class="col-num">01</span> <span data-i18n="footer_col1">Platform</span></div>
           <ul class="footer-links-list">
-            <li><a href="#pipeline" class="footer-link">Reasoning Pipeline</a></li>
-            <li><a href="#security" class="footer-link">Zero-Knowledge Vault</a></li>
-            <li><a href="#specification" class="footer-link">Terminal Klinis CLI</a></li>
-            <li><a href="/app" class="footer-link">Neura Workspace</a></li>
+            <li><a href="#pipeline" class="footer-link" data-i18n="footer_link_pipeline">Reasoning Pipeline</a></li>
+            <li><a href="#security" class="footer-link" data-i18n="footer_link_vault">Zero-Knowledge Vault</a></li>
+            <li><a href="#neurapet" class="footer-link" data-i18n="footer_link_neurapet">NeuraPet AI Companion</a></li>
+            <li><a href="#specification" class="footer-link" data-i18n="footer_link_cli">Terminal Klinis CLI</a></li>
+            <li><a href="/app" class="footer-link" data-i18n="footer_link_workspace">Neura Workspace</a></li>
           </ul>
         </div>
 
-        <!-- Col 2: Model & Data -->
+        <!-- Col 2: Model & Riset -->
         <div class="footer-col">
-          <div class="footer-col-title"><span class="col-num">02</span> Model &amp; Riset</div>
+          <div class="footer-col-title"><span class="col-num">02</span> <span data-i18n="footer_col2">Model &amp; Riset</span></div>
           <ul class="footer-links-list">
-            <li><a href="/app" class="footer-link">Alzheimer 3.x</a></li>
-            <li><a href="#specification" class="footer-link">32 Biomarker Klinis</a></li>
-            <li><a href="/app" class="footer-link">Validasi 430 Pasien</a></li>
-            <li><a href="/app" class="footer-link">ROC-AUC 0.933</a></li>
+            <li><a href="#specification" class="footer-link" data-i18n="footer_link_model">Model XGBoost 3.x</a></li>
+            <li><a href="#specification" class="footer-link" data-i18n="footer_link_biomarkers">32 Biomarker Multimodal</a></li>
+            <li><a href="#blog" class="footer-link" data-i18n="footer_link_validation">Kohort Validasi 430 Pasien</a></li>
+            <li><a href="#blog" class="footer-link" data-i18n="footer_link_research">Publikasi Riset Klinis</a></li>
+            <li><a href="#updates" class="footer-link" data-i18n="footer_link_dispatch">Clinical Dispatch</a></li>
           </ul>
         </div>
 
         <!-- Col 3: Protokol -->
         <div class="footer-col">
-          <div class="footer-col-title"><span class="col-num">03</span> Protokol</div>
+          <div class="footer-col-title"><span class="col-num">03</span> <span data-i18n="footer_col3">Protokol &amp; Standar</span></div>
           <ul class="footer-links-list">
-            <li><a href="#security" class="footer-link">HIPAA Safe Harbor</a></li>
-            <li><a href="#security" class="footer-link">Enkripsi AES-256</a></li>
-            <li><a href="/app" class="footer-link">Skrining Kognitif MMSE</a></li>
-            <li><a href="/app" class="footer-link">Etika AI Kesehatan</a></li>
+            <li><a href="#security" class="footer-link" data-i18n="footer_link_hipaa">HIPAA Safe Harbor</a></li>
+            <li><a href="#security" class="footer-link" data-i18n="footer_link_aes">Enkripsi AES-256 GCM</a></li>
+            <li><a href="#pipeline" class="footer-link" data-i18n="footer_link_mmse">Protokol Kognitif MMSE</a></li>
+            <li><a href="/app" class="footer-link" data-i18n="footer_link_ethics">Etika &amp; Privasi AI Medis</a></li>
           </ul>
         </div>
 
         <!-- Col 4: Perusahaan -->
         <div class="footer-col">
-          <div class="footer-col-title"><span class="col-num">04</span> Ekosistem</div>
+          <div class="footer-col-title"><span class="col-num">04</span> <span data-i18n="footer_col4">Navigasi &amp; Layanan</span></div>
           <ul class="footer-links-list">
-            <li><a href="#about" class="footer-link">Tentang Neura AI</a></li>
-            <li><a href="/app" class="footer-link">Dokumentasi API</a></li>
-            <li><a href="/app" class="footer-link">Kemitraan Klinis</a></li>
-            <li><a href="/app" class="footer-link">Dukungan Tenaga Medis</a></li>
+            <li><a href="#about" class="footer-link" data-i18n="footer_link_about">Tentang Neura AI</a></li>
+            <li><a href="#download" class="footer-link" data-i18n="footer_link_download">Download Clinical Suite</a></li>
+            <li><a href="/app" class="footer-link" data-i18n="footer_link_voice">Konsultasi Suara AI</a></li>
+            <li><a href="/app" class="footer-link" data-i18n="footer_link_help">Portal Tenaga Medis</a></li>
           </ul>
         </div>
       </div>
@@ -1613,12 +1615,12 @@
           <span data-about="legal.rights">Hak Cipta Dilindungi.</span>
         </div>
         <div class="footer-center-tag">
-          <span data-i18n="footer_tag">Model Machine Learning Tervalidasi Klinis</span>
+          <span data-i18n="footer_tag">Model Machine Learning Tervalidasi Klinis • XGBoost 3.x</span>
         </div>
         <div class="footer-bottom-links">
           <a href="/app" data-i18n="footer_privacy">Kebijakan Privasi</a>
           <a href="/app" data-i18n="footer_terms">Syarat Layanan</a>
-          <a href="/app" data-i18n="footer_sec">Keamanan Data</a>
+          <a href="#security" data-i18n="footer_sec">Keamanan Data</a>
           <span class="footer-lang-tag">ID</span>
         </div>
       </div>
@@ -1629,7 +1631,7 @@
   <script src="/js/about_app.js?v=1"></script>
   <script src="/js/smooth-scroll.js?v=46"></script>
   <script src="/js/dynamic-island.js?v=73"></script>
-  <script src="/js/welcome.js?v=56"></script>
+  <script src="/js/welcome.js?v=57"></script>
   <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js" defer></script>
   <script src="/js/voice-consultation.js?v=64"></script>
 
@@ -1984,20 +1986,6 @@
 
         raf = requestAnimationFrame(loop);
       }
-
-      if (typeof ResizeObserver !== 'undefined') {
-        document.addEventListener('DOMContentLoaded', function () {
-          var card = document.getElementById('neura-auth-main-card');
-          if (card) {
-            new ResizeObserver(resize).observe(card);
-          }
-          initParticles();
-        });
-      } else {
-        document.addEventListener('DOMContentLoaded', initParticles);
-      }
-    })();
-  </script>
 
       if (typeof ResizeObserver !== 'undefined') {
         document.addEventListener('DOMContentLoaded', function () {
