@@ -489,6 +489,17 @@
     _scheduleNextGaze();
   }
 
+  function _startRandomGaze() {
+    _scheduleNextGaze();
+  }
+
+  function _startNaturalBlinking() {
+    _scheduleNextBlink();
+  }
+
+  window._startRandomGaze = _startRandomGaze;
+  window._startNaturalBlinking = _startNaturalBlinking;
+
   function _applyGazePose(pose) {
     if (_isPetting) return;
     const trackEl = document.getElementById('bot-eyes-track');
@@ -1062,8 +1073,7 @@
 
   function init() {
     ensureDynamicIslandDOM();
-    _startRandomGaze();
-    _startNaturalBlinking();
+    _startIdleBehaviors();
     syncStatus();
     setInterval(syncStatus, 8000);
     _showInitialWelcomeGreeting();
