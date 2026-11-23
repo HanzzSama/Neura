@@ -3468,6 +3468,11 @@ body[data-canvas-view="explorer"] .general-interactive-bar,
   background: rgba(245, 158, 11, 0.15);
   color: #F59E0B;
 }
+.sdb-type-mysql {
+  background: rgba(59, 130, 246, 0.16);
+  color: #60A5FA;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+}
 
 /* ========================================================================
    15b. SIDEBAR GENERAL ARCHITECTURE & USER JOURNEY

@@ -9,6 +9,7 @@ from app.Http.Controllers.Admin.AdminAuthController import admin_auth_bp
 from app.Http.Controllers.Admin.AdminNakesController import admin_nakes_bp
 from app.Http.Controllers.Admin.AdminMlController import admin_ml_bp
 from app.Http.Controllers.Admin.AdminResearchController import admin_research_bp
+from app.Http.Controllers.Admin.AdminDatabaseController import admin_database_bp
 
 
 def register_admin_routes(app: Flask):
@@ -17,3 +18,4 @@ def register_admin_routes(app: Flask):
     app.register_blueprint(admin_nakes_bp, url_prefix="/api/admin")
     app.register_blueprint(admin_ml_bp, url_prefix="/api")
     app.register_blueprint(admin_research_bp, url_prefix="/api")
+    app.register_blueprint(admin_database_bp, url_prefix="/api/database")

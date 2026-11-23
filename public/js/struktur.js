@@ -413,9 +413,9 @@
       id: 'db-users',
       kind: 'database',
       category: 'AUTH & PROFILES',
-      title: 'Firestore: users',
+      title: 'MySQL: users',
       name: 'users',
-      path: 'firestore/users',
+      path: 'database/users',
       desc: 'Penyimpanan identitas pasien, profil kredensial dokter terverifikasi, dan hak akses RBAC.',
       iconType: 'users',
       borderVariant: 'card-border-cyan',
@@ -428,7 +428,7 @@
       category: 'SESSION STORE',
       title: 'Local Disk: sessions',
       name: 'sessions',
-      path: 'core/auth_middleware.py',
+      path: 'storage/framework/sessions',
       desc: 'State session token login aktif, cookie security, dan expiry time guard berbasis disk.',
       iconType: 'sessions',
       borderVariant: 'card-border-neutral',
@@ -439,9 +439,9 @@
       id: 'db-consultations',
       kind: 'database',
       category: 'TELEMEDICINE',
-      title: 'Firestore: consultations',
+      title: 'MySQL: consultations',
       name: 'consultations',
-      path: 'firestore/consultations',
+      path: 'database/consultations',
       desc: 'Catatan rekam medis terenkripsi, transkrip telekonsultasi, rekomendasi obat & rujukan dokter.',
       iconType: 'consultations',
       borderVariant: 'card-border-cyan',
@@ -452,10 +452,10 @@
       id: 'db-predictions',
       kind: 'database',
       category: 'AI INFERENCE SINK',
-      title: 'Firestore: predictions',
-      name: 'predictions',
-      path: 'firestore/predictions',
-      desc: 'Sink riwayat skor probabilitas CDR pasien, confidence level, dan rekomendasi tindak lanjut.',
+      title: 'MySQL: prediction_records',
+      name: 'prediction_records',
+      path: 'database/prediction_records',
+      desc: 'Sink riwayat hasil inferensi XGBoost (25 trees), logit z, estimasi probabilitas & skor risiko.',
       iconType: 'predictions',
       borderVariant: 'card-border-cyan',
       ports: [{ side: 'left', type: 'green', symbol: '+' }],
@@ -466,8 +466,8 @@
       kind: 'csv',
       category: 'TABULAR DATA LAKE',
       title: 'alzheimers_disease_data.csv',
-      path: 'data/alzheimers_disease_data.csv',
-      desc: 'Kohort OASIS 2.149 baris rekaman klinis, 35 parameter kognitif & MRI untuk baseline verifikasi.',
+      path: 'database/datasets/alzheimers_disease_data.csv',
+      desc: 'Kohort Alzheimer 2.149 baris rekaman klinis, 35 parameter kognitif & MMSE untuk baseline verifikasi.',
       iconType: 'database',
       borderVariant: 'card-border-gold',
       count: '2149 Baris',
@@ -477,11 +477,11 @@
     {
       id: 'db-ml_logs',
       kind: 'database',
-      category: 'AUDIT & TELEMETRY',
-      title: 'Firestore: ml_logs',
-      name: 'ml_logs',
-      path: 'firestore/ml_logs',
-      desc: 'Log performa inferensi real-time, latensi ms GPU/CPU, dan audit trail komputasi model.',
+      category: 'RESEARCH PUBLICATIONS',
+      title: 'MySQL: research_dispatches',
+      name: 'research_dispatches',
+      path: 'database/research_dispatches',
+      desc: 'Publikasi buletin riset klinis Alzheimer, telaah ilmiah, dan audit trail komputasi model.',
       iconType: 'ml_logs',
       borderVariant: 'card-border-cyan',
       ports: [{ side: 'left', type: 'green', symbol: '+' }],
@@ -2765,17 +2765,24 @@
     // Close code preview drawer if open
     closeCodeDrawer();
 
-    // Detach previous Firestore realtime listener if active
-    if (activeFirestoreUnsubscribe) {
-      try { activeFirestoreUnsubscribe(); } catch (_) {}
-      activeFirestoreUnsubscribe = null;
-    }
-
     const title = colName || 'users';
     if (dbDrawerTitle) dbDrawerTitle.textContent = title;
-    if (dbDrawerSubtitle) dbDrawerSubtitle.textContent = colMeta?.description || 'Memuat dokumen dari koleksi...';
+    if (dbDrawerSubtitle) dbDrawerSubtitle.textContent = colMeta?.description || 'Memuat rekaman dari database MySQL neura_db...';
+
+    const isDatasetCsv = title.endsWith('.csv') || (colMeta && colMeta.type === 'dataset');
+    const isSessionStore = title === 'sessions' || (colMeta && (colMeta.type === 'session' || colMeta.type === 'local'));
+
     if (dbDrawerTypeBadge) {
-      dbDrawerTypeBadge.textContent = (colMeta?.type || (title.endsWith('.csv') ? 'DATASET' : 'FIRESTORE')).toUpperCase();
+      if (isDatasetCsv) {
+        dbDrawerTypeBadge.innerHTML = 'DATASET &bull; CSV';
+        dbDrawerTypeBadge.className = 'db-drawer-type-badge sdb-type-dataset';
+      } else if (isSessionStore) {
+        dbDrawerTypeBadge.innerHTML = 'STORAGE &bull; SESSIONS';
+        dbDrawerTypeBadge.className = 'db-drawer-type-badge sdb-type-local';
+      } else {
+        dbDrawerTypeBadge.innerHTML = 'MYSQL &bull; neura_db';
+        dbDrawerTypeBadge.className = 'db-drawer-type-badge sdb-type-mysql';
+      }
     }
     if (dbDrawerCount) dbDrawerCount.textContent = 'Memuat data...';
 
@@ -2785,88 +2792,25 @@
 
     // Reset table & inspector
     if (dbRecordsThead) dbRecordsThead.innerHTML = '';
-    if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#6B7280;">Sedang menghubungkan ke Firebase Firestore...</td></tr>`;
+    if (dbRecordsTbody) dbRecordsTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:#6B7280;">Sedang memuat rekaman dari database MySQL neura_db...</td></tr>';
     if (dbDocInspector) dbDocInspector.style.display = 'none';
     if (dbDrawerSearchInput) dbDrawerSearchInput.value = '';
 
-    // Helper: fallback fetch via REST API
-    async function fallbackFetchDocs() {
-      try {
-        const res = await fetch(`/api/database/collection/${encodeURIComponent(title)}/docs?limit=60`);
-        const data = await res.json();
-        if (data.status === 'success') {
-          STATE.activeDbCollection = title;
-          STATE.activeDbDocs = data.documents || [];
-          renderDbDrawerContent(data);
-          updateCanvasAndSidebarColCount(title, data.documents?.length || 0);
-        } else {
-          if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#EF4444;">Gagal memuat dokumen: ${data.message || 'Error'}</td></tr>`;
-        }
-      } catch (err) {
-        if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#EF4444;">Koneksi error: ${err.message}</td></tr>`;
+    // Fetch live rows from MySQL via REST API
+    try {
+      const res = await fetch(`/api/database/collection/${encodeURIComponent(title)}/docs?limit=60`);
+      const data = await res.json();
+      if (data.status === 'success') {
+        STATE.activeDbCollection = title;
+        STATE.activeDbDocs = data.documents || [];
+        renderDbDrawerContent(data);
+        updateCanvasAndSidebarColCount(title, data.documents?.length || 0);
+      } else {
+        if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#EF4444;">Gagal memuat dokumen: ${data.message || 'Error'}</td></tr>`;
       }
+    } catch (err) {
+      if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#EF4444;">Koneksi error: ${err.message}</td></tr>`;
     }
-
-    // 1. Cek apakah Firebase Firestore Client SDK tersedia & koleksi adalah Firestore (bukan file CSV)
-    const isDatasetCsv = title.endsWith('.csv') || (colMeta && colMeta.type === 'dataset');
-    const isFirebaseReady = typeof window.firebase !== 'undefined' && typeof window.firebase.firestore === 'function';
-
-    if (isFirebaseReady && !isDatasetCsv) {
-      try {
-        const db = window.firebase.firestore();
-        // Listener REAL-TIME Firestore onSnapshot
-        activeFirestoreUnsubscribe = db.collection(title).limit(80).onSnapshot((snapshot) => {
-          const docs = [];
-          snapshot.forEach(docSnap => {
-            docs.push({
-              id: docSnap.id,
-              data: docSnap.data()
-            });
-          });
-
-          if (docs.length > 0) {
-            STATE.activeDbCollection = title;
-            STATE.activeDbDocs = docs;
-
-            // Ekstrak columns dinamis dari seluruh fields
-            const colSet = new Set();
-            docs.forEach(d => {
-              if (d.data && typeof d.data === 'object') {
-                Object.keys(d.data).forEach(k => colSet.add(k));
-              }
-            });
-            const columns = Array.from(colSet);
-
-            renderDbDrawerContent({
-              collection: title,
-              type: 'firestore',
-              count: docs.length,
-              columns: columns.length ? columns : ['id', 'status'],
-              documents: docs
-            });
-
-            if (dbDrawerTypeBadge) {
-              dbDrawerTypeBadge.innerHTML = `FIRESTORE &bull; <span style="color:#22C55E;font-weight:700;">â— REAL-TIME</span>`;
-            }
-
-            updateCanvasAndSidebarColCount(title, docs.length);
-            return;
-          }
-
-          // Jika snapshot kosong, coba panggil API
-          fallbackFetchDocs();
-        }, (err) => {
-          console.warn('[Firestore Live] onSnapshot error / offline, beralih ke REST API:', err);
-          fallbackFetchDocs();
-        });
-        return;
-      } catch (err) {
-        console.warn('[Firestore] Error attaching onSnapshot:', err);
-      }
-    }
-
-    // 2. Fallback fetch via REST API jika SDK belum aktif atau dataset CSV
-    await fallbackFetchDocs();
   }
   window.openDatabaseDrawer = openDatabaseDrawer;
 
@@ -2964,26 +2908,33 @@
   }
 
   /* =====================================================================
-     9C. DATABASE CANVAS MODE ENGINE
+     9C. DATABASE CANVAS MODE ENGINE (MySQL neura_db + DATASET)
      ===================================================================== */
   const DATABASE_CONNECTIONS = [
     ['db-users', 'db-sessions', 'auth', 'Token Guard'],
-    ['db-users', 'db-consultations', 'contains', 'Patient History'],
-    ['db-consultations', 'db-predictions', 'calls', 'Clinical Eval'],
-    ['db-predictions', 'db-ml_logs', 'core', 'Inference Telemetry'],
-    ['db-alzheimers_data', 'db-predictions', 'ml', 'OASIS Benchmark'],
-    ['db-alzheimers_data', 'db-ml_logs', 'default', 'Feature Sync'],
+    ['db-users', 'db-user_profiles', 'contains', '1:1 Biomarkers'],
+    ['db-users', 'db-nakes', 'auth', 'Clinician Account'],
+    ['db-users', 'db-consultations', 'dataflow', 'Patient History'],
+    ['db-nakes', 'db-consultations', 'calls', 'Validated By'],
+    ['db-consultations', 'db-prediction_records', 'core', 'Diagnosis & Logit z'],
+    ['db-alzheimers_data', 'db-prediction_records', 'ml', 'XGBoost Benchmark'],
+    ['db-research_dispatches', 'db-research_subscribers', 'default', 'Broadcast Email'],
+    ['db-users', 'db-research_dispatches', 'default', 'Public Feed'],
   ];
 
-  // SVG icons for DB collections — consistent with folder structure SVG system
+  // SVG icons for DB collections & MySQL tables
   const DB_SVG_ICONS = {
-    users:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    consultations:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
-    predictions:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
-    sessions:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-    ml_logs:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
-    dataset:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-    default:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+    users:               `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    user_profiles:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+    nakes:               `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
+    consultations:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+    predictions:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
+    prediction_records:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
+    research_dispatches: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+    research_subscribers:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+    sessions:            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    dataset:             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    default:             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
   };
 
   function getDbSvgIcon(col) {
@@ -2994,12 +2945,15 @@
   }
 
   const FALLBACK_DB_COLLECTIONS = [
-    { id: 'db-users', name: 'users', type: 'firestore', category: 'AUTH & PROFILES', count: 48, description: 'Akun pasien, kredensial autentikasi Firebase, profil nakes & preferensi.' },
-    { id: 'db-consultations', name: 'consultations', type: 'firestore', category: 'TELEMEDICINE', count: 36, description: 'Catatan rekam medis, anamnesis, riwayat konsultasi pasien & anjuran dokter.' },
-    { id: 'db-predictions', name: 'predictions', type: 'firestore', category: 'AI INFERENCE SINK', count: 82, description: 'Log hasil inferensi model Alzheimer, estimasi probabilitas CDR, dan skor risiko.' },
-    { id: 'db-sessions', name: 'sessions', type: 'local', category: 'SESSION STORE', count: 2, description: 'Token sesi login admin aktif, expiry time, dan kontrol akses RBAC berbasis disk.' },
-    { id: 'db-ml_logs', name: 'ml_logs', type: 'firestore', category: 'AUDIT & TELEMETRY', count: 128, description: 'Log runtime inferensi model, durasi komputasi (latency ms), throughput & memori GPU.' },
-    { id: 'db-alzheimers_data', name: 'alzheimers_disease_data.csv', type: 'dataset', category: 'TABULAR DATA LAKE', count: 2149, description: 'Dataset kohort OASIS dengan 35 parameter demografi, MRI (eTIV, nWBV), dan biomarker MMSE.' }
+    { id: 'db-users', name: 'users', type: 'mysql', category: 'AUTH & PROFILES', count: 3, description: 'Tabel akun pengguna, kredensial autentikasi, dan peran RBAC (User, Nakes, Admin).' },
+    { id: 'db-user_profiles', name: 'user_profiles', type: 'mysql', category: 'CLINICAL BIOMARKERS', count: 0, description: '32 Biomarker klinis pasien, MMSE, ADL, dan 7 keluhan kognitif spesifik Alzheimer.' },
+    { id: 'db-nakes', name: 'nakes', type: 'mysql', category: 'HEALTHCARE DIRECTORY', count: 3, description: 'Direktori tenaga medis & dokter spesialis saraf terverifikasi (SIP, STR, Faskes).' },
+    { id: 'db-consultations', name: 'consultations', type: 'mysql', category: 'TELEMEDICINE', count: 23, description: 'Catatan rekam medis terenkripsi, kode rujukan dokter (NKS-26-XXXX-ALZ), dan status.' },
+    { id: 'db-prediction_records', name: 'prediction_records', type: 'mysql', category: 'AI INFERENCE SINK', count: 37, description: 'Log inferensi XGBoost (25 trees), logit z, label resmi ML (0/1), dan tingkat risiko.' },
+    { id: 'db-research_dispatches', name: 'research_dispatches', type: 'mysql', category: 'RESEARCH PUBLICATIONS', count: 5, description: 'Buletin riset klinis Alzheimer, telaah ilmiah, dan publikasi penelitian berkala.' },
+    { id: 'db-research_subscribers', name: 'research_subscribers', type: 'mysql', category: 'SUBSCRIBERS', count: 0, description: 'Daftar email dokter dan peneliti pelanggan buletin riset klinis Neura.' },
+    { id: 'db-sessions', name: 'sessions', type: 'local', category: 'SESSION STORE', count: 2, description: 'Token sesi login admin & pengguna aktif, masa berlaku, dan kontrol akses berbasis disk.' },
+    { id: 'db-alzheimers_data', name: 'alzheimers_disease_data.csv', type: 'dataset', category: 'TABULAR DATA LAKE', count: 2149, description: 'Dataset kohort Alzheimer 2.149 baris dengan 35 parameter demografi, klinis & MMSE.' }
   ];
 
   function saveDatabaseCardPositions() {
@@ -3016,12 +2970,15 @@
 
   function layoutDatabaseGrid(collections) {
     const coords = [
-      { x: 180, y: 120 },
+      { x: 160, y: 120 },
       { x: 520, y: 120 },
-      { x: 860, y: 120 },
-      { x: 180, y: 270 },
-      { x: 520, y: 270 },
-      { x: 860, y: 270 },
+      { x: 880, y: 120 },
+      { x: 160, y: 280 },
+      { x: 520, y: 280 },
+      { x: 880, y: 280 },
+      { x: 160, y: 440 },
+      { x: 520, y: 440 },
+      { x: 880, y: 440 },
     ];
     let savedPositions = {};
     try {
@@ -3029,12 +2986,12 @@
     } catch(e) {}
 
     return collections.map((col, idx) => {
-      const defaultPos = coords[idx] || { x: 180 + (idx % 3) * 340, y: 120 + Math.floor(idx / 3) * 150 };
+      const defaultPos = coords[idx] || { x: 160 + (idx % 3) * 360, y: 120 + Math.floor(idx / 3) * 160 };
       const pos = savedPositions[col.name] || savedPositions[col.id] || defaultPos;
       return {
         id: col.id || `db-${col.name}`,
         name: col.name,
-        type: col.type || 'firestore',
+        type: col.type || 'mysql',
         kind: 'database',
         category: col.category || 'DATABASE',
         count: col.count || 0,
@@ -3043,6 +3000,8 @@
         y: pos.y,
         fields: col.fields || []
       };
+    });
+  }
     });
   }
 
@@ -3268,15 +3227,19 @@
   function renderDatabaseCard(node) {
     const el = document.createElement('div');
     const isDataset = node.type === 'dataset';
+    const isMysql = node.type === 'mysql';
+    const catColor = isDataset ? '#F59E0B' : (isMysql ? '#60A5FA' : '#06B6D4');
+    const unitLabel = isDataset ? 'Baris' : (isMysql ? 'Rows' : 'Items');
+
     el.className = `canvas-node db-card ${isDataset ? 'db-card-dataset' : ''}`;
     el.id = node.id;
     el.style.left = `${node.x}px`;
     el.style.top  = `${node.y}px`;
     el.setAttribute('data-col-name', node.name);
-    el.setAttribute('data-dbl-hint', 'Klik 2x untuk lihat isi dokumen');
+    el.setAttribute('data-dbl-hint', 'Klik 2x untuk lihat isi rekaman tabel');
 
     const iconBox = `<div class="card-icon-slot">${getDbSvgIcon(node)}</div>`;
-    const countBadge = `<div class="db-card-badge ${isDataset ? 'db-card-badge-dataset' : ''}">${node.count} ${isDataset ? 'Baris' : 'Docs'}</div>`;
+    const countBadge = `<div class="db-card-badge ${isDataset ? 'db-card-badge-dataset' : ''}">${node.count} ${unitLabel}</div>`;
     const portsHtml = renderPortsHtml(node);
     const isUsersCard = (node.name === 'users' || node.id === 'db-users');
     const onlineHtml = isUsersCard ? renderOnlineUsersStackHtml(cachedOnlineUsers) : '';
@@ -3285,7 +3248,7 @@
       ${iconBox}
       <div class="card-divider-v"></div>
       <div class="card-text-slot">
-        <div class="card-category-label" style="color:${isDataset ? '#F59E0B' : '#06B6D4'};font-weight:700;">${node.category || 'DATABASE'}</div>
+        <div class="card-category-label" style="color:${catColor};font-weight:700;">${node.category || 'DATABASE'}</div>
         <div class="card-title-main" title="${node.name}">${node.name}</div>
       </div>
       ${countBadge}
@@ -3374,7 +3337,7 @@
       num: '06',
       title: 'Persistence & Data Lake Layer',
       catFilter: 'storage',
-      nodeIds: ['node-dataset', 'store-firestore-users', 'store-firestore-consultations', 'store-firestore-predictions', 'store-local-sessions', 'store-firestore-logs']
+      nodeIds: ['db-csv-lake', 'db-users', 'db-consultations', 'db-predictions', 'db-sessions', 'db-ml_logs']
     }
   ];
 
@@ -3740,18 +3703,24 @@
 
   function renderSidebarDatabaseList(collections) {
     if (!sidebarDbList) return;
-    sidebarDbList.innerHTML = collections.map(c => `
+    sidebarDbList.innerHTML = collections.map(c => {
+      const isDataset = c.type === 'dataset';
+      const isMysql = c.type === 'mysql';
+      const pillClass = isDataset ? 'sdb-type-dataset' : (isMysql ? 'sdb-type-mysql' : '');
+      const unitLabel = isDataset ? 'baris' : (isMysql ? 'rows' : 'items');
+      return `
       <div class="sidebar-db-item" data-col-id="${c.id}" data-col-name="${c.name}">
         <div class="sdb-icon-box">${getDbSvgIcon(c)}</div>
         <div class="sdb-info">
           <div class="sdb-name">${escapeHtml(c.name)}</div>
           <div class="sdb-meta">
-            <span class="sdb-type-pill ${c.type === 'dataset' ? 'sdb-type-dataset' : ''}">${c.type.toUpperCase()}</span>
-            <span class="sdb-count">${c.count} ${c.type === 'dataset' ? 'baris' : 'docs'}</span>
+            <span class="sdb-type-pill ${pillClass}">${c.type.toUpperCase()}</span>
+            <span class="sdb-count">${c.count} ${unitLabel}</span>
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     $$('.sidebar-db-item').forEach(el => {
       el.addEventListener('click', () => {
@@ -3821,7 +3790,7 @@
           <div class="ctx-header">
             <span class="ctx-header-icon">${getCtxSvg(isDataset ? 'dataset' : 'database')}</span>
             <span class="ctx-header-title">${colTitle}</span>
-            <span class="ctx-header-badge">${isDataset ? 'DATASET' : 'FIRESTORE'}</span>
+            <span class="ctx-header-badge">${isDataset ? 'DATASET' : (node.type === 'local' ? 'LOCAL' : 'MYSQL')}</span>
           </div>
           <div class="ctx-item primary" data-action="db-showcase">
             <span class="ctx-item-icon">${getCtxSvg('table')}</span>
@@ -4315,7 +4284,7 @@
         match = (node.lang === 'javascript') || ext === '.js' || ext === '.ts' || name.endsWith('.js') || name.endsWith('.ts');
       } else if (filter === 'database') {
         match = (node.kind === 'database') || (node.type === 'firestore' || node.type === 'dataset' || (node.id && node.id.startsWith('db-')));
-      } else if (filter === 'firestore') {
+      } else if (filter === 'firestore' || filter === 'mysql') {
         match = node.type === 'firestore' || (node.id && node.id.startsWith('db-') && !node.id.includes('csv'));
       } else if (filter === 'dataset') {
         match = node.type === 'dataset' || (node.name && node.name.endsWith('.csv'));
@@ -7285,7 +7254,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         { nodes: ['page-welcome'], conns: ['page-welcome->auth-register'], msg: '1. Pengguna membuka modal pendaftaran di welcome.html...' },
         { nodes: ['auth-register'], conns: ['auth-register->auth-profile', 'auth-register->auth-otp'], msg: '2. Pengisian identitas & pengiriman 6-digit kode OTP...' },
         { nodes: ['auth-otp', 'auth-profile'], conns: ['auth-otp->gate-email-verify', 'auth-profile->gate-license-check'], msg: '3. Verifikasi kode OTP email & validasi STR konsil kedokteran...' },
-        { nodes: ['gate-email-verify', 'gate-license-check'], conns: ['auth-profile->db-users'], msg: '4. Profil kredensial terverifikasi tersimpan di Firestore: users!' }
+        { nodes: ['gate-email-verify', 'gate-license-check'], conns: ['auth-profile->db-users'], msg: '4. Profil kredensial terverifikasi tersimpan di MySQL: users!' }
       ];
     } else if (scenario === 'screening') {
       sequence = [
@@ -7295,7 +7264,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         { nodes: ['dash-user'], conns: ['dash-user->input-biomarkers', 'dash-user->input-voice'], msg: '4. Pasien mengisi 35 biomarker & merekam suara kognitif...' },
         { nodes: ['input-biomarkers', 'input-voice'], conns: ['input-biomarkers->engine-biomarker-pipe', 'input-voice->engine-voice-pipe'], msg: '5. Ekstraksi tremor akustik & normalisasi tensor...' },
         { nodes: ['engine-biomarker-pipe', 'engine-voice-pipe'], conns: ['engine-biomarker-pipe->engine-ml-alzheimer', 'engine-voice-pipe->engine-ml-alzheimer'], msg: '6. Ensemble PyTorch menghitung probabilitas skor CDR...' },
-        { nodes: ['engine-ml-alzheimer'], conns: ['engine-ml-alzheimer->engine-report-sink', 'engine-ml-alzheimer->db-predictions'], msg: '7. Laporan klinis PDF terbit & riwayat tersimpan di Firestore!' }
+        { nodes: ['engine-ml-alzheimer'], conns: ['engine-ml-alzheimer->engine-report-sink', 'engine-ml-alzheimer->db-predictions'], msg: '7. Laporan klinis PDF terbit & riwayat tersimpan di MySQL: prediction_records!' }
       ];
     } else if (scenario === 'telemed') {
       sequence = [

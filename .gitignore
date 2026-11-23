@@ -1,65 +1,91 @@
-# Python
+# ==============================================================================
+# NEURA AI — .gitignore
+# ==============================================================================
+
+# Python Bytecode & Distribution
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
+*$py.class
+*.so
 .Python
-*.egg-info/
-dist/
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Models LLM
-modelsLLM/
-
-# Virtual Environment
+# Virtual Environments
 venv/
 .venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
-# Environment Variables
+# Environment Variables & Private Secrets
 .env
+.env.local
+.env.*.local
+*.pem
+*.key
 
-# Flask Session storage
-.flask_sessions/
-*.bak
+# Persistent Storage, Sessions, & Runtime Logs
+storage/framework/sessions/*
+!storage/framework/sessions/.gitkeep
+storage/logs/*.log
+!storage/logs/.gitkeep
+storage/app/*
+!storage/app/.gitkeep
+!storage/app/consultations_records.json
+!storage/app/notifications.json
 
-# Jupyter Notebooks
+# Large AI Models & Binaries (GGUF, Keras, H5)
+storage/modelsLLM/*.gguf
+storage/modelsLLM/*.bin
+!storage/modelsLLM/.gitkeep
+modelsLLM/
+storage/checkpoints/*.keras
+storage/checkpoints/*.h5
+storage/checkpoints/NeuralNetwork/
+!storage/checkpoints/.gitkeep
+!storage/checkpoints/xgboost_alzheimers.json
+
+# Reports & Metrics (keep .gitkeep and reports)
+!storage/reports/.gitkeep
+
+# Temporary Scripts & Test Caches
+scratch/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Jupyter Notebooks & Checkpoints
 .ipynb_checkpoints/
 *.ipynb
 
-# TensorFlow / Model Files
-*.h5
-*.keras
-*.pb
-*.tflite
+# Legacy Session Folders & Backups
+.flask_sessions/
+*.bak
 
-# Public outputs (uncomment to exclude from git)
-# public/checkpoints/
-# public/logs/
-# public/exports/
-
-# Keep public directories tracked (but not their contents)
-!public/checkpoints/.gitkeep
-!public/logs/.gitkeep
-!public/exports/.gitkeep
-!public/reports/.gitkeep
-!public/assets/.gitkeep
-
-# OS
+# Operating System Metadata
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# IDE
-.vscode/settings.json
+# IDE & Editor Settings
 .idea/
 *.swp
 *.swo
-
-# Testing
-.pytest_cache/
-htmlcov/
-.coverage
-coverage.xml
-
-# Typing
-.mypy_cache/
+*~
+.vscode/
