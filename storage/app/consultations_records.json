@@ -15454,5 +15454,625 @@
       "Diagnosis": 0,
       "DoctorInCharge": "XXXConfid"
     }
+  },
+  "NKS-26-8372-ALZ": {
+    "document_id": "DOC-NEURA-2026-8372",
+    "nakes_code": "NKS-26-8372-ALZ",
+    "created_at": "23 November 2026, 23:57 WIB",
+    "timestamp_iso": "2026-11-23T23:57:35.080444",
+    "status": "VALID_ACTIVE",
+    "patient": {
+      "name": "Pasien #5804",
+      "id": "5804",
+      "age": 85,
+      "gender": "Perempuan (1)",
+      "source": "dataset_sample"
+    },
+    "prediction": {
+      "model_name": "XGBoost 3.x (25 Trees • 10-Fold CV RapidMiner)",
+      "ml_label": 0,
+      "ml_label_name": "Diagnosis = 0 (Non-Alzheimer's / Negative)",
+      "ml_label_badge": "Diagnosis = 0",
+      "diagnosis_label": "Non-Alzheimer's",
+      "is_positive": false,
+      "risk_level": "Low Risk (Negative)",
+      "risk_level_id": "Risiko Rendah (Negatif)",
+      "probability": 10.3,
+      "probability_positive": 10.3,
+      "probability_negative": 89.7,
+      "confidence": "89.7%",
+      "calculation_details": {
+        "raw_logit_z": -2.1641,
+        "base_margin": 0.0002,
+        "sum_tree_weights": -2.1642,
+        "num_trees": 25,
+        "formula": "σ(z) = 1 / (1 + exp(-z))",
+        "latex_formula": "P(\\text{Diagnosis}=1) = \\frac{1}{1 + e^{-z}}",
+        "formula_evaluated": "P(1) = 1 / (1 + e^(--2.1641)) = 10.30%",
+        "math_steps": "z = base_margin + Σ(w_tree) = 0.0002 - 2.1642 = -2.1641\nP(Diagnosis=1) = σ(z) = 1 / (1 + e^(-(-2.1641))) = 0.1030 (10.30%)\nP(Diagnosis=0) = 1 - P(Diagnosis=1) = 0.8970 (89.70%)",
+        "top_positive_drivers": [
+          {
+            "feature": "CholesterolHDL",
+            "impact": 0.1363,
+            "impact_abs": 0.1363
+          }
+        ],
+        "top_protective_drivers": [
+          {
+            "feature": "BehavioralProblems",
+            "impact": -0.4853,
+            "impact_abs": 0.4853
+          },
+          {
+            "feature": "MMSE",
+            "impact": -0.3875,
+            "impact_abs": 0.3875
+          },
+          {
+            "feature": "FunctionalAssessment",
+            "impact": -0.3583,
+            "impact_abs": 0.3583
+          },
+          {
+            "feature": "MemoryComplaints",
+            "impact": -0.3529,
+            "impact_abs": 0.3529
+          }
+        ]
+      },
+      "rapidminer_tree": {
+        "diagnosis": 0,
+        "label": "Non-Alzheimer",
+        "confidence": 96.1,
+        "leaf_counts": {
+          "0": 394,
+          "1": 16
+        },
+        "rule_path": "MMSE > 24.010 -> FunctionalAssessment <= 9.894",
+        "source": "RapidMiner modelML.rmp (Rule Tree)"
+      },
+      "consensus": {
+        "agreement": true,
+        "status": "Konsisten (XGBoost & RapidMiner sejalan)",
+        "xgboost_prediction": 0,
+        "rapidminer_prediction": 0
+      },
+      "symptom_summary": {
+        "items": {
+          "MemoryComplaints": {
+            "name": "Keluhan Memori / Sering Lupa",
+            "val": 0,
+            "desc": "Kesulitan mengingat informasi baru atau percakapan baru-baru ini"
+          },
+          "BehavioralProblems": {
+            "name": "Gangguan Perilaku / Emosi",
+            "val": 0,
+            "desc": "Agitasi, kecemasan, atau respon emosional tak biasa"
+          },
+          "Confusion": {
+            "name": "Kebingungan Mental",
+            "val": 1,
+            "desc": "Sulit memproses instruksi atau bingung dalam alur berpikir"
+          },
+          "Disorientation": {
+            "name": "Disorientasi Waktu & Tempat",
+            "val": 0,
+            "desc": "Lupa tanggal, musim, atau tersesat di tempat yang dikenal"
+          },
+          "PersonalityChanges": {
+            "name": "Perubahan Kepribadian",
+            "val": 1,
+            "desc": "Penarikan diri dari sosial atau perubahan watak drastis"
+          },
+          "DifficultyCompletingTasks": {
+            "name": "Sulit Menyelesaikan Tugas Rutin",
+            "val": 0,
+            "desc": "Kesulitan menyusun rencana atau mengurus keuangan/tugas rumah"
+          },
+          "Forgetfulness": {
+            "name": "Sering Lupa Menaruh Barang",
+            "val": 0,
+            "desc": "Menaruh barang di tempat janggal dan tidak dapat menelusuri kembali"
+          }
+        },
+        "active_count": 2,
+        "total_count": 7,
+        "active_percentage": 28.6,
+        "has_cognitive_alert": true
+      }
+    },
+    "biomarkers_breakdown": [
+      {
+        "category": "Demografi & Fisik",
+        "items": [
+          {
+            "label": "Usia",
+            "value": "85 tahun"
+          },
+          {
+            "label": "Jenis Kelamin",
+            "value": "Perempuan (1)"
+          },
+          {
+            "label": "Indeks Massa Tubuh (BMI)",
+            "value": "38.6 kg/m²"
+          },
+          {
+            "label": "Tingkat Pendidikan",
+            "value": "Level 2"
+          }
+        ]
+      },
+      {
+        "category": "Kognitif & Fungsional",
+        "items": [
+          {
+            "label": "Mini-Mental State Exam (MMSE)",
+            "value": "28.2 / 30"
+          },
+          {
+            "label": "Activities of Daily Living (ADL)",
+            "value": "7.1 / 10"
+          },
+          {
+            "label": "Functional Assessment",
+            "value": "8.9 / 10"
+          }
+        ]
+      },
+      {
+        "category": "Vaskular & Lipid",
+        "items": [
+          {
+            "label": "Tekanan Darah",
+            "value": "173/109 mmHg"
+          },
+          {
+            "label": "Kolesterol Total",
+            "value": "178.8 mg/dL"
+          },
+          {
+            "label": "LDL / HDL",
+            "value": "137.7 / 96.6 mg/dL"
+          },
+          {
+            "label": "Trigliserida",
+            "value": "313.8 mg/dL"
+          }
+        ]
+      }
+    ],
+    "all_32_biomarkers": {
+      "Age": 85,
+      "Gender": "Perempuan (1)",
+      "Ethnicity": 3,
+      "EducationLevel": 2,
+      "BMI": 38.6,
+      "Smoking": 0,
+      "AlcoholConsumption": 13.8,
+      "PhysicalActivity": 3.5,
+      "DietQuality": 8.2,
+      "SleepQuality": 4.3,
+      "FamilyHistoryAlzheimers": 0,
+      "CardiovascularDisease": 0,
+      "Diabetes": 0,
+      "Depression": 0,
+      "HeadInjury": 0,
+      "Hypertension": 0,
+      "SystolicBP": 173,
+      "DiastolicBP": 109,
+      "CholesterolTotal": 178.8,
+      "CholesterolLDL": 137.7,
+      "CholesterolHDL": 96.6,
+      "CholesterolTriglycerides": 313.8,
+      "MMSE": 28.2,
+      "FunctionalAssessment": 8.9,
+      "MemoryComplaints": 0,
+      "BehavioralProblems": 0,
+      "ADL": 7.1,
+      "Confusion": 1,
+      "Disorientation": 0,
+      "PersonalityChanges": 1,
+      "DifficultyCompletingTasks": 0,
+      "Forgetfulness": 0
+    },
+    "symptom_summary": {
+      "items": {
+        "MemoryComplaints": {
+          "name": "Keluhan Memori / Sering Lupa",
+          "val": 0,
+          "desc": "Kesulitan mengingat informasi baru atau percakapan baru-baru ini"
+        },
+        "BehavioralProblems": {
+          "name": "Gangguan Perilaku / Emosi",
+          "val": 0,
+          "desc": "Agitasi, kecemasan, atau respon emosional tak biasa"
+        },
+        "Confusion": {
+          "name": "Kebingungan Mental",
+          "val": 1,
+          "desc": "Sulit memproses instruksi atau bingung dalam alur berpikir"
+        },
+        "Disorientation": {
+          "name": "Disorientasi Waktu & Tempat",
+          "val": 0,
+          "desc": "Lupa tanggal, musim, atau tersesat di tempat yang dikenal"
+        },
+        "PersonalityChanges": {
+          "name": "Perubahan Kepribadian",
+          "val": 1,
+          "desc": "Penarikan diri dari sosial atau perubahan watak drastis"
+        },
+        "DifficultyCompletingTasks": {
+          "name": "Sulit Menyelesaikan Tugas Rutin",
+          "val": 0,
+          "desc": "Kesulitan menyusun rencana atau mengurus keuangan/tugas rumah"
+        },
+        "Forgetfulness": {
+          "name": "Sering Lupa Menaruh Barang",
+          "val": 0,
+          "desc": "Menaruh barang di tempat janggal dan tidak dapat menelusuri kembali"
+        }
+      },
+      "active_count": 2,
+      "total_count": 7,
+      "active_percentage": 28.6,
+      "has_cognitive_alert": true
+    },
+    "recommendations": [
+      "Lakukan pemantauan fungsi kognitif berkala minimal 1 kali setiap 6 bulan.",
+      "Terapkan diet neuroprotektif (Mediterranean-DASH Diet Intervention for Neurodegenerative Delay / MIND Diet).",
+      "Rutin melakukan stimulasi otak (membaca kritis, teka-teki, interaksi sosial aktif) minimal 30 menit sehari.",
+      "Bawa dan serahkan Kode Konsultasi Nakes ini ke Dokter Spesialis Saraf / Neurologi di Faskes rujukan untuk pemeriksaan lanjutan (MoCA, MRI Brain, atau PET Scan jika diindikasikan)."
+    ],
+    "verification_hash": "SHA256-235A858CDF8C5C25",
+    "source": "dataset_sample",
+    "raw_features": {
+      "PatientID": 5804,
+      "Age": 85,
+      "Gender": 1,
+      "Ethnicity": 3,
+      "EducationLevel": 2,
+      "BMI": 38.5549277005657,
+      "Smoking": 0,
+      "AlcoholConsumption": 13.83837109894156,
+      "PhysicalActivity": 3.509199765268638,
+      "DietQuality": 8.246322162314382,
+      "SleepQuality": 4.325691977685004,
+      "FamilyHistoryAlzheimers": 0,
+      "CardiovascularDisease": 0,
+      "Diabetes": 0,
+      "Depression": 0,
+      "HeadInjury": 0,
+      "Hypertension": 0,
+      "SystolicBP": 173,
+      "DiastolicBP": 109,
+      "CholesterolTotal": 178.84420282831528,
+      "CholesterolLDL": 137.69867206286628,
+      "CholesterolHDL": 96.64922605825224,
+      "CholesterolTriglycerides": 313.8115056572668,
+      "MMSE": 28.184766665814383,
+      "FunctionalAssessment": 8.88619653733594,
+      "MemoryComplaints": 0,
+      "BehavioralProblems": 0,
+      "ADL": 7.092648363931541,
+      "Confusion": 1,
+      "Disorientation": 0,
+      "PersonalityChanges": 1,
+      "DifficultyCompletingTasks": 0,
+      "Forgetfulness": 0,
+      "Diagnosis": 0,
+      "DoctorInCharge": "XXXConfid"
+    }
+  },
+  "DOC-NEURA-2026-8372": {
+    "document_id": "DOC-NEURA-2026-8372",
+    "nakes_code": "NKS-26-8372-ALZ",
+    "created_at": "23 November 2026, 23:57 WIB",
+    "timestamp_iso": "2026-11-23T23:57:35.080444",
+    "status": "VALID_ACTIVE",
+    "patient": {
+      "name": "Pasien #5804",
+      "id": "5804",
+      "age": 85,
+      "gender": "Perempuan (1)",
+      "source": "dataset_sample"
+    },
+    "prediction": {
+      "model_name": "XGBoost 3.x (25 Trees • 10-Fold CV RapidMiner)",
+      "ml_label": 0,
+      "ml_label_name": "Diagnosis = 0 (Non-Alzheimer's / Negative)",
+      "ml_label_badge": "Diagnosis = 0",
+      "diagnosis_label": "Non-Alzheimer's",
+      "is_positive": false,
+      "risk_level": "Low Risk (Negative)",
+      "risk_level_id": "Risiko Rendah (Negatif)",
+      "probability": 10.3,
+      "probability_positive": 10.3,
+      "probability_negative": 89.7,
+      "confidence": "89.7%",
+      "calculation_details": {
+        "raw_logit_z": -2.1641,
+        "base_margin": 0.0002,
+        "sum_tree_weights": -2.1642,
+        "num_trees": 25,
+        "formula": "σ(z) = 1 / (1 + exp(-z))",
+        "latex_formula": "P(\\text{Diagnosis}=1) = \\frac{1}{1 + e^{-z}}",
+        "formula_evaluated": "P(1) = 1 / (1 + e^(--2.1641)) = 10.30%",
+        "math_steps": "z = base_margin + Σ(w_tree) = 0.0002 - 2.1642 = -2.1641\nP(Diagnosis=1) = σ(z) = 1 / (1 + e^(-(-2.1641))) = 0.1030 (10.30%)\nP(Diagnosis=0) = 1 - P(Diagnosis=1) = 0.8970 (89.70%)",
+        "top_positive_drivers": [
+          {
+            "feature": "CholesterolHDL",
+            "impact": 0.1363,
+            "impact_abs": 0.1363
+          }
+        ],
+        "top_protective_drivers": [
+          {
+            "feature": "BehavioralProblems",
+            "impact": -0.4853,
+            "impact_abs": 0.4853
+          },
+          {
+            "feature": "MMSE",
+            "impact": -0.3875,
+            "impact_abs": 0.3875
+          },
+          {
+            "feature": "FunctionalAssessment",
+            "impact": -0.3583,
+            "impact_abs": 0.3583
+          },
+          {
+            "feature": "MemoryComplaints",
+            "impact": -0.3529,
+            "impact_abs": 0.3529
+          }
+        ]
+      },
+      "rapidminer_tree": {
+        "diagnosis": 0,
+        "label": "Non-Alzheimer",
+        "confidence": 96.1,
+        "leaf_counts": {
+          "0": 394,
+          "1": 16
+        },
+        "rule_path": "MMSE > 24.010 -> FunctionalAssessment <= 9.894",
+        "source": "RapidMiner modelML.rmp (Rule Tree)"
+      },
+      "consensus": {
+        "agreement": true,
+        "status": "Konsisten (XGBoost & RapidMiner sejalan)",
+        "xgboost_prediction": 0,
+        "rapidminer_prediction": 0
+      },
+      "symptom_summary": {
+        "items": {
+          "MemoryComplaints": {
+            "name": "Keluhan Memori / Sering Lupa",
+            "val": 0,
+            "desc": "Kesulitan mengingat informasi baru atau percakapan baru-baru ini"
+          },
+          "BehavioralProblems": {
+            "name": "Gangguan Perilaku / Emosi",
+            "val": 0,
+            "desc": "Agitasi, kecemasan, atau respon emosional tak biasa"
+          },
+          "Confusion": {
+            "name": "Kebingungan Mental",
+            "val": 1,
+            "desc": "Sulit memproses instruksi atau bingung dalam alur berpikir"
+          },
+          "Disorientation": {
+            "name": "Disorientasi Waktu & Tempat",
+            "val": 0,
+            "desc": "Lupa tanggal, musim, atau tersesat di tempat yang dikenal"
+          },
+          "PersonalityChanges": {
+            "name": "Perubahan Kepribadian",
+            "val": 1,
+            "desc": "Penarikan diri dari sosial atau perubahan watak drastis"
+          },
+          "DifficultyCompletingTasks": {
+            "name": "Sulit Menyelesaikan Tugas Rutin",
+            "val": 0,
+            "desc": "Kesulitan menyusun rencana atau mengurus keuangan/tugas rumah"
+          },
+          "Forgetfulness": {
+            "name": "Sering Lupa Menaruh Barang",
+            "val": 0,
+            "desc": "Menaruh barang di tempat janggal dan tidak dapat menelusuri kembali"
+          }
+        },
+        "active_count": 2,
+        "total_count": 7,
+        "active_percentage": 28.6,
+        "has_cognitive_alert": true
+      }
+    },
+    "biomarkers_breakdown": [
+      {
+        "category": "Demografi & Fisik",
+        "items": [
+          {
+            "label": "Usia",
+            "value": "85 tahun"
+          },
+          {
+            "label": "Jenis Kelamin",
+            "value": "Perempuan (1)"
+          },
+          {
+            "label": "Indeks Massa Tubuh (BMI)",
+            "value": "38.6 kg/m²"
+          },
+          {
+            "label": "Tingkat Pendidikan",
+            "value": "Level 2"
+          }
+        ]
+      },
+      {
+        "category": "Kognitif & Fungsional",
+        "items": [
+          {
+            "label": "Mini-Mental State Exam (MMSE)",
+            "value": "28.2 / 30"
+          },
+          {
+            "label": "Activities of Daily Living (ADL)",
+            "value": "7.1 / 10"
+          },
+          {
+            "label": "Functional Assessment",
+            "value": "8.9 / 10"
+          }
+        ]
+      },
+      {
+        "category": "Vaskular & Lipid",
+        "items": [
+          {
+            "label": "Tekanan Darah",
+            "value": "173/109 mmHg"
+          },
+          {
+            "label": "Kolesterol Total",
+            "value": "178.8 mg/dL"
+          },
+          {
+            "label": "LDL / HDL",
+            "value": "137.7 / 96.6 mg/dL"
+          },
+          {
+            "label": "Trigliserida",
+            "value": "313.8 mg/dL"
+          }
+        ]
+      }
+    ],
+    "all_32_biomarkers": {
+      "Age": 85,
+      "Gender": "Perempuan (1)",
+      "Ethnicity": 3,
+      "EducationLevel": 2,
+      "BMI": 38.6,
+      "Smoking": 0,
+      "AlcoholConsumption": 13.8,
+      "PhysicalActivity": 3.5,
+      "DietQuality": 8.2,
+      "SleepQuality": 4.3,
+      "FamilyHistoryAlzheimers": 0,
+      "CardiovascularDisease": 0,
+      "Diabetes": 0,
+      "Depression": 0,
+      "HeadInjury": 0,
+      "Hypertension": 0,
+      "SystolicBP": 173,
+      "DiastolicBP": 109,
+      "CholesterolTotal": 178.8,
+      "CholesterolLDL": 137.7,
+      "CholesterolHDL": 96.6,
+      "CholesterolTriglycerides": 313.8,
+      "MMSE": 28.2,
+      "FunctionalAssessment": 8.9,
+      "MemoryComplaints": 0,
+      "BehavioralProblems": 0,
+      "ADL": 7.1,
+      "Confusion": 1,
+      "Disorientation": 0,
+      "PersonalityChanges": 1,
+      "DifficultyCompletingTasks": 0,
+      "Forgetfulness": 0
+    },
+    "symptom_summary": {
+      "items": {
+        "MemoryComplaints": {
+          "name": "Keluhan Memori / Sering Lupa",
+          "val": 0,
+          "desc": "Kesulitan mengingat informasi baru atau percakapan baru-baru ini"
+        },
+        "BehavioralProblems": {
+          "name": "Gangguan Perilaku / Emosi",
+          "val": 0,
+          "desc": "Agitasi, kecemasan, atau respon emosional tak biasa"
+        },
+        "Confusion": {
+          "name": "Kebingungan Mental",
+          "val": 1,
+          "desc": "Sulit memproses instruksi atau bingung dalam alur berpikir"
+        },
+        "Disorientation": {
+          "name": "Disorientasi Waktu & Tempat",
+          "val": 0,
+          "desc": "Lupa tanggal, musim, atau tersesat di tempat yang dikenal"
+        },
+        "PersonalityChanges": {
+          "name": "Perubahan Kepribadian",
+          "val": 1,
+          "desc": "Penarikan diri dari sosial atau perubahan watak drastis"
+        },
+        "DifficultyCompletingTasks": {
+          "name": "Sulit Menyelesaikan Tugas Rutin",
+          "val": 0,
+          "desc": "Kesulitan menyusun rencana atau mengurus keuangan/tugas rumah"
+        },
+        "Forgetfulness": {
+          "name": "Sering Lupa Menaruh Barang",
+          "val": 0,
+          "desc": "Menaruh barang di tempat janggal dan tidak dapat menelusuri kembali"
+        }
+      },
+      "active_count": 2,
+      "total_count": 7,
+      "active_percentage": 28.6,
+      "has_cognitive_alert": true
+    },
+    "recommendations": [
+      "Lakukan pemantauan fungsi kognitif berkala minimal 1 kali setiap 6 bulan.",
+      "Terapkan diet neuroprotektif (Mediterranean-DASH Diet Intervention for Neurodegenerative Delay / MIND Diet).",
+      "Rutin melakukan stimulasi otak (membaca kritis, teka-teki, interaksi sosial aktif) minimal 30 menit sehari.",
+      "Bawa dan serahkan Kode Konsultasi Nakes ini ke Dokter Spesialis Saraf / Neurologi di Faskes rujukan untuk pemeriksaan lanjutan (MoCA, MRI Brain, atau PET Scan jika diindikasikan)."
+    ],
+    "verification_hash": "SHA256-235A858CDF8C5C25",
+    "source": "dataset_sample",
+    "raw_features": {
+      "PatientID": 5804,
+      "Age": 85,
+      "Gender": 1,
+      "Ethnicity": 3,
+      "EducationLevel": 2,
+      "BMI": 38.5549277005657,
+      "Smoking": 0,
+      "AlcoholConsumption": 13.83837109894156,
+      "PhysicalActivity": 3.509199765268638,
+      "DietQuality": 8.246322162314382,
+      "SleepQuality": 4.325691977685004,
+      "FamilyHistoryAlzheimers": 0,
+      "CardiovascularDisease": 0,
+      "Diabetes": 0,
+      "Depression": 0,
+      "HeadInjury": 0,
+      "Hypertension": 0,
+      "SystolicBP": 173,
+      "DiastolicBP": 109,
+      "CholesterolTotal": 178.84420282831528,
+      "CholesterolLDL": 137.69867206286628,
+      "CholesterolHDL": 96.64922605825224,
+      "CholesterolTriglycerides": 313.8115056572668,
+      "MMSE": 28.184766665814383,
+      "FunctionalAssessment": 8.88619653733594,
+      "MemoryComplaints": 0,
+      "BehavioralProblems": 0,
+      "ADL": 7.092648363931541,
+      "Confusion": 1,
+      "Disorientation": 0,
+      "PersonalityChanges": 1,
+      "DifficultyCompletingTasks": 0,
+      "Forgetfulness": 0,
+      "Diagnosis": 0,
+      "DoctorInCharge": "XXXConfid"
+    }
   }
 }
