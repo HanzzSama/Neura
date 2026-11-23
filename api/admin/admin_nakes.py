@@ -15,6 +15,11 @@ from pathlib import Path
 from flask import Blueprint, request, jsonify
 from core.logger import get_logger
 
+try:
+    from core.database import execute_query, execute_insert, execute_update
+except Exception:
+    execute_query = execute_insert = execute_update = None
+
 logger = get_logger(__name__)
 
 admin_nakes_bp = Blueprint("admin_nakes", __name__)
@@ -26,7 +31,27 @@ NAKES_DB_FILE = Path(__file__).resolve().parent.parent.parent / "datasets" / "na
 
 
 def _load_nakes_db():
-    """Baca database nakes dari JSON. Kembalikan list kosong jika file tidak ada."""
+    """Baca data nakes dari database MySQL relasional jika aktif, fallback ke JSON."""
+    if execute_query:
+        try:
+            rows = execute_query("SELECT * FROM nakes ORDER BY id DESC")
+            if rows:
+                return [{
+                    "id": r.get("nip") or f"NKS-{r['id']}",
+                    "name": r["full_name"],
+                    "profession": r["specialization"],
+                    "str_number": r["str"],
+                    "sip_number": r["sip"],
+                    "institution": r["facility_name"],
+                    "phone": r.get("phone_number", ""),
+                    "nakes_email": r.get("email", ""),
+                    "real_email": r.get("email", ""),
+                    "status": "Terverifikasi KKI" if r.get("status_validation") == "ACTIVE" else r.get("status_validation", "ACTIVE"),
+                    "created_at": str(r.get("created_at", ""))
+                } for r in rows]
+        except Exception as e:
+            logger.warning(f"MySQL query nakes fallback to JSON: {e}")
+
     if not NAKES_DB_FILE.exists():
         return []
     try:
@@ -122,6 +147,18 @@ def api_create_nakes():
 
     items.insert(0, record)
     _save_nakes_db(items)
+
+    # Simpan juga ke database MySQL jika server aktif
+    if execute_insert:
+        try:
+            execute_insert(
+                "INSERT INTO nakes (sip, str, nip, full_name, specialization, facility_name, phone_number, email, status_validation) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'ACTIVE') "
+                "ON DUPLICATE KEY UPDATE full_name=VALUES(full_name), facility_name=VALUES(facility_name)",
+                (record["sip_number"], record["str_number"], record["id"], record["name"], record["profession"], record["institution"], record["phone"], record["nakes_email"])
+            )
+        except Exception as e:
+            logger.warning(f"MySQL create nakes warning: {e}")
 
     return jsonify({
         "success": True,

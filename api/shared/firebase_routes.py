@@ -13,6 +13,9 @@ from pathlib import Path
 from flask import Blueprint, request, jsonify
 from core.logger import get_logger
 
+# Resolve BASE_DIR ke root project (dua level di atas file ini: api/shared/ → root)
+_BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 logger = get_logger(__name__)
 
 shared_bp = Blueprint("shared", __name__)
@@ -88,7 +91,7 @@ def api_about():
     """
     global _about_cache, _about_cache_mtime
 
-    about_path = Path("about_app.json")
+    about_path = _BASE_DIR / "config" / "about_app.json"
     if not about_path.exists():
         return jsonify({"error": "about_app.json not found"}), 404
 
@@ -103,7 +106,7 @@ def api_about():
         _about_cache_mtime = current_mtime
         return jsonify(_about_cache)
     except Exception as e:
-        logger.error(f"[about] Failed to read about_app.json: {e}")
+        logger.error(f"[about] Failed to read config/about_app.json: {e}")
         return jsonify({"error": "Failed to read about_app.json"}), 500
 
 

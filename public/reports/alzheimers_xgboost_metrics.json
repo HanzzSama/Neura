@@ -40,86 +40,86 @@
   ],
   "hyperparameters": {
     "learning_rate": 0.2,
-    "max_depth": 5,
+    "max_depth": 4,
     "random_seed": 2001,
     "cv_folds": 10,
     "scale_pos_weight": 1.83,
-    "best_iteration": 26
+    "best_iteration": 25
   },
-  "cv_10fold_auc": 0.9553,
+  "cv_10fold_auc": 0.9527,
   "metrics": {
-    "accuracy": 0.9465,
-    "precision": 0.9574,
+    "accuracy": 0.9442,
+    "precision": 0.9507,
     "recall": 0.8882,
-    "f1_score": 0.9215,
-    "roc_auc": 0.9275
+    "f1_score": 0.9184,
+    "roc_auc": 0.9263
   },
   "confusion_matrix": {
-    "tn": 272,
-    "fp": 6,
+    "tn": 271,
+    "fp": 7,
     "fn": 17,
     "tp": 135
   },
   "top_features": [
     {
-      "feature": "FunctionalAssessment",
-      "importance": 0.1531
-    },
-    {
       "feature": "MemoryComplaints",
-      "importance": 0.1344
+      "importance": 0.1606
     },
     {
-      "feature": "BehavioralProblems",
-      "importance": 0.1272
-    },
-    {
-      "feature": "MMSE",
-      "importance": 0.1069
+      "feature": "FunctionalAssessment",
+      "importance": 0.1477
     },
     {
       "feature": "ADL",
-      "importance": 0.0944
+      "importance": 0.1364
     },
     {
-      "feature": "Smoking",
-      "importance": 0.0295
+      "feature": "BehavioralProblems",
+      "importance": 0.1353
     },
     {
-      "feature": "CholesterolTotal",
-      "importance": 0.0208
-    },
-    {
-      "feature": "EducationLevel",
-      "importance": 0.0202
-    },
-    {
-      "feature": "DietQuality",
-      "importance": 0.02
+      "feature": "MMSE",
+      "importance": 0.1261
     },
     {
       "feature": "CholesterolHDL",
-      "importance": 0.0191
+      "importance": 0.0263
     },
     {
-      "feature": "Confusion",
-      "importance": 0.019
+      "feature": "DifficultyCompletingTasks",
+      "importance": 0.0256
     },
     {
-      "feature": "PersonalityChanges",
-      "importance": 0.0187
+      "feature": "CholesterolTriglycerides",
+      "importance": 0.0226
     },
     {
-      "feature": "AlcoholConsumption",
-      "importance": 0.0186
+      "feature": "CholesterolTotal",
+      "importance": 0.0216
     },
     {
       "feature": "CholesterolLDL",
-      "importance": 0.0185
+      "importance": 0.0209
+    },
+    {
+      "feature": "Confusion",
+      "importance": 0.0188
+    },
+    {
+      "feature": "SleepQuality",
+      "importance": 0.0188
+    },
+    {
+      "feature": "AlcoholConsumption",
+      "importance": 0.0184
+    },
+    {
+      "feature": "DietQuality",
+      "importance": 0.0166
     },
     {
       "feature": "PhysicalActivity",
-      "importance": 0.0184
+      "importance": 0.0157
     }
   ]
 }

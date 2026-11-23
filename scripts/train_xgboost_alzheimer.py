@@ -88,8 +88,9 @@ def train_alzheimers_xgboost(
     print(f"       Class 1 (Alzheimer): {pos_count:,} ({pos_count/len(y)*100:.1f}%)")
     print(f"       Calculated scale_pos_weight: {scale_pos_weight:.2f}")
 
-    # 3. 10-Fold Stratified Cross Validation Grid Search (Alignment with modelML.rmp)
-    print("\n[3/6] 🔄 Running 10-Fold Stratified Cross-Validation & Grid Search...")
+    # 3. 10-Fold Stratified Cross Validation Grid Search (Alignment with datasets/modelML.rmp)
+    print("\n[3/6] 🔄 Running 10-Fold Stratified Cross-Validation & Grid Search (modelML.rmp spec)...")
+    # modelML.rmp: booster='tree booster', rounds=25, lr in [0.1, 0.2], max_depth in [4, 5]
     param_grid = [
         {"learning_rate": 0.1, "max_depth": 4},
         {"learning_rate": 0.15, "max_depth": 4},
@@ -112,18 +113,20 @@ def train_alzheimers_xgboost(
             y_tr, y_val = y.iloc[train_idx], y.iloc[val_idx]
 
             fold_model = xgb.XGBClassifier(
-                n_estimators=100,
+                booster="gbtree",
+                n_estimators=25,
                 learning_rate=p["learning_rate"],
                 max_depth=p["max_depth"],
-                min_child_weight=3,
-                subsample=0.85,
-                colsample_bytree=0.85,
+                min_child_weight=1.0,
+                subsample=1.0,
+                colsample_bytree=1.0,
+                gamma=0.0,
+                reg_lambda=1.0,
+                reg_alpha=0.0,
                 scale_pos_weight=scale_pos_weight,
-                gamma=0.2,
                 eval_metric="logloss",
                 random_state=random_state,
                 n_jobs=-1,
-                early_stopping_rounds=25,
             )
             fold_model.fit(
                 X_tr, y_tr,
@@ -144,39 +147,41 @@ def train_alzheimers_xgboost(
             best_mean_auc = mean_auc
             best_params = p
 
-    print(f"\n       🏆 Best Hyperparameters: {best_params} (10-Fold CV AUC: {best_mean_auc*100:.2f}%)")
+    print(f"\n       🏆 Best Hyperparameters (modelML.rmp): {best_params} (10-Fold CV AUC: {best_mean_auc*100:.2f}%)")
 
-    # 4. Train Final Model on Stratified Train/Test Split (80/20) with Early Stopping
-    print("\n[4/6] 🚀 Training Final Production Model with Optimal Parameters...")
+    # 4. Train Final Model on Stratified Train/Test Split (80/20) matching modelML.rmp rounds=25
+    print("\n[4/6] 🚀 Training Final Production Model (25 rounds tree booster)...")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.20, random_state=random_state, stratify=y
     )
 
     model = xgb.XGBClassifier(
-        n_estimators=150,
+        booster="gbtree",
+        n_estimators=25,
         learning_rate=best_params["learning_rate"],
         max_depth=best_params["max_depth"],
-        min_child_weight=3,
-        subsample=0.85,
-        colsample_bytree=0.85,
+        min_child_weight=1.0,
+        subsample=1.0,
+        colsample_bytree=1.0,
+        gamma=0.0,
+        reg_lambda=1.0,
+        reg_alpha=0.0,
         scale_pos_weight=scale_pos_weight,
-        gamma=0.2,
         eval_metric="logloss",
         random_state=random_state,
         n_jobs=-1,
-        early_stopping_rounds=25,
     )
 
-    # Fit model with early stopping on test validation
+    # Fit model with 25 rounds exactly
     model.fit(
         X_train,
         y_train,
         eval_set=[(X_train, y_train), (X_test, y_test)],
-        verbose=25,
+        verbose=5,
     )
 
-    best_iteration = getattr(model, "best_iteration", model.n_estimators)
-    print(f"       Best iteration reached at round: {best_iteration}")
+    best_iteration = 25
+    print(f"       Production model trained with {best_iteration} rounds tree booster.")
 
     # 5. Model Evaluation
     print("\n[5/6] 📊 Evaluating Model Performance on Test Data...")
@@ -280,6 +285,38 @@ def train_alzheimers_xgboost(
 
     print("\n✨ Training and evaluation completed successfully!")
     return model, metrics_summary
+
+
+def train_xgboost_pipeline(
+    dataset_csv: str = "datasets/alzheimers_disease_data.csv",
+    save_model_path: str = "public/checkpoints/xgboost_alzheimers.json"
+):
+    """
+    IMPLEMENTASI 2: ALGORITMA XGBOOST LENGKAP (TRAINING & EVALUASI)
+    Persis sesuai implementations.txt Bagian 3.
+    """
+    from app.Services.ML.XGBoostTrainerService import XGBoostTrainerService
+    res = XGBoostTrainerService.train_pipeline_implementations_txt(
+        dataset_csv=dataset_csv,
+        save_model_path=save_model_path
+    )
+    return res["model"], res
+
+
+def print_xgboost_tree_dump(model, tree_index: int = 0):
+    """
+    IMPLEMENTASI 3: DUMP DAN VISUALISASI POHON XGBOOST
+    Persis sesuai implementations.txt Bagian 4.
+    """
+    booster = model.get_booster()
+    dump_list = booster.get_dump(with_stats=True)
+
+    if tree_index >= len(dump_list):
+        print(f"Pohon indeks {tree_index} tidak ditemukan. Total pohon: {len(dump_list)}")
+        return
+
+    print(f"\n=== STRUKTUR POHON XGBOOST (Tree #{tree_index}) ===")
+    print(dump_list[tree_index])
 
 
 if __name__ == "__main__":

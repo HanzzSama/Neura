@@ -15,6 +15,11 @@ from pathlib import Path
 from flask import Blueprint, request, jsonify
 from core.logger import get_logger
 
+try:
+    from core.database import execute_query, execute_insert, execute_update
+except Exception:
+    execute_query = execute_insert = execute_update = None
+
 logger = get_logger(__name__)
 
 admin_research_bp = Blueprint("admin_research", __name__)
@@ -23,7 +28,31 @@ RESEARCH_DB_FILE = Path(__file__).resolve().parent.parent.parent / "datasets" / 
 
 
 def _load_research_db():
-    """Baca database riset dari JSON. Kembalikan list jika file tidak ada."""
+    """Baca database riset dari MySQL jika aktif, fallback ke JSON."""
+    if execute_query:
+        try:
+            rows = execute_query("SELECT * FROM research_dispatches ORDER BY id ASC")
+            if rows:
+                return [{
+                    "id": f"res-{r['id']:03d}",
+                    "title": r["title"],
+                    "dateText": r["published_at"].strftime("%b %Y") if hasattr(r["published_at"], "strftime") else "2026",
+                    "categories": [c.strip() for c in (r["category"] or "Model AI").split(",")],
+                    "readLinkText": "Baca riset",
+                    "linkUrl": "/app",
+                    "summaryText": r.get("abstract") or r.get("content") or "",
+                    "thumbnailType": "badge_glow",
+                    "thumbnailConfig": {
+                        "badgeIcon": "✦",
+                        "badgeText": r.get("badge_label") or "Model Klinis",
+                        "glowColor": "terracotta"
+                    },
+                    "isPublished": True,
+                    "order": r["id"]
+                } for r in rows]
+        except Exception as e:
+            logger.warning(f"MySQL query research fallback to JSON: {e}")
+
     if not RESEARCH_DB_FILE.exists():
         return []
     try:

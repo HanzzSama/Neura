@@ -2,12 +2,22 @@
 api/user/user_predict.py
 ========================
 User / Pasien AI Alzheimer's Prediction:
-  POST/GET /api/predict — Prediksi risiko Alzheimer menggunakan model XGBoost (32 biomarker).
+  POST/GET /api/predict — Prediksi risiko Alzheimer menggunakan model XGBoost (32 biomarker)
+                         DAN Pohon Keputusan RapidMiner (implementations.txt alignment).
 """
 
 import traceback
+import json
+import random
+from pathlib import Path
+import pandas as pd
 from flask import Blueprint, request, jsonify
-from core.logger import get_logger
+
+from app.Services.Logger.LoggerService import get_logger
+from app.Services.Database.DatabaseManager import execute_insert
+from app.Services.ML.XGBoostInferenceService import AlzheimersPredictor
+from app.Services.ML.RapidMinerTreeService import predict_rapidminer_tree
+from config.ml import ALZHEIMER_DATASET_CSV
 
 logger = get_logger(__name__)
 
@@ -88,18 +98,14 @@ def map_user_profile_to_features(p: dict) -> dict:
 @user_predict_bp.route("/predict", methods=["GET", "POST"])
 def api_predict():
     try:
-        import random
-        import pandas as pd
-        from scripts.predict_xgboost_alzheimer import AlzheimersPredictor
-
         predictor = AlzheimersPredictor()
         body = request.get_json(silent=True) or {}
         patient_input = body.get("input", None)
         mode = body.get("mode", "")
 
-        df_raw = pd.read_csv("datasets/alzheimers_disease_data.csv")
+        csv_file = ALZHEIMER_DATASET_CSV if ALZHEIMER_DATASET_CSV.exists() else Path("datasets/alzheimers_disease_data.csv")
+        df_raw = pd.read_csv(csv_file)
 
-        # Prioritize real patient Data Diri if provided and mode is not explicit dataset simulation
         if patient_input is not None and isinstance(patient_input, dict) and mode != "dataset":
             mapped_patient = map_user_profile_to_features(patient_input)
             res = predictor.predict_patient(mapped_patient)
@@ -109,7 +115,6 @@ def api_predict():
             pid = patient_name
             actual = None
         else:
-            # Benchmark simulation using a random patient sample from the 2,149 dataset rows
             rand_idx = random.randint(0, len(df_raw) - 1)
             sample_row = df_raw.iloc[rand_idx].to_dict()
             res = predictor.predict_patient(sample_row)
@@ -118,6 +123,41 @@ def api_predict():
             pid = patient_data.get("PatientID", rand_idx + 1)
             patient_name = f"Pasien #{pid}"
             actual = patient_data.get("Diagnosis", None)
+
+        all_32_biomarkers = {
+            "Age": int(patient_data.get("Age", 72)),
+            "Gender": "Perempuan (1)" if int(patient_data.get("Gender", 0)) == 1 else "Laki-laki (0)",
+            "Ethnicity": int(patient_data.get("Ethnicity", 0)),
+            "EducationLevel": int(patient_data.get("EducationLevel", 1)),
+            "BMI": round(float(patient_data.get("BMI", 22.5)), 1),
+            "SystolicBP": int(patient_data.get("SystolicBP", 120)),
+            "DiastolicBP": int(patient_data.get("DiastolicBP", 80)),
+            "Smoking": int(patient_data.get("Smoking", 0)),
+            "AlcoholConsumption": round(float(patient_data.get("AlcoholConsumption", 5.0)), 1),
+            "PhysicalActivity": round(float(patient_data.get("PhysicalActivity", 5.0)), 1),
+            "DietQuality": round(float(patient_data.get("DietQuality", 5.0)), 1),
+            "SleepQuality": round(float(patient_data.get("SleepQuality", 7.0)), 1),
+            "FamilyHistoryAlzheimers": int(patient_data.get("FamilyHistoryAlzheimers", 0)),
+            "CardiovascularDisease": int(patient_data.get("CardiovascularDisease", 0)),
+            "Diabetes": int(patient_data.get("Diabetes", 0)),
+            "Depression": int(patient_data.get("Depression", 0)),
+            "HeadInjury": int(patient_data.get("HeadInjury", 0)),
+            "Hypertension": int(patient_data.get("Hypertension", 0)),
+            "CholesterolTotal": round(float(patient_data.get("CholesterolTotal", 200.0)), 1),
+            "CholesterolLDL": round(float(patient_data.get("CholesterolLDL", 100.0)), 1),
+            "CholesterolHDL": round(float(patient_data.get("CholesterolHDL", 50.0)), 1),
+            "CholesterolTriglycerides": round(float(patient_data.get("CholesterolTriglycerides", 150.0)), 1),
+            "MMSE": round(float(patient_data.get("MMSE", 24.0)), 1),
+            "FunctionalAssessment": round(float(patient_data.get("FunctionalAssessment", 7.0)), 1),
+            "ADL": round(float(patient_data.get("ADL", 7.0)), 1),
+            "MemoryComplaints": int(patient_data.get("MemoryComplaints", 0)),
+            "BehavioralProblems": int(patient_data.get("BehavioralProblems", 0)),
+            "Confusion": int(patient_data.get("Confusion", 0)),
+            "Disorientation": int(patient_data.get("Disorientation", 0)),
+            "PersonalityChanges": int(patient_data.get("PersonalityChanges", 0)),
+            "DifficultyCompletingTasks": int(patient_data.get("DifficultyCompletingTasks", 0)),
+            "Forgetfulness": int(patient_data.get("Forgetfulness", 0)),
+        }
 
         key_markers = {
             "Age": int(patient_data.get("Age", 72)),
@@ -132,8 +172,35 @@ def api_predict():
             "DiastolicBP": int(patient_data.get("DiastolicBP", 80)),
         }
 
-        prob_pos = round(float(res["probability_percent"]), 2)
-        prob_neg = round(float(100.0 - prob_pos), 2)
+        prob_pos = res["probability_percent_1"]
+        prob_neg = res["probability_percent_0"]
+
+        try:
+            if execute_insert:
+                execute_insert(
+                    "INSERT INTO prediction_records ("
+                    "patient_name, source, ml_label, ml_label_name, ml_label_badge, "
+                    "is_positive, risk_level, risk_level_id, probability_1, probability_0, confidence, "
+                    "raw_logit_z, base_margin, sum_tree_weights, num_trees, active_symptoms_count, "
+                    "calculation_details, symptom_summary, all_32_biomarkers"
+                    ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (
+                        patient_name, source,
+                        res["ml_label"], res["ml_label_name"], res["ml_label_badge"],
+                        1 if res["prediction"] == 1 else 0, res["risk_level"], res.get("risk_level_id", "Risiko"),
+                        prob_pos, prob_neg, res["confidence"],
+                        res["calculation_details"].get("raw_logit_z", 0.0),
+                        res["calculation_details"].get("base_margin", 0.0),
+                        res["calculation_details"].get("sum_tree_weights", 0.0),
+                        res["calculation_details"].get("num_trees", 25),
+                        res["symptom_summary"].get("active_count", 0),
+                        json.dumps(res["calculation_details"]),
+                        json.dumps(res["symptom_summary"]),
+                        json.dumps(all_32_biomarkers)
+                    )
+                )
+        except Exception as db_err:
+            logger.warning(f"MySQL insert prediction_records warning: {db_err}")
 
         return jsonify({
             "source": source,
@@ -141,14 +208,25 @@ def api_predict():
             "patient_id": int(pid) if isinstance(pid, (int, float)) else str(pid),
             "actual_diagnosis": int(actual) if actual is not None else None,
             "predicted_class": res["diagnosis_label"],
+            "ml_label": res["ml_label"],
+            "ml_label_name": res["ml_label_name"],
+            "ml_label_badge": res["ml_label_badge"],
             "is_positive": res["prediction"] == 1,
             "risk_level": res["risk_level"],
+            "risk_level_id": res["risk_level_id"],
             "probability": prob_pos,
+            "probability_1": prob_pos,
+            "probability_0": prob_neg,
             "confidence": res["confidence"],
+            "rapidminer_tree": res.get("rapidminer_tree", {}),
+            "consensus": res.get("consensus", {}),
+            "calculation_details": res["calculation_details"],
+            "symptom_summary": res["symptom_summary"],
             "key_markers": key_markers,
+            "all_32_biomarkers": all_32_biomarkers,
             "probabilities": [
-                {"class": "Non-Alzheimer's", "prob": round(prob_neg / 100.0, 4)},
-                {"class": "Alzheimer's Disease", "prob": round(prob_pos / 100.0, 4)},
+                {"class": "Diagnosis = 0 (Non-Alzheimer's)", "prob": round(prob_neg / 100.0, 4)},
+                {"class": "Diagnosis = 1 (Alzheimer's Disease)", "prob": round(prob_pos / 100.0, 4)},
             ]
         })
     except Exception as e:
