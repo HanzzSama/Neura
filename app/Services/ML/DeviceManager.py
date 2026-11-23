@@ -7,13 +7,15 @@ Ensures CPU-only execution for XGBoost clinical inference and optimal GPU/CPU fo
 
 import os
 import sys
-from typing import Literal, Dict, Any
+import importlib
+import importlib.util
+from typing import Literal, Dict, Any, Optional
 from app.Services.Logger.LoggerService import get_logger
 
 logger = get_logger(__name__)
 
 ComputeMode = Literal["cpu", "igpu", "dedicated_gpu"]
-_GPU_TIER_CACHE: Dict[str, Any] | None = None
+_GPU_TIER_CACHE: Optional[Dict[str, Any]] = None
 
 
 def detect_gpu_tier() -> Dict[str, Any]:
@@ -38,22 +40,24 @@ def detect_gpu_tier() -> Dict[str, Any]:
         except ValueError:
             pass
 
-    # Check CUDA torch
+    # Check CUDA torch dynamically to avoid Pylance missing-import errors
     try:
-        import torch
-        if torch.cuda.is_available():
-            dev_name = torch.cuda.get_device_name(0)
-            vram = int(torch.cuda.get_device_properties(0).total_memory / (1024 * 1024))
-            result = {
-                "tier": "dedicated_gpu",
-                "n_gpu_layers": -1,
-                "backend": "cuda",
-                "device_name": dev_name,
-                "vram_mb": vram,
-                "reason": f"NVIDIA CUDA terdeteksi ({dev_name}, {vram} MB VRAM)",
-            }
-            _GPU_TIER_CACHE = result
-            return result
+        torch_mod = importlib.util.find_spec("torch")
+        if torch_mod is not None:
+            torch = importlib.import_module("torch")
+            if hasattr(torch, "cuda") and torch.cuda.is_available():
+                dev_name = torch.cuda.get_device_name(0)
+                vram = int(torch.cuda.get_device_properties(0).total_memory / (1024 * 1024))
+                result = {
+                    "tier": "dedicated_gpu",
+                    "n_gpu_layers": -1,
+                    "backend": "cuda",
+                    "device_name": dev_name,
+                    "vram_mb": vram,
+                    "reason": f"NVIDIA CUDA terdeteksi ({dev_name}, {vram} MB VRAM)",
+                }
+                _GPU_TIER_CACHE = result
+                return result
     except Exception:
         pass
 
