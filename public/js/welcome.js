@@ -478,7 +478,7 @@
 
   // -------------------------------------------------------------------------
   // 7. Interactive Magnetic Particles & Celestial Nebula for Download CTA Card
-  // (Duplicated & adapted from Welcome Login Card Antigravity Particle Engine)
+  // (Optimized: Viewport-aware, Squared Distance Physics, Auto-sleep when offscreen)
   // -------------------------------------------------------------------------
   function initCtaStarsCanvas() {
     const canvas = document.getElementById('cta-stars-canvas');
@@ -494,19 +494,23 @@
     let mouseY = -999;
     let animTime = 0;
     let rafId = null;
+    let isVisible = false;
 
     // Physics parameters matching Welcome Login Card
     const PARTICLE_COUNT = 96;
     const MAX_RADIUS = 2.8;
     const MIN_RADIUS = 0.8;
-    const MOUSE_RADIUS = 240;       // Jarak deteksi magnet kursor
-    const CONNECT_DIST = 105;       // Jarak garis koneksi konstelasi
+    const MOUSE_RADIUS = 240;
+    const MOUSE_RADIUS_SQ = 240 * 240; // 57600
+    const CONNECT_DIST = 105;
+    const CONNECT_DIST_SQ = 105 * 105; // 11025
     const BASE_SPEED = 0.28;
-    const ATTRACT_FORCE = 0.07;     // Tarikan halus ke kursor
-    const MIN_CURSOR_DIST = 34;     // Jarak henti aman dengan kursor
-    const REPULSION_DIST = 24;      // Jarak minimum antar sesama partikel
-    const REPULSION_FORCE = 0.12;   // Daya tolak antar partikel agar tidak tumpuk-menumpuk
-    const DAMPING = 0.89;           // Gesekan lembut agar partikel tenang & stabil
+    const ATTRACT_FORCE = 0.07;
+    const MIN_CURSOR_DIST = 34;
+    const REPULSION_DIST = 24;
+    const REPULSION_DIST_SQ = 24 * 24; // 576
+    const REPULSION_FORCE = 0.12;
+    const DAMPING = 0.89;
     const MAX_SPEED = 3.2;
 
     // 3 Blurred Gradient Bubbles (Luminous Aurora Nebulae positioned on the center-right)
@@ -618,21 +622,24 @@
       const rect = container.getBoundingClientRect();
       mouseX = e.clientX - rect.left;
       mouseY = e.clientY - rect.top;
-    });
+    }, { passive: true });
 
     container.addEventListener('mouseenter', function (e) {
       const rect = container.getBoundingClientRect();
       mouseX = e.clientX - rect.left;
       mouseY = e.clientY - rect.top;
-    });
+    }, { passive: true });
 
     container.addEventListener('mouseleave', function () {
       mouseX = -999;
       mouseY = -999;
-    });
+    }, { passive: true });
 
     function loop() {
-      if (!canvas || !ctx) return;
+      if (!canvas || !ctx || !isVisible || document.hidden) {
+        rafId = null;
+        return;
+      }
       ctx.clearRect(0, 0, width, height);
 
       animTime += 0.015;
@@ -668,7 +675,7 @@
       ctx.restore();
 
       // ---------------------------------------------------------------------
-      // 2. Interactive Magnetic Physics on Particles (Welcome Card Duplicate)
+      // 2. Interactive Magnetic Physics on Particles (Squared-Distance Optimization)
       // ---------------------------------------------------------------------
       const isMouseActive = mouseX > 0 && mouseY > 0 && mouseX <= width && mouseY <= height;
 
@@ -680,9 +687,10 @@
         if (isMouseActive) {
           const dx = mouseX - p.x;
           const dy = mouseY - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
 
-          if (dist < MOUSE_RADIUS && dist > 1) {
+          if (distSq < MOUSE_RADIUS_SQ && distSq > 1) {
+            const dist = Math.sqrt(distSq);
             const normX = dx / dist;
             const normY = dy / dist;
             const factor = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
@@ -713,16 +721,17 @@
         }
       }
 
-      // 2b. Inter-Particle Repulsion (Personal Space)
+      // 2b. Inter-Particle Repulsion (Fast Squared Distance Check)
       for (let i = 0; i < particles.length; i++) {
         const pi = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
           const pj = particles[j];
           const pdx = pj.x - pi.x;
           const pdy = pj.y - pi.y;
-          const pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+          const pdistSq = pdx * pdx + pdy * pdy;
 
-          if (pdist < REPULSION_DIST && pdist > 0.001) {
+          if (pdistSq < REPULSION_DIST_SQ && pdistSq > 0.001) {
+            const pdist = Math.sqrt(pdistSq);
             const pnormX = pdx / pdist;
             const pnormY = pdy / pdist;
             const repFactor = (REPULSION_DIST - pdist) / REPULSION_DIST;
@@ -772,19 +781,23 @@
         ctx.shadowBlur = 0; // reset
       }
 
-      // 2d. Draw Dynamic Constellation Connecting Lines
+      // 2d. Draw Dynamic Constellation Connecting Lines (Squared Distance)
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i], b = particles[j];
           const ddx = a.x - b.x, ddy = a.y - b.y;
-          const d = Math.sqrt(ddx * ddx + ddy * ddy);
-          if (d < CONNECT_DIST) {
+          const dSq = ddx * ddx + ddy * ddy;
+          if (dSq < CONNECT_DIST_SQ) {
+            const d = Math.sqrt(dSq);
             let lineAlpha;
             if (isMouseActive) {
               const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-              const md = Math.sqrt((mx - mouseX) * (mx - mouseX) + (my - mouseY) * (my - mouseY));
-              if (md < MOUSE_RADIUS * 1.1) {
-                lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / (MOUSE_RADIUS * 1.1)) * 0.38;
+              const mdx = mx - mouseX, mdy = my - mouseY;
+              const mdSq = mdx * mdx + mdy * mdy;
+              const mRange = MOUSE_RADIUS * 1.1;
+              if (mdSq < mRange * mRange) {
+                const md = Math.sqrt(mdSq);
+                lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / mRange) * 0.38;
               } else {
                 lineAlpha = (1 - d / CONNECT_DIST) * 0.04;
               }
@@ -829,10 +842,34 @@
       });
     }
 
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
     resize();
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(loop);
+
+    // Viewport-Aware Observer: Only run when bottom CTA is approaching or in viewport
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        const inView = entries[0].isIntersecting;
+        if (inView && !isVisible) {
+          isVisible = true;
+          if (!rafId) rafId = requestAnimationFrame(loop);
+        } else if (!inView && isVisible) {
+          isVisible = false;
+          if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        }
+      }, { rootMargin: '250px' });
+      io.observe(container);
+    } else {
+      isVisible = true;
+      if (!rafId) rafId = requestAnimationFrame(loop);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      } else if (isVisible && !rafId) {
+        rafId = requestAnimationFrame(loop);
+      }
+    });
   }
 
   if (document.readyState === 'loading') {
@@ -1172,9 +1209,24 @@
         left,
         right,
         targetProgress: 0,
-        currentProgress: -1 // start uninitialized to force first frame paint
+        currentProgress: -1, // start uninitialized to force first frame paint
+        inView: true
       };
     });
+
+    // Viewport-aware observer to prevent layout thrashing on off-screen rows
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const match = items.find(it => it.row === entry.target);
+          if (match) {
+            match.inView = entry.isIntersecting;
+            if (entry.isIntersecting) requestTick();
+          }
+        });
+      }, { rootMargin: '160px' });
+      rows.forEach(r => observer.observe(r));
+    }
 
     function clamp(val, min, max) {
       return Math.max(min, Math.min(max, val));
@@ -1189,42 +1241,62 @@
     /**
      * Compute scroll progress for a row:
      * - Starts sliding in when row top enters viewport near bottom (vh * 0.95)
-     * - Reaches 1 (natural 0 offset) when row top reaches comfortable reading position (vh * 0.22)
+     * - Reaches 1 (natural 0 offset) when row top reaches comfortable reading position (vh * 0.36)
      * - As user scrolls BACK UP, progress goes back from 1 down to 0, sliding elements back out.
      */
     function computeTargetProgress(row) {
       const rect = row.getBoundingClientRect();
       const vh = window.innerHeight || document.documentElement.clientHeight;
       const start = vh * 0.95;
-      const end   = vh * 0.22;
+      const end   = vh * 0.36;
       const raw = (start - rect.top) / (start - end);
       return smoothstep(raw);
     }
 
     function renderItem(item) {
       const p = item.currentProgress;
-      // On desktop use full 100% translation; on small mobile screens scale down for comfort
+
+      // When settled (p >= 0.995), clean up inline styles so text and cards are 100% sharp
+      if (p >= 0.995) {
+        if (item.left) {
+          item.left.style.transform = '';
+          item.left.style.opacity = '1';
+        }
+        if (item.right) {
+          item.right.style.transform = '';
+          item.right.style.opacity = '1';
+        }
+        return;
+      }
+
+      // Responsive safe parallax horizontal travel (guaranteed inside viewport margins)
       const isMobile = window.innerWidth <= 768;
-      const maxPercent = isMobile ? 35 : 100;
+      const isTablet = window.innerWidth <= 1024;
+      let maxShiftX = 50;
+      if (isMobile) {
+        maxShiftX = 14;
+      } else if (isTablet) {
+        maxShiftX = 24;
+      } else {
+        const screenMargin = Math.max(20, (window.innerWidth - 1240) / 2);
+        maxShiftX = Math.min(60, Math.max(25, screenMargin * 0.45));
+      }
 
-      // When progress = 0: offsetPercent = maxPercent (100%)
-      // When progress = 1: offsetPercent = 0%
-      const offsetPercent = (1 - p) * maxPercent;
+      const factor = (1 - p);
+      const shiftX = factor * maxShiftX;
+      const shiftY = factor * 18; // subtle vertical depth
 
-      // Left child starts at -100% (or -offset) -> glides right to 0
-      // Right child starts at +100% (or +offset) -> glides left to 0
-      const leftTranslate  = -offsetPercent;
-      const rightTranslate = +offsetPercent;
-
-      // Opacity fades in quickly and stays at 1
-      const opacity = clamp(p * 1.5, 0, 1);
+      // Bidirectional glide: left child glides from left (-shiftX) -> 0; right child glides from right (+shiftX) -> 0
+      const leftTranslateX  = -shiftX;
+      const rightTranslateX = +shiftX;
+      const opacity = clamp(p * 1.4, 0, 1);
 
       if (item.left) {
-        item.left.style.transform = `translate3d(${leftTranslate.toFixed(2)}%, 0, 0)`;
+        item.left.style.transform = `translate3d(${leftTranslateX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0)`;
         item.left.style.opacity   = opacity.toFixed(3);
       }
       if (item.right) {
-        item.right.style.transform = `translate3d(${rightTranslate.toFixed(2)}%, 0, 0)`;
+        item.right.style.transform = `translate3d(${rightTranslateX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0)`;
         item.right.style.opacity   = opacity.toFixed(3);
       }
     }
@@ -1235,6 +1307,11 @@
       let active = false;
 
       items.forEach(item => {
+        // Skip off-screen rows that are already settled
+        if (!item.inView && item.currentProgress >= 0 && Math.abs(item.targetProgress - item.currentProgress) < 0.005) {
+          return;
+        }
+
         item.targetProgress = computeTargetProgress(item.row);
 
         if (item.currentProgress < 0) {
@@ -1278,6 +1355,172 @@
 
     // Initial paint
     requestAnimationFrame(tick);
+  })();
+
+  // -------------------------------------------------------------------------
+  // 10. Interactive Parallax Scroller for Research Updates, Bottom CTA & Footer
+  // -------------------------------------------------------------------------
+  (function initBottomSectionsParallax() {
+    const syncSection = document.querySelector('.sync-updates-section');
+    const ctaSection = document.querySelector('.bottom-cta-section');
+    const footerSection = document.querySelector('.site-footer');
+
+    if (!syncSection && !ctaSection && !footerSection) return;
+
+    // Elements cache
+    const syncCard = syncSection ? syncSection.querySelector('.sync-updates-card') : null;
+    const syncWatermark = syncSection ? syncSection.querySelector('.sync-watermark-text') : null;
+    const syncContent = syncSection ? syncSection.querySelector('.sync-content-wrap') : null;
+
+    const ctaContainer = ctaSection ? ctaSection.querySelector('.bottom-cta-container') : null;
+    const ctaContent = ctaSection ? ctaSection.querySelector('.download-card-content') : null;
+    const ctaCanvas = ctaSection ? document.getElementById('cta-stars-canvas') : null;
+
+    const footerWatermark = footerSection ? footerSection.querySelector('.footer-abstract-watermark') : null;
+    const footerTop = footerSection ? footerSection.querySelector('.footer-top') : null;
+
+    let inView = {
+      sync: true,
+      cta: true,
+      footer: true
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.target === syncSection) inView.sync = entry.isIntersecting;
+          if (entry.target === ctaSection) inView.cta = entry.isIntersecting;
+          if (entry.target === footerSection) inView.footer = entry.isIntersecting;
+          if (entry.isIntersecting) requestTick();
+        });
+      }, { rootMargin: '120px' });
+
+      if (syncSection) io.observe(syncSection);
+      if (ctaSection) io.observe(ctaSection);
+      if (footerSection) io.observe(footerSection);
+    }
+
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    function smoothstep(val) {
+      const x = clamp(val, 0, 1);
+      return x * x * (3 - 2 * x);
+    }
+
+    let rafId = null;
+
+    // Smoothed progress states (for inertial easing)
+    let syncProg = 0, targetSyncProg = 0;
+    let ctaProg = 0, targetCtaProg = 0;
+    let footerProg = 0, targetFooterProg = 0;
+
+    function render() {
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const isMobile = window.innerWidth <= 768;
+
+      // ── 1. Sync Updates Section Parallax ──
+      if (syncSection && inView.sync) {
+        const rect = syncSection.getBoundingClientRect();
+        const raw = (vh - rect.top) / (vh + rect.height);
+        targetSyncProg = clamp(raw, 0, 1);
+        syncProg += (targetSyncProg - syncProg) * 0.12;
+
+        const entrance = smoothstep((vh * 0.95 - rect.top) / (vh * 0.65));
+
+        if (syncCard) {
+          const cardScale = isMobile ? 1 : 0.96 + 0.04 * entrance;
+          const cardY = (1 - entrance) * (isMobile ? 16 : 32);
+          syncCard.style.transform = `translate3d(0, ${cardY.toFixed(1)}px, 0) scale(${cardScale.toFixed(4)})`;
+        }
+
+        if (syncWatermark) {
+          const maxDriftX = isMobile ? 30 : 75;
+          const driftX = (syncProg - 0.5) * maxDriftX;
+          const driftY = (syncProg - 0.5) * (isMobile ? 15 : 35);
+          syncWatermark.style.transform = `translate3d(calc(-50% + ${driftX.toFixed(1)}px), ${driftY.toFixed(1)}px, 0)`;
+        }
+
+        if (syncContent) {
+          const contentY = (1 - entrance) * (isMobile ? 10 : 20);
+          syncContent.style.transform = `translate3d(0, ${contentY.toFixed(1)}px, 0)`;
+        }
+      }
+
+      // ── 2. Bottom CTA Section Parallax ──
+      if (ctaSection && inView.cta) {
+        const rect = ctaSection.getBoundingClientRect();
+        const raw = (vh - rect.top) / (vh + rect.height);
+        targetCtaProg = clamp(raw, 0, 1);
+        ctaProg += (targetCtaProg - ctaProg) * 0.12;
+
+        const entrance = smoothstep((vh * 0.95 - rect.top) / (vh * 0.60));
+
+        if (ctaContainer) {
+          const containerScale = isMobile ? 1 : 0.95 + 0.05 * entrance;
+          const containerY = (1 - entrance) * (isMobile ? 18 : 36);
+          ctaContainer.style.transform = `translate3d(0, ${containerY.toFixed(1)}px, 0) scale(${containerScale.toFixed(4)})`;
+        }
+
+        if (ctaContent) {
+          const floatY = (ctaProg - 0.5) * (isMobile ? -12 : -26);
+          ctaContent.style.transform = `translate3d(0, ${floatY.toFixed(1)}px, 0)`;
+        }
+
+        if (ctaCanvas) {
+          const canvasY = (ctaProg - 0.5) * (isMobile ? 10 : 22);
+          ctaCanvas.style.transform = `translate3d(0, ${canvasY.toFixed(1)}px, 0)`;
+        }
+      }
+
+      // ── 3. Site Footer Parallax ──
+      if (footerSection && inView.footer) {
+        const rect = footerSection.getBoundingClientRect();
+        const raw = (vh - rect.top) / (rect.height + 60);
+        targetFooterProg = clamp(raw, 0, 1);
+        footerProg += (targetFooterProg - footerProg) * 0.12;
+
+        if (footerWatermark) {
+          const maxDriftX = isMobile ? 35 : 85;
+          const driftX = (footerProg - 0.5) * maxDriftX;
+          const driftY = (1 - footerProg) * (isMobile ? 15 : 30);
+          footerWatermark.style.transform = `translate3d(calc(-50% + ${driftX.toFixed(1)}px), ${driftY.toFixed(1)}px, 0)`;
+        }
+
+        if (footerTop) {
+          const topY = (1 - smoothstep(footerProg * 1.5)) * (isMobile ? 12 : 24);
+          const topOpacity = clamp(0.65 + footerProg * 0.35, 0, 1);
+          footerTop.style.transform = `translate3d(0, ${topY.toFixed(1)}px, 0)`;
+          footerTop.style.opacity = topOpacity.toFixed(2);
+        }
+      }
+
+      const isSyncActive = syncSection && inView.sync && Math.abs(targetSyncProg - syncProg) > 0.001;
+      const isCtaActive = ctaSection && inView.cta && Math.abs(targetCtaProg - ctaProg) > 0.001;
+      const isFooterActive = footerSection && inView.footer && Math.abs(targetFooterProg - footerProg) > 0.001;
+
+      if (isSyncActive || isCtaActive || isFooterActive) {
+        rafId = requestAnimationFrame(render);
+      } else {
+        rafId = null;
+      }
+    }
+
+    function requestTick() {
+      if (!rafId) {
+        rafId = requestAnimationFrame(render);
+      }
+    }
+
+    if (window.lenis) {
+      window.lenis.on('scroll', requestTick);
+    }
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick, { passive: true });
+
+    // Initial first paint
+    requestAnimationFrame(render);
   })();
 
 })();

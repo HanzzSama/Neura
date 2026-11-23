@@ -17,7 +17,7 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/css/welcome.css?v=66">
+  <link rel="stylesheet" href="/css/welcome.css?v=69">
   <link rel="stylesheet" href="/css/template.css?v=1.2">
   <link rel="stylesheet" href="/css/dynamic-island.css?v=70">
   <link rel="stylesheet" href="/css/smooth-scroll.css?v=44">
@@ -1629,8 +1629,8 @@
   <script src="/js/about_app.js?v=1"></script>
   <script src="/js/smooth-scroll.js?v=46"></script>
   <script src="/js/dynamic-island.js?v=71"></script>
-  <script src="/js/welcome.js?v=52"></script>
-  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+  <script src="/js/welcome.js?v=56"></script>
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js" defer></script>
   <script src="/js/voice-consultation.js?v=64"></script>
 
   <!-- Firebase Authentication & Cloud Firestore Database -->
@@ -1641,7 +1641,7 @@
   <script src="/js/notification-manager.js?v=1"></script>
   <script src="/js/auth-hero.js?v=109"></script>
 
-  <!-- NeuraPet Welcome Preview Interactions (eye tracking, blink, squish) -->
+  <!-- NeuraPet Welcome Preview Interactions (Optimized: Viewport-aware, zero layout thrashing) -->
   <script>
     (function () {
       const face = document.getElementById('neurapet-demo-face');
@@ -1650,23 +1650,59 @@
       const head = document.getElementById('neurapet-demo-head');
       if (!face || !eyesTrack || !eyesWrap || !head) return;
 
-      /* ── Eye Gaze Tracking ── */
+      let isVisible = true;
+      let cachedRect = null;
+      let ticking = false;
+      let pendingMouseX = 0, pendingMouseY = 0;
       const MAX_EYE = 5.8, MAX_HEAD = 2.2;
+      const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+
+      function updateRect() {
+        if (isVisible) {
+          cachedRect = face.getBoundingClientRect();
+        }
+      }
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          isVisible = entries[0].isIntersecting;
+          if (isVisible) updateRect();
+        }, { threshold: 0.1 });
+        observer.observe(face);
+      }
+
+      window.addEventListener('resize', updateRect, { passive: true });
+      window.addEventListener('scroll', updateRect, { passive: true });
+      updateRect();
+
+      /* ── Eye Gaze Tracking (RAF Throttled, Zero Reflow) ── */
       document.addEventListener('mousemove', function (e) {
-        const r = face.getBoundingClientRect();
-        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-        const dx = (e.clientX - cx) / (window.innerWidth / 2);
-        const dy = (e.clientY - cy) / (window.innerHeight / 2);
-        const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+        if (!isVisible || !cachedRect) return;
+        pendingMouseX = e.clientX;
+        pendingMouseY = e.clientY;
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(renderEyeTracking);
+        }
+      }, { passive: true });
+
+      function renderEyeTracking() {
+        ticking = false;
+        if (!isVisible || !cachedRect) return;
+        const cx = cachedRect.left + cachedRect.width / 2;
+        const cy = cachedRect.top + cachedRect.height / 2;
+        const dx = (pendingMouseX - cx) / (window.innerWidth / 2);
+        const dy = (pendingMouseY - cy) / (window.innerHeight / 2);
         eyesTrack.style.transform = 'translate(' + clamp(dx * MAX_EYE, MAX_EYE) + 'px,' + clamp(dy * MAX_EYE, MAX_EYE) + 'px)';
         head.style.transform = 'rotate(' + clamp(dx * MAX_HEAD, MAX_HEAD) + 'deg)';
-      });
+      }
 
-      /* ── Periodic Blink ── */
+      /* ── Periodic Blink (Only when Visible) ── */
+      let blinkTimer = null;
       function blink() {
+        if (!isVisible || document.hidden) return;
         eyesWrap.classList.add('is-blinking');
         setTimeout(function () { eyesWrap.classList.remove('is-blinking'); }, 120);
-        // occasional double-blink
         if (Math.random() < 0.28) {
           setTimeout(function () {
             eyesWrap.classList.add('is-blinking');
@@ -1675,10 +1711,21 @@
         }
       }
       function scheduleBlink() {
-        var delay = 2000 + Math.random() * 2200;
-        setTimeout(function () { blink(); scheduleBlink(); }, delay);
+        clearTimeout(blinkTimer);
+        const delay = 2000 + Math.random() * 2200;
+        blinkTimer = setTimeout(function () {
+          if (isVisible && !document.hidden) blink();
+          scheduleBlink();
+        }, delay);
       }
       scheduleBlink();
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && isVisible) {
+          updateRect();
+          scheduleBlink();
+        }
+      });
 
       /* ── Squish on Click ── */
       face.addEventListener('click', function () {
@@ -1691,22 +1738,26 @@
   </script>
 
 
-  <!-- Antigravity Particle Dots Effect (Welcome Card) -->
+  <!-- Antigravity Particle Dots Effect (Optimized: Viewport-aware, Squared Distance Physics) -->
   <script>
     (function () {
       'use strict';
-      var canvas, ctx, cardEl, particles = [], mouseX = -999, mouseY = -999, raf;
-      var PARTICLE_COUNT = 110;
+      var canvas, ctx, cardEl, particles = [], mouseX = -999, mouseY = -999, raf = null;
+      var isVisible = true;
+      var PARTICLE_COUNT = 96;
       var MAX_RADIUS = 2.6;
       var MIN_RADIUS = 0.8;
-      var MOUSE_RADIUS = 200;       // Jarak deteksi magnet kursor
-      var CONNECT_DIST = 115;       // Jarak garis koneksi
+      var MOUSE_RADIUS = 200;
+      var MOUSE_RADIUS_SQ = 200 * 200;
+      var CONNECT_DIST = 115;
+      var CONNECT_DIST_SQ = 115 * 115;
       var BASE_SPEED = 0.3;
-      var ATTRACT_FORCE = 0.08;     // Tarikan halus ke kursor (tanpa putaran)
-      var MIN_CURSOR_DIST = 32;     // Jarak henti aman dengan kursor (agar tidak menempel mati)
-      var REPULSION_DIST = 26;      // Jarak minimum antar sesama partikel (personal space)
-      var REPULSION_FORCE = 0.14;   // Daya tolak antar partikel agar tidak tumpuk-menumpuk
-      var DAMPING = 0.88;           // Gesekan lembut agar partikel tenang & stabil
+      var ATTRACT_FORCE = 0.08;
+      var MIN_CURSOR_DIST = 32;
+      var REPULSION_DIST = 26;
+      var REPULSION_DIST_SQ = 26 * 26;
+      var REPULSION_FORCE = 0.14;
+      var DAMPING = 0.88;
       var MAX_SPEED = 3.2;
 
       function initParticles() {
@@ -1735,21 +1786,47 @@
           var rect = cardEl.getBoundingClientRect();
           mouseX = e.clientX - rect.left;
           mouseY = e.clientY - rect.top;
-        });
+        }, { passive: true });
 
         cardEl.addEventListener('mouseenter', function (e) {
           var rect = cardEl.getBoundingClientRect();
           mouseX = e.clientX - rect.left;
           mouseY = e.clientY - rect.top;
-        });
+        }, { passive: true });
 
         cardEl.addEventListener('mouseleave', function () {
           mouseX = -999;
           mouseY = -999;
+        }, { passive: true });
+
+        window.addEventListener('resize', resize, { passive: true });
+
+        // Viewport Visibility Observer: Auto-pause when card is off-screen
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            var inView = entries[0].isIntersecting;
+            if (inView && !isVisible) {
+              isVisible = true;
+              if (!raf) raf = requestAnimationFrame(loop);
+            } else if (!inView && isVisible) {
+              isVisible = false;
+              if (raf) { cancelAnimationFrame(raf); raf = null; }
+            }
+          }, { threshold: 0.05 });
+          io.observe(cardEl);
+        }
+
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) {
+            if (raf) { cancelAnimationFrame(raf); raf = null; }
+          } else if (isVisible && !raf) {
+            raf = requestAnimationFrame(loop);
+          }
         });
 
-        window.addEventListener('resize', resize);
-        loop();
+        if (isVisible && !raf) {
+          raf = requestAnimationFrame(loop);
+        }
       }
 
       function resize() {
@@ -1759,34 +1836,36 @@
       }
 
       function loop() {
-        if (!canvas || !ctx) return;
+        if (!canvas || !ctx || !isVisible || document.hidden) {
+          raf = null;
+          return;
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         var welcomePane = document.getElementById('pane-view-welcome');
         var isWelcome = welcomePane && welcomePane.classList.contains('active');
         var isMouseActive = mouseX > 0 && mouseY > 0 && mouseX <= canvas.width && mouseY <= canvas.height;
 
-        // 1. Gaya Tarik Magnet ke Kursor (Langsung Lurus, Tanpa Orbit/Putaran)
+        // 1. Gaya Tarik Magnet ke Kursor (Squared distance fast check)
         for (var i = 0; i < particles.length; i++) {
           var p = particles[i];
 
           if (isMouseActive) {
             var dx = mouseX - p.x;
             var dy = mouseY - p.y;
-            var dist = Math.sqrt(dx * dx + dy * dy);
+            var distSq = dx * dx + dy * dy;
 
-            if (dist < MOUSE_RADIUS && dist > 1) {
+            if (distSq < MOUSE_RADIUS_SQ && distSq > 1) {
+              var dist = Math.sqrt(distSq);
               var normX = dx / dist;
               var normY = dy / dist;
               var factor = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
 
               if (dist > MIN_CURSOR_DIST) {
-                // Menarik lurus ke arah kursor tanpa efek rotasi/lingkaran
                 var pull = factor * ATTRACT_FORCE;
                 p.vx += normX * pull;
                 p.vy += normY * pull;
               } else {
-                // Jika terlalu dekat dengan ujung kursor, tahan posisinya dengan lembut
                 var pushBack = (MIN_CURSOR_DIST - dist) / MIN_CURSOR_DIST * 0.12;
                 p.vx -= normX * pushBack;
                 p.vy -= normY * pushBack;
@@ -1808,22 +1887,22 @@
           }
         }
 
-        // 2. Inter-Particle Repulsion (Menjaga Jarak Antar Partikel agar Tidak Saling Menumpuk)
+        // 2. Inter-Particle Repulsion (Fast Squared Distance Check)
         for (var i = 0; i < particles.length; i++) {
           var pi = particles[i];
           for (var j = i + 1; j < particles.length; j++) {
             var pj = particles[j];
             var pdx = pj.x - pi.x;
             var pdy = pj.y - pi.y;
-            var pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+            var pdistSq = pdx * pdx + pdy * pdy;
 
-            if (pdist < REPULSION_DIST && pdist > 0.001) {
+            if (pdistSq < REPULSION_DIST_SQ && pdistSq > 0.001) {
+              var pdist = Math.sqrt(pdistSq);
               var pnormX = pdx / pdist;
               var pnormY = pdy / pdist;
               var repFactor = (REPULSION_DIST - pdist) / REPULSION_DIST;
               var repForce = repFactor * REPULSION_FORCE;
 
-              // Tolak menjauh satu sama lain
               pi.vx -= pnormX * repForce;
               pi.vy -= pnormY * repForce;
               pj.vx += pnormX * repForce;
@@ -1853,7 +1932,6 @@
           p.x += p.vx;
           p.y += p.vy;
 
-          // Boundaries wrap
           if (p.x < -12) p.x = canvas.width + 12;
           if (p.x > canvas.width + 12) p.x = -12;
           if (p.y < -12) p.y = canvas.height + 12;
@@ -1872,14 +1950,18 @@
             for (var j = i + 1; j < particles.length; j++) {
               var a = particles[i], b = particles[j];
               var ddx = a.x - b.x, ddy = a.y - b.y;
-              var d = Math.sqrt(ddx * ddx + ddy * ddy);
-              if (d < CONNECT_DIST) {
+              var dSq = ddx * ddx + ddy * ddy;
+              if (dSq < CONNECT_DIST_SQ) {
+                var d = Math.sqrt(dSq);
                 var lineAlpha;
                 if (isMouseActive) {
                   var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-                  var md = Math.sqrt((mx - mouseX) * (mx - mouseX) + (my - mouseY) * (my - mouseY));
-                  if (md < MOUSE_RADIUS * 1.1) {
-                    lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / (MOUSE_RADIUS * 1.1)) * 0.42;
+                  var mdx = mx - mouseX, mdy = my - mouseY;
+                  var mdSq = mdx * mdx + mdy * mdy;
+                  var mRange = MOUSE_RADIUS * 1.1;
+                  if (mdSq < mRange * mRange) {
+                    var md = Math.sqrt(mdSq);
+                    lineAlpha = (1 - d / CONNECT_DIST) * (1 - md / mRange) * 0.42;
                   } else {
                     lineAlpha = (1 - d / CONNECT_DIST) * 0.04;
                   }
@@ -1902,6 +1984,20 @@
 
         raf = requestAnimationFrame(loop);
       }
+
+      if (typeof ResizeObserver !== 'undefined') {
+        document.addEventListener('DOMContentLoaded', function () {
+          var card = document.getElementById('neura-auth-main-card');
+          if (card) {
+            new ResizeObserver(resize).observe(card);
+          }
+          initParticles();
+        });
+      } else {
+        document.addEventListener('DOMContentLoaded', initParticles);
+      }
+    })();
+  </script>
 
       if (typeof ResizeObserver !== 'undefined') {
         document.addEventListener('DOMContentLoaded', function () {

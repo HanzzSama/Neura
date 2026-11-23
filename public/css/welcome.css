@@ -2354,7 +2354,8 @@ a {
   grid-template-columns: 1fr 1.2fr;
   gap: 60px;
   align-items: center;
-  /* No overflow:hidden — parent clips must not cut off parallax children */
+  overflow: visible;
+  /* Parent clips must never cut off parallax or transform children */
 }
 
 .product-row.reverse {
@@ -4577,4 +4578,24 @@ a {
   .footer-top {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   CPU & GPU Performance Acceleration
+   ========================================================================== */
+.hero-brain-canvas,
+.auth-card-particles,
+.cta-stars-canvas {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.sync-updates-card,
+.sync-watermark-text,
+.sync-content-wrap,
+.bottom-cta-container,
+.download-card-content,
+.footer-abstract-watermark,
+.footer-top {
+  will-change: transform;
 }
