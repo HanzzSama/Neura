@@ -28,6 +28,7 @@
 - [Skema Database Relasional MySQL](#-skema-database-relasional-mysql-neura_db)
 - [CLI Console Management: nterli](#-cli-console-management-nterli)
 - [Tutorial Instalasi & Menjalankan Project](#-tutorial-instalasi--menjalankan-project)
+- [Panduan Instalasi Library Python Sesuai Kebutuhan](#-panduan-instalasi-library-python-sesuai-kebutuhan)
 - [Konfigurasi Environment (.env)](#-konfigurasi-environment-env)
 - [REST API Endpoints](#-rest-api-endpoints)
 - [Sistem Autentikasi Admin 2FA](#-sistem-autentikasi-admin-2fa)
@@ -353,6 +354,81 @@ Buka peramban (browser) dan akses:
 * **Landing Page:** [http://localhost:5000/](http://localhost:5000/)
 * **Workspace AI:** [http://localhost:5000/app](http://localhost:5000/app)
 * **Admin Database Canvas:** [http://localhost:5000/struktur](http://localhost:5000/struktur)
+
+---
+
+## 📦 Panduan Instalasi Library Python Sesuai Kebutuhan
+
+Neura AI dirancang secara modular sehingga Anda dapat menginstal dependensi pustaka Python secara **fleksibel sesuai dengan modul fitur yang ingin Anda gunakan**:
+
+### 1. Instalasi Standar Produksi (All-In-One)
+Jika Anda ingin menjalankan seluruh fitur platform utama secara langsung tanpa memilah paket:
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 2. Instalasi Modular Berdasarkan Kebutuhan (Tiered Installation)
+
+#### 🔹 Paket A: Core Web, Database & Machine Learning (Wajib)
+Hanya untuk menjalankan Web Server, Antarmuka Pengguna, Koneksi MySQL Laragon, dan Model Inferensi Prediksi Alzheimer (XGBoost 25 Trees):
+```bash
+pip install flask>=3.0.0 flask-cors>=4.0.0 flask-session>=0.8.0 \
+            pymysql>=1.1.0 cryptography>=41.0.0 \
+            xgboost>=2.0.0 scikit-learn>=1.3.0 pandas>=2.0.0 numpy>=1.24.0 \
+            python-dotenv>=1.0.0 PyYAML>=6.0 rich>=13.0.0 requests>=2.31.0
+```
+
+#### 🔹 Paket B: Voice AI Agent & WebRTC Telemedisin (Opsional)
+Diperlukan apabila Anda ingin mengaktifkan agen asisten suara real-time berbasis WebRTC, deteksi suara manusia (Silero VAD), Deepgram STT, dan penalaran OpenAI:
+```bash
+pip install livekit>=1.1.20 livekit-api>=1.2.2 livekit-agents>=1.8.8 \
+            livekit-plugins-silero>=1.8.8 livekit-plugins-deepgram>=1.8.8 \
+            livekit-plugins-openai>=1.8.8
+```
+
+#### 🔹 Paket C: Model Bahasa Generatif Lokal / Offline LLM (Opsional)
+Diperlukan untuk menjalankan model biner Llama 3.2 1B (`storage/modelsLLM/*.gguf`) secara offline di komputer lokal tanpa API eksternal:
+
+* **Mode CPU Standar (Windows / macOS / Linux):**
+  ```bash
+  pip install llama-cpp-python>=0.3.0
+  ```
+* **Mode Akselerasi GPU CUDA (NVIDIA GPU di Windows PowerShell):**
+  ```powershell
+  $env:CMAKE_ARGS="-DGGML_CUDA=on"
+  pip install llama-cpp-python --force-reinstall --no-cache-dir
+  ```
+* **Mode Akselerasi Metal (macOS Apple Silicon M1/M2/M3/M4):**
+  ```bash
+  CMAKE_ARGS="-DGGML_METAL=on" pip install llama-cpp-python
+  ```
+
+#### 🔹 Paket D: Deep Learning & Neural Network Riset (Opsional)
+Diperlukan jika Anda ingin bereksperimen dengan model deep learning multi-layer perceptron (Keras 3 / TensorFlow):
+```bash
+pip install tensorflow>=2.13.0 matplotlib>=3.7.0
+```
+
+#### 🔹 Paket E: Pengembang, Pengujian Otomatis & Code Quality (Development)
+Diperlukan bagi kontributor atau pengembang yang ingin menjalankan automated testing, linting, formatting, atau Jupyter Notebook:
+```bash
+pip install -r requirements-dev.txt
+# atau secara mandiri:
+pip install pytest pytest-cov black flake8 isort mypy jupyter ipykernel
+```
+
+---
+
+### 3. Tips Mengatasi Kendala Instalasi di Windows
+
+| Gejala Error | Penyebab Utama | Solusi Praktis |
+| :--- | :--- | :--- |
+| `Microsoft Visual C++ 14.0 or greater is required` | Kompilasi paket biner C++ seperti `llama-cpp-python` membutuhkan compiler | Unduh dan pasang **Visual Studio Build Tools** dari [visualstudio.microsoft.com](https://visualstudio.microsoft.com/visual-cpp-build-tools/) dengan mencentang *"Desktop development with C++"*. Atau gunakan *pre-built wheel* `pip install llama-cpp-python --prefer-binary`. |
+| `SSL: CERTIFICATE_VERIFY_FAILED` | Sertifikat Python root belum terbarui di sistem | Jalankan perintah `pip install --upgrade certifi` atau gunakan flag `--trusted-host pypi.org --trusted-host files.pythonhosted.org`. |
+| `Filenames too long` / Error Path Windows | Limit 260 karakter path Windows | Buka PowerShell administrator dan jalankan: `git config --system core.longpaths true` serta aktifkan *LongPathsEnabled* di Registry. |
+| `pip cache corrupt / checksum mismatch` | Cache download paket rusak | Bersihkan cache pip: `pip cache purge` lalu instal ulang. |
 
 ---
 

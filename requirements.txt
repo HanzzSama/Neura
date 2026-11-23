@@ -1,29 +1,33 @@
-# ==============================
-# Neura — Production Requirements
-# ==============================
+# ==============================================================================
+# NEURA AI — PRODUCTION REQUIREMENTS
+# ==============================================================================
 
-# Core ML Framework
+# --- 1. CORE MACHINE LEARNING & PREDICTIVE MODELS ---
+xgboost>=2.0.0
+scikit-learn>=1.3.0
+pandas>=2.0.0
+numpy>=1.24.0
 tensorflow>=2.13.0
 
-# Data Processing
-numpy>=1.24.0
-pandas>=2.0.0
-scikit-learn>=1.3.0
-
-# Configuration & Environment
-PyYAML>=6.0
-python-dotenv>=1.0.0
-
-# Web Server
+# --- 2. WEB SERVER & FRAMEWORK ---
 flask>=3.0.0
 flask-cors>=4.0.0
-flask-session>=0.8
+flask-session>=0.8.0
 
-# Visualization & Output
+# --- 3. DATABASE RELASIONAL (MYSQL LARAGON) ---
+pymysql>=1.1.0
+cryptography>=41.0.0
+
+# --- 4. CONFIGURATION, ENVIRONMENT & UTILS ---
+python-dotenv>=1.0.0
+PyYAML>=6.0
+rich>=13.0.0
+requests>=2.31.0
+
+# --- 5. VISUALIZATION & METRICS ---
 matplotlib>=3.7.0
-rich>=13.0.0          # Beautiful terminal output
 
-# LiveKit Voice AI Agents
+# --- 6. VOICE AI AGENTS & WEBRTC LIVEKIT (OPSIONAL) ---
 livekit>=1.1.20
 livekit-api>=1.2.2
 livekit-agents>=1.8.8
@@ -31,3 +35,6 @@ livekit-plugins-silero>=1.8.8
 livekit-plugins-deepgram>=1.8.8
 livekit-plugins-openai>=1.8.8
 
+# --- 7. LOCAL LLM INFERENCE (OPSIONAL) ---
+# Uncomment jika ingin menjalankan inferensi GGUF lokal via CPU:
+# llama-cpp-python>=0.3.0
