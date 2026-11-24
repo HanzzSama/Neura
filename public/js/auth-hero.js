@@ -1129,7 +1129,43 @@
     }
   }
 
+  function syncUserToDatabase(user, customName, password, provider, role) {
+    if (!user || (!user.email && !user.uid)) return Promise.resolve();
+    var displayName = customName || user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+    var payload = {
+      uid: user.uid || '',
+      email: user.email || '',
+      displayName: displayName,
+      photoURL: user.photoURL || '',
+      phoneNumber: user.phoneNumber || user.phone || '',
+      password: password || '',
+      provider: provider || (user.providerData && user.providerData[0] ? user.providerData[0].providerId : 'password'),
+      role: role || (user.email && user.email.endsWith('@neura.ns.id') ? 'Nakes' : 'User')
+    };
+
+    return fetch('/api/user/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      return res.json();
+    }).then(function (data) {
+      if (data && data.success && data.user) {
+        if (data.user.role) {
+          localStorage.setItem('neura_user_role', data.user.role);
+        }
+      }
+      return data;
+    }).catch(function (err) {
+      console.warn('[Neura Auth] Sinkronisasi user ke MySQL database warning:', err);
+    });
+  }
+
   function saveUserToFirestore(db, user, customName) {
+    // Sinkronkan selalu ke database relasional MySQL neura_db.users
+    syncUserToDatabase(user, customName);
+
     if (!db || !user || !user.uid) return Promise.resolve();
     var docData = {
       uid: user.uid,
@@ -1280,6 +1316,7 @@
         photoURL: ''
       };
       syncUserProfileToStorage(mockUser, mockUser.displayName);
+      syncUserToDatabase(mockUser, mockUser.displayName, '', provider, 'User');
       showLoggedState(mockUser);
       showAlert('Berhasil masuk mode klinis! Anda akan dialihkan ke Workspace...', false);
       setTimeout(function () {
@@ -1916,8 +1953,9 @@
 
             // Step 2: Simpan ke Firestore & kirim email verifikasi via server SMTP (non-blocking)
             updateProfilePromise.then(function () {
-              // Simpan ke Firestore (non-blocking)
+              // Simpan ke Firestore (non-blocking) dan sinkronkan ke MySQL
               saveUserToFirestore(db, user, name);
+              syncUserToDatabase(user, name, password, 'password', 'User');
 
               // Ambil idToken user dan kirim custom email "Confirm Email" via Gmail SMTP
               user.getIdToken(true).then(function (token) {

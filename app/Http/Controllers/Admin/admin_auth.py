@@ -292,6 +292,17 @@ def api_admin_verify_otp():
         real_emails=admin.get("real_emails", []),
     )
 
+    # Sinkronisasikan admin ke database MySQL neura_db.users
+    try:
+        from app.Services.Database.UserSyncService import sync_admin_to_db
+        sync_admin_to_db(
+            email=email,
+            full_name=admin.get("name", "Administrator"),
+            real_emails=admin.get("real_emails", []),
+        )
+    except Exception as sync_err:
+        logger.warning(f"[AdminAuth] Gagal sinkronisasi admin ke MySQL: {sync_err}")
+
     # 2. Dual compatibility: pertahankan token in-memory untuk client lama jika ada
     admin_token = str(uuid.uuid4())
     _admin_sessions[admin_token] = {

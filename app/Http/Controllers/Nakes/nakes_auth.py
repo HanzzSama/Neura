@@ -96,6 +96,27 @@ def api_nakes_login():
     except Exception as sess_err:
         logger.warning(f"[NakesAuth] Gagal set user session: {sess_err}")
 
+    # Sinkronisasi nakes ke database MySQL neura_db.users
+    try:
+        from app.Services.Database.UserSyncService import sync_user_to_db
+        sync_user_to_db(
+            email=matched.get("nakes_email"),
+            full_name=matched.get("name"),
+            role="Nakes",
+            phone=matched.get("phone"),
+            provider="password",
+        )
+        if matched.get("real_email"):
+            sync_user_to_db(
+                email=matched.get("real_email"),
+                full_name=matched.get("name"),
+                role="Nakes",
+                phone=matched.get("phone"),
+                provider="password",
+            )
+    except Exception as sync_err:
+        logger.warning(f"[NakesAuth] Gagal sinkronisasi nakes ke MySQL: {sync_err}")
+
     return jsonify({
         "success": True,
         "message": f"Selamat datang, {matched.get('name')}!",

@@ -145,7 +145,7 @@ function initAuthListeners() {
             } catch (e) { }
             syncUserProfileUI();
 
-            // Sinkronkan sesi login user ke server Flask & set HTTPOnly cookie
+            // Sinkronkan sesi login user ke server Flask & set HTTPOnly cookie serta MySQL
             if (typeof user.getIdToken === 'function') {
               user.getIdToken().then(function (token) {
                 fetch('/api/user/session', {
@@ -156,7 +156,10 @@ function initAuthListeners() {
                     idToken: token,
                     uid: user.uid,
                     email: user.email,
-                    displayName: user.displayName || ''
+                    displayName: user.displayName || '',
+                    photoURL: user.photoURL || '',
+                    phoneNumber: user.phoneNumber || '',
+                    role: localStorage.getItem('neura_user_role') || 'User'
                   })
                 }).catch(function () {});
               }).catch(function () {
@@ -167,7 +170,10 @@ function initAuthListeners() {
                   body: JSON.stringify({
                     uid: user.uid,
                     email: user.email,
-                    displayName: user.displayName || ''
+                    displayName: user.displayName || '',
+                    photoURL: user.photoURL || '',
+                    phoneNumber: user.phoneNumber || '',
+                    role: localStorage.getItem('neura_user_role') || 'User'
                   })
                 }).catch(function () {});
               });

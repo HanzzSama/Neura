@@ -39,6 +39,11 @@ def _run_background_checks():
         connected, msg = test_connection()
         if connected:
             logger.info(f"[Bootstrap] Database MySQL OK: {msg}")
+            try:
+                from app.Services.Database.UserSyncService import seed_default_admins_and_users
+                seed_default_admins_and_users()
+            except Exception as seed_err:
+                logger.warning(f"[Bootstrap] UserSync default seeding warning: {seed_err}")
         else:
             logger.warning(f"[Bootstrap] Database MySQL Warning: {msg}")
     except Exception as e:
