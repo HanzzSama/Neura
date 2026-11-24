@@ -23,103 +23,176 @@ logger = get_logger(__name__)
 admin_database_bp = Blueprint("admin_database", __name__)
 
 SCHEMA_COLUMNS = {
-    "users": ["id", "email", "full_name", "phone", "role", "avatar_url", "created_at", "updated_at"],
-    "user_profiles": [
-        "id", "user_id", "patient_name", "age", "gender", "ethnicity", "education_level",
-        "height", "weight", "bmi", "systolic_bp", "diastolic_bp", "smoking", "alcohol_consumption",
-        "physical_activity", "diet_quality", "sleep_quality", "family_history_alzheimers",
-        "cardiovascular_disease", "diabetes", "depression", "head_injury", "hypertension",
-        "cholesterol_total", "cholesterol_ldl", "cholesterol_hdl", "cholesterol_triglycerides",
-        "mmse", "functional_assessment", "adl", "memory_complaints", "behavioral_problems",
-        "confusion", "disorientation", "personality_changes", "difficulty_completing_tasks",
-        "forgetfulness", "created_at"
-    ],
-    "nakes": [
-        "id", "user_id", "sip", "str", "nip", "full_name", "specialization",
-        "facility_name", "phone_number", "email", "status_validation", "verified_at"
-    ],
-    "consultations": [
-        "id", "doc_id", "nakes_code", "patient_name", "patient_id_label", "user_id",
-        "validated_by_nakes_id", "status", "verification_hash", "created_at_label", "created_at"
-    ],
-    "prediction_records": [
-        "id", "consultation_id", "user_id", "patient_name", "source", "ml_label",
-        "ml_label_name", "ml_label_badge", "is_positive", "risk_level", "probability_1",
-        "probability_0", "confidence", "raw_logit_z", "sum_tree_weights", "created_at"
-    ],
-    "research_dispatches": [
-        "id", "title", "category", "abstract", "content", "author", "badge_label",
-        "is_featured", "published_at"
-    ],
-    "research_subscribers": [
-        "id", "email", "subscribed_categories", "is_active", "subscribed_at"
-    ]
+    "users": ["id", "uuid", "email", "full_name", "phone", "role", "avatar_url", "status", "email_verified_at", "created_at"],
+    "patient_profiles": ["id", "user_id", "full_name", "nik", "date_of_birth", "gender", "phone", "avatar_url", "emergency_contact_name", "updated_at"],
+    "oauth_identities": ["id", "user_id", "provider", "provider_uid", "provider_email", "last_login_at", "created_at"],
+    "nakes_profiles": ["id", "user_id", "sip", "str", "nip", "specialization", "facility_name", "validation_status", "verified_at", "created_at"],
+    "admin_profiles": ["id", "user_id", "custom_email", "real_notification_emails", "department", "security_clearance", "created_at"],
+    "medical_documents": ["id", "doc_number", "patient_user_id", "patient_name", "document_title", "status", "qr_verification_token", "integrity_hash", "created_at"],
+    "consultation_sessions": ["id", "document_id", "nakes_code", "assigned_nakes_id", "session_channel", "scheduled_at", "completed_at", "created_at"],
+    "clinical_validations": ["id", "document_id", "validator_nakes_id", "icd10_code", "diagnosis_name", "clinical_notes", "signed_at"],
+    "patient_biomarkers": ["id", "patient_user_id", "age", "gender", "bmi", "systolic_bp", "diastolic_bp", "mmse", "functional_assessment", "adl", "memory_complaints", "biomarker_hash", "recorded_at"],
+    "prediction_runs": ["id", "document_id", "biomarker_id", "model_version", "ml_label", "ml_label_name", "risk_level", "probability_positive", "raw_logit_z", "created_at"],
+    "auth_sessions": ["session_token", "user_id", "role", "ip_address", "user_agent", "last_activity_at", "expires_at"],
+    "auth_otp_codes": ["id", "identifier", "otp_code", "purpose", "attempts", "expires_at", "consumed_at", "created_at"],
+    "system_notifications": ["id", "target_user_id", "target_role", "title", "body", "category", "urgency", "is_read", "created_at"],
+    "system_cache": ["cache_key", "tag", "expires_at"],
+    "audit_logs": ["id", "actor_user_id", "actor_email", "action", "entity_type", "entity_id", "ip_address", "created_at"],
+    "research_articles": ["id", "slug", "title", "category", "author_name", "badge_label", "is_featured", "published_at"],
+    "research_subscribers": ["id", "email", "subscribed_categories", "is_active", "subscribed_at"],
+    # Legacy compat
+    "user_profiles": ["id", "user_id", "patient_name", "age", "gender", "bmi", "mmse", "created_at"],
+    "nakes": ["id", "user_id", "sip", "str", "full_name", "facility_name", "status_validation"],
+    "consultations": ["id", "doc_id", "nakes_code", "patient_name", "status", "verification_hash", "created_at"],
+    "prediction_records": ["id", "consultation_id", "ml_label", "ml_label_name", "probability_1", "raw_logit_z", "created_at"],
+    "research_dispatches": ["id", "title", "category", "author", "is_featured", "published_at"],
 }
 
 MYSQL_TABLE_CONFIGS = [
+    # --- DOMAIN 1: IAM & PROFILES ---
     {
         "id": "db-users",
         "name": "users",
         "table": "users",
         "type": "mysql",
-        "category": "AUTH & PROFILES",
-        "description": "Tabel akun pengguna, kredensial autentikasi, dan hak akses RBAC (User, Nakes, Admin)."
+        "category": "IAM & PROFILES",
+        "description": "Tabel akun pengguna, kredensial autentikasi, UUID, dan hak akses RBAC (User, Nakes, Admin)."
     },
     {
-        "id": "db-user_profiles",
-        "name": "user_profiles",
-        "table": "user_profiles",
+        "id": "db-patient_profiles",
+        "name": "patient_profiles",
+        "table": "patient_profiles",
         "type": "mysql",
-        "category": "CLINICAL BIOMARKERS",
-        "description": "32 Biomarker klinis pasien, MMSE, ADL, dan 7 keluhan kognitif spesifik Alzheimer."
+        "category": "IAM & PROFILES",
+        "description": "Profil demografi pasien, kontak darurat keluarga, NIK, dan preferensi akun."
     },
     {
-        "id": "db-nakes",
-        "name": "nakes",
-        "table": "nakes",
+        "id": "db-oauth_identities",
+        "name": "oauth_identities",
+        "table": "oauth_identities",
         "type": "mysql",
-        "category": "HEALTHCARE DIRECTORY",
-        "description": "Direktori tenaga medis & dokter spesialis saraf terverifikasi (SIP, STR, Faskes)."
+        "category": "IAM & PROFILES",
+        "description": "Mapping kredensial pihak ketiga OAuth Google & Firebase Authentication."
     },
     {
-        "id": "db-consultations",
-        "name": "consultations",
-        "table": "consultations",
+        "id": "db-admin_profiles",
+        "name": "admin_profiles",
+        "table": "admin_profiles",
         "type": "mysql",
-        "category": "TELEMEDICINE",
-        "description": "Catatan rekam medis terenkripsi, kode rujukan dokter (NKS-26-XXXX-ALZ), dan status."
+        "category": "IAM & PROFILES",
+        "description": "Konfigurasi khusus administrator, routing notifikasi email asli, dan security clearance."
     },
     {
-        "id": "db-prediction_records",
-        "name": "prediction_records",
-        "table": "prediction_records",
+        "id": "db-nakes_profiles",
+        "name": "nakes_profiles",
+        "table": "nakes_profiles",
         "type": "mysql",
-        "category": "AI INFERENCE SINK",
-        "description": "Log inferensi XGBoost (25 trees), logit z, label resmi ML (0/1), dan tingkat risiko."
+        "category": "KLINIS & NAKES",
+        "description": "Direktori tenaga medis & dokter spesialis saraf terverifikasi (SIP, STR KKI, Faskes)."
+    },
+
+    # --- DOMAIN 2: REKAM MEDIS & DOKUMEN ELEKTRONIK (EMR) ---
+    {
+        "id": "db-medical_documents",
+        "name": "medical_documents",
+        "table": "medical_documents",
+        "type": "mysql",
+        "category": "REKAM MEDIS & DOKUMEN",
+        "description": "Master berkas rekam medis pasien (DOC-NEURA-2026-XXXX), status, dan hash integritas SHA-256."
     },
     {
-        "id": "db-research_dispatches",
-        "name": "research_dispatches",
-        "table": "research_dispatches",
+        "id": "db-consultation_sessions",
+        "name": "consultation_sessions",
+        "table": "consultation_sessions",
         "type": "mysql",
-        "category": "RESEARCH PUBLICATIONS",
-        "description": "Buletin riset klinis Alzheimer, telaah ilmiah, dan publikasi penelitian berkala."
+        "category": "REKAM MEDIS & DOKUMEN",
+        "description": "Sesi telemedisin & konsultasi klinis berisikan kode rujukan dokter (NKS-26-XXXX-ALZ)."
+    },
+    {
+        "id": "db-clinical_validations",
+        "name": "clinical_validations",
+        "table": "clinical_validations",
+        "type": "mysql",
+        "category": "REKAM MEDIS & DOKUMEN",
+        "description": "Catatan validasi dokter spesialis, diagnosa ICD-10 (G30.9), dan digital signature."
+    },
+
+    # --- DOMAIN 3: AI ENGINE & 32 BIOMARKER ---
+    {
+        "id": "db-patient_biomarkers",
+        "name": "patient_biomarkers",
+        "table": "patient_biomarkers",
+        "type": "mysql",
+        "category": "AI & BIOMARKER",
+        "description": "32 Parameter biomarker klinis pasien presisi tinggi sesuai model RapidMiner modelML.rmp."
+    },
+    {
+        "id": "db-prediction_runs",
+        "name": "prediction_runs",
+        "table": "prediction_runs",
+        "type": "mysql",
+        "category": "AI & BIOMARKER",
+        "description": "Riwayat inferensi model XGBoost 25 Trees, kalkulasi logit z, dan probabilitas risiko Alzheimer."
+    },
+
+    # --- DOMAIN 4: SESI, 2FA OTP & CACHE PERFORMA TINGGI ---
+    {
+        "id": "db-auth_sessions",
+        "name": "auth_sessions",
+        "table": "auth_sessions",
+        "type": "mysql",
+        "category": "SESI & CACHE",
+        "description": "Penyimpanan sesi server-side persisten di database MySQL & token Remember Me."
+    },
+    {
+        "id": "db-auth_otp_codes",
+        "name": "auth_otp_codes",
+        "table": "auth_otp_codes",
+        "type": "mysql",
+        "category": "SESI & CACHE",
+        "description": "Pusat kode 2FA OTP admin dengan proteksi rate limit, cooldown 45s, dan validasi sekali pakai."
+    },
+    {
+        "id": "db-system_cache",
+        "name": "system_cache",
+        "table": "system_cache",
+        "type": "mysql",
+        "category": "SESI & CACHE",
+        "description": "Key-value cache sistem berbasis MySQL InnoDB untuk akselerasi respon endpoint."
+    },
+
+    # --- DOMAIN 5 & 6: AUDIT TRAIL, NOTIFIKASI & RISET ---
+    {
+        "id": "db-system_notifications",
+        "name": "system_notifications",
+        "table": "system_notifications",
+        "type": "mysql",
+        "category": "AUDIT & NOTIFIKASI",
+        "description": "Pusat notifikasi persisten real-time untuk pasien, dokter, dan administrator."
+    },
+    {
+        "id": "db-audit_logs",
+        "name": "audit_logs",
+        "table": "audit_logs",
+        "type": "mysql",
+        "category": "AUDIT & NOTIFIKASI",
+        "description": "Audit trail kepatuhan Permenkes RME, mutasi data medis, dan log keamanan login."
+    },
+    {
+        "id": "db-research_articles",
+        "name": "research_articles",
+        "table": "research_articles",
+        "type": "mysql",
+        "category": "RISET & PUSTAKA",
+        "description": "Publikasi berkala telaah ilmiah dan buletin riset klinis Alzheimer."
     },
     {
         "id": "db-research_subscribers",
         "name": "research_subscribers",
         "table": "research_subscribers",
         "type": "mysql",
-        "category": "SUBSCRIBERS",
+        "category": "RISET & PUSTAKA",
         "description": "Daftar email dokter dan peneliti pelanggan buletin riset klinis Neura."
-    },
-    {
-        "id": "db-sessions",
-        "name": "sessions",
-        "table": "sessions",
-        "type": "local",
-        "category": "SESSION STORE",
-        "description": "Token sesi login admin & pengguna aktif, masa berlaku, dan kontrol akses berbasis disk."
     },
     {
         "id": "db-alzheimers_data",
@@ -128,6 +201,24 @@ MYSQL_TABLE_CONFIGS = [
         "type": "dataset",
         "category": "TABULAR DATA LAKE",
         "description": "Dataset kohort Alzheimer 2.149 baris dengan 35 parameter demografi, klinis & MMSE."
+    },
+
+    # --- LEGACY REFERENCES (Backwards Compatibility) ---
+    {
+        "id": "db-consultations",
+        "name": "consultations",
+        "table": "consultations",
+        "type": "mysql",
+        "category": "LEGACY COMPAT",
+        "description": "Tabel konsultasi v1 (telah tersinkronisasi otomatis ke medical_documents)."
+    },
+    {
+        "id": "db-nakes",
+        "name": "nakes",
+        "table": "nakes",
+        "type": "mysql",
+        "category": "LEGACY COMPAT",
+        "description": "Tabel direktori nakes v1 (telah tersinkronisasi ke nakes_profiles)."
     }
 ]
 

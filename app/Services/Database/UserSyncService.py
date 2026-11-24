@@ -151,6 +151,25 @@ def sync_user_to_db(
                 (final_name, final_avatar, final_phone, final_role, final_pwd_hash, existing["id"]),
             )
 
+            # Dual write ke patient_profiles & oauth_identities V2
+            try:
+                execute_update("""
+                    INSERT INTO `patient_profiles` (`user_id`, `full_name`, `phone`, `avatar_url`)
+                    VALUES (%s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                        `full_name` = VALUES(`full_name`),
+                        `phone` = VALUES(`phone`),
+                        `avatar_url` = VALUES(`avatar_url`);
+                """, (existing["id"], final_name, final_phone, final_avatar))
+                if provider == "google":
+                    execute_update("""
+                        INSERT INTO `oauth_identities` (`user_id`, `provider`, `provider_uid`, `provider_email`, `last_login_at`)
+                        VALUES (%s, 'google', %s, %s, CURRENT_TIMESTAMP)
+                        ON DUPLICATE KEY UPDATE `last_login_at` = CURRENT_TIMESTAMP;
+                    """, (existing["id"], f"google_{email_clean}", email_clean))
+            except Exception:
+                pass
+
             logger.info(f"[UserSync] Berhasil memperbarui user di MySQL: id={existing['id']}, email={email_clean}, role={final_role}")
             return {
                 "success": True,
@@ -177,6 +196,25 @@ def sync_user_to_db(
                 """,
                 (email_clean, new_pwd_hash, target_name, phone or None, target_role, avatar_url or None),
             )
+
+            # Dual write ke patient_profiles & oauth_identities V2
+            try:
+                execute_update("""
+                    INSERT INTO `patient_profiles` (`user_id`, `full_name`, `phone`, `avatar_url`)
+                    VALUES (%s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                        `full_name` = VALUES(`full_name`),
+                        `phone` = VALUES(`phone`),
+                        `avatar_url` = VALUES(`avatar_url`);
+                """, (new_id, target_name, phone or None, avatar_url or None))
+                if provider == "google":
+                    execute_update("""
+                        INSERT INTO `oauth_identities` (`user_id`, `provider`, `provider_uid`, `provider_email`, `last_login_at`)
+                        VALUES (%s, 'google', %s, %s, CURRENT_TIMESTAMP)
+                        ON DUPLICATE KEY UPDATE `last_login_at` = CURRENT_TIMESTAMP;
+                    """, (new_id, f"google_{email_clean}", email_clean))
+            except Exception:
+                pass
 
             logger.info(f"[UserSync] Berhasil menyimpan user baru ke MySQL: id={new_id}, email={email_clean}, role={target_role}")
             return {

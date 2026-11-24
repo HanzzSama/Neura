@@ -15,4 +15,4 @@ DB_USER = os.getenv("DB_USER") or os.getenv("DB_USERNAME", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_NAME = os.getenv("DB_NAME") or os.getenv("DB_DATABASE", "neura_db")
 
-SCHEMA_FILE = PROJECT_ROOT / "database" / "migrations" / "schema.sql"
+SCHEMA_FILE = PROJECT_ROOT / "database" / "migrations" / "schema_v2.sql"

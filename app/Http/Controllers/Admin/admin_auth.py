@@ -207,6 +207,13 @@ def api_admin_send_otp():
 
         logger.info(f"[Admin OTP] Generated SINGLE OTP for {email} -> dest: {real_emails}")
 
+        # Simpan kode OTP ke MySQL auth_otp_codes
+        try:
+            from app.Services.Database.SessionDatabaseService import save_auth_otp
+            save_auth_otp(identifier=email, otp_code=otp_code, purpose="ADMIN_2FA", expires_sec=300)
+        except Exception as otp_db_err:
+            logger.warning(f"[Admin OTP] Gagal simpan OTP ke MySQL: {otp_db_err}")
+
         smtp_ok = bool(send_result.get("success", False))
         if not smtp_ok:
             error_msg = send_result.get("error", "Gagal mengirimkan email OTP.")
@@ -313,6 +320,33 @@ def api_admin_verify_otp():
     }
     _save_admin_sessions()
 
+    # Simpan ke tabel auth_sessions & audit_logs di MySQL
+    try:
+        from app.Services.Database.SessionDatabaseService import save_auth_session, record_audit_log
+        from app.Services.Database.DatabaseManager import execute_one
+        admin_u = execute_one("SELECT id FROM `users` WHERE `email` = %s LIMIT 1;", (email,))
+        u_id = admin_u["id"] if admin_u else 1
+        save_auth_session(
+            token=admin_token,
+            user_id=u_id,
+            role="Admin",
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent", ""),
+            payload=admin_payload,
+        )
+        record_audit_log(
+            actor_user_id=u_id,
+            actor_email=email,
+            action="ADMIN_LOGIN_2FA_SUCCESS",
+            entity_type="auth_sessions",
+            entity_id=admin_token,
+            details=admin_payload,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent", ""),
+        )
+    except Exception as db_sess_err:
+        logger.warning(f"[AdminAuth] Gagal simpan sesi ke MySQL: {db_sess_err}")
+
     admin_payload = {
         "custom_email": email,
         "name":         admin.get("name", "Administrator"),
@@ -404,6 +438,28 @@ def api_admin_verify_session():
             or ""
         ).strip()
 
+    if token:
+        # Cek database auth_sessions terlebih dahulu
+        try:
+            from app.Services.Database.SessionDatabaseService import get_auth_session
+            db_sess = get_auth_session(token)
+            if db_sess:
+                set_admin_session(
+                    email=db_sess["email"],
+                    name=db_sess["name"],
+                    role=db_sess["role"],
+                )
+                return jsonify({
+                    "valid": True,
+                    "admin": {
+                        "email": db_sess["email"],
+                        "name":  db_sess["name"],
+                        "role":  db_sess["role"],
+                    },
+                })
+        except Exception:
+            pass
+
     if token and token in _admin_sessions:
         s_data = _admin_sessions[token]
         # Validasi masa aktif 30 hari (Remember Me)
@@ -437,7 +493,20 @@ def api_admin_logout():
 
     body  = request.get_json(silent=True) or {}
     token = str(body.get("token") or "").strip()
-    if token and token in _admin_sessions:
-        _admin_sessions.pop(token, None)
-        _save_admin_sessions()
+    if token:
+        if token in _admin_sessions:
+            _admin_sessions.pop(token, None)
+            _save_admin_sessions()
+        try:
+            from app.Services.Database.SessionDatabaseService import delete_auth_session, record_audit_log
+            delete_auth_session(token)
+            record_audit_log(
+                actor_email="admin_logout",
+                action="ADMIN_LOGOUT",
+                entity_type="auth_sessions",
+                entity_id=token,
+                ip_address=request.remote_addr,
+            )
+        except Exception:
+            pass
     return jsonify({"success": True, "message": "Sesi admin berhasil diakhiri."})

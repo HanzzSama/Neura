@@ -74,13 +74,27 @@ def broadcast_notification(target_role="all", title="", body="", category="gener
         "read": False
     }
 
-    # 1. Simpan ke histori
+    # 1. Simpan ke histori berkas & basis data MySQL
     try:
         items = _load_notifications()
         items.append(payload)
         _save_notifications(items)
     except Exception as e:
         logger.error(f"[Notification Hub] Error saving notification: {e}")
+
+    try:
+        from app.Services.Database.SessionDatabaseService import save_system_notification
+        save_system_notification(
+            title=title,
+            body=body,
+            target_role=target_role,
+            category=category,
+            urgency=urgency,
+            action_url=action_url,
+            metadata=meta or {},
+        )
+    except Exception as db_notif_err:
+        logger.warning(f"[Notification Hub] Gagal simpan ke MySQL: {db_notif_err}")
 
     # 2. Push ke active SSE subscriber queues
     event_data = f"data: {json.dumps(payload)}\n\n"
