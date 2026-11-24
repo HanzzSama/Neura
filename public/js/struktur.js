@@ -1012,7 +1012,7 @@
       savedCanvas = localStorage.getItem('neura_active_canvas') || localStorage.getItem('neura_active_mode');
     } catch(e) {}
 
-    const target = viewParam || savedCanvas || 'explorer';
+    const target = viewParam || savedCanvas || 'general';
 
     // Muat custom pages dari registry sebelum kanvas di-render agar kartu tidak hilang saat refresh
     try {
@@ -2746,13 +2746,13 @@
     if (nodeEl) {
       const isDataset = colName.endsWith('.csv');
       const badge = nodeEl.querySelector('.db-card-badge');
-      if (badge) badge.textContent = `${count} ${isDataset ? 'Baris' : 'Docs'}`;
+      if (badge) badge.textContent = `${count} ${isDataset ? 'Baris' : 'Rows'}`;
     }
     // 2. Update Sidebar Item Badge
     const sideItem = document.querySelector(`.sidebar-db-item[data-col-name="${colName}"] .sdb-count`);
     if (sideItem) {
       const isDataset = colName.endsWith('.csv');
-      sideItem.textContent = `${count} ${isDataset ? 'baris' : 'docs'}`;
+      sideItem.textContent = `${count} ${isDataset ? 'baris' : 'rows'}`;
     }
     // 3. Update State node
     const nodeState = STATE.nodes?.find(n => n.name === colName);
@@ -2800,16 +2800,68 @@
     try {
       const res = await fetch(`/api/database/collection/${encodeURIComponent(title)}/docs?limit=60`);
       const data = await res.json();
-      if (data.status === 'success') {
+      if (data.status === 'success' || data.status === 'warning') {
         STATE.activeDbCollection = title;
         STATE.activeDbDocs = data.documents || [];
         renderDbDrawerContent(data);
         updateCanvasAndSidebarColCount(title, data.documents?.length || 0);
+
+        if (data.mysql_connected === false || data.is_fallback) {
+          const offlineBanner = document.createElement('tr');
+          offlineBanner.innerHTML = `
+            <td colspan="${(data.columns?.length || 5) + 1}" style="padding: 16px; background: rgba(239, 68, 68, 0.08); border-bottom: 1px solid rgba(239, 68, 68, 0.25);">
+              <div style="display:flex; align-items:flex-start; gap:12px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" style="flex-shrink:0; margin-top:2px;">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div style="font-size:12px; line-height:1.5;">
+                  <strong style="color:#FCA5A5; font-size:13px; display:block; margin-bottom:2px;">
+                    MySQL Server (Laragon) Belum Berjalan di Port 3306
+                  </strong>
+                  <span style="color:#CBD5E1;">
+                    Server aplikasi tidak dapat tersambung ke <code>127.0.0.1:3306</code> (database <code>neura_db</code>).<br>
+                    <strong>Solusi:</strong> Buka aplikasi <strong>Laragon</strong> di komputer Anda lalu klik tombol <strong>"Start All"</strong> untuk menyalakan database MySQL.
+                  </span>
+                </div>
+              </div>
+            </td>
+          `;
+          if (dbRecordsTbody && dbRecordsTbody.firstChild) {
+            dbRecordsTbody.insertBefore(offlineBanner, dbRecordsTbody.firstChild);
+          } else if (dbRecordsTbody) {
+            dbRecordsTbody.appendChild(offlineBanner);
+          }
+        }
       } else {
-        if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#EF4444;">Gagal memuat dokumen: ${data.message || 'Error'}</td></tr>`;
+        if (dbRecordsTbody) {
+          dbRecordsTbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="padding:24px;">
+                <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:16px;color:#FCA5A5;">
+                  <div style="font-weight:700;margin-bottom:4px;">Gagal Memuat Rekaman</div>
+                  <div style="font-size:12px;color:#CBD5E1;">${data.message || 'Error'}</div>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
       }
     } catch (err) {
-      if (dbRecordsTbody) dbRecordsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#EF4444;">Koneksi error: ${err.message}</td></tr>`;
+      if (dbRecordsTbody) {
+        dbRecordsTbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="padding:24px;">
+              <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:16px;color:#FCA5A5;">
+                <div style="font-weight:700;margin-bottom:4px;">MySQL (Laragon) Belum Berjalan</div>
+                <div style="font-size:12px;color:#CBD5E1;">
+                  Server tidak dapat terhubung ke <code>127.0.0.1:3306</code>.<br>
+                  Buka aplikasi <strong>Laragon</strong> di komputer Anda lalu klik tombol <strong>"Start All"</strong>.
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
     }
   }
   window.openDatabaseDrawer = openDatabaseDrawer;
@@ -5599,62 +5651,50 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
 
   // Curated architectural relation connectors for root modules
   const ROOT_EXPLORER_CONNECTIONS = [
-    // Web Server Connections (server.py running web application)
-    ['exp-server-py', 'exp-api',       'calls',    'Mount API'],
-    ['exp-server-py', 'exp-public',    'default',  'Serve Web'],
-    ['exp-server-py', 'exp-core',      'contains', 'Core Logger'],
-    ['exp-server-py', 'exp-configs',   'imports',  'Load Config'],
+    // Web Server Connections
+    ['exp-server-py', 'exp-bootstrap', 'imports',  'Boot App'],
+    ['exp-server-py', 'exp-routes',    'calls',    'Register Routes'],
+    ['exp-server-py', 'exp-public',    'default',  'Serve SPA'],
 
-    // Agents & Core
-    ['exp-main-py',         'exp-core',      'calls',    'Core Hub'],
-    ['exp-voice_agent-py',  'exp-modelsLLM', 'ml',       'Voice AI'],
+    // CLI Console Connections
+    ['exp-nterli-py', 'exp-app',       'calls',    'Invoke Commands'],
+    ['exp-nterli-py', 'exp-database',  'calls',    'Migrate / Seed'],
 
-    // AI & Multimodal Pipeline
-    ['exp-core',      'exp-modelsLLM', 'core',     'Warmup Pipe'],
-    ['exp-modelsLLM', 'exp-features',  'provides', 'Biomarkers'],
-    ['exp-modelsLLM', 'exp-datasets',  'ml',       'OASIS Feed'],
+    // Clean Architecture Interconnections
+    ['exp-routes',    'exp-app',       'calls',    'Controllers'],
+    ['exp-app',       'exp-config',    'imports',  'Load Config'],
+    ['exp-app',       'exp-database',  'contains', 'MySQL Models'],
+    ['exp-app',       'exp-storage',   'contains', 'Inference & Sessions'],
 
-    // Terminal Automation & Dev Tools
-    ['exp-scripts',   'exp-training',  'default',  'Train Pipe'],
-    ['exp-scripts',   'exp-tests',     'default',  'Run Tests'],
-    ['exp-training',  'exp-data',      'contains', 'Data Lake'],
-    ['exp-training',  'exp-modelsLLM', 'provides', 'Weights'],
+    // Quality & Toolchain
+    ['exp-scripts',   'exp-storage',   'default',  'Model Weights'],
+    ['exp-tests',     'exp-app',       'default',  'Run Feature Tests'],
   ];
 
   // Specific architectural layout for root cards (coords + roles)
   const ROOT_ARCHITECTURAL_LAYOUT = {
-    // Row 0: Runtime & Web Entrypoints (y = 80)
-    'server.py':            { x: 420,  y: 80,  category: '⚡ WEB RUNNER',        icon: 'server',   border: 'card-border-server', hero: true },
-    'main.py':              { x: 710,  y: 80,  category: 'CLI RUNNER',          icon: 'terminal', border: 'card-border-emerald' },
-    'voice_agent.py':       { x: 1000, y: 80,  category: 'VOICE AGENT',         icon: 'brain',    border: 'card-border-purple' },
+    // Row 0: Runtime Runners & CLI (y = 80)
+    'server.py':            { x: 340,  y: 80,  category: '⚡ WEB RUNNER',        icon: 'server',   border: 'card-border-server', hero: true },
+    'nterli.py':            { x: 670,  y: 80,  category: 'CLI CONSOLE',         icon: 'terminal', border: 'card-border-emerald', hero: true },
+    'README.md':            { x: 1000, y: 80,  category: 'DOCUMENTATION',       icon: 'code',     border: 'card-border-neutral' },
 
-    // Row 1: Core Services & Web Frontend (y = 220)
-    'public':               { x: 130,  y: 220, category: 'UI / FRONTEND SPA',   icon: 'palette',  border: 'card-border-emerald' },
-    'api':                  { x: 420,  y: 220, category: 'REST API ROUTER',     icon: 'api',      border: 'card-border-blue' },
-    'core':                 { x: 710,  y: 220, category: 'CORE ENGINE',         icon: 'cyclone',  border: 'card-border-emerald' },
-    'configs':              { x: 1000, y: 220, category: 'SYSTEM CONFIG',       icon: 'folder',   border: 'card-border-neutral' },
+    // Row 1: Core Clean Architecture & Routes (y = 220)
+    'app':                  { x: 130,  y: 220, category: 'CLEAN ARCHITECTURE',  icon: 'cyclone',  border: 'card-border-emerald', hero: true },
+    'bootstrap':            { x: 420,  y: 220, category: 'APP BOOTSTRAPPER',    icon: 'cyclone',  border: 'card-border-cyan' },
+    'config':               { x: 710,  y: 220, category: 'SYSTEM CONFIG',       icon: 'folder',   border: 'card-border-neutral' },
+    'routes':               { x: 1000, y: 220, category: 'REST API ROUTER',     icon: 'api',      border: 'card-border-blue' },
 
-    // Row 2: AI & Clinical Data Pipeline (y = 360)
-    'modelsLLM':            { x: 130,  y: 360, category: 'AI / MULTIMODAL',     icon: 'brain',    border: 'card-border-purple' },
-    'features':             { x: 420,  y: 360, category: 'FEATURE PIPELINE',    icon: 'folder',   border: 'card-border-purple' },
-    'datasets':             { x: 710,  y: 360, category: 'BIOMARKER DATA',      icon: 'database', border: 'card-border-amber' },
-    'data':                 { x: 1000, y: 360, category: 'DATA LAKE',           icon: 'folder',   border: 'card-border-amber' },
+    // Row 2: Presentation & Persistence (y = 360)
+    'public':               { x: 130,  y: 360, category: 'UI / FRONTEND SPA',   icon: 'palette',  border: 'card-border-emerald' },
+    'database':             { x: 420,  y: 360, category: 'MYSQL MIGRATIONS',    icon: 'database', border: 'card-border-amber' },
+    'storage':              { x: 710,  y: 360, category: 'MODELS & SESSIONS',   icon: 'database', border: 'card-border-purple' },
+    'scripts':              { x: 1000, y: 360, category: 'ML & TOOLCHAIN',      icon: 'terminal', border: 'card-border-amber' },
 
-    // Row 3: Terminal Automation & Research (y = 500)
-    'scripts':              { x: 130,  y: 500, category: 'PROCESSING TERMINAL', icon: 'terminal', border: 'card-border-amber' },
-    'training':             { x: 420,  y: 500, category: 'MODEL TRAINING',      icon: 'folder',   border: 'card-border-purple' },
-    'tests':                { x: 710,  y: 500, category: 'TEST SUITE',          icon: 'folder',   border: 'card-border-neutral' },
-    'notebooks':            { x: 1000, y: 500, category: 'NOTEBOOKS',           icon: 'folder',   border: 'card-border-neutral' },
-
-    // Row 4: Independent Scratch & Project Documents (y = 660)
-    'scratch':              { x: 130,  y: 660, category: 'SCRATCH EXPERIMENT',  icon: 'folder',   border: 'card-border-neutral' },
-    'about_app.json':       { x: 420,  y: 660, category: 'JSON METADATA',       icon: 'database', border: 'card-border-amber' },
-    'README.md':            { x: 710,  y: 660, category: 'DOCUMENTATION',       icon: 'code',     border: 'card-border-neutral' },
-    'requirements.txt':     { x: 1000, y: 660, category: 'DEPENDENCIES',        icon: 'code',     border: 'card-border-neutral' },
-
-    // Row 5: Dev Dependencies & Dev Notes (y = 780)
-    'requirements-dev.txt': { x: 420,  y: 780, category: 'DEV DEPS',            icon: 'code',     border: 'card-border-neutral' },
-    'implementations.txt':  { x: 710,  y: 780, category: 'DEV NOTES',           icon: 'code',     border: 'card-border-neutral' },
+    // Row 3: Quality Assurance & Specifications (y = 500)
+    'tests':                { x: 130,  y: 500, category: 'TEST SUITES',         icon: 'folder',   border: 'card-border-neutral' },
+    'docs':                 { x: 420,  y: 500, category: 'ARCHITECTURE DOCS',   icon: 'folder',   border: 'card-border-neutral' },
+    'requirements.txt':     { x: 710,  y: 500, category: 'DEPENDENCIES',        icon: 'code',     border: 'card-border-neutral' },
+    'requirements-dev.txt': { x: 1000, y: 500, category: 'DEV DEPS',            icon: 'code',     border: 'card-border-neutral' },
   };
 
   function getItemsAtPath(tree, pathArray) {
@@ -7118,11 +7158,6 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     toastTimer = setTimeout(() => { t.style.opacity = '0'; }, duration);
   }
 
-})();
-
-
-
-
 
   /* =====================================================================
      INTERACTIVE FLOW TRACER & FLOW FILTER ENGINE (General Canvas)
@@ -7340,3 +7375,5 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
   window.applyFlowFilter = applyFlowFilter;
   window.runFlowSimulation = runFlowSimulation;
   window.resetFlowSimulation = resetFlowSimulation;
+
+})();

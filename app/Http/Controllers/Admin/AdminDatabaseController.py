@@ -3,6 +3,7 @@ app/Http/Controllers/Admin/AdminDatabaseController.py
 ====================================================
 Admin Database & Schema Explorer Controller for MySQL neura_db (Laragon).
 Provides live collections/tables metadata and document/row queries for the Admin Canvas.
+Includes intelligent fallback when MySQL service in Laragon is not yet started.
 """
 
 import os
@@ -13,13 +14,47 @@ from decimal import Decimal
 from pathlib import Path
 from flask import Blueprint, request, jsonify
 
-from app.Services.Database.DatabaseManager import execute_query
+from app.Services.Database.DatabaseManager import execute_query, is_mysql_available
 from app.Services.Logger.LoggerService import get_logger
 from config.app import BASE_DIR, STORAGE_DIR
 
 logger = get_logger(__name__)
 
 admin_database_bp = Blueprint("admin_database", __name__)
+
+SCHEMA_COLUMNS = {
+    "users": ["id", "email", "full_name", "phone", "role", "avatar_url", "created_at", "updated_at"],
+    "user_profiles": [
+        "id", "user_id", "patient_name", "age", "gender", "ethnicity", "education_level",
+        "height", "weight", "bmi", "systolic_bp", "diastolic_bp", "smoking", "alcohol_consumption",
+        "physical_activity", "diet_quality", "sleep_quality", "family_history_alzheimers",
+        "cardiovascular_disease", "diabetes", "depression", "head_injury", "hypertension",
+        "cholesterol_total", "cholesterol_ldl", "cholesterol_hdl", "cholesterol_triglycerides",
+        "mmse", "functional_assessment", "adl", "memory_complaints", "behavioral_problems",
+        "confusion", "disorientation", "personality_changes", "difficulty_completing_tasks",
+        "forgetfulness", "created_at"
+    ],
+    "nakes": [
+        "id", "user_id", "sip", "str", "nip", "full_name", "specialization",
+        "facility_name", "phone_number", "email", "status_validation", "verified_at"
+    ],
+    "consultations": [
+        "id", "doc_id", "nakes_code", "patient_name", "patient_id_label", "user_id",
+        "validated_by_nakes_id", "status", "verification_hash", "created_at_label", "created_at"
+    ],
+    "prediction_records": [
+        "id", "consultation_id", "user_id", "patient_name", "source", "ml_label",
+        "ml_label_name", "ml_label_badge", "is_positive", "risk_level", "probability_1",
+        "probability_0", "confidence", "raw_logit_z", "sum_tree_weights", "created_at"
+    ],
+    "research_dispatches": [
+        "id", "title", "category", "abstract", "content", "author", "badge_label",
+        "is_featured", "published_at"
+    ],
+    "research_subscribers": [
+        "id", "email", "subscribed_categories", "is_active", "subscribed_at"
+    ]
+}
 
 MYSQL_TABLE_CONFIGS = [
     {
@@ -108,6 +143,127 @@ def _serialize_val(val):
     return val
 
 
+def _get_fallback_documents(clean_name: str, limit: int = 60):
+    """Memuat data cadangan lokal saat MySQL belum dinyalakan di Laragon."""
+    columns = SCHEMA_COLUMNS.get(clean_name, ["id", "name", "created_at"])
+    docs = []
+
+    if clean_name == "consultations":
+        candidates = [
+            BASE_DIR / "database" / "datasets" / "consultations_records.json",
+            STORAGE_DIR / "app" / "consultations_records.json",
+        ]
+        for p in candidates:
+            if p.exists():
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        raw_data = json.load(f)
+                    items_list = list(raw_data.values()) if isinstance(raw_data, dict) else raw_data
+                    for i, item in enumerate(items_list[:limit]):
+                        if not isinstance(item, dict):
+                            continue
+                        docs.append({
+                            "id": item.get("id") or item.get("doc_id") or item.get("nakes_code") or f"cons-{i+1}",
+                            "data": item,
+                            **item
+                        })
+                    if docs:
+                        break
+                except Exception:
+                    pass
+
+    elif clean_name == "nakes":
+        nakes_file = BASE_DIR / "database" / "datasets" / "nakes_directory.json"
+        if nakes_file.exists():
+            try:
+                with open(nakes_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for i, item in enumerate(data[:limit]):
+                    docs.append({
+                        "id": item.get("id") or f"nakes-{i+1}",
+                        "data": item,
+                        **item
+                    })
+            except Exception:
+                pass
+
+    elif clean_name == "research_dispatches":
+        res_file = BASE_DIR / "database" / "datasets" / "research_updates.json"
+        if res_file.exists():
+            try:
+                with open(res_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for i, item in enumerate(data[:limit]):
+                    docs.append({
+                        "id": item.get("id") or f"res-{i+1}",
+                        "data": item,
+                        **item
+                    })
+            except Exception:
+                pass
+
+    elif clean_name == "users":
+        docs = [
+            {
+                "id": "1",
+                "email": "haidarandrianno098@gmail.com",
+                "full_name": "Haidar Andrianno (Admin)",
+                "role": "Admin",
+                "phone": "081234567890",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "2",
+                "email": "dr.sarah@neura.ns.id",
+                "full_name": "dr. Sarah Sp.N",
+                "role": "Nakes",
+                "phone": "081298765432",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "3",
+                "email": "pasien.budi@neura.id",
+                "full_name": "Budi Santoso",
+                "role": "User",
+                "phone": "081311223344",
+                "created_at": datetime.now().isoformat()
+            }
+        ]
+
+    elif clean_name == "prediction_records":
+        cons_file = BASE_DIR / "database" / "datasets" / "consultations_records.json"
+        if cons_file.exists():
+            try:
+                with open(cons_file, "r", encoding="utf-8") as f:
+                    raw_cons = json.load(f)
+                items_list = list(raw_cons.values()) if isinstance(raw_cons, dict) else raw_cons
+                for i, item in enumerate(items_list[:limit]):
+                    if not isinstance(item, dict):
+                        continue
+                    prob = float(item.get("probability", 0.75))
+                    pred_obj = {
+                        "id": f"pred-{i+1}",
+                        "consultation_id": item.get("doc_id") or item.get("nakes_code") or f"CONS-{i+1}",
+                        "patient_name": item.get("patient_name", "Pasien"),
+                        "source": "xgboost_inference",
+                        "ml_label": 1 if prob >= 0.5 else 0,
+                        "ml_label_name": "Positif Risiko Alzheimer" if prob >= 0.5 else "Negatif / Risiko Rendah",
+                        "risk_level": "High Risk" if prob >= 0.7 else ("Moderate Risk" if prob >= 0.4 else "Low Risk"),
+                        "probability_1": prob,
+                        "confidence": float(item.get("confidence", 0.88)),
+                        "created_at": item.get("timestamp") or datetime.now().isoformat()
+                    }
+                    docs.append({
+                        "id": pred_obj["id"],
+                        "data": pred_obj,
+                        **pred_obj
+                    })
+            except Exception:
+                pass
+
+    return columns, docs
+
+
 @admin_database_bp.route("/collections", methods=["GET"])
 def api_get_database_collections():
     """
@@ -132,6 +288,8 @@ def api_get_database_collections():
         except Exception:
             dataset_rows = 2149
 
+    is_online, mysql_msg = is_mysql_available()
+
     for cfg in MYSQL_TABLE_CONFIGS:
         t_name = cfg["name"]
         item = dict(cfg)
@@ -141,23 +299,37 @@ def api_get_database_collections():
         elif cfg["type"] == "dataset":
             item["count"] = dataset_rows
         else:
-            # Query count langsung dari MySQL
-            try:
-                rows = execute_query(f"SELECT COUNT(*) as cnt FROM `{t_name}`")
-                item["count"] = int(rows[0]["cnt"]) if rows else 0
-            except Exception as e:
-                logger.warning(f"[AdminDatabase] Error counting {t_name}: {e}")
-                item["count"] = 0
+            if is_online:
+                try:
+                    rows = execute_query(f"SELECT COUNT(*) as cnt FROM `{t_name}`")
+                    item["count"] = int(rows[0]["cnt"]) if rows else 0
+                except Exception as e:
+                    logger.warning(f"[AdminDatabase] Error counting {t_name}: {e}")
+                    item["count"] = 0
+            else:
+                # Bila MySQL offline, tampilkan jumlah perkiraan fallback seeder
+                fallback_counts = {
+                    "users": 3,
+                    "user_profiles": 0,
+                    "nakes": 3,
+                    "consultations": 23,
+                    "prediction_records": 23,
+                    "research_dispatches": 5,
+                    "research_subscribers": 0
+                }
+                item["count"] = fallback_counts.get(t_name, 0)
 
         collections.append(item)
 
     return jsonify({
         "status": "success",
+        "mysql_connected": is_online,
         "database": "neura_db",
         "engine": "MySQL 8.4 (Laragon)",
         "host": "127.0.0.1:3306",
         "total_tables": len(collections),
         "collections": collections,
+        "message": mysql_msg if not is_online else "Terhubung ke MySQL neura_db"
     })
 
 
@@ -165,6 +337,7 @@ def api_get_database_collections():
 def api_get_collection_docs(col_name):
     """
     Mengambil data baris/rekaman dari tabel MySQL, sesi, atau CSV dataset.
+    Dilengkapi fallback otomatis jika MySQL Laragon belum dihidupkan.
     """
     limit = int(request.args.get("limit", 60))
     limit = min(max(1, limit), 200)
@@ -195,6 +368,7 @@ def api_get_collection_docs(col_name):
                     })
             return jsonify({
                 "status": "success",
+                "mysql_connected": True,
                 "collection": clean_name,
                 "type": "dataset",
                 "columns": columns,
@@ -224,6 +398,7 @@ def api_get_collection_docs(col_name):
                     })
         return jsonify({
             "status": "success",
+            "mysql_connected": True,
             "collection": clean_name,
             "type": "local",
             "columns": columns,
@@ -234,6 +409,22 @@ def api_get_collection_docs(col_name):
     valid_tables = {c["table"]: c for c in MYSQL_TABLE_CONFIGS if c["type"] == "mysql"}
     if clean_name not in valid_tables:
         return jsonify({"status": "error", "message": f"Tabel '{clean_name}' tidak dikenal."}), 404
+
+    is_online, mysql_msg = is_mysql_available()
+    if not is_online:
+        # Fallback graceful tanpa 500
+        fallback_cols, fallback_docs = _get_fallback_documents(clean_name, limit)
+        return jsonify({
+            "status": "warning",
+            "mysql_connected": False,
+            "is_fallback": True,
+            "collection": clean_name,
+            "table": clean_name,
+            "type": "mysql",
+            "columns": fallback_cols,
+            "documents": fallback_docs,
+            "message": f"Layanan MySQL (Laragon) pada 127.0.0.1:3306 belum berjalan. Menampilkan data cadangan lokal. Silakan buka Laragon lalu klik 'Start All'."
+        }), 200
 
     try:
         # Ambil kolom tabel
@@ -265,6 +456,8 @@ def api_get_collection_docs(col_name):
 
         return jsonify({
             "status": "success",
+            "mysql_connected": True,
+            "is_fallback": False,
             "collection": clean_name,
             "table": clean_name,
             "type": "mysql",
@@ -272,8 +465,19 @@ def api_get_collection_docs(col_name):
             "documents": docs
         })
     except Exception as e:
-        logger.error(f"[AdminDatabase] Error fetching docs from {clean_name}: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        logger.warning(f"[AdminDatabase] Error fetching docs from MySQL {clean_name}, returning fallback: {e}")
+        fallback_cols, fallback_docs = _get_fallback_documents(clean_name, limit)
+        return jsonify({
+            "status": "warning",
+            "mysql_connected": False,
+            "is_fallback": True,
+            "collection": clean_name,
+            "table": clean_name,
+            "type": "mysql",
+            "columns": fallback_cols,
+            "documents": fallback_docs,
+            "message": f"Koneksi MySQL terputus: {e}. Menampilkan data cadangan lokal. Silakan periksa status Laragon MySQL."
+        }), 200
 
 
 @admin_database_bp.route("/online-users", methods=["GET"])
@@ -282,34 +486,40 @@ def api_get_online_users():
     Mengembalikan daftar pengguna dan nakes aktif dari MySQL users
     untuk avatar stack di kartu users kanvas database.
     """
-    try:
-        rows = execute_query("SELECT id, full_name, email, role, avatar_url FROM users ORDER BY id ASC LIMIT 10")
-        users = []
-        role_colors = {
-            "admin": "#EA580C",
-            "nakes": "#06B6D4",
-            "user": "#3B82F6"
-        }
-        for r in rows:
-            role = (r.get("role") or "user").lower()
-            name = r.get("full_name") or r.get("email", "User")
-            parts = [p for p in name.split() if p]
-            initials = "".join([p[0].upper() for p in parts[:2]]) if parts else "U"
-            users.append({
-                "id": str(r.get("id")),
-                "name": name,
-                "initials": initials,
-                "role": role.capitalize(),
-                "type": role,
-                "status": "online",
-                "color": role_colors.get(role, "#3B82F6"),
-                "avatar": r.get("avatar_url") or ""
-            })
-        if not users:
-            users = [
-                {"id": "1", "name": "Admin Neura", "initials": "AN", "role": "Super Admin", "type": "admin", "status": "online", "color": "#EA580C"}
-            ]
-        return jsonify({"status": "success", "users": users})
-    except Exception as e:
-        logger.warning(f"[AdminDatabase] Error fetching online users: {e}")
-        return jsonify({"status": "success", "users": []})
+    is_online, _ = is_mysql_available()
+    if is_online:
+        try:
+            rows = execute_query("SELECT id, full_name, email, role, avatar_url FROM users ORDER BY id ASC LIMIT 10")
+            users = []
+            role_colors = {
+                "admin": "#EA580C",
+                "nakes": "#06B6D4",
+                "user": "#3B82F6"
+            }
+            for r in rows:
+                role = (r.get("role") or "user").lower()
+                name = r.get("full_name") or r.get("email", "User")
+                parts = [p for p in name.split() if p]
+                initials = "".join([p[0].upper() for p in parts[:2]]) if parts else "U"
+                users.append({
+                    "id": str(r.get("id")),
+                    "name": name,
+                    "initials": initials,
+                    "role": role.capitalize(),
+                    "type": role,
+                    "status": "online",
+                    "color": role_colors.get(role, "#3B82F6"),
+                    "avatar": r.get("avatar_url") or ""
+                })
+            if users:
+                return jsonify({"status": "success", "mysql_connected": True, "users": users})
+        except Exception as e:
+            logger.warning(f"[AdminDatabase] Error fetching online users: {e}")
+
+    # Fallback default online users saat offline
+    fallback_users = [
+        {"id": "1", "name": "Admin Neura", "initials": "AN", "role": "Super Admin", "type": "admin", "status": "online", "color": "#EA580C"},
+        {"id": "2", "name": "dr. Sarah Sp.N", "initials": "DS", "role": "Nakes", "type": "nakes", "status": "online", "color": "#06B6D4"},
+        {"id": "3", "name": "Budi Santoso", "initials": "BS", "role": "Pasien", "type": "user", "status": "online", "color": "#3B82F6"}
+    ]
+    return jsonify({"status": "success", "mysql_connected": is_online, "users": fallback_users})

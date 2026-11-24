@@ -28,8 +28,28 @@ def get_db_connection(database: Optional[str] = DB_NAME) -> pymysql.Connection:
         charset="utf8mb4",
         cursorclass=DictCursor,
         autocommit=True,
-        connect_timeout=4,
+        connect_timeout=2,
     )
+
+
+import time
+
+_last_check_time = 0.0
+_cached_availability = (False, "Belum diperiksa")
+
+
+def is_mysql_available(cache_ttl_sec: int = 4) -> Tuple[bool, str]:
+    """Cek cepat ketersediaan MySQL dengan cache TTL agar request API tidak blocking."""
+    global _last_check_time, _cached_availability
+    now = time.time()
+    if _cached_availability[0] and (now - _last_check_time) < cache_ttl_sec:
+        return _cached_availability
+    if not _cached_availability[0] and (now - _last_check_time) < 2.5:
+        return _cached_availability
+    ok, msg = test_connection()
+    _cached_availability = (ok, msg)
+    _last_check_time = now
+    return _cached_availability
 
 
 def test_connection() -> Tuple[bool, str]:
