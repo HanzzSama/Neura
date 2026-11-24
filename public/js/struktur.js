@@ -3002,8 +3002,6 @@
       };
     });
   }
-    });
-  }
 
   async function enterDatabaseMode() {
     STATE.databaseMode = true;

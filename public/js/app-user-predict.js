@@ -280,8 +280,13 @@ function renderPredictionOutput(data) {
       </div>
 
     </div>
-  `, {
-    stream: false,
-    suggestions: suggestions
-  });
+  `;
+
+  if (typeof appendBotMessage === 'function') {
+    appendBotMessage(html, {
+      stream: false,
+      suggestions: suggestions
+    });
+  }
+  return html;
 }
