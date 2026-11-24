@@ -12,11 +12,11 @@ import logging
 from pathlib import Path
 
 # Ensure project root is on sys.path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from core.database import (
+from app.Services.Database.DatabaseManager import (
     init_database,
     execute_insert,
     execute_query,
@@ -27,7 +27,7 @@ from core.database import (
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("neura.migrate")
 
-DATASETS_DIR = Path(__file__).resolve().parent.parent / "datasets"
+DATASETS_DIR = PROJECT_ROOT / "database" / "datasets"
 
 
 def migrate_nakes():
@@ -223,6 +223,11 @@ def run_migration():
     print("   http://localhost/phpmyadmin/index.php?route=/database/structure&db=neura_db")
     print("=" * 65)
     return True
+
+
+def run_seeder():
+    """Entry point for nterli seed."""
+    return run_migration()
 
 
 if __name__ == "__main__":

@@ -110,11 +110,16 @@ def main():
     # migrate
     subparsers.add_parser("migrate", help="Run database schema migrations")
 
-    # db:seed
+    # db:seed & seed alias
     subparsers.add_parser("db:seed", help="Seed database with initial records")
+    subparsers.add_parser("seed", help="Alias for db:seed")
 
-    # train:xgboost
+    # train:xgboost & train alias
     subparsers.add_parser("train:xgboost", help="Train XGBoost model matching modelML.rmp")
+    subparsers.add_parser("train", help="Alias for train:xgboost")
+
+    # test
+    subparsers.add_parser("test", help="Run automated test suite (Unit & Feature)")
 
     # status
     subparsers.add_parser("status", help="Display system and database status")
@@ -125,10 +130,21 @@ def main():
         cmd_serve(args)
     elif args.command == "migrate":
         cmd_migrate(args)
-    elif args.command == "db:seed":
+    elif args.command in ("db:seed", "seed"):
         cmd_seed(args)
-    elif args.command == "train:xgboost":
+    elif args.command in ("train:xgboost", "train"):
         cmd_train_xgboost(args)
+    elif args.command == "test":
+        import unittest
+        loader = unittest.TestLoader()
+        suite = loader.discover(
+            start_dir=str(PROJECT_ROOT / "tests"),
+            pattern="*Test.py",
+            top_level_dir=str(PROJECT_ROOT)
+        )
+        runner = unittest.TextTestRunner(verbosity=2)
+        result = runner.run(suite)
+        sys.exit(0 if result.wasSuccessful() else 1)
     elif args.command == "status":
         cmd_status(args)
     else:

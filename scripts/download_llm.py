@@ -2,8 +2,10 @@ import os
 import sys
 import time
 import urllib.request
+from pathlib import Path
 
-MODEL_DIR = "modelsLLM"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MODEL_DIR = str(PROJECT_ROOT / "storage" / "modelsLLM")
 MODEL_NAME = "llama-3.2-1b-instruct-q4_k_m.gguf"
 MODEL_URL = "https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF/resolve/main/Llama-3.2-1B-Instruct-Q4_K_M.gguf"
 
