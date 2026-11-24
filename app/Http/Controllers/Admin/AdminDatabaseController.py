@@ -230,6 +230,66 @@ def _get_fallback_documents(clean_name: str, limit: int = 60):
             }
         ]
 
+    elif clean_name == "user_profiles":
+        csv_path = BASE_DIR / "database" / "datasets" / "alzheimers_disease_data.csv"
+        if csv_path.exists():
+            try:
+                with open(csv_path, "r", encoding="utf-8") as f:
+                    reader = csv.DictReader(f)
+                    for i, r in enumerate(reader):
+                        if i >= min(limit, 30):
+                            break
+                        p_obj = {
+                            "id": i + 1,
+                            "user_id": i + 1,
+                            "patient_name": f"Pasien Kohort #{r.get('PatientID', i+1)}",
+                            "age": int(float(r.get("Age", 68))),
+                            "gender": "Laki-laki" if r.get("Gender") == "0" else "Perempuan",
+                            "education_level": r.get("EducationLevel", "Sarjana"),
+                            "bmi": float(r.get("BMI", 24.5)),
+                            "smoking": int(float(r.get("Smoking", 0))),
+                            "systolic_bp": int(float(r.get("SystolicBP", 125))),
+                            "diastolic_bp": int(float(r.get("DiastolicBP", 82))),
+                            "mmse": float(r.get("MMSE", 23.4)),
+                            "functional_assessment": float(r.get("FunctionalAssessment", 6.8)),
+                            "adl": float(r.get("ADL", 7.2)),
+                            "memory_complaints": int(float(r.get("MemoryComplaints", 1))),
+                            "confusion": int(float(r.get("Confusion", 0))),
+                            "created_at": datetime.now().isoformat()
+                        }
+                        docs.append({
+                            "id": str(p_obj["id"]),
+                            "data": p_obj,
+                            **p_obj
+                        })
+            except Exception:
+                pass
+
+    elif clean_name == "research_subscribers":
+        docs = [
+            {
+                "id": "1",
+                "email": "dr.sarah@neura.ns.id",
+                "subscribed_categories": "Clinical Research, Neurologi, Biomarkers",
+                "is_active": 1,
+                "subscribed_at": datetime.now().isoformat()
+            },
+            {
+                "id": "2",
+                "email": "peneliti.alzheimer@ui.ac.id",
+                "subscribed_categories": "AI Inference, OASIS Dataset",
+                "is_active": 1,
+                "subscribed_at": datetime.now().isoformat()
+            },
+            {
+                "id": "3",
+                "email": "klinik.saraf@mitra-neura.id",
+                "subscribed_categories": "Telemedicine, Buletin Bulanan",
+                "is_active": 1,
+                "subscribed_at": datetime.now().isoformat()
+            }
+        ]
+
     elif clean_name == "prediction_records":
         cons_file = BASE_DIR / "database" / "datasets" / "consultations_records.json"
         if cons_file.exists():

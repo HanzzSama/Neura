@@ -964,7 +964,7 @@
   let canvasBreadcrumb, btnToggleExplorer;
   // Database components refs
   let btnToggleDb, dbDrawer, btnDbDrawerClose, dbDrawerTitle, dbDrawerSubtitle;
-  let dbDrawerTypeBadge, dbDrawerCount, dbDrawerSearchInput, dbDrawerSchemaPills;
+  let dbDrawerTypeBadge, dbDrawerCount, dbDrawerSearchInput, dbDrawerSchemaPills, dbDrawerAlertBox;
   let dbRecordsThead, dbRecordsTbody, dbDocInspector, dbInspectorId, dbInspectorCode;
   let btnDbCopyJson, btnCloseInspector;
   let tabBtnFiles, tabBtnDb, paneTabFiles, paneTabDb, sidebarDbList;
@@ -1690,7 +1690,8 @@
     dbDrawerTypeBadge  = $('#db-drawer-type-badge');
     dbDrawerCount      = $('#db-drawer-count');
     dbDrawerSearchInput = $('#db-drawer-search-input');
-    dbDrawerSchemaPills = $('#db-drawer-schema-pills');
+    dbDrawerSchemaPills = $('#db-schema-pills') || $('#db-drawer-schema-pills');
+    dbDrawerAlertBox = $('#db-drawer-alert-box');
     dbRecordsThead     = $('#db-records-thead');
     dbRecordsTbody     = $('#db-records-tbody');
     dbDocInspector     = $('#db-doc-inspector');
@@ -2299,7 +2300,7 @@
   }
 
   function escapeHtml(str) {
-    return str
+    return String(str ?? '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -2798,48 +2799,98 @@
 
     // Fetch live rows from MySQL via REST API
     try {
+      if (dbDrawerAlertBox) {
+        dbDrawerAlertBox.style.display = 'none';
+        dbDrawerAlertBox.innerHTML = '';
+      }
+
       const res = await fetch(`/api/database/collection/${encodeURIComponent(title)}/docs?limit=60`);
       const data = await res.json();
+
       if (data.status === 'success' || data.status === 'warning') {
         STATE.activeDbCollection = title;
         STATE.activeDbDocs = data.documents || [];
         renderDbDrawerContent(data);
         updateCanvasAndSidebarColCount(title, data.documents?.length || 0);
 
+        // Tampilkan Banner Offline Elegan Jika MySQL Laragon Belum Berjalan
         if (data.mysql_connected === false || data.is_fallback) {
-          const offlineBanner = document.createElement('tr');
-          offlineBanner.innerHTML = `
-            <td colspan="${(data.columns?.length || 5) + 1}" style="padding: 16px; background: rgba(239, 68, 68, 0.08); border-bottom: 1px solid rgba(239, 68, 68, 0.25);">
-              <div style="display:flex; align-items:flex-start; gap:12px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" style="flex-shrink:0; margin-top:2px;">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                <div style="font-size:12px; line-height:1.5;">
-                  <strong style="color:#FCA5A5; font-size:13px; display:block; margin-bottom:2px;">
-                    MySQL Server (Laragon) Belum Berjalan di Port 3306
-                  </strong>
-                  <span style="color:#CBD5E1;">
-                    Server aplikasi tidak dapat tersambung ke <code>127.0.0.1:3306</code> (database <code>neura_db</code>).<br>
-                    <strong>Solusi:</strong> Buka aplikasi <strong>Laragon</strong> di komputer Anda lalu klik tombol <strong>"Start All"</strong> untuk menyalakan database MySQL.
-                  </span>
+          const alertHtml = `
+            <div class="db-offline-state-card" style="
+              background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+              border: 1px solid rgba(239, 68, 68, 0.35);
+              border-radius: 12px;
+              padding: 16px 20px;
+              box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            ">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                  <div style="
+                    width: 36px; height: 36px; border-radius: 9px;
+                    background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);
+                    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+                  ">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                      <line x1="1" y1="1" x2="23" y2="23" stroke="#EF4444" stroke-width="2.2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                      <span style="font-weight: 700; font-size: 13.5px; color: #FCA5A5;">
+                        MySQL Server Belum Aktif di Port 3306
+                      </span>
+                      <span style="
+                        font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+                        padding: 2px 7px; border-radius: 9999px;
+                        background: rgba(239, 68, 68, 0.2); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.4);
+                      ">OFFLINE • MODE CADANGAN</span>
+                    </div>
+                    <p style="font-size: 12px; color: #94A3B8; margin: 0 0 8px 0; line-height: 1.5;">
+                      Data di bawah ini ditampilkan dari <strong>cadangan lokal (Local Fallback)</strong> agar Anda tetap dapat melihat struktur skema tabel.
+                    </p>
+                    <div style="font-size: 11.5px; color: #CBD5E1; line-height: 1.4;">
+                      <strong style="color: #38BDF8;">Solusi:</strong> Buka <strong>Laragon</strong> &rarr; Klik tombol <strong style="color: #34D399;">"Start All"</strong>, lalu klik tombol <em>Muat Ulang</em> di sebelah kanan.
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <button onclick="window.openDatabaseDrawer && window.openDatabaseDrawer('${escapeHtml(title)}')" style="
+                    background: #1E293B; border: 1px solid #475569; color: #F1F5F9;
+                    font-size: 11.5px; font-weight: 600; padding: 6px 14px; border-radius: 6px;
+                    cursor: pointer; display: flex; align-items: center; gap: 6px;
+                    transition: all 0.15s ease;
+                  " onmouseover="this.style.background='#334155'" onmouseout="this.style.background='#1E293B'">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    Muat Ulang
+                  </button>
                 </div>
               </div>
-            </td>
+            </div>
           `;
-          if (dbRecordsTbody && dbRecordsTbody.firstChild) {
-            dbRecordsTbody.insertBefore(offlineBanner, dbRecordsTbody.firstChild);
-          } else if (dbRecordsTbody) {
-            dbRecordsTbody.appendChild(offlineBanner);
+          if (dbDrawerAlertBox) {
+            dbDrawerAlertBox.innerHTML = alertHtml;
+            dbDrawerAlertBox.style.display = 'block';
           }
         }
       } else {
         if (dbRecordsTbody) {
           dbRecordsTbody.innerHTML = `
             <tr>
-              <td colspan="5" style="padding:24px;">
-                <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:16px;color:#FCA5A5;">
-                  <div style="font-weight:700;margin-bottom:4px;">Gagal Memuat Rekaman</div>
-                  <div style="font-size:12px;color:#CBD5E1;">${data.message || 'Error'}</div>
+              <td colspan="5" style="padding: 24px;">
+                <div style="
+                  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+                  border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 18px 20px; color: #FCA5A5;
+                ">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                    <strong style="font-size:13.5px;">Gagal Memuat Rekaman MySQL</strong>
+                    <button onclick="window.openDatabaseDrawer && window.openDatabaseDrawer('${escapeHtml(title)}')" style="
+                      background: #1E293B; border: 1px solid #475569; color: #F1F5F9; font-size: 11px; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+                    ">Coba Lagi</button>
+                  </div>
+                  <div style="font-size: 12px; color: #CBD5E1; line-height: 1.5;">${escapeHtml(data.message || 'Terjadi kesalahan kueri.')}</div>
                 </div>
               </td>
             </tr>
@@ -2847,15 +2898,24 @@
         }
       }
     } catch (err) {
+      console.warn('[DatabaseDrawer Warning]', err);
       if (dbRecordsTbody) {
         dbRecordsTbody.innerHTML = `
           <tr>
-            <td colspan="5" style="padding:24px;">
-              <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:16px;color:#FCA5A5;">
-                <div style="font-weight:700;margin-bottom:4px;">MySQL (Laragon) Belum Berjalan</div>
-                <div style="font-size:12px;color:#CBD5E1;">
-                  Server tidak dapat terhubung ke <code>127.0.0.1:3306</code>.<br>
-                  Buka aplikasi <strong>Laragon</strong> di komputer Anda lalu klik tombol <strong>"Start All"</strong>.
+            <td colspan="5" style="padding: 24px;">
+              <div style="
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+                border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 18px 20px; color: #FCA5A5;
+              ">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                  <strong style="font-size:13.5px;">Koneksi Database Belum Terbuka</strong>
+                  <button onclick="window.openDatabaseDrawer && window.openDatabaseDrawer('${escapeHtml(title)}')" style="
+                    background: #1E293B; border: 1px solid #475569; color: #F1F5F9; font-size: 11px; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+                  ">Hubungkan Ulang</button>
+                </div>
+                <div style="font-size: 12px; color: #CBD5E1; line-height: 1.5;">
+                  Server Neura tidak dapat terhubung ke <code>127.0.0.1:3306</code>.<br>
+                  Buka aplikasi <strong>Laragon</strong> lalu klik <strong>"Start All"</strong>, kemudian klik <em>Hubungkan Ulang</em>.
                 </div>
               </div>
             </td>
@@ -2918,7 +2978,7 @@
       dbRecordsTbody.innerHTML = docs.map((doc, idx) => {
         const idVal = doc.id || `doc-${idx+1}`;
         const rowCells = cols.slice(0, 4).map(c => {
-          const val = doc.data ? doc.data[c] : '';
+          const val = (doc.data && doc.data[c] !== undefined) ? doc.data[c] : (doc[c] !== undefined ? doc[c] : '');
           const str = (typeof val === 'object' && val !== null) ? JSON.stringify(val) : String(val ?? '—');
           return `<td title="${escapeHtml(str)}">${escapeHtml(str)}</td>`;
         }).join('');
