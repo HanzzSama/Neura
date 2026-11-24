@@ -625,7 +625,79 @@
   font-weight: 500;
 }
 .status-away {
-  color: var(--st-text-muted);
+  color: #F59E0B;
+}
+.status-offline {
+  color: #64748B;
+}
+
+.collab-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.collab-page-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3.5px;
+  font-size: 9.5px;
+  font-family: var(--st-font-mono, monospace);
+  color: #38BDF8;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1.2;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collab-time-badge {
+  font-size: 9.5px;
+  color: var(--st-text-muted, #94A3B8);
+  line-height: 1.2;
+}
+
+.collab-avatar {
+  position: relative;
+}
+
+.collab-dot-mini {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--st-bg-surface, #18181B);
+}
+
+.collab-dot-mini.dot-online {
+  background: #10B981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+}
+
+.collab-dot-mini.dot-away {
+  background: #F59E0B;
+}
+
+.collab-dot-mini.dot-offline {
+  background: #64748B;
+}
+
+.collab-item.collab-item-you {
+  background: rgba(217, 119, 87, 0.08);
+  border: 1px solid rgba(217, 119, 87, 0.22);
+}
+
+.collaborators-popup {
+  right: -20px;
+  width: 330px;
 }
 .collab-footer {
   padding: 8px 10px 4px;
@@ -800,12 +872,12 @@ body[data-canvas-view="explorer"] .general-interactive-bar,
 
 /* Explorer Cards — fade-in entrance animation */
 @keyframes explorer-card-in {
-  from { opacity: 0; transform: translateY(12px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 .canvas-node.explorer-card,
 .file-card.explorer-card {
-  animation: explorer-card-in 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: explorer-card-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Empty folder placeholder */
@@ -1374,7 +1446,7 @@ body[data-canvas-view="explorer"] .general-interactive-bar,
 
 /* Unique Hero Card for LLM Reasoning & AI Multimodal Engine */
 .card-hero-llm {
-  position: relative;
+  position: absolute !important;
   overflow: visible !important;
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(18, 17, 16, 0.96) 65%) !important;
   border: 1.5px solid #8B5CF6 !important;
@@ -1390,7 +1462,7 @@ body[data-canvas-view="explorer"] .general-interactive-bar,
 
 /* Unique Hero Card for server.py (Web Runner Entrypoint) */
 .file-card-hero {
-  position: relative;
+  position: absolute !important;
   overflow: visible !important;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(18, 17, 16, 0.96) 65%) !important;
   border: 1.5px solid #10B981 !important;
@@ -1422,8 +1494,8 @@ body[data-canvas-view="explorer"] .general-interactive-bar,
 /* Hero Server Badge (server.py) — Floating cleanly above card top-right */
 .hero-server-badge {
   position: absolute;
-  top: -24px;
-  right: 2px;
+  top: -11px;
+  right: 14px;
   display: inline-flex;
   align-items: center;
   gap: 5px;

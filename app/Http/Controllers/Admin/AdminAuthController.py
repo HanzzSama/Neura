@@ -5,6 +5,8 @@ from app.Http.Controllers.Admin.admin_auth import (
     api_admin_verify_otp,
     api_admin_verify_session,
     api_admin_logout,
+    api_admin_heartbeat,
+    api_admin_active_collaborators,
 )
 
 __all__ = [
@@ -14,4 +16,6 @@ __all__ = [
     "api_admin_verify_otp",
     "api_admin_verify_session",
     "api_admin_logout",
+    "api_admin_heartbeat",
+    "api_admin_active_collaborators",
 ]

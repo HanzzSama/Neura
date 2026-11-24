@@ -951,6 +951,14 @@
     contextTargetElement: null,
   };
 
+  // Cache pristine coordinates of canonical General Architecture nodes
+  const GENERAL_PRISTINE_COORDS = {};
+  GENERAL_NODES.forEach(n => {
+    if (n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) {
+      GENERAL_PRISTINE_COORDS[n.id] = { x: n.x, y: n.y };
+    }
+  });
+
   /* =====================================================================
      3. DOM REFS
      ===================================================================== */
@@ -1875,6 +1883,14 @@
     if (e.code === 'KeyN' && !e.target.matches('input,textarea') && !e.ctrlKey && !e.metaKey) openAddNodeModal();
     if (e.code === 'KeyS' && !e.target.matches('input,textarea') && !e.ctrlKey && !e.metaKey) addStickyNote();
     if (e.code === 'KeyG' && !e.target.matches('input,textarea')) cycleGrid();
+    if (e.code === 'KeyA' && e.shiftKey && !e.target.matches('input,textarea')) {
+      e.preventDefault();
+      autoLayoutCurrentView(true);
+    }
+    if (e.code === 'KeyL' && (e.altKey || (e.ctrlKey && e.shiftKey)) && !e.target.matches('input,textarea')) {
+      e.preventDefault();
+      autoLayoutCurrentView(true);
+    }
     if ((e.ctrlKey || e.metaKey) && e.code === 'Equal') { e.preventDefault(); zoomStep(1.15); }
     if ((e.ctrlKey || e.metaKey) && e.code === 'Minus') { e.preventDefault(); zoomStep(0.87); }
     if (e.code === 'Digit1' && e.shiftKey) fitView();
@@ -1917,11 +1933,25 @@
   }
 
   function fitView(animate = true) {
-    if (!STATE.nodes.length) return;
+    if (!STATE.nodes || !STATE.nodes.length) return;
+    const validNodes = STATE.nodes.filter(n => Number.isFinite(n.x) && Number.isFinite(n.y));
+    if (!validNodes.length) {
+      STATE.scale = 1.0;
+      STATE.tx = 60;
+      STATE.ty = 60;
+      applyTransform(animate);
+      return;
+    }
     const pad = 80;
+    const isDbView = STATE.canvasView === 'database';
     const allItems = [
-      ...STATE.nodes.map(n => ({ x: n.x, y: n.y, w: 244, h: 64 })),
-      ...STATE.stickies.map(s => ({ x: s.x, y: s.y, w: 196, h: 100 }))
+      ...validNodes.map(n => ({
+        x: n.x,
+        y: n.y,
+        w: isDbView ? 340 : 244,
+        h: isDbView ? 160 : 68
+      })),
+      ...STATE.stickies.filter(s => Number.isFinite(s.x) && Number.isFinite(s.y)).map(s => ({ x: s.x, y: s.y, w: 196, h: 100 }))
     ];
     const xs = allItems.map(i => i.x);
     const ys = allItems.map(i => i.y);
@@ -1930,15 +1960,20 @@
     const maxX = Math.max(...allItems.map(i => i.x + i.w)) + pad;
     const maxY = Math.max(...allItems.map(i => i.y + i.h)) + pad;
 
-    const viewW  = canvasContainer.offsetWidth  || 800;
-    const viewH  = canvasContainer.offsetHeight || 600;
-    const scaleX = viewW / (maxX - minX);
-    const scaleY = viewH / (maxY - minY);
-    const scale  = clamp(Math.min(scaleX, scaleY), STATE.minScale, 1.2);
+    const viewW  = (canvasContainer && canvasContainer.offsetWidth)  || window.innerWidth  || 800;
+    const viewH  = (canvasContainer && canvasContainer.offsetHeight) || window.innerHeight || 600;
+    const spanX  = Math.max(maxX - minX, 100);
+    const spanY  = Math.max(maxY - minY, 100);
+    const scaleX = viewW / spanX;
+    const scaleY = viewH / spanY;
+    const rawScale = Math.min(scaleX, scaleY);
+    const scale  = clamp(Number.isFinite(rawScale) ? rawScale : 1.0, STATE.minScale, 1.2);
 
     STATE.scale = scale;
-    STATE.tx    = (viewW - (maxX - minX) * scale) / 2 - minX * scale;
-    STATE.ty    = (viewH - (maxY - minY) * scale) / 2 - minY * scale;
+    const newTx = (viewW - spanX * scale) / 2 - minX * scale;
+    const newTy = (viewH - spanY * scale) / 2 - minY * scale;
+    STATE.tx = Number.isFinite(newTx) ? newTx : 60;
+    STATE.ty = Number.isFinite(newTy) ? newTy : 60;
     applyTransform(animate);
   }
 
@@ -2389,27 +2424,51 @@
     const node = STATE.nodes.find(n => n.id === nodeId);
     if (!node) return { x: 0, y: 0 };
     const el = document.getElementById(nodeId);
-    const W = (el && el.offsetWidth) ? el.offsetWidth : (node.kind === 'database' || nodeId.startsWith('db-') ? 260 : 252);
-    const H = (el && el.offsetHeight) ? el.offsetHeight : 64;
+    
+    // Exact element dimensions with robust fallbacks
+    const W = (el && el.offsetWidth > 0) ? el.offsetWidth : (node.kind === 'database' || nodeId.startsWith('db-') ? 260 : 252);
+    const H = (el && el.offsetHeight > 0) ? el.offsetHeight : (node.kind === 'database' || nodeId.startsWith('db-') ? 80 : 64);
+    
+    // Exact position: prioritize live element position, fallback to node coordinates
+    const posX = (el && typeof el.offsetLeft === 'number' && !isNaN(el.offsetLeft)) ? el.offsetLeft : (node.x || 0);
+    const posY = (el && typeof el.offsetTop === 'number' && !isNaN(el.offsetTop)) ? el.offsetTop : (node.y || 0);
+
+    // Pixel-perfect port center mapping matching .node-port in CSS (centered directly on border)
     switch (side) {
-      case 'right':  return { x: node.x + W,      y: node.y + H / 2 };
-      case 'left':   return { x: node.x,          y: node.y + H / 2 };
-      case 'bottom': return { x: node.x + W / 2,  y: node.y + H };
-      case 'top':    return { x: node.x + W / 2,  y: node.y };
-      default:       return { x: node.x + W,      y: node.y + H / 2 };
+      case 'right':  return { x: posX + W,      y: posY + H / 2 };
+      case 'left':   return { x: posX,          y: posY + H / 2 };
+      case 'bottom': return { x: posX + W / 2,  y: posY + H };
+      case 'top':    return { x: posX + W / 2,  y: posY };
+      default:       return { x: posX + W,      y: posY + H / 2 };
     }
   }
 
   function getBestPorts(srcNode, dstNode) {
-    const dx = dstNode.x - srcNode.x;
-    if (Math.abs(dx) > 80) {
-      return dx > 0 ? ['right', 'left'] : ['left', 'right'];
+    const srcEl = document.getElementById(srcNode.id);
+    const dstEl = document.getElementById(dstNode.id);
+    const srcW = (srcEl && srcEl.offsetWidth > 0) ? srcEl.offsetWidth : 252;
+    const srcH = (srcEl && srcEl.offsetHeight > 0) ? srcEl.offsetHeight : 64;
+    const dstW = (dstEl && dstEl.offsetWidth > 0) ? dstEl.offsetWidth : 252;
+    const dstH = (dstEl && dstEl.offsetHeight > 0) ? dstEl.offsetHeight : 64;
+
+    const cx1 = (srcEl && typeof srcEl.offsetLeft === 'number' && !isNaN(srcEl.offsetLeft)) ? srcEl.offsetLeft + srcW / 2 : (srcNode.x + srcW / 2);
+    const cy1 = (srcEl && typeof srcEl.offsetTop === 'number' && !isNaN(srcEl.offsetTop)) ? srcEl.offsetTop + srcH / 2 : (srcNode.y + srcH / 2);
+    const cx2 = (dstEl && typeof dstEl.offsetLeft === 'number' && !isNaN(dstEl.offsetLeft)) ? dstEl.offsetLeft + dstW / 2 : (dstNode.x + dstW / 2);
+    const cy2 = (dstEl && typeof dstEl.offsetTop === 'number' && !isNaN(dstEl.offsetTop)) ? dstEl.offsetTop + dstH / 2 : (dstNode.y + dstH / 2);
+
+    const dx = cx2 - cx1;
+    const dy = cy2 - cy1;
+
+    // Card width is ~3.5x card height, so apply aspect-ratio weighting for natural port selection
+    if (Math.abs(dx) >= Math.abs(dy) * 0.9) {
+      return dx >= 0 ? ['right', 'left'] : ['left', 'right'];
+    } else {
+      return dy >= 0 ? ['bottom', 'top'] : ['top', 'bottom'];
     }
-    const dy = dstNode.y - srcNode.y;
-    return dy > 0 ? ['bottom', 'top'] : ['top', 'bottom'];
   }
 
   function renderAllConnections() {
+    if (!pathsGroup || !badgesGroup) return;
     pathsGroup.innerHTML  = '';
     badgesGroup.innerHTML = '';
 
@@ -2422,35 +2481,46 @@
       const p1 = getNodeCenter(srcId, srcSide);
       const p2 = getNodeCenter(dstId, dstSide);
 
-      const offset = Math.abs(p2.x - p1.x) * 0.5 || 100;
-      let cx1 = p1.x, cy1 = p1.y, cx2 = p2.x, cy2 = p2.y;
-      if (srcSide === 'right')  cx1 = p1.x + offset;
-      if (srcSide === 'left')   cx1 = p1.x - offset;
-      if (srcSide === 'bottom') cy1 = p1.y + offset;
-      if (srcSide === 'top')    cy1 = p1.y - offset;
-      if (dstSide === 'left')   cx2 = p2.x - offset;
-      if (dstSide === 'right')  cx2 = p2.x + offset;
-      if (dstSide === 'top')    cy2 = p2.y - offset;
-      if (dstSide === 'bottom') cy2 = p2.y + offset;
+      // Clean, organic cubic bezier control points based on orientation
+      const dx = Math.abs(p2.x - p1.x);
+      const dy = Math.abs(p2.y - p1.y);
+      const offsetX = Math.max(dx * 0.45, 50);
+      const offsetY = Math.max(dy * 0.45, 50);
+
+      let cx1 = p1.x, cy1 = p1.y;
+      let cx2 = p2.x, cy2 = p2.y;
+
+      if (srcSide === 'right')  cx1 = p1.x + offsetX;
+      if (srcSide === 'left')   cx1 = p1.x - offsetX;
+      if (srcSide === 'bottom') cy1 = p1.y + offsetY;
+      if (srcSide === 'top')    cy1 = p1.y - offsetY;
+
+      if (dstSide === 'left')   cx2 = p2.x - offsetX;
+      if (dstSide === 'right')  cx2 = p2.x + offsetX;
+      if (dstSide === 'top')    cy2 = p2.y - offsetY;
+      if (dstSide === 'bottom') cy2 = p2.y + offsetY;
 
       const d = `M ${p1.x} ${p1.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p2.x} ${p2.y}`;
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', d);
-      path.setAttribute('class', `connection-path type-${type}`);
+      path.setAttribute('class', `connection-path type-${type || 'default'}`);
       path.dataset.idx = idx;
       path.dataset.src = srcId;
       path.dataset.dst = dstId;
       pathsGroup.appendChild(path);
 
       if (label) {
-        const mx = (p1.x + p2.x) / 2;
-        const my = (p1.y + p2.y) / 2;
+        // True cubic Bezier midpoint at t = 0.5: B(0.5) = 0.125*p1 + 0.375*c1 + 0.375*c2 + 0.125*p2
+        const mx = 0.125 * p1.x + 0.375 * cx1 + 0.375 * cx2 + 0.125 * p2.x;
+        const my = 0.125 * p1.y + 0.375 * cy1 + 0.375 * cy2 + 0.125 * p2.y;
+        const badgeW = Math.max(label.length * 7.5 + 24, 80);
         const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-        fo.setAttribute('x', mx - 50);
-        fo.setAttribute('y', my - 12);
-        fo.setAttribute('width', '100');
-        fo.setAttribute('height', '24');
-        fo.innerHTML = `<div class="rel-label-badge">${label}</div>`;
+        fo.setAttribute('x', mx - badgeW / 2);
+        fo.setAttribute('y', my - 13);
+        fo.setAttribute('width', badgeW);
+        fo.setAttribute('height', '26');
+        fo.style.overflow = 'visible';
+        fo.innerHTML = `<div class="rel-label-badge" style="width:100%;text-align:center;">${escapeHtml(label)}</div>`;
         badgesGroup.appendChild(fo);
       }
     });
@@ -2464,6 +2534,10 @@
      ===================================================================== */
   function openCodeDrawer(node) {
     if (!codeDrawer) return;
+
+    if (window.NeuraPresence && typeof window.NeuraPresence.sendHeartbeat === 'function') {
+      window.NeuraPresence.sendHeartbeat();
+    }
 
     drawerFileName.textContent = node.title || node.name || 'Berkas';
     drawerFilePath.textContent = node.path || '—';
@@ -2763,6 +2837,10 @@
   async function openDatabaseDrawer(colName, colMeta = null) {
     if (!dbDrawer) return;
 
+    if (window.NeuraPresence && typeof window.NeuraPresence.sendHeartbeat === 'function') {
+      window.NeuraPresence.sendHeartbeat();
+    }
+
     // Close code preview drawer if open
     closeCodeDrawer();
 
@@ -3023,30 +3101,67 @@
      9C. DATABASE CANVAS MODE ENGINE (MySQL neura_db + DATASET)
      ===================================================================== */
   const DATABASE_CONNECTIONS = [
-    ['db-users', 'db-sessions', 'auth', 'Token Guard'],
-    ['db-users', 'db-user_profiles', 'contains', '1:1 Biomarkers'],
+    // IAM & Kredensial (Kolom 0 -> Kolom 1 & Kolom 0)
+    ['db-users', 'db-admin_profiles', 'auth', 'Admin Credential'],
+    ['db-users', 'db-oauth_identities', 'auth', 'OAuth SSO Identity'],
+    ['db-users', 'db-auth_sessions', 'auth', 'Bearer Sessions'],
+    ['db-users', 'db-auth_otp_codes', 'auth', '2FA OTP Verification'],
+    ['db-users', 'db-patient_profiles', 'contains', 'Patient Identity'],
+    ['db-users', 'db-nakes_profiles', 'contains', 'Nakes Identity'],
     ['db-users', 'db-nakes', 'auth', 'Clinician Account'],
-    ['db-users', 'db-consultations', 'dataflow', 'Patient History'],
+    ['db-users', 'db-sessions', 'auth', 'Legacy Session Store'],
+    // Rekam Medis & EMR Workflow (Kolom 1 -> Kolom 2)
+    ['db-patient_profiles', 'db-medical_documents', 'dataflow', 'Medical Records'],
+    ['db-medical_documents', 'db-consultation_sessions', 'dataflow', 'Telemed Session'],
+    ['db-medical_documents', 'db-clinical_validations', 'dataflow', 'Nakes Validation'],
+    ['db-medical_documents', 'db-prediction_runs', 'core', 'AI Diagnosis'],
+    ['db-nakes_profiles', 'db-clinical_validations', 'calls', 'Clinical Sign'],
     ['db-nakes', 'db-consultations', 'calls', 'Validated By'],
+    ['db-users', 'db-consultations', 'dataflow', 'Patient History'],
     ['db-consultations', 'db-prediction_records', 'core', 'Diagnosis & Logit z'],
+    // AI Inference, Biomarkers & Dataset (Kolom 1 -> Kolom 3)
+    ['db-patient_profiles', 'db-patient_biomarkers', 'dataflow', '35 Clinical Biomarkers'],
+    ['db-patient_biomarkers', 'db-prediction_runs', 'core', 'Biomarker Input'],
+    ['db-prediction_runs', 'db-prediction_attributions', 'dataflow', 'SHAP Attribution'],
+    ['db-alzheimers_data', 'db-prediction_runs', 'ml', 'XGBoost Baseline'],
     ['db-alzheimers_data', 'db-prediction_records', 'ml', 'XGBoost Benchmark'],
-    ['db-research_dispatches', 'db-research_subscribers', 'default', 'Broadcast Email'],
-    ['db-users', 'db-research_dispatches', 'default', 'Public Feed'],
+    // Notifikasi, Audit Trail & Publikasi Riset
+    ['db-users', 'db-system_notifications', 'default', 'User Alerts'],
+    ['db-users', 'db-audit_logs', 'default', 'Audit Trail'],
+    ['db-research_articles', 'db-research_subscribers', 'default', 'Broadcast Dispatch'],
+    ['db-research_dispatches', 'db-research_subscribers', 'default', 'Legacy Dispatch'],
   ];
 
   // SVG icons for DB collections & MySQL tables
   const DB_SVG_ICONS = {
-    users:               `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    user_profiles:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
-    nakes:               `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
-    consultations:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
-    predictions:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
-    prediction_records:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
-    research_dispatches: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
-    research_subscribers:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
-    sessions:            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-    dataset:             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-    default:             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+    users:                 `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    patient_profiles:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    oauth_identities:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>`,
+    nakes_profiles:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
+    admin_profiles:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    medical_documents:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+    consultation_sessions:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+    clinical_validations: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>`,
+    document_attachments: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
+    patient_biomarkers:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+    prediction_runs:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
+    prediction_attributions:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    auth_sessions:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    auth_otp_codes:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+    system_cache:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    system_notifications: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+    audit_logs:           `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`,
+    research_articles:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    research_subscribers: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+    // Legacy compat
+    user_profiles:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+    nakes:                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
+    consultations:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+    prediction_records:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
+    research_dispatches:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+    sessions:             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    dataset:              `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    default:              `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
   };
 
   function getDbSvgIcon(col) {
@@ -3057,16 +3172,101 @@
   }
 
   const FALLBACK_DB_COLLECTIONS = [
-    { id: 'db-users', name: 'users', type: 'mysql', category: 'AUTH & PROFILES', count: 3, description: 'Tabel akun pengguna, kredensial autentikasi, dan peran RBAC (User, Nakes, Admin).' },
-    { id: 'db-user_profiles', name: 'user_profiles', type: 'mysql', category: 'CLINICAL BIOMARKERS', count: 0, description: '32 Biomarker klinis pasien, MMSE, ADL, dan 7 keluhan kognitif spesifik Alzheimer.' },
-    { id: 'db-nakes', name: 'nakes', type: 'mysql', category: 'HEALTHCARE DIRECTORY', count: 3, description: 'Direktori tenaga medis & dokter spesialis saraf terverifikasi (SIP, STR, Faskes).' },
-    { id: 'db-consultations', name: 'consultations', type: 'mysql', category: 'TELEMEDICINE', count: 23, description: 'Catatan rekam medis terenkripsi, kode rujukan dokter (NKS-26-XXXX-ALZ), dan status.' },
-    { id: 'db-prediction_records', name: 'prediction_records', type: 'mysql', category: 'AI INFERENCE SINK', count: 37, description: 'Log inferensi XGBoost (25 trees), logit z, label resmi ML (0/1), dan tingkat risiko.' },
-    { id: 'db-research_dispatches', name: 'research_dispatches', type: 'mysql', category: 'RESEARCH PUBLICATIONS', count: 5, description: 'Buletin riset klinis Alzheimer, telaah ilmiah, dan publikasi penelitian berkala.' },
-    { id: 'db-research_subscribers', name: 'research_subscribers', type: 'mysql', category: 'SUBSCRIBERS', count: 0, description: 'Daftar email dokter dan peneliti pelanggan buletin riset klinis Neura.' },
-    { id: 'db-sessions', name: 'sessions', type: 'local', category: 'SESSION STORE', count: 2, description: 'Token sesi login admin & pengguna aktif, masa berlaku, dan kontrol akses berbasis disk.' },
+    { id: 'db-users', name: 'users', type: 'mysql', category: 'IAM & SECURITY', count: 22, description: 'Master identitas pengguna terdaftar, kredensial password hash argon2id, status aktivasi dan role.' },
+    { id: 'db-patient_profiles', name: 'patient_profiles', type: 'mysql', category: 'IAM & PROFILES', count: 22, description: 'Profil demografi pasien, tanggal lahir, kontak darurat, dan relasi 1:1 terhadap users.' },
+    { id: 'db-oauth_identities', name: 'oauth_identities', type: 'mysql', category: 'IAM & SECURITY', count: 0, description: 'Koneksi single sign-on Google OAuth2, provider UID, email terverifikasi, dan timestamp login.' },
+    { id: 'db-nakes_profiles', name: 'nakes_profiles', type: 'mysql', category: 'KLINIS & NAKES', count: 3, description: 'Kredensial tenaga medis profesional (SIP, STR, NIP, Faskes) dengan status validasi resmi.' },
+    { id: 'db-admin_profiles', name: 'admin_profiles', type: 'mysql', category: 'IAM & SECURITY', count: 10, description: 'Profil administrator, custom alert email dispatcher, departemen operasional, dan clearance level.' },
+    { id: 'db-medical_documents', name: 'medical_documents', type: 'mysql', category: 'REKAM MEDIS & DOKUMEN', count: 29, description: 'Master nomor rekam medis digital (DOC-26-XXXX-MED), QR verification token, dan hash integritas.' },
+    { id: 'db-consultation_sessions', name: 'consultation_sessions', type: 'mysql', category: 'REKAM MEDIS & DOKUMEN', count: 29, description: 'Sesi konsultasi telemedicine, channel WebRTC LiveKit, assigned clinician, dan jadwal interaksi.' },
+    { id: 'db-clinical_validations', name: 'clinical_validations', type: 'mysql', category: 'REKAM MEDIS & DOKUMEN', count: 0, description: 'Validasi diagnosis klinis resmi oleh dokter spesialis saraf dengan kode ICD-10 dan catatan telaah.' },
+    { id: 'db-document_attachments', name: 'document_attachments', type: 'mysql', category: 'REKAM MEDIS & DOKUMEN', count: 0, description: 'Lampiran dokumen fisik hasil laboratorium, MRI, CT scan otak, dan rekaman audio tremor akustik.' },
+    { id: 'db-patient_biomarkers', name: 'patient_biomarkers', type: 'mysql', category: 'AI & BIOMARKER', count: 15, description: '35 Parameter biomarker klinis pasien: MMSE, ADL, Functional Assessment, keluhan kognitif, dan hash.' },
+    { id: 'db-prediction_runs', name: 'prediction_runs', type: 'mysql', category: 'AI & INFERENCE', count: 0, description: 'Log eksekusi inferensi AI XGBoost ensemble, probabilitas positif, raw logit z, dan level risiko klinis.' },
+    { id: 'db-prediction_attributions', name: 'prediction_attributions', type: 'mysql', category: 'AI & INFERENCE', count: 0, description: 'Atribusi kontribusi fitur (SHAP value) untuk setiap inferensi biomarker guna transparansi klinis.' },
+    { id: 'db-auth_sessions', name: 'auth_sessions', type: 'mysql', category: 'SESI & CACHE', count: 0, description: 'Tabel sesi otorisasi aktif berbasis bearer token di database, IP address, user agent, dan masa berlaku.' },
+    { id: 'db-auth_otp_codes', name: 'auth_otp_codes', type: 'mysql', category: 'SESI & CACHE', count: 1, description: 'Kode 6-digit One-Time Password keamanan 2FA untuk login dan verifikasi akun dengan timer batas waktu.' },
+    { id: 'db-system_cache', name: 'system_cache', type: 'mysql', category: 'SESI & CACHE', count: 0, description: 'Penyimpanan cache terdistribusi di database untuk percepatan respons kuari dashboard dan statistik.' },
+    { id: 'db-system_notifications', name: 'system_notifications', type: 'mysql', category: 'AUDIT & NOTIFIKASI', count: 1, description: 'Notifikasi in-app untuk pasien, dokter, dan admin terkait status rekam medis dan jadwal konsultasi.' },
+    { id: 'db-audit_logs', name: 'audit_logs', type: 'mysql', category: 'AUDIT & NOTIFIKASI', count: 1, description: 'Catatan audit forensik immutable seluruh aksi CRUD kredensial, diagnosa, dan parameter privasi.' },
+    { id: 'db-research_articles', name: 'research_articles', type: 'mysql', category: 'RISET & PUSTAKA', count: 5, description: 'Artikel ilmiah, telaah klinis biomarker, dan buletin riset Alzheimer Neura Medical Research.' },
+    { id: 'db-research_subscribers', name: 'research_subscribers', type: 'mysql', category: 'RISET & PUSTAKA', count: 0, description: 'Daftar email dokter dan peneliti pelanggan buletin riset klinis dan pembaruan AI Neura.' },
+    // Legacy compat & Data lake
+    { id: 'db-nakes', name: 'nakes', type: 'mysql', category: 'LEGACY COMPAT', count: 3, description: 'Tabel kompatibilitas v1 untuk direktori nakes dan dokter spesialis.' },
+    { id: 'db-consultations', name: 'consultations', type: 'mysql', category: 'LEGACY COMPAT', count: 37, description: 'Tabel kompatibilitas v1 untuk catatan riwayat rujukan telemedicine.' },
+    { id: 'db-prediction_records', name: 'prediction_records', type: 'mysql', category: 'LEGACY COMPAT', count: 37, description: 'Tabel kompatibilitas v1 untuk riwayat skor prediksi inferensi XGBoost.' },
+    { id: 'db-sessions', name: 'sessions', type: 'local', category: 'SESSION STORE', count: 2, description: 'Penyimpanan token sesi lokal legacy di folder storage/sessions.' },
     { id: 'db-alzheimers_data', name: 'alzheimers_disease_data.csv', type: 'dataset', category: 'TABULAR DATA LAKE', count: 2149, description: 'Dataset kohort Alzheimer 2.149 baris dengan 35 parameter demografi, klinis & MMSE.' }
   ];
+
+  // 4-Column Domain Swimlane Layout for Database Mode
+  const DATABASE_DOMAIN_LAYOUT = {
+    // === Kolom 0 (x = 80): IAM, Kredensial, Autentikasi & Cache ===
+    'users':                 { col: 0, x: 80, y: 80 },
+    'admin_profiles':        { col: 0, x: 80, y: 260 },
+    'oauth_identities':      { col: 0, x: 80, y: 440 },
+    'auth_sessions':         { col: 0, x: 80, y: 620 },
+    'auth_otp_codes':        { col: 0, x: 80, y: 800 },
+    'system_cache':          { col: 0, x: 80, y: 980 },
+    'sessions':              { col: 0, x: 80, y: 1160 },
+
+    // === Kolom 1 (x = 480): Profil Pasien, Nakes & Audit Trail ===
+    'patient_profiles':      { col: 1, x: 480, y: 80 },
+    'nakes_profiles':        { col: 1, x: 480, y: 260 },
+    'nakes':                 { col: 1, x: 480, y: 440 },
+    'system_notifications':  { col: 1, x: 480, y: 620 },
+    'audit_logs':            { col: 1, x: 480, y: 800 },
+
+    // === Kolom 2 (x = 880): EMR, Sesi Konsultasi & Rekam Medis ===
+    'medical_documents':     { col: 2, x: 880, y: 80 },
+    'consultation_sessions': { col: 2, x: 880, y: 260 },
+    'clinical_validations':  { col: 2, x: 880, y: 440 },
+    'consultations':         { col: 2, x: 880, y: 620 },
+    'document_attachments':  { col: 2, x: 880, y: 800 },
+
+    // === Kolom 3 (x = 1280): AI Inference, Biomarkers, Data Lake & Riset ===
+    'patient_biomarkers':          { col: 3, x: 1280, y: 80 },
+    'prediction_runs':             { col: 3, x: 1280, y: 260 },
+    'prediction_attributions':     { col: 3, x: 1280, y: 440 },
+    'prediction_records':          { col: 3, x: 1280, y: 620 },
+    'alzheimers_disease_data.csv': { col: 3, x: 1280, y: 800 },
+    'research_articles':           { col: 3, x: 1280, y: 980 },
+    'research_subscribers':        { col: 3, x: 1280, y: 1160 },
+    'research_dispatches':         { col: 3, x: 1280, y: 1340 },
+  };
+
+  function resolveCardCollisions(nodes, cardW = 340, cardH = 170) {
+    if (!nodes || nodes.length < 2) return nodes;
+    const maxIterations = 35;
+    let iteration = 0;
+    let hasCollision = true;
+
+    while (hasCollision && iteration < maxIterations) {
+      hasCollision = false;
+      iteration++;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
+          if (!a || !b) continue;
+          if (!Number.isFinite(a.x) || !Number.isFinite(a.y) || !Number.isFinite(b.x) || !Number.isFinite(b.y)) continue;
+
+          const dx = Math.abs(a.x - b.x);
+          const dy = Math.abs(a.y - b.y);
+
+          if (dx < cardW && dy < cardH) {
+            hasCollision = true;
+            if (b.y >= a.y) {
+              b.y = a.y + cardH + 16;
+            } else {
+              a.y = b.y + cardH + 16;
+            }
+          }
+        }
+      }
+    }
+    return nodes;
+  }
 
   function saveDatabaseCardPositions() {
     try {
@@ -3080,29 +3280,49 @@
     } catch(e) {}
   }
 
-  function layoutDatabaseGrid(collections) {
-    const coords = [
-      { x: 160, y: 120 },
-      { x: 520, y: 120 },
-      { x: 880, y: 120 },
-      { x: 160, y: 280 },
-      { x: 520, y: 280 },
-      { x: 880, y: 280 },
-      { x: 160, y: 440 },
-      { x: 520, y: 440 },
-      { x: 880, y: 440 },
-    ];
+  function layoutDatabaseGrid(collections, forceReset = false) {
     let savedPositions = {};
-    try {
-      savedPositions = JSON.parse(localStorage.getItem('neura_db_card_positions') || '{}');
-    } catch(e) {}
+    if (!forceReset) {
+      try {
+        savedPositions = JSON.parse(localStorage.getItem('neura_db_card_positions') || '{}');
+        const posList = Object.values(savedPositions);
+        let hasCollidingSaved = false;
+        for (let i = 0; i < posList.length; i++) {
+          for (let j = i + 1; j < posList.length; j++) {
+            if (Math.abs(posList[i].x - posList[j].x) < 280 && Math.abs(posList[i].y - posList[j].y) < 140) {
+              hasCollidingSaved = true;
+              break;
+            }
+          }
+          if (hasCollidingSaved) break;
+        }
+        if (hasCollidingSaved) {
+          console.warn('[DatabaseLayout] Terdeteksi koordinat bertumpukan di localStorage, me-reset ke layout domain.');
+          savedPositions = {};
+          localStorage.removeItem('neura_db_card_positions');
+        }
+      } catch(e) {
+        savedPositions = {};
+      }
+    }
 
-    return collections.map((col, idx) => {
-      const defaultPos = coords[idx] || { x: 160 + (idx % 3) * 360, y: 120 + Math.floor(idx / 3) * 160 };
-      const pos = savedPositions[col.name] || savedPositions[col.id] || defaultPos;
+    let unplacedIdx = 0;
+    const result = collections.map((col, idx) => {
+      const name = col.name || col.title || '';
+      const domainPos = DATABASE_DOMAIN_LAYOUT[name] || DATABASE_DOMAIN_LAYOUT[col.id];
+      let pos;
+      if (savedPositions[name] || savedPositions[col.id]) {
+        pos = savedPositions[name] || savedPositions[col.id];
+      } else if (domainPos) {
+        pos = { x: domainPos.x, y: domainPos.y };
+      } else {
+        pos = { x: 80 + (unplacedIdx % 4) * 400, y: 1400 + Math.floor(unplacedIdx / 4) * 190 };
+        unplacedIdx++;
+      }
+
       return {
-        id: col.id || `db-${col.name}`,
-        name: col.name,
+        id: col.id || `db-${name}`,
+        name: name,
         type: col.type || 'mysql',
         kind: 'database',
         category: col.category || 'DATABASE',
@@ -3113,7 +3333,95 @@
         fields: col.fields || []
       };
     });
+
+    return resolveCardCollisions(result, 340, 180);
   }
+
+  function applyLayoutCoordinates(targetNodes, smooth = true, toastMsg = '') {
+    STATE.nodes = targetNodes;
+    if (STATE.canvasView === 'database') {
+      saveDatabaseCardPositions();
+    }
+
+    const cardEls = $$('.canvas-node, .file-card, .db-card-canvas, .general-card');
+    const elMap = new Map();
+    cardEls.forEach(el => elMap.set(el.id, el));
+
+    if (smooth && cardEls.length > 0) {
+      cardEls.forEach(el => {
+        el.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1), top 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+      });
+
+      targetNodes.forEach(node => {
+        const el = elMap.get(node.id);
+        if (el) {
+          el.style.left = `${node.x}px`;
+          el.style.top = `${node.y}px`;
+        }
+      });
+
+      const startTime = performance.now();
+      const duration = 460;
+      function stepAnim(now) {
+        renderAllConnections();
+        if (now - startTime < duration) {
+          requestAnimationFrame(stepAnim);
+        } else {
+          cardEls.forEach(el => { el.style.transition = ''; });
+          renderAllConnections();
+          fitView(true);
+        }
+      }
+      requestAnimationFrame(stepAnim);
+    } else {
+      if (nodesLayer) {
+        nodesLayer.innerHTML = '';
+        if (STATE.canvasView === 'database') {
+          targetNodes.forEach(n => renderDatabaseCard(n));
+        } else if (STATE.canvasView === 'explorer') {
+          targetNodes.forEach(n => (n.kind === 'file' ? renderExplorerFileCard(n) : renderExplorerFolderCard(n)));
+        } else {
+          targetNodes.forEach(n => renderGeneralCard(n));
+        }
+      }
+      renderAllConnections();
+      fitView(true);
+    }
+
+    if (toastMsg) showToast(toastMsg, 2400);
+  }
+
+  function autoLayoutCurrentView(smooth = true) {
+    const view = STATE.canvasView || 'general';
+
+    if (view === 'database') {
+      try { localStorage.removeItem('neura_db_card_positions'); } catch(e) {}
+      const collections = (STATE.dbCollections && STATE.dbCollections.length) ? STATE.dbCollections : FALLBACK_DB_COLLECTIONS;
+      const newNodes = layoutDatabaseGrid(collections, true);
+      applyLayoutCoordinates(newNodes, smooth, '✓ Auto Layout: 19+ Tabel Database berhasil ditata rapi per domain!');
+    } else if (view === 'explorer') {
+      const isRoot = !STATE.explorerPath || STATE.explorerPath.length === 0;
+      const rawItems = (STATE.explorerCurrentItems && STATE.explorerCurrentItems.length)
+        ? STATE.explorerCurrentItems
+        : getItemsAtPath(STATE.explorerTreeCache || FALLBACK_TREE, STATE.explorerPath || []);
+      const newNodes = layoutExplorerGrid(rawItems, isRoot);
+      resolveCardCollisions(newNodes, 280, 95);
+      applyLayoutCoordinates(newNodes, smooth, '✓ Auto Layout: Susunan folder & berkas direktori berhasil dirapikan!');
+    } else {
+      // General Architecture Mode
+      const newNodes = JSON.parse(JSON.stringify(GENERAL_NODES));
+      newNodes.forEach(node => {
+        if (GENERAL_PRISTINE_COORDS[node.id]) {
+          node.x = GENERAL_PRISTINE_COORDS[node.id].x;
+          node.y = GENERAL_PRISTINE_COORDS[node.id].y;
+        }
+      });
+      resolveCardCollisions(newNodes, 280, 160);
+      applyLayoutCoordinates(newNodes, smooth, '✓ Auto Layout: 28 Modul Arsitektur Sistem ditata rapi & simetris!');
+    }
+  }
+  window.autoLayoutCurrentView = autoLayoutCurrentView;
+  window.resolveCardCollisions = resolveCardCollisions;
 
   async function enterDatabaseMode() {
     STATE.databaseMode = true;
@@ -4548,6 +4856,12 @@
     // Undo / Redo buttons
     $('#tool-undo')?.addEventListener('click', doUndo);
     $('#tool-redo')?.addEventListener('click', doRedo);
+
+    // Auto Layout (Rapikan Kartu)
+    $('#tool-auto-layout')?.addEventListener('click', () => autoLayoutCurrentView(true));
+    $('#btn-db-auto-layout')?.addEventListener('click', () => autoLayoutCurrentView(true));
+    $('#btn-tree-auto-layout')?.addEventListener('click', () => autoLayoutCurrentView(true));
+    $('#btn-gen-auto-layout')?.addEventListener('click', () => autoLayoutCurrentView(true));
   }
 
   function cycleGrid() {
@@ -5276,6 +5590,11 @@
       STATE.databaseMode = false;
       enterGeneralMode();
     }
+
+    // Trigger instant presence heartbeat on canvas view change
+    if (window.NeuraPresence && typeof window.NeuraPresence.sendHeartbeat === 'function') {
+      window.NeuraPresence.sendHeartbeat();
+    }
   }
   window.switchCanvasView = switchCanvasView;
 
@@ -5846,7 +6165,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         });
       });
 
-      return result;
+      return resolveCardCollisions(result, 280, 95);
     }
 
     // Generic subfolder layout (inside public/, api/, etc.)
@@ -5937,7 +6256,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       });
     });
 
-    return result;
+    return resolveCardCollisions(result, 280, 95);
   }
 
   async function enterExplorerMode(pathArray = []) {
@@ -6032,6 +6351,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       // Render relations for root
       if (isRoot) {
         renderAllConnections();
+        requestAnimationFrame(() => renderAllConnections());
       }
 
       STATE.canvasView = 'explorer';
@@ -6083,6 +6403,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       // Smoothly fit the newly opened folder cards
       setTimeout(() => {
         fitView(true);
+        if (isRoot) renderAllConnections();
       }, 50);
     } finally {
       setTimeout(() => {

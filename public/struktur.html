@@ -20,7 +20,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/welcome.css?v=68">
   <link rel="stylesheet" href="/css/template.css?v=1.5">
-  <link rel="stylesheet" href="/css/struktur.css?v=8.0">
+  <link rel="stylesheet" href="/css/struktur.css?v=8.2">
   <link rel="stylesheet" href="/css/responsive-app.css?v=2.0">
 
   <!-- highlight.js for syntax highlighting in code drawer -->
@@ -233,53 +233,74 @@
     <div class="topbar-right">
       <!-- Collaborators Avatar Stack -->
       <div class="collaborators-wrapper">
-        <div class="collaborators-stack" id="collaborators-stack" title="5 Peneliti & Pengembang Aktif (Klik untuk detail)">
-          <span class="avatar-chip chip-1" title="Dr. Sarah K. (Lead Clinical)">SK</span>
-          <span class="avatar-chip chip-2" title="Alex R. (ML Engine)">AR</span>
-          <span class="avatar-chip chip-3" title="Hanzz (Core Dev)">HZ</span>
-          <span class="avatar-chip chip-more">+2</span>
+        <div class="collaborators-stack" id="collaborators-stack" title="Administrator &amp; Peneliti Aktif (Klik untuk detail)">
+          <span class="avatar-chip chip-3" style="background: linear-gradient(135deg, #EA580C, #C2410C);" title="Haidar Rifky A (Super Admin)">HR</span>
+          <span class="avatar-chip chip-1" style="background: linear-gradient(135deg, #06B6D4, #0891B2);" title="Syafiq Ahmad A. (Admin)">SA</span>
+          <span class="avatar-chip chip-2" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);" title="Muhammad Hasanudin (Admin)">MH</span>
+          <span class="avatar-chip chip-more">+5</span>
         </div>
 
         <!-- Collaborators Popover -->
         <div class="topbar-dropdown-menu collaborators-popup" id="collaborators-popup">
-          <div class="dropdown-menu-header">PENELITI & PENGEMBANG AKTIF (5 ONLINE)</div>
-          <div class="collab-item">
-            <div class="collab-avatar chip-3">HZ</div>
+          <div class="dropdown-menu-header">ADMINISTRATOR &amp; PENELITI AKTIF (4 ONLINE)</div>
+          <div class="collab-item collab-item-you">
+            <div class="collab-avatar" style="background: linear-gradient(135deg, #EA580C, #C2410C);">
+              HR
+              <span class="collab-dot-mini dot-online"></span>
+            </div>
             <div class="collab-info">
-              <div class="collab-name">Hanzz (Anda) <span class="collab-badge-you">Host</span></div>
-              <div class="collab-role">Core Architecture & Dev • <span class="status-live">Aktif di Kanvas</span></div>
+              <div class="collab-name">Haidar Rifky A <span class="collab-badge-you">Anda / Host</span></div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Aktif di Kanvas</span></div>
+              <div class="collab-meta-row">
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /struktur</span>
+                <span class="collab-time-badge">Login: Hari ini, 12:45 WIB</span>
+              </div>
             </div>
           </div>
           <div class="collab-item">
-            <div class="collab-avatar chip-1">SK</div>
+            <div class="collab-avatar" style="background: linear-gradient(135deg, #06B6D4, #0891B2);">
+              SA
+              <span class="collab-dot-mini dot-online"></span>
+            </div>
             <div class="collab-info">
-              <div class="collab-name">Dr. Sarah K.</div>
-              <div class="collab-role">Lead Clinical Research • <span class="status-live">Analisis Biomarker</span></div>
+              <div class="collab-name">Syafiq Ahmad A.</div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Analisis Biomarker</span></div>
+              <div class="collab-meta-row">
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /app?view=clinical</span>
+                <span class="collab-time-badge">Login: Hari ini, 12:30 WIB</span>
+              </div>
             </div>
           </div>
           <div class="collab-item">
-            <div class="collab-avatar chip-2">AR</div>
+            <div class="collab-avatar" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
+              MH
+              <span class="collab-dot-mini dot-online"></span>
+            </div>
             <div class="collab-info">
-              <div class="collab-name">Alex R.</div>
-              <div class="collab-role">ML & Deep Learning • <span class="status-live">Model ResNet-3D</span></div>
+              <div class="collab-name">Muhammad Hasanudin</div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Model ResNet-3D</span></div>
+              <div class="collab-meta-row">
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /struktur?view=explorer</span>
+                <span class="collab-time-badge">Login: Hari ini, 12:10 WIB</span>
+              </div>
             </div>
           </div>
           <div class="collab-item">
-            <div class="collab-avatar chip-more">BS</div>
-            <div class="collab-info">
-              <div class="collab-name">dr. Budi S., Sp.S</div>
-              <div class="collab-role">Consultant Neurologist • <span class="status-away">Online 12m lalu</span></div>
+            <div class="collab-avatar" style="background: linear-gradient(135deg, #10B981, #059669);">
+              MK
+              <span class="collab-dot-mini dot-online"></span>
             </div>
-          </div>
-          <div class="collab-item">
-            <div class="collab-avatar chip-more">MP</div>
             <div class="collab-info">
-              <div class="collab-name">dr. Maya P., Sp.Rad</div>
-              <div class="collab-role">Neuroimaging Specialist • <span class="status-away">Online 35m lalu</span></div>
+              <div class="collab-name">Muhammad Khoir Luqman</div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Aktif di Sistem</span></div>
+              <div class="collab-meta-row">
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /app?view=patients</span>
+                <span class="collab-time-badge">Login: Hari ini, 11:45 WIB</span>
+              </div>
             </div>
           </div>
           <div class="collab-footer">
-            <span class="pulse-dot"></span> Sinkronisasi multi-user WebSocket siap
+            <span class="pulse-dot"></span> Terhubung ke Database MySQL &bull; Real-time Aktif
           </div>
         </div>
       </div>
@@ -538,6 +559,16 @@
             </svg>
           </button>
         </div>
+        <div class="tool-btn-wrap" data-tooltip="Auto Layout (Rapikan Kartu)" data-shortcut="Shift+A">
+          <button class="tool-btn" id="tool-auto-layout" title="Rapikan Tata Letak Kartu Secara Otomatis">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div class="toolbar-divider"></div>
@@ -729,6 +760,14 @@
                 <line x1="3" y1="21" x2="10" y2="14"></line>
               </svg>
             </button>
+            <button class="tree-action-btn" id="btn-gen-auto-layout" title="Auto Layout (Rapikan Kartu)" onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              </svg>
+            </button>
           </div>
           <!-- Actions for FILES mode -->
           <div class="tree-header-actions" id="sidebar-actions-files" role="toolbar" aria-label="Aksi Struktur Folder" style="display:none;">
@@ -750,6 +789,14 @@
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
               </svg>
             </button>
+            <button class="tree-action-btn" id="btn-tree-auto-layout" title="Auto Layout (Rapikan Kartu)" onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              </svg>
+            </button>
           </div>
           <!-- Actions for DATABASE mode -->
           <div class="tree-header-actions" id="sidebar-actions-db" role="toolbar" aria-label="Aksi Basis Data" style="display:none;">
@@ -757,6 +804,14 @@
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="23 4 23 10 17 10"></polyline>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+            </button>
+            <button class="tree-action-btn" id="btn-db-auto-layout" title="Auto Layout (Rapikan Kartu)" onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
               </svg>
             </button>
           </div>
@@ -1258,8 +1313,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=4"></script>
   <script src="/js/notification-manager.js?v=1"></script>
-  <script src="/js/struktur.js?v=9.5"></script>
+  <script src="/js/struktur.js?v=9.8"></script>
   <script src="/js/admin-device-guard.js?v=2.0"></script>
+  <script src="/js/admin-presence.js?v=2.0"></script>
 </body>
 
 </html>

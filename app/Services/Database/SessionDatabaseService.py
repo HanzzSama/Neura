@@ -106,6 +106,102 @@ def delete_auth_session(token: str) -> bool:
         return False
 
 
+def touch_auth_session(
+    token: str,
+    current_page: Optional[str] = None,
+    page_title: Optional[str] = None,
+    canvas_view: Optional[str] = None,
+    action: Optional[str] = None,
+) -> bool:
+    """Memperbarui last_activity_at dan data halaman terkini di tabel auth_sessions MySQL."""
+    ok, _ = is_mysql_available()
+    if not ok:
+        return False
+    try:
+        row = execute_one("SELECT `payload` FROM `auth_sessions` WHERE `session_token` = %s LIMIT 1;", (token,))
+        payload = {}
+        if row and row.get("payload"):
+            try:
+                payload = json.loads(row["payload"])
+            except Exception:
+                pass
+        if current_page:
+            payload["current_page"] = current_page
+        if page_title:
+            payload["page_title"] = page_title
+        if canvas_view:
+            payload["canvas_view"] = canvas_view
+        if action:
+            payload["action"] = action
+        payload["last_seen_ts"] = time.time()
+
+        execute_update("""
+            UPDATE `auth_sessions`
+            SET `payload` = %s, `last_activity_at` = CURRENT_TIMESTAMP
+            WHERE `session_token` = %s;
+        """, (json.dumps(payload), token))
+        return True
+    except Exception as e:
+        logger.warning(f"[SessionDB] Gagal touch sesi di MySQL: {e}")
+        return False
+
+
+def get_all_active_admin_sessions() -> List[Dict[str, Any]]:
+    """Mengambil seluruh sesi admin aktif dari tabel auth_sessions MySQL dengan profil lengkap."""
+    ok, _ = is_mysql_available()
+    if not ok:
+        return []
+    try:
+        rows = execute_query("""
+            SELECT 
+                s.`session_token`,
+                s.`user_id`,
+                s.`role`,
+                s.`ip_address`,
+                s.`user_agent`,
+                s.`payload`,
+                s.`last_activity_at`,
+                s.`expires_at`,
+                u.`email`,
+                u.`full_name`,
+                u.`avatar_url`,
+                ap.`department`,
+                ap.`custom_email`
+            FROM `auth_sessions` s
+            JOIN `users` u ON u.`id` = s.`user_id`
+            LEFT JOIN `admin_profiles` ap ON ap.`user_id` = u.`id`
+            WHERE s.`role` = 'Admin' AND s.`expires_at` > CURRENT_TIMESTAMP
+            ORDER BY s.`last_activity_at` DESC;
+        """)
+        results = []
+        for r in rows:
+            payload = {}
+            if r.get("payload"):
+                try:
+                    payload = json.loads(r["payload"])
+                except Exception:
+                    pass
+            results.append({
+                "session_token": r["session_token"],
+                "user_id": r["user_id"],
+                "role": r["role"],
+                "ip_address": r["ip_address"],
+                "user_agent": r["user_agent"],
+                "payload": payload,
+                "last_activity_at": r["last_activity_at"],
+                "expires_at": r["expires_at"],
+                "email": r["email"],
+                "full_name": r["full_name"],
+                "avatar_url": r["avatar_url"],
+                "department": r.get("department") or "System Architecture & AI Engineering",
+                "custom_email": r.get("custom_email") or r["email"],
+            })
+        return results
+    except Exception as e:
+        logger.warning(f"[SessionDB] Gagal get_all_active_admin_sessions: {e}")
+        return []
+
+
 # -----------------------------------------------------------------------------
 # 2. AUTH OTP CODES (Database-backed 2FA OTP Store)
 # -----------------------------------------------------------------------------
