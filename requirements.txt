@@ -38,3 +38,5 @@ livekit-plugins-openai>=1.8.8
 # --- 7. LOCAL LLM INFERENCE (OPSIONAL) ---
 # Uncomment jika ingin menjalankan inferensi GGUF lokal via CPU:
 # llama-cpp-python>=0.3.0
+
+# Beberapa library harus diinstal manual
