@@ -11,7 +11,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neura / Admin Hub</title>
-  <meta name="description" content="Neura Admin Hub — Pusat manajemen dataset, model ML, platform, dan operasional Neura AI." />
+  <meta name="description"
+    content="Neura Admin Hub — Pusat manajemen dataset, model ML, platform, dan operasional Neura AI." />
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
@@ -20,9 +21,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
 
-  <link rel="stylesheet" href="/css/admin-hub.css?v=2.0" />
+  <link rel="stylesheet" href="/css/admin-hub.css?v=1.9" />
   <style id="auth-shield-style">
     body:not(.auth-cleared) {
       visibility: hidden !important;
@@ -46,7 +49,8 @@
         </button>
         <a href="/admin" class="hub-brand">
           <span class="hub-brand-mark" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
               <circle cx="7" cy="7" r="2.5" />
               <circle cx="17" cy="7" r="2.5" />
               <circle cx="7" cy="17" r="2.5" />
@@ -65,18 +69,21 @@
 
       <div class="hub-topbar-center">
         <div class="hub-search-box">
-          <svg class="hub-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="hub-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input type="text" id="hub-search-input" class="hub-search-input" placeholder="Search for modules, datasets, or tools..." autocomplete="off" />
+          <input type="text" id="hub-search-input" class="hub-search-input"
+            placeholder="Search for modules, datasets, or tools..." autocomplete="off" />
           <kbd class="hub-search-kbd">Ctrl K</kbd>
         </div>
       </div>
 
       <div class="hub-topbar-right">
         <button class="hub-icon-btn" id="hub-theme-btn" title="Ganti Tema (Light / Dark)" aria-label="Toggle Theme">
-          <svg id="hub-theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg id="hub-theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
             <circle cx="12" cy="12" r="5" />
             <line x1="12" y1="1" x2="12" y2="3" />
             <line x1="12" y1="21" x2="12" y2="23" />
@@ -129,7 +136,8 @@
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
               <span>Nakes & Users</span>
-              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
@@ -144,7 +152,8 @@
                 <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
               </svg>
               <span>Datasets & ML</span>
-              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
@@ -157,7 +166,8 @@
                 <rect x="3" y="14" width="7" height="7" rx="1" />
               </svg>
               <span>Platform & Pages</span>
-              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
@@ -169,7 +179,8 @@
                 <line x1="6" y1="20" x2="6" y2="14" />
               </svg>
               <span>Operations & System</span>
-              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="sb1-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
@@ -211,7 +222,8 @@
           <button class="sb1-item" id="sb1-settings-btn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
             <span>Settings</span>
           </button>
@@ -334,7 +346,8 @@
                   </div>
                   <div class="bento-file-name">alzheimers_disease_data.CSV</div>
                   <p class="bento-desc">
-                    Data klinis mentah lengkap sebelum proses pemecahan dataset training dan testing untuk model AI Neura.
+                    Data klinis mentah lengkap sebelum proses pemecahan dataset training dan testing untuk model AI
+                    Neura.
                   </p>
                   <div class="bento-actions">
                     <button type="button" class="bento-open-btn" data-bento-open="dataset-original">Open</button>
@@ -378,7 +391,8 @@
               <!-- Card A: AI Engine & Live Training Pulse -->
               <div class="bento-card bento-ai-card">
                 <svg class="ai-sparkline-art" viewBox="0 0 220 70" fill="none" aria-hidden="true">
-                  <path d="M4 58 L38 48 L72 52 L106 30 L142 34 L176 16 L216 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M4 58 L38 48 L72 52 L106 30 L142 34 L176 16 L216 12" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
                   <circle cx="216" cy="12" r="3.5" fill="currentColor" />
                 </svg>
 
@@ -387,7 +401,8 @@
                     <h3 class="bento-title-sm">AI Engine &amp; Training Pulse</h3>
                     <span class="compact-badge" id="ai-accuracy-badge">95.35% Acc</span>
                   </div>
-                  <p class="bento-desc-sm" id="ai-engine-subtitle">XGBoost Classifier &bull; 32 Biomarkers &bull; Ready</p>
+                  <p class="bento-desc-sm" id="ai-engine-subtitle">XGBoost Classifier &bull; 32 Biomarkers &bull; Ready
+                  </p>
 
                   <!-- Inline Live Progress Bar (shown when training/evaluating) -->
                   <div class="ai-inline-status" id="ai-inline-status" style="display:none;">
@@ -402,7 +417,8 @@
 
                   <div class="bento-inline-actions">
                     <button type="button" class="bento-pill-btn" id="btn-inline-eval">Evaluate</button>
-                    <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="btn-inline-train">Train 5 Epochs</button>
+                    <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="btn-inline-train">Train 5
+                      Epochs</button>
                   </div>
                 </div>
               </div>
@@ -444,7 +460,8 @@
             <div class="hub-section-head">
               <div>
                 <h1 class="hub-section-title">Platform Ecosystem</h1>
-                <p class="hub-section-sub">Akses modul utama platform Neura AI dan kelola alur kerja riset maupun arsitektur.</p>
+                <p class="hub-section-sub">Akses modul utama platform Neura AI dan kelola alur kerja riset maupun
+                  arsitektur.</p>
               </div>
               <button class="hub-browse-btn" data-expand-trigger="platform">Browse all</button>
             </div>
@@ -469,8 +486,10 @@
                 <div class="telemetry-ring-wrap">
                   <svg class="telemetry-donut" viewBox="0 0 80 80" aria-hidden="true">
                     <circle class="donut-track" cx="40" cy="40" r="30" />
-                    <circle class="donut-seg-pasien" id="donut-seg-pasien" cx="40" cy="40" r="30" stroke-dasharray="150 188.5" stroke-dashoffset="0" />
-                    <circle class="donut-seg-nakes" id="donut-seg-nakes" cx="40" cy="40" r="30" stroke-dasharray="30 188.5" stroke-dashoffset="-150" />
+                    <circle class="donut-seg-pasien" id="donut-seg-pasien" cx="40" cy="40" r="30"
+                      stroke-dasharray="150 188.5" stroke-dashoffset="0" />
+                    <circle class="donut-seg-nakes" id="donut-seg-nakes" cx="40" cy="40" r="30"
+                      stroke-dasharray="30 188.5" stroke-dashoffset="-150" />
                   </svg>
                   <div class="donut-center-text">
                     <span id="telemetry-total-users">--</span>
@@ -483,12 +502,9 @@
                     <h3 class="bento-title-sm">Nakes &amp; Consultation</h3>
                     <span class="compact-badge" id="telemetry-docs-badge">-- docs</span>
                   </div>
-                  <p class="bento-desc-sm" id="telemetry-breakdown-text">Memuat proporsi pasien &amp; tenaga kesehatan...</p>
-                  <div class="telemetry-legend" aria-hidden="true">
-                    <span><i class="legend-dot legend-dot--accent"></i>Pasien</span>
-                    <span><i class="legend-dot legend-dot--neutral"></i>Nakes</span>
-                  </div>
-                  <div class="bento-inline-actions" style="margin-top: 14px;">
+                  <p class="bento-desc-sm" id="telemetry-breakdown-text">Memuat proporsi pasien &amp; tenaga
+                    kesehatan...</p>
+                  <div class="bento-inline-actions" style="margin-top: 12px;">
                     <button type="button" class="bento-pill-btn" data-bento-open="data-nakes">View Directory</button>
                     <button type="button" class="bento-pill-btn" data-bento-open="statistik-analytics">Stats</button>
                   </div>
@@ -497,12 +513,7 @@
 
               <!-- Card D: System Health & Active Presence Radar -->
               <div class="bento-card bento-radar-card">
-                <svg class="radar-watermark-art" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-                  <path d="M120 20 A100 100 0 0 0 20 120" stroke="currentColor" stroke-width="1.2" />
-                  <path d="M120 52 A68 68 0 0 0 52 120" stroke="currentColor" stroke-width="1.2" />
-                  <path d="M120 84 A36 36 0 0 0 84 120" stroke="currentColor" stroke-width="1.2" />
-                </svg>
-                <div class="bento-title-row" style="margin-bottom: 12px; position: relative; z-index: 1;">
+                <div class="bento-title-row" style="margin-bottom: 10px;">
                   <h3 class="bento-title-sm">System Health &amp; Presence</h3>
                   <span class="compact-badge" id="radar-online-badge">Checking...</span>
                 </div>
@@ -550,27 +561,37 @@
                 <div class="spectrum-list">
                   <div class="spectrum-row" title="MMSE Score — 24.8% importance">
                     <span class="spectrum-label">MMSE</span>
-                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--1" style="width:92%"></div></div>
+                    <div class="spectrum-track">
+                      <div class="spectrum-fill spectrum-fill--1" style="width:92%"></div>
+                    </div>
                     <span class="spectrum-val">24.8%</span>
                   </div>
                   <div class="spectrum-row" title="Functional Assessment — 21.4% importance">
                     <span class="spectrum-label">Functional</span>
-                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--2" style="width:79%"></div></div>
+                    <div class="spectrum-track">
+                      <div class="spectrum-fill spectrum-fill--2" style="width:79%"></div>
+                    </div>
                     <span class="spectrum-val">21.4%</span>
                   </div>
                   <div class="spectrum-row" title="Memory Complaints — 18.2% importance">
                     <span class="spectrum-label">Memory</span>
-                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--3" style="width:67%"></div></div>
+                    <div class="spectrum-track">
+                      <div class="spectrum-fill spectrum-fill--3" style="width:67%"></div>
+                    </div>
                     <span class="spectrum-val">18.2%</span>
                   </div>
                   <div class="spectrum-row" title="ADL Score — 15.6% importance">
                     <span class="spectrum-label">ADL</span>
-                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--4" style="width:58%"></div></div>
+                    <div class="spectrum-track">
+                      <div class="spectrum-fill spectrum-fill--4" style="width:58%"></div>
+                    </div>
                     <span class="spectrum-val">15.6%</span>
                   </div>
                   <div class="spectrum-row" title="Behavioral Problems — 11.1% importance">
                     <span class="spectrum-label">Behavior</span>
-                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--5" style="width:42%"></div></div>
+                    <div class="spectrum-track">
+                      <div class="spectrum-fill spectrum-fill--5" style="width:42%"></div>
+                    </div>
                     <span class="spectrum-val">11.1%</span>
                   </div>
                 </div>
@@ -606,7 +627,8 @@
                 </div>
 
                 <div class="bento-inline-actions">
-                  <button type="button" class="bento-pill-btn" data-bento-open="konsultasi-records">View Records</button>
+                  <button type="button" class="bento-pill-btn" data-bento-open="konsultasi-records">View
+                    Records</button>
                 </div>
               </div>
             </div>
@@ -744,7 +766,8 @@
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <input type="text" id="cmd-palette-input" class="cmd-palette-input" placeholder="Ketik perintah, dataset, atau halaman..." autocomplete="off" />
+        <input type="text" id="cmd-palette-input" class="cmd-palette-input"
+          placeholder="Ketik perintah, dataset, atau halaman..." autocomplete="off" />
         <kbd class="hub-search-kbd">Esc</kbd>
       </div>
       <div class="cmd-palette-list" id="cmd-palette-list">
