@@ -379,6 +379,13 @@
       telemetrySection.style.display = showTel ? '' : 'none';
     }
 
+    const labSection = document.getElementById('hub-abstract-lab-section');
+    if (labSection) {
+      const showLab = (activeCategory === 'all' || activeCategory === 'datasets' || activeCategory === 'operations') &&
+        (!q || 'biomarker mmse adl consultation nks voice chat architecture security 2fa'.includes(q));
+      labSection.style.display = showLab ? '' : 'none';
+    }
+
     renderFeatured();
     renderCompactGrid('hub-datasets-grid', DATASET_CARDS);
     renderCompactGrid('hub-operations-grid', OPERATION_CARDS);
@@ -725,6 +732,9 @@
       const docsEl = document.getElementById('telemetry-docs-badge');
       if (docsEl) docsEl.textContent = `${kpis.total_consultation_docs ?? 0} docs`;
 
+      const cadenceDocsEl = document.getElementById('cadence-docs-badge');
+      if (cadenceDocsEl) cadenceDocsEl.textContent = `${kpis.total_consultation_docs ?? 0} docs`;
+
       const textEl = document.getElementById('telemetry-breakdown-text');
       if (textEl) textEl.textContent = `${pasien} Pasien · ${nakes} Nakes · ${bd.admin ?? 0} Admin`;
 
@@ -769,10 +779,16 @@
       if (dbVal && colRes?.collections) {
         dbVal.textContent = `${colRes.collections.length} collections`;
       }
+      const archColsBadge = document.getElementById('arch-cols-badge');
+      if (archColsBadge && colRes?.collections) {
+        archColsBadge.textContent = `${colRes.collections.length} cols`;
+      }
 
       const admins = presRes?.collaborators || presRes?.active || [];
       const adminsVal = document.getElementById('radar-val-admins');
       if (adminsVal) adminsVal.textContent = `${Math.max(1, admins.length)} online`;
+      const secAdminsBadge = document.getElementById('sec-admins-badge');
+      if (secAdminsBadge) secAdminsBadge.textContent = `${Math.max(1, admins.length)} online`;
 
       if (onlineBadge) onlineBadge.textContent = 'All Systems OK';
       const insightInfra = document.getElementById('insight-infra-val');

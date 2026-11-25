@@ -435,6 +435,7 @@ button {
   display: flex;
   align-items: center;
   gap: 9px;
+  white-space: nowrap;
 }
 
 .hub-switch-input {
@@ -470,7 +471,7 @@ button {
   transform: translateX(13px);
 }
 
-/* ── Sidebar 2 (Expandable Sub-Menu) ── */
+/* ── Sidebar 2 (Expandable Sub-Menu with Smooth Slide & No-Wrap) ── */
 .hub-sidebar-2 {
   width: 0;
   opacity: 0;
@@ -478,16 +479,28 @@ button {
   flex-shrink: 0;
   border-right: 0 solid var(--hub-border);
   background: var(--hub-bg);
-  display: flex;
-  flex-direction: column;
-  transition: width 0.2s ease, opacity 0.16s ease;
+  transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
 }
 
 .hub-sidebar-2.is-open {
-  width: 196px;
+  width: 212px;
   opacity: 1;
   border-right-width: 1px;
+}
+
+.sb2-inner {
+  width: 212px;
+  min-width: 212px;
+  height: 100%;
   padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-12px);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hub-sidebar-2.is-open .sb2-inner {
+  transform: translateX(0);
 }
 
 .sb2-header {
@@ -507,6 +520,7 @@ button {
 .sb2-close-btn {
   width: 24px;
   height: 24px;
+  flex-shrink: 0;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
@@ -537,8 +551,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
   transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.sb2-item span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -557,6 +577,8 @@ button {
   font-family: var(--hub-font-mono);
   font-size: 10px;
   color: var(--hub-text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .sb2-footer {
@@ -1009,6 +1031,10 @@ button {
 }
 
 .bento-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   height: 30px;
   padding: 0 13px;
   border-radius: 999px;
@@ -1017,6 +1043,7 @@ button {
   font-size: 12px;
   font-weight: 500;
   color: var(--hub-text-secondary);
+  white-space: nowrap;
   transition: border-color 0.14s, color 0.14s, background 0.14s;
 }
 
@@ -1260,18 +1287,18 @@ button {
   opacity: 0.7;
 }
 
-/* ── Telemetry & Radar Bento ── */
+/* ── Telemetry & Radar Bento (Minimalist Swiss Style) ── */
 .bento-telemetry-card {
-  padding: 20px 22px;
+  padding: 22px 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 22px;
 }
 
 .telemetry-ring-wrap {
   position: relative;
-  width: 82px;
-  height: 82px;
+  width: 90px;
+  height: 90px;
   flex-shrink: 0;
 }
 
@@ -1284,23 +1311,23 @@ button {
 .donut-track {
   fill: none;
   stroke: var(--hub-border);
-  stroke-width: 8;
+  stroke-width: 6.5;
 }
 
 .donut-seg-pasien {
   fill: none;
   stroke: var(--hub-accent);
-  stroke-width: 8;
+  stroke-width: 6.5;
   stroke-linecap: round;
-  transition: stroke-dasharray 0.4s ease;
+  transition: stroke-dasharray 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .donut-seg-nakes {
   fill: none;
   stroke: var(--hub-text);
-  stroke-width: 8;
+  stroke-width: 6.5;
   stroke-linecap: round;
-  transition: stroke-dasharray 0.4s ease;
+  transition: stroke-dasharray 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .donut-center-text {
@@ -1315,7 +1342,8 @@ button {
 
 .donut-center-text span {
   font-family: var(--hub-font-mono);
-  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
   font-weight: 700;
   color: var(--hub-text);
 }
@@ -1323,6 +1351,7 @@ button {
 .donut-center-text small {
   font-size: 9.5px;
   color: var(--hub-text-muted);
+  margin-top: 2px;
 }
 
 .telemetry-info {
@@ -1330,33 +1359,73 @@ button {
   min-width: 0;
 }
 
+.telemetry-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--hub-text-muted);
+}
+
+.telemetry-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot--accent { background: var(--hub-accent); }
+.legend-dot--neutral { background: var(--hub-text); }
+
 .bento-radar-card {
-  padding: 20px 22px;
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+.radar-watermark-art {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 110px;
+  height: 110px;
+  color: var(--hub-text-muted);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
 .radar-matrix {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 9px;
 }
 
 .radar-row {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--hub-bg-subtle);
-  border: 1px solid var(--hub-border);
-  font-size: 12px;
+  gap: 10px;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--hub-border);
+  font-size: 12.5px;
+}
+
+.radar-row:last-child {
+  border-bottom: none;
+  padding-bottom: 2px;
 }
 
 .radar-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -1377,7 +1446,8 @@ button {
 
 .radar-val {
   font-family: var(--hub-font-mono);
-  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
   color: var(--hub-text-muted);
 }
 
@@ -1660,6 +1730,184 @@ button {
 @keyframes toast-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Intelligence & Architecture Lab (5 Abstract Cards) ── */
+.lab-bento-top {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.lab-bento-bottom {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.lab-card {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 162px;
+}
+
+.lab-card--art {
+  min-height: 152px;
+}
+
+/* 1. Biomarker Spectrum Bars */
+.spectrum-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.spectrum-row {
+  display: grid;
+  grid-template-columns: 74px 1fr 42px;
+  align-items: center;
+  gap: 10px;
+  font-size: 11.5px;
+}
+
+.spectrum-label {
+  color: var(--hub-text-secondary);
+  font-weight: 500;
+}
+
+.spectrum-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--hub-bg-preview);
+  overflow: hidden;
+}
+
+.spectrum-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--hub-accent);
+  transition: filter 0.15s ease;
+}
+
+.spectrum-fill--2 { opacity: 0.82; }
+.spectrum-fill--3 { opacity: 0.65; }
+.spectrum-fill--4 { background: var(--hub-text-secondary); opacity: 0.55; }
+.spectrum-fill--5 { background: var(--hub-text-muted); opacity: 0.45; }
+
+.spectrum-row:hover .spectrum-fill {
+  filter: brightness(1.12);
+}
+
+.spectrum-val {
+  font-family: var(--hub-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--hub-text-muted);
+  text-align: right;
+}
+
+/* 2. Consultation Cadence Bars */
+.cadence-wave {
+  height: 74px;
+  margin-top: 18px;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+.cadence-wave span {
+  flex: 1;
+  border-radius: 999px;
+  background: var(--hub-border-strong);
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.cadence-wave span.is-peak {
+  background: var(--hub-accent);
+}
+
+.lab-card:hover .cadence-wave span {
+  transform: scaleY(1.06);
+  transform-origin: bottom;
+}
+
+/* 3. Sonic Rings Art */
+.sonic-rings-art {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  width: 108px;
+  height: 108px;
+  color: var(--hub-accent);
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.lab-card:hover .sonic-rings-art {
+  opacity: 0.55;
+  transform: scale(1.04);
+}
+
+/* 4. Isometric Layer Stack */
+.iso-stack-art {
+  position: absolute;
+  right: 16px;
+  bottom: 42px;
+  width: 58px;
+  height: 44px;
+  pointer-events: none;
+}
+
+.iso-plate {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  border: 1px solid var(--hub-border-strong);
+  background: var(--hub-bg-subtle);
+  transform: rotateX(55deg) rotateZ(-35deg);
+  transition: transform 0.22s ease;
+}
+
+.iso-plate-1 { top: 0; border-color: var(--hub-accent-border); background: var(--hub-accent-soft); }
+.iso-plate-2 { top: 8px; opacity: 0.85; }
+.iso-plate-3 { top: 16px; opacity: 0.65; }
+
+.lab-card:hover .iso-plate-1 { transform: rotateX(55deg) rotateZ(-35deg) translate(2px, -4px); }
+.lab-card:hover .iso-plate-3 { transform: rotateX(55deg) rotateZ(-35deg) translate(-2px, 4px); }
+
+/* 5. Security 4x4 Dot Matrix */
+.sec-matrix-art {
+  position: absolute;
+  right: 18px;
+  bottom: 44px;
+  display: grid;
+  grid-template-columns: repeat(4, 6px);
+  gap: 5px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.sec-matrix-art span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hub-border-strong);
+}
+
+.sec-matrix-art span.is-on {
+  background: var(--hub-accent);
+}
+
+@media (max-width: 960px) {
+  .lab-bento-top,
+  .lab-bento-bottom {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Featured 4-Column Cards ── */

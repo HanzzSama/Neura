@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/css/admin-hub.css?v=1.6" />
+  <link rel="stylesheet" href="/css/admin-hub.css?v=2.0" />
   <style id="auth-shield-style">
     body:not(.auth-cleared) {
       visibility: hidden !important;
@@ -240,19 +240,21 @@
 
       <!-- SIDEBAR 2: Expandable Sub-Menu for Sidebar 1 -->
       <aside class="hub-sidebar-2" id="hub-sidebar-2" aria-label="Sub-menu Sidebar">
-        <div class="sb2-header">
-          <span class="sb2-title" id="sb2-title">Sub-menu</span>
-          <button class="sb2-close-btn" id="sb2-close-btn" title="Collapse Sub-menu" aria-label="Collapse">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-        </div>
-        <div class="sb2-list" id="sb2-list">
-          <!-- Populated dynamically by admin-hub.js -->
-        </div>
-        <div class="sb2-footer">
-          <button class="sb2-browse-all" id="sb2-reset-filter">Browse All</button>
+        <div class="sb2-inner">
+          <div class="sb2-header">
+            <span class="sb2-title" id="sb2-title">Sub-menu</span>
+            <button class="sb2-close-btn" id="sb2-close-btn" title="Collapse Sub-menu" aria-label="Collapse">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+          </div>
+          <div class="sb2-list" id="sb2-list">
+            <!-- Populated dynamically by admin-hub.js -->
+          </div>
+          <div class="sb2-footer">
+            <button class="sb2-browse-all" id="sb2-reset-filter">Browse All</button>
+          </div>
         </div>
       </aside>
 
@@ -482,7 +484,11 @@
                     <span class="compact-badge" id="telemetry-docs-badge">-- docs</span>
                   </div>
                   <p class="bento-desc-sm" id="telemetry-breakdown-text">Memuat proporsi pasien &amp; tenaga kesehatan...</p>
-                  <div class="bento-inline-actions" style="margin-top: 12px;">
+                  <div class="telemetry-legend" aria-hidden="true">
+                    <span><i class="legend-dot legend-dot--accent"></i>Pasien</span>
+                    <span><i class="legend-dot legend-dot--neutral"></i>Nakes</span>
+                  </div>
+                  <div class="bento-inline-actions" style="margin-top: 14px;">
                     <button type="button" class="bento-pill-btn" data-bento-open="data-nakes">View Directory</button>
                     <button type="button" class="bento-pill-btn" data-bento-open="statistik-analytics">Stats</button>
                   </div>
@@ -491,7 +497,12 @@
 
               <!-- Card D: System Health & Active Presence Radar -->
               <div class="bento-card bento-radar-card">
-                <div class="bento-title-row" style="margin-bottom: 10px;">
+                <svg class="radar-watermark-art" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                  <path d="M120 20 A100 100 0 0 0 20 120" stroke="currentColor" stroke-width="1.2" />
+                  <path d="M120 52 A68 68 0 0 0 52 120" stroke="currentColor" stroke-width="1.2" />
+                  <path d="M120 84 A36 36 0 0 0 84 120" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+                <div class="bento-title-row" style="margin-bottom: 12px; position: relative; z-index: 1;">
                   <h3 class="bento-title-sm">System Health &amp; Presence</h3>
                   <span class="compact-badge" id="radar-online-badge">Checking...</span>
                 </div>
@@ -512,6 +523,147 @@
                     <span class="radar-label">Active Admins</span>
                     <span class="radar-val" id="radar-val-admins">1 online</span>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="hub-divider"></div>
+
+          <!-- SECTION: ABSTRACT INTELLIGENCE LAB (5 New Abstract Cards: Bento 2 + 3) -->
+          <section class="hub-section" id="hub-abstract-lab-section" data-section="datasets">
+            <div class="hub-section-head" style="margin-bottom: 12px;">
+              <h2 class="bento-section-label">Intelligence &amp; Architecture Lab</h2>
+              <span class="hub-link-btn" id="lab-biomarker-hint">Hover bar untuk detail fitur</span>
+            </div>
+
+            <!-- Row 1: 1.3fr : 1fr -->
+            <div class="lab-bento-top">
+              <!-- Card 1: Biomarker Feature Spectrum -->
+              <div class="bento-card lab-card">
+                <div class="bento-title-row">
+                  <h3 class="bento-title-sm">Biomarker Feature Spectrum</h3>
+                  <span class="compact-badge">32 Features</span>
+                </div>
+                <p class="bento-desc-sm">Kontribusi fitur klinis utama pada prediksi model Alzheimer XGBoost.</p>
+
+                <div class="spectrum-list">
+                  <div class="spectrum-row" title="MMSE Score — 24.8% importance">
+                    <span class="spectrum-label">MMSE</span>
+                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--1" style="width:92%"></div></div>
+                    <span class="spectrum-val">24.8%</span>
+                  </div>
+                  <div class="spectrum-row" title="Functional Assessment — 21.4% importance">
+                    <span class="spectrum-label">Functional</span>
+                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--2" style="width:79%"></div></div>
+                    <span class="spectrum-val">21.4%</span>
+                  </div>
+                  <div class="spectrum-row" title="Memory Complaints — 18.2% importance">
+                    <span class="spectrum-label">Memory</span>
+                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--3" style="width:67%"></div></div>
+                    <span class="spectrum-val">18.2%</span>
+                  </div>
+                  <div class="spectrum-row" title="ADL Score — 15.6% importance">
+                    <span class="spectrum-label">ADL</span>
+                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--4" style="width:58%"></div></div>
+                    <span class="spectrum-val">15.6%</span>
+                  </div>
+                  <div class="spectrum-row" title="Behavioral Problems — 11.1% importance">
+                    <span class="spectrum-label">Behavior</span>
+                    <div class="spectrum-track"><div class="spectrum-fill spectrum-fill--5" style="width:42%"></div></div>
+                    <span class="spectrum-val">11.1%</span>
+                  </div>
+                </div>
+
+                <div class="bento-inline-actions">
+                  <button type="button" class="bento-pill-btn" data-bento-open="ml-model">Inspect Charts</button>
+                </div>
+              </div>
+
+              <!-- Card 2: Consultation & NKS Cadence -->
+              <div class="bento-card lab-card">
+                <div class="bento-title-row">
+                  <h3 class="bento-title-sm">Consultation &amp; NKS Cadence</h3>
+                  <span class="compact-badge" id="cadence-docs-badge">-- docs</span>
+                </div>
+                <p class="bento-desc-sm">Ritme skrining pasien dan validasi kode rujukan NKS terbaru.</p>
+
+                <div class="cadence-wave" aria-hidden="true">
+                  <span style="height:32%"></span>
+                  <span style="height:56%"></span>
+                  <span style="height:44%"></span>
+                  <span style="height:78%"></span>
+                  <span style="height:92%" class="is-peak"></span>
+                  <span style="height:64%"></span>
+                  <span style="height:50%"></span>
+                  <span style="height:86%" class="is-peak"></span>
+                  <span style="height:70%"></span>
+                  <span style="height:40%"></span>
+                  <span style="height:62%"></span>
+                  <span style="height:95%" class="is-peak"></span>
+                  <span style="height:54%"></span>
+                  <span style="height:38%"></span>
+                </div>
+
+                <div class="bento-inline-actions">
+                  <button type="button" class="bento-pill-btn" data-bento-open="konsultasi-records">View Records</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2: 3 Equal Columns -->
+            <div class="lab-bento-bottom">
+              <!-- Card 3: Voice & Chat Corpus Wave -->
+              <div class="bento-card lab-card lab-card--art">
+                <svg class="sonic-rings-art" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                  <circle cx="95" cy="95" r="24" stroke="currentColor" stroke-width="1.3" />
+                  <circle cx="95" cy="95" r="44" stroke="currentColor" stroke-width="1.2" opacity="0.65" />
+                  <circle cx="95" cy="95" r="64" stroke="currentColor" stroke-width="1.1" opacity="0.35" />
+                </svg>
+                <div class="bento-title-row">
+                  <h3 class="bento-title-sm">Voice &amp; Chat Corpus</h3>
+                  <span class="compact-badge">NLP</span>
+                </div>
+                <p class="bento-desc-sm">Korpus intent percakapan teks &amp; konsultasi suara AI.</p>
+                <div class="bento-inline-actions">
+                  <button type="button" class="bento-pill-btn" data-bento-open="dataset-intents">Chat JSON</button>
+                  <a href="/chat" class="bento-pill-btn">Voice UI</a>
+                </div>
+              </div>
+
+              <!-- Card 4: Architecture Layer Stack -->
+              <div class="bento-card lab-card lab-card--art">
+                <div class="iso-stack-art" aria-hidden="true">
+                  <span class="iso-plate iso-plate-3"></span>
+                  <span class="iso-plate iso-plate-2"></span>
+                  <span class="iso-plate iso-plate-1"></span>
+                </div>
+                <div class="bento-title-row">
+                  <h3 class="bento-title-sm">Architecture Stack</h3>
+                  <span class="compact-badge" id="arch-cols-badge">Clean</span>
+                </div>
+                <p class="bento-desc-sm">Controllers, Services, &amp; lapisan koleksi MySQL/JSON.</p>
+                <div class="bento-inline-actions">
+                  <a href="/app/struktur" class="bento-pill-btn">Open Canvas</a>
+                  <button type="button" class="bento-pill-btn" data-bento-open="database-explorer">Inspect DB</button>
+                </div>
+              </div>
+
+              <!-- Card 5: Admin Security & Audit Matrix -->
+              <div class="bento-card lab-card lab-card--art">
+                <div class="sec-matrix-art" aria-hidden="true">
+                  <span></span><span class="is-on"></span><span></span><span></span>
+                  <span></span><span></span><span class="is-on"></span><span></span>
+                  <span class="is-on"></span><span></span><span></span><span class="is-on"></span>
+                  <span></span><span class="is-on"></span><span></span><span></span>
+                </div>
+                <div class="bento-title-row">
+                  <h3 class="bento-title-sm">Security &amp; 2FA Matrix</h3>
+                  <span class="compact-badge" id="sec-admins-badge">Verified</span>
+                </div>
+                <p class="bento-desc-sm">Sesi OTP 2FA aktif dan pemantauan kolaborator admin.</p>
+                <div class="bento-inline-actions">
+                  <button type="button" class="bento-pill-btn" data-bento-open="audit-presence">Presence</button>
                 </div>
               </div>
             </div>
@@ -611,7 +763,7 @@
 
   <script src="/js/auth-guard.js?v=1.1"></script>
   <script src="/js/admin-dataset-drawer.js?v=1.2"></script>
-  <script src="/js/admin-hub.js?v=1.6"></script>
+  <script src="/js/admin-hub.js?v=1.7"></script>
 </body>
 
 </html>
