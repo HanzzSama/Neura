@@ -70,6 +70,12 @@ def register_web_routes(app: Flask):
     def folder_structure_page():
         return send_from_directory(PUBLIC_DIR, "struktur.html")
 
+    @app.route("/admin", strict_slashes=False)
+    @app.route("/app/admin", strict_slashes=False)
+    @app.route("/admin.html", strict_slashes=False)
+    def admin_hub_page():
+        return send_from_directory(PUBLIC_DIR, "admin.html")
+
     @app.route("/api/project-structure", methods=["GET"])
     def get_project_structure():
         ignored_dirs = {".git", ".ipynb_checkpoints", ".flask_sessions", "venv", "__pycache__", ".gemini", "node_modules"}

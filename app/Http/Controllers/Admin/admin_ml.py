@@ -471,3 +471,152 @@ def api_admin_platform_stats():
         logger.error(f"Gagal memuat platform stats: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+def _datasets_dir() -> Path:
+    return Path(__file__).resolve().parents[4] / "database" / "datasets"
+
+
+def _read_csv_rows(csv_path: Path):
+    import csv
+    with open(csv_path, "r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.reader(f)
+        headers = next(reader, [])
+        rows = list(reader)
+    return headers, rows
+
+
+@admin_ml_bp.route("/admin/datasets/summary", methods=["GET"])
+def api_admin_datasets_summary():
+    """Mengembalikan ringkasan metadata dataset-original, dataset-training, dataset-testing, dan intents."""
+    try:
+        ds_dir = _datasets_dir()
+        orig_csv = ds_dir / "alzheimers_disease_data.csv"
+        headers, rows = ([], [])
+        orig_size_kb = 0.0
+        if orig_csv.exists():
+            headers, rows = _read_csv_rows(orig_csv)
+            orig_size_kb = round(orig_csv.stat().st_size / 1024, 1)
+
+        total_rows = len(rows)
+        split_idx = int(total_rows * 0.8)
+        train_rows = split_idx
+        test_rows = total_rows - split_idx
+
+        chat_json = ds_dir / "chat_dataset.json"
+        voice_json = ds_dir / "voice_dataset.json"
+        intents_count = 0
+        for jp in (chat_json, voice_json):
+            if jp.exists():
+                try:
+                    data = json.loads(jp.read_text(encoding="utf-8"))
+                    if isinstance(data, list):
+                        intents_count += len(data)
+                    elif isinstance(data, dict) and "intents" in data:
+                        intents_count += len(data["intents"])
+                except Exception:
+                    pass
+
+        return jsonify({
+            "success": True,
+            "datasets": {
+                "dataset-original": {
+                    "key": "dataset-original",
+                    "name": "Dataset Original",
+                    "file": "alzheimers_disease_data.csv",
+                    "rows": total_rows,
+                    "columns": len(headers),
+                    "size_kb": orig_size_kb,
+                    "status": "Ready" if total_rows > 0 else "Missing",
+                },
+                "dataset-training": {
+                    "key": "dataset-training",
+                    "name": "Dataset Training (80%)",
+                    "file": "alzheimers_disease_data.csv [0:80%]",
+                    "rows": train_rows,
+                    "columns": len(headers),
+                    "split": "80%",
+                    "status": "Ready" if train_rows > 0 else "Missing",
+                },
+                "dataset-testing": {
+                    "key": "dataset-testing",
+                    "name": "Dataset Testing (20%)",
+                    "file": "alzheimers_disease_data.csv [80%:100%]",
+                    "rows": test_rows,
+                    "columns": len(headers),
+                    "split": "20%",
+                    "status": "Ready" if test_rows > 0 else "Missing",
+                },
+                "dataset-intents": {
+                    "key": "dataset-intents",
+                    "name": "Chat & Voice Intents",
+                    "file": "chat_dataset.json + voice_dataset.json",
+                    "rows": intents_count,
+                    "columns": 3,
+                    "status": "Ready" if intents_count > 0 else "Empty",
+                },
+            }
+        })
+    except Exception as e:
+        logger.error(f"Gagal memuat summary dataset: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@admin_ml_bp.route("/admin/datasets/<dataset_key>/preview", methods=["GET"])
+def api_admin_dataset_preview(dataset_key: str):
+    """Mengembalikan header kolom dan sampel baris untuk preview drawer admin."""
+    try:
+        limit = min(max(int(request.args.get("limit", 15)), 1), 50)
+        ds_dir = _datasets_dir()
+
+        if dataset_key in ("dataset-original", "dataset-training", "dataset-testing"):
+            orig_csv = ds_dir / "alzheimers_disease_data.csv"
+            if not orig_csv.exists():
+                return jsonify({"success": False, "error": "Dataset CSV tidak ditemukan"}), 404
+            headers, rows = _read_csv_rows(orig_csv)
+            split_idx = int(len(rows) * 0.8)
+
+            if dataset_key == "dataset-training":
+                subset = rows[:split_idx]
+            elif dataset_key == "dataset-testing":
+                subset = rows[split_idx:]
+            else:
+                subset = rows
+
+            return jsonify({
+                "success": True,
+                "key": dataset_key,
+                "total_rows": len(subset),
+                "total_columns": len(headers),
+                "headers": headers[:12],
+                "rows": [r[:12] for r in subset[:limit]],
+            })
+
+        if dataset_key == "dataset-intents":
+            chat_json = ds_dir / "chat_dataset.json"
+            sample_rows = []
+            if chat_json.exists():
+                data = json.loads(chat_json.read_text(encoding="utf-8"))
+                items = data.get("intents", data) if isinstance(data, dict) else data
+                if isinstance(items, list):
+                    for item in items[:limit]:
+                        if isinstance(item, dict):
+                            tag = item.get("tag") or item.get("intent") or "-"
+                            patterns = item.get("patterns") or item.get("text") or []
+                            pat_count = len(patterns) if isinstance(patterns, list) else 1
+                            sample_txt = patterns[0] if isinstance(patterns, list) and patterns else str(patterns)
+                            sample_rows.append([str(tag), str(pat_count), str(sample_txt)[:80]])
+            return jsonify({
+                "success": True,
+                "key": dataset_key,
+                "total_rows": len(sample_rows),
+                "total_columns": 3,
+                "headers": ["Intent / Tag", "Patterns", "Sample Input"],
+                "rows": sample_rows,
+            })
+
+        return jsonify({"success": False, "error": "Dataset key tidak dikenali"}), 404
+    except Exception as e:
+        logger.error(f"Gagal memuat preview dataset {dataset_key}: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
