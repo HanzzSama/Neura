@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Neura &bull; 3-Canvas System (General &bull; Explorer &bull; Database)</title>
-  <meta name="description" content="Sistem 3-Canvas interaktif Neura AI: General Living Network Topology, Project File Explorer, dan Database Collections.">
+  <meta name="description"
+    content="Sistem 3-Canvas interaktif Neura AI: General Living Network Topology, Project File Explorer, dan Database Collections.">
 
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -15,16 +16,19 @@
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/welcome.css?v=68">
   <link rel="stylesheet" href="/css/template.css?v=1.5">
-  <link rel="stylesheet" href="/css/struktur.css?v=8.2">
+  <link rel="stylesheet" href="/css/struktur.css?v=9.4">
   <link rel="stylesheet" href="/css/responsive-app.css?v=2.0">
 
   <!-- highlight.js for syntax highlighting in code drawer -->
-  <link rel="stylesheet" id="hljs-theme-link" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" id="hljs-theme-link"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <!-- Pre-load theme preference -->
@@ -32,7 +36,7 @@
     try {
       const t = localStorage.getItem('neura_theme_v1') || 'dark';
       document.documentElement.setAttribute('data-theme', t);
-    } catch(e) {}
+    } catch (e) { }
   </script>
 </head>
 
@@ -46,7 +50,8 @@
       <a href="/app" class="brand-link" title="Kembali ke Dashboard Utama">
         <div class="brand-logo-icon">
           <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-            <path d="M16 3L28 9.5V22.5L16 29L4 22.5V9.5L16 3Z" stroke="#D97757" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M16 3L28 9.5V22.5L16 29L4 22.5V9.5L16 3Z" stroke="#D97757" stroke-width="2.5"
+              stroke-linejoin="round" />
             <circle cx="16" cy="16" r="4.5" fill="#D97757" />
             <path d="M16 3V11.5M28 22.5L20 18M4 22.5L12 18" stroke="#D97757" stroke-width="2" stroke-linecap="round" />
           </svg>
@@ -56,29 +61,41 @@
 
       <div class="topbar-separator"></div>
 
-      <!-- Project Switcher / Breadcrumb Dropdown Trigger -->
-      <div class="project-pill-dropdown" id="project-dropdown" title="Ganti ruang kerja & tampilan kanvas">
+      <!-- Project Switcher — styled as a proper button/pill with dropdown -->
+      <button class="project-pill-dropdown" id="project-dropdown" title="Ganti ruang kerja &amp; tampilan kanvas"
+        type="button">
         <span class="project-badge-dot"></span>
         <span class="project-title" id="current-project-title">Neura Core Architecture</span>
-        <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </div>
+        <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
 
       <!-- Project / View Dropdown Menu -->
       <div class="topbar-dropdown-menu project-dropdown-menu" id="project-dropdown-menu">
         <div class="dropdown-menu-header">PILIH RUANG KERJA & TAMPILAN</div>
         <div class="dropdown-menu-item active" id="pmenu-item-arch" data-action="arch">
           <div class="dmenu-icon icon-arch">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+              </path>
+            </svg>
           </div>
           <div class="dmenu-text">
             <div class="dmenu-title">General Architecture Canvas</div>
-            <div class="dmenu-desc">Topologi makro: Halaman UI, LLM AI, Dataset CSV, Core & Database (Live Packet Stream)</div>
+            <div class="dmenu-desc">Topologi makro: Halaman UI, LLM AI, Dataset CSV, Core & Database (Live Packet
+              Stream)</div>
           </div>
           <span class="dmenu-check">✓</span>
         </div>
         <div class="dropdown-menu-item" id="pmenu-item-exp" data-action="exp">
           <div class="dmenu-icon icon-exp">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
           </div>
           <div class="dmenu-text">
             <div class="dmenu-title">Project File Explorer</div>
@@ -88,7 +105,11 @@
         </div>
         <div class="dropdown-menu-item" id="pmenu-item-db" data-action="db">
           <div class="dmenu-icon icon-db">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+            </svg>
           </div>
           <div class="dmenu-text">
             <div class="dmenu-title">Database &amp; Collections Canvas</div>
@@ -99,7 +120,10 @@
         <div class="dropdown-divider"></div>
         <a href="/app/riset" class="dropdown-menu-item">
           <div class="dmenu-icon icon-riset">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
           </div>
           <div class="dmenu-text">
             <div class="dmenu-title">Studio Riset Neura</div>
@@ -108,7 +132,10 @@
         </a>
         <a href="/app" class="dropdown-menu-item">
           <div class="dmenu-icon icon-dash">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
           </div>
           <div class="dmenu-text">
             <div class="dmenu-title">Dashboard Utama</div>
@@ -133,34 +160,72 @@
 
       <!-- Filter Dropdown: MODE ARSITEKTUR GENERAL -->
       <div class="filter-dropdown-wrap filter-bar--general" id="filter-bar-general">
-        <button class="filter-dropdown-btn" id="filter-dropdown-btn-general" aria-haspopup="listbox" aria-expanded="false">
-          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        <button class="filter-dropdown-btn" id="filter-dropdown-btn-general" aria-haspopup="listbox"
+          aria-expanded="false">
+          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
           <span class="filter-dropdown-label" id="filter-label-general">Semua</span>
-          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
         </button>
         <ul class="filter-dropdown-menu" id="filter-menu-general" role="listbox">
           <li class="filter-option active" data-filter="all" data-label="Semua" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
             Semua
           </li>
           <li class="filter-option" data-filter="page" data-label="Halaman UI" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+            </svg>
             Halaman UI
           </li>
           <li class="filter-option" data-filter="llm" data-label="LLM &amp; AI" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z" />
+              <path
+                d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z" />
+            </svg>
             LLM &amp; AI
           </li>
           <li class="filter-option" data-filter="csv" data-label="Dataset CSV" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
             Dataset CSV
           </li>
           <li class="filter-option" data-filter="folder" data-label="Subsystem" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            </svg>
             Subsystem
           </li>
           <li class="filter-option" data-filter="db" data-label="Basis Data" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3" />
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+            </svg>
             Basis Data
           </li>
         </ul>
@@ -168,30 +233,58 @@
 
       <!-- Filter Dropdown: MODE STRUKTUR FOLDER -->
       <div class="filter-dropdown-wrap filter-bar--files" id="filter-bar-files" style="display:none;">
-        <button class="filter-dropdown-btn" id="filter-dropdown-btn-files" aria-haspopup="listbox" aria-expanded="false">
-          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <button class="filter-dropdown-btn" id="filter-dropdown-btn-files" aria-haspopup="listbox"
+          aria-expanded="false">
+          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
           <span class="filter-dropdown-label" id="filter-label-files">Semua</span>
-          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
         </button>
         <ul class="filter-dropdown-menu" id="filter-menu-files" role="listbox">
           <li class="filter-option active" data-filter="all" data-label="Semua" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
             Semua
           </li>
           <li class="filter-option" data-filter="folder" data-label="Folder" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            </svg>
             Folder
           </li>
           <li class="filter-option" data-filter="file" data-label="File" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+              <polyline points="13 2 13 9 20 9" />
+            </svg>
             File
           </li>
           <li class="filter-option" data-filter="python" data-label=".py" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v1H6a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v1a4 4 0 0 0 8 0v-1h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V6a4 4 0 0 0-4-4z"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12 2a4 4 0 0 0-4 4v1H6a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v1a4 4 0 0 0 8 0v-1h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V6a4 4 0 0 0-4-4z" />
+            </svg>
             .py
           </li>
           <li class="filter-option" data-filter="javascript" data-label=".js" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
             .js
           </li>
         </ul>
@@ -199,30 +292,60 @@
 
       <!-- Filter Dropdown: MODE BASIS DATA & KOLEKSI -->
       <div class="filter-dropdown-wrap filter-bar--db" id="filter-bar-db" style="display:none;">
-        <button class="filter-dropdown-btn filter-dropdown-btn--db" id="filter-dropdown-btn-db" aria-haspopup="listbox" aria-expanded="false">
-          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <button class="filter-dropdown-btn filter-dropdown-btn--db" id="filter-dropdown-btn-db" aria-haspopup="listbox"
+          aria-expanded="false">
+          <svg class="filter-dropdown-icon-svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+          </svg>
           <span class="filter-dropdown-label" id="filter-label-db">Semua Koleksi</span>
-          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="filter-dropdown-caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
         </button>
         <ul class="filter-dropdown-menu filter-dropdown-menu--db" id="filter-menu-db" role="listbox">
           <li class="filter-option active" data-filter="all" data-label="Semua Koleksi" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3" />
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+            </svg>
             Semua Koleksi
           </li>
           <li class="filter-option" data-filter="mysql" data-label="Tabel MySQL" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z" />
+            </svg>
             Tabel MySQL
           </li>
           <li class="filter-option" data-filter="dataset" data-label="Dataset Lake" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
             Dataset Lake
           </li>
           <li class="filter-option" data-filter="auth" data-label="Auth &amp; Sesi" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
             Auth &amp; Sesi
           </li>
           <li class="filter-option" data-filter="clinical" data-label="Klinis &amp; ML" role="option">
-            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <svg class="filter-opt-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
             Klinis &amp; ML
           </li>
         </ul>
@@ -233,10 +356,14 @@
     <div class="topbar-right">
       <!-- Collaborators Avatar Stack -->
       <div class="collaborators-wrapper">
-        <div class="collaborators-stack" id="collaborators-stack" title="Administrator &amp; Peneliti Aktif (Klik untuk detail)">
-          <span class="avatar-chip chip-3" style="background: linear-gradient(135deg, #EA580C, #C2410C);" title="Haidar Rifky A (Super Admin)">HR</span>
-          <span class="avatar-chip chip-1" style="background: linear-gradient(135deg, #06B6D4, #0891B2);" title="Syafiq Ahmad A. (Admin)">SA</span>
-          <span class="avatar-chip chip-2" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);" title="Muhammad Hasanudin (Admin)">MH</span>
+        <div class="collaborators-stack" id="collaborators-stack"
+          title="Administrator &amp; Peneliti Aktif (Klik untuk detail)">
+          <span class="avatar-chip chip-3" style="background: linear-gradient(135deg, #EA580C, #C2410C);"
+            title="Haidar Rifky A (Super Admin)">HR</span>
+          <span class="avatar-chip chip-1" style="background: linear-gradient(135deg, #06B6D4, #0891B2);"
+            title="Syafiq Ahmad A. (Admin)">SA</span>
+          <span class="avatar-chip chip-2" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);"
+            title="Muhammad Hasanudin (Admin)">MH</span>
           <span class="avatar-chip chip-more">+5</span>
         </div>
 
@@ -250,9 +377,13 @@
             </div>
             <div class="collab-info">
               <div class="collab-name">Haidar Rifky A <span class="collab-badge-you">Anda / Host</span></div>
-              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Aktif di Kanvas</span></div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Aktif
+                  di Kanvas</span></div>
               <div class="collab-meta-row">
-                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /struktur</span>
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  </svg> /struktur</span>
                 <span class="collab-time-badge">Login: Hari ini, 12:45 WIB</span>
               </div>
             </div>
@@ -264,9 +395,13 @@
             </div>
             <div class="collab-info">
               <div class="collab-name">Syafiq Ahmad A.</div>
-              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Analisis Biomarker</span></div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span
+                  class="status-live">Analisis Biomarker</span></div>
               <div class="collab-meta-row">
-                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /app?view=clinical</span>
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  </svg> /app?view=clinical</span>
                 <span class="collab-time-badge">Login: Hari ini, 12:30 WIB</span>
               </div>
             </div>
@@ -278,9 +413,13 @@
             </div>
             <div class="collab-info">
               <div class="collab-name">Muhammad Hasanudin</div>
-              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Model ResNet-3D</span></div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Model
+                  ResNet-3D</span></div>
               <div class="collab-meta-row">
-                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /struktur?view=explorer</span>
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  </svg> /struktur?view=explorer</span>
                 <span class="collab-time-badge">Login: Hari ini, 12:10 WIB</span>
               </div>
             </div>
@@ -292,9 +431,13 @@
             </div>
             <div class="collab-info">
               <div class="collab-name">Muhammad Khoir Luqman</div>
-              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Aktif di Sistem</span></div>
+              <div class="collab-role">System Architecture &amp; AI Engineering &bull; <span class="status-live">Aktif
+                  di Sistem</span></div>
               <div class="collab-meta-row">
-                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> /app?view=patients</span>
+                <span class="collab-page-badge" title="Halaman Terkini"><svg width="10" height="10" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  </svg> /app?view=patients</span>
                 <span class="collab-time-badge">Login: Hari ini, 11:45 WIB</span>
               </div>
             </div>
@@ -305,13 +448,14 @@
         </div>
       </div>
 
-      <div class="topbar-separator"></div>
+      <div class="topbar-divider"></div>
 
       <!-- Action Tools -->
       <div class="topbar-actions">
         <!-- Theme Toggle -->
         <button class="topbar-btn topbar-btn-icon" id="btn-theme-toggle" title="Ganti Tema (Gelap / Terang)">
-          <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="theme-icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -322,30 +466,21 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
-          <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+          <svg class="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" style="display:none;">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
 
-        <!-- Toggle Grid / Background -->
-        <button class="topbar-btn topbar-btn-icon" id="btn-toggle-grid" title="Ganti Pola Kanvas (Titik / Garis / Polos)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-        </button>
 
-        <!-- Export Diagram Wrapper -->
+        <!-- Export Diagram (icon-only, label in dropdown) -->
         <div class="export-btn-wrapper">
-          <button class="topbar-btn" id="btn-export-diagram" title="Ekspor Snapshot Diagram / Tata Letak">
+          <button class="topbar-btn topbar-btn-icon" id="btn-export-diagram" title="Ekspor Diagram">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            <span class="btn-text-responsive">Ekspor</span>
           </button>
 
           <!-- Export Dropdown Menu -->
@@ -383,45 +518,11 @@
           </div>
         </div>
 
-        <!-- 3-Canvas Segmented Switcher (General -> Explorer -> Database) -->
-        <div class="canvas-mode-segmented" id="canvas-mode-segmented" title="Pilih Kanvas Sistem Neura">
-          <button class="mode-seg-btn active" id="btn-mode-general" data-mode="general" title="Kanvas 1: Diagram Arsitektur General (Topologi Makro & Jaringan Berjalan)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-            <span class="btn-text-responsive">General</span>
-          </button>
-          <button class="mode-seg-btn" id="btn-mode-explorer" data-mode="explorer" title="Kanvas 2: Penelusuran Direktori & Berkas Proyek">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-            <span class="btn-text-responsive">Explorer</span>
-          </button>
-          <button class="mode-seg-btn" id="btn-mode-database" data-mode="database" title="Kanvas 3: Koleksi Basis Data, Sesi & Dataset Lake">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-            <span class="btn-text-responsive">Database</span>
-          </button>
-        </div>
-
         <!-- Hidden compat buttons for programmatic triggers -->
         <button id="btn-toggle-explorer" style="display:none;"></button>
         <button id="btn-toggle-db" style="display:none;"></button>
-
-        <!-- Toggle Sidebar Folder -->
-        <button class="topbar-btn" id="btn-topbar-sidebar" title="Buka / Tutup Sidebar Folder">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="15" y1="3" x2="15" y2="21"></line>
-          </svg>
-          <span class="btn-text-responsive">Sidebar</span>
-        </button>
-
-        <div class="topbar-divider"></div>
-
-        <!-- Link to Studio Riset -->
-        <a href="/app/riset" class="topbar-link-btn" title="Buka Studio Riset &amp; Publikasi">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-          <span class="btn-text-responsive">Studio Riset</span>
-        </a>
+        <!-- Hidden compat: sidebar still togglable via JS -->
+        <button id="btn-topbar-sidebar" style="display:none;"></button>
 
         <!-- Link to Dashboard -->
         <a href="/app" class="topbar-accent-btn" title="Kembali ke Dashboard Aplikasi">
@@ -448,22 +549,23 @@
         <div class="tool-btn-wrap" data-tooltip="Pilih &amp; Pindah Node" data-shortcut="V">
           <button class="tool-btn active" id="tool-select" data-mode="select">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+              <path d="M3 3l7 18 3-7 7-3L3 3z" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Hand Tool — Geser Kanvas" data-shortcut="H / Spasi">
           <button class="tool-btn" id="tool-pan" data-mode="pan">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 11V6a2 2 0 0 0-4 0v4M14 8V4a2 2 0 0 0-4 0v6M10 9V7a2 2 0 0 0-4 0v8a7 7 0 0 0 14 0v-4a2 2 0 0 0-4 0"/>
+              <path
+                d="M18 11V6a2 2 0 0 0-4 0v4M14 8V4a2 2 0 0 0-4 0v6M10 9V7a2 2 0 0 0-4 0v8a7 7 0 0 0 14 0v-4a2 2 0 0 0-4 0" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Lasso — Pilih Banyak Node" data-shortcut="L">
           <button class="tool-btn" id="tool-lasso" data-mode="lasso">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8l6-6V5a2 2 0 0 0-2-2z"/>
-              <polyline points="13 21 13 15 19 15"/>
+              <path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8l6-6V5a2 2 0 0 0-2-2z" />
+              <polyline points="13 21 13 15 19 15" />
             </svg>
           </button>
         </div>
@@ -476,28 +578,28 @@
         <div class="tool-btn-wrap" data-tooltip="Tambah Modul Card" data-shortcut="N">
           <button class="tool-btn" id="tool-add-node">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Tambah Sticky Note" data-shortcut="S">
           <button class="tool-btn" id="tool-add-note">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Hubungkan Dua Node" data-shortcut="C">
           <button class="tool-btn" id="tool-connect" data-mode="connect">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="6" cy="6" r="3"/>
-              <circle cx="18" cy="18" r="3"/>
-              <path d="M8.59 8.59l6.83 6.82"/>
+              <circle cx="6" cy="6" r="3" />
+              <circle cx="18" cy="18" r="3" />
+              <path d="M8.59 8.59l6.83 6.82" />
             </svg>
           </button>
         </div>
@@ -510,16 +612,16 @@
         <div class="tool-btn-wrap" data-tooltip="Undo" data-shortcut="Ctrl+Z">
           <button class="tool-btn tool-btn-disabled" id="tool-undo">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 14 4 9 9 4"/>
-              <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+              <polyline points="9 14 4 9 9 4" />
+              <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Redo" data-shortcut="Ctrl+Y">
           <button class="tool-btn tool-btn-disabled" id="tool-redo">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="15 14 20 9 15 4"/>
-              <path d="M4 20v-7a4 4 0 0 1 4-4h12"/>
+              <polyline points="15 14 20 9 15 4" />
+              <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
             </svg>
           </button>
         </div>
@@ -532,10 +634,10 @@
         <div class="tool-btn-wrap" data-tooltip="Perbesar" data-shortcut="Ctrl++">
           <button class="tool-btn" id="tool-zoom-in">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              <line x1="11" y1="8" x2="11" y2="14"/>
-              <line x1="8" y1="11" x2="14" y2="11"/>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <line x1="11" y1="8" x2="11" y2="14" />
+              <line x1="8" y1="11" x2="14" y2="11" />
             </svg>
           </button>
         </div>
@@ -543,29 +645,29 @@
         <div class="tool-btn-wrap" data-tooltip="Perkecil" data-shortcut="Ctrl+-">
           <button class="tool-btn" id="tool-zoom-out">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              <line x1="8" y1="11" x2="14" y2="11"/>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <line x1="8" y1="11" x2="14" y2="11" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Fit All Nodes" data-shortcut="Shift+1">
           <button class="tool-btn" id="tool-fit-view">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="15 3 21 3 21 9"/>
-              <polyline points="9 21 3 21 3 15"/>
-              <line x1="21" y1="3" x2="14" y2="10"/>
-              <line x1="3" y1="21" x2="10" y2="14"/>
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Auto Layout (Rapikan Kartu)" data-shortcut="Shift+A">
           <button class="tool-btn" id="tool-auto-layout" title="Rapikan Tata Letak Kartu Secara Otomatis">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-              <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-              <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-              <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+              <rect x="3" y="3" width="7" height="7" rx="1.5" />
+              <rect x="14" y="3" width="7" height="7" rx="1.5" />
+              <rect x="14" y="14" width="7" height="7" rx="1.5" />
+              <rect x="3" y="14" width="7" height="7" rx="1.5" />
             </svg>
           </button>
         </div>
@@ -578,20 +680,20 @@
         <div class="tool-btn-wrap" data-tooltip="Toggle Grid (Dot / Line / Off)" data-shortcut="G">
           <button class="tool-btn" id="tool-toggle-grid">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7" rx="1"/>
-              <rect x="14" y="3" width="7" height="7" rx="1"/>
-              <rect x="14" y="14" width="7" height="7" rx="1"/>
-              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
             </svg>
           </button>
         </div>
         <div class="tool-btn-wrap" data-tooltip="Hapus Koneksi Node Terpilih" data-shortcut="Del">
           <button class="tool-btn" id="tool-delete-sel">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-              <path d="M10 11v6M14 11v6"/>
-              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+              <path d="M10 11v6M14 11v6" />
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
             </svg>
           </button>
         </div>
@@ -636,7 +738,8 @@
     <div class="canvas-container" id="canvas-container">
 
       <!-- CANVAS BREADCRUMB (Explorer Mode & Database Navigation) -->
-      <nav class="canvas-breadcrumb" id="canvas-breadcrumb" style="display:none;" aria-label="Navigasi direktori explorer">
+      <nav class="canvas-breadcrumb" id="canvas-breadcrumb" style="display:none;"
+        aria-label="Navigasi direktori explorer">
         <!-- Populated dynamically by JS in Explorer and Database modes -->
       </nav>
 
@@ -698,8 +801,10 @@
          ======================================================================== -->
     <aside class="struktur-tree-sidebar" id="struktur-tree-sidebar" aria-label="Struktur Folder Explorer">
       <!-- Toggle button attached to sidebar's edge -->
-      <button class="sidebar-collapse-toggle" id="btn-toggle-sidebar" title="Ciutkan / Lebarkan Sidebar" aria-label="Tutup atau Buka Sidebar">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button class="sidebar-collapse-toggle" id="btn-toggle-sidebar" title="Ciutkan / Lebarkan Sidebar"
+        aria-label="Tutup atau Buka Sidebar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
       </button>
@@ -709,15 +814,19 @@
         <div class="tree-header-title-row">
           <div class="tree-title-left">
             <div class="tree-header-icon-box" id="sidebar-icon-box">
-              <svg id="sidebar-icon-gen" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg id="sidebar-icon-gen" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="2" y1="12" x2="22" y2="12"></line>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                </path>
               </svg>
-              <svg id="sidebar-icon-folder" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+              <svg id="sidebar-icon-folder" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
               </svg>
-              <svg id="sidebar-icon-db" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+              <svg id="sidebar-icon-db" class="tree-header-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" style="display:none;">
                 <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
                 <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
                 <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
@@ -734,34 +843,41 @@
           <!-- Actions for GENERAL mode -->
           <div class="tree-header-actions" id="sidebar-actions-gen" role="toolbar" aria-label="Aksi Arsitektur General">
             <button class="tree-action-btn" id="btn-gen-expand-all" title="Buka Semua Tahap">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="7 13 12 18 17 13"></polyline>
                 <polyline points="7 6 12 11 17 6"></polyline>
               </svg>
             </button>
             <button class="tree-action-btn" id="btn-gen-collapse-all" title="Tutup Semua Tahap">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="17 11 12 6 7 11"></polyline>
                 <polyline points="17 18 12 13 7 18"></polyline>
               </svg>
             </button>
             <span class="tree-action-sep"></span>
-            <button class="tree-action-btn tree-action-add" id="btn-gen-add-page" title="Tambah Halaman Baru (Scaffold)" onclick="window.openScaffoldModal && window.openScaffoldModal()">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <button class="tree-action-btn tree-action-add" id="btn-gen-add-page" title="Tambah Halaman Baru (Scaffold)"
+              onclick="window.openScaffoldModal && window.openScaffoldModal()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
             <button class="tree-action-btn" id="btn-gen-fit-view" title="Pusatkan Seluruh Kanvas">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 3 21 3 21 9"></polyline>
                 <polyline points="9 21 3 21 3 15"></polyline>
                 <line x1="21" y1="3" x2="14" y2="10"></line>
                 <line x1="3" y1="21" x2="10" y2="14"></line>
               </svg>
             </button>
-            <button class="tree-action-btn" id="btn-gen-auto-layout" title="Auto Layout (Rapikan Kartu)" onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <button class="tree-action-btn" id="btn-gen-auto-layout" title="Auto Layout (Rapikan Kartu)"
+              onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
@@ -770,27 +886,33 @@
             </button>
           </div>
           <!-- Actions for FILES mode -->
-          <div class="tree-header-actions" id="sidebar-actions-files" role="toolbar" aria-label="Aksi Struktur Folder" style="display:none;">
+          <div class="tree-header-actions" id="sidebar-actions-files" role="toolbar" aria-label="Aksi Struktur Folder"
+            style="display:none;">
             <button class="tree-action-btn" id="btn-tree-expand-all" title="Buka Semua Folder">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="7 13 12 18 17 13"></polyline>
                 <polyline points="7 6 12 11 17 6"></polyline>
               </svg>
             </button>
             <button class="tree-action-btn" id="btn-tree-collapse-all" title="Tutup Semua Folder">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="17 11 12 6 7 11"></polyline>
                 <polyline points="17 18 12 13 7 18"></polyline>
               </svg>
             </button>
             <button class="tree-action-btn" id="btn-tree-refresh" title="Muat Ulang Struktur Direktori">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="23 4 23 10 17 10"></polyline>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
               </svg>
             </button>
-            <button class="tree-action-btn" id="btn-tree-auto-layout" title="Auto Layout (Rapikan Kartu)" onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <button class="tree-action-btn" id="btn-tree-auto-layout" title="Auto Layout (Rapikan Kartu)"
+              onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
@@ -799,15 +921,19 @@
             </button>
           </div>
           <!-- Actions for DATABASE mode -->
-          <div class="tree-header-actions" id="sidebar-actions-db" role="toolbar" aria-label="Aksi Basis Data" style="display:none;">
+          <div class="tree-header-actions" id="sidebar-actions-db" role="toolbar" aria-label="Aksi Basis Data"
+            style="display:none;">
             <button class="tree-action-btn" id="btn-db-sidebar-refresh" title="Muat Ulang Koleksi">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="23 4 23 10 17 10"></polyline>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
               </svg>
             </button>
-            <button class="tree-action-btn" id="btn-db-auto-layout" title="Auto Layout (Rapikan Kartu)" onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <button class="tree-action-btn" id="btn-db-auto-layout" title="Auto Layout (Rapikan Kartu)"
+              onclick="window.autoLayoutCurrentView && window.autoLayoutCurrentView(true)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
@@ -819,12 +945,14 @@
 
         <!-- Search bar (placeholder swaps by mode via JS) -->
         <div class="tree-search-wrap">
-          <svg class="tree-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="tree-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <input type="text" id="tree-search-input" placeholder="Filter folder &amp; berkas..." autocomplete="off">
-          <button class="tree-search-clear" id="tree-search-clear" style="display:none;" title="Bersihkan pencarian">&times;</button>
+          <button class="tree-search-clear" id="tree-search-clear" style="display:none;"
+            title="Bersihkan pencarian">&times;</button>
         </div>
 
         <!-- Quick Chips: GENERAL ARCHITECTURE mode -->
@@ -851,7 +979,8 @@
             <span class="chip-status-dot active-dot"></span>
             <span>Aktif</span>
           </button>
-          <button class="quick-chip quick-chip--status" data-gen-filter="disabled" title="Modul Nonaktif / Pemeliharaan">
+          <button class="quick-chip quick-chip--status" data-gen-filter="disabled"
+            title="Modul Nonaktif / Pemeliharaan">
             <span class="chip-status-dot disabled-dot"></span>
             <span>Nonaktif</span>
           </button>
@@ -860,19 +989,33 @@
         <!-- Quick Chips: FILES mode -->
         <div class="tree-quick-access" id="quick-chips-files" style="display:none;">
           <button class="quick-chip" data-target="public" title="Buka direktori public/">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
             <span>public/</span>
           </button>
           <button class="quick-chip" data-target="api" title="Buka direktori api/">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
             <span>api/</span>
           </button>
           <button class="quick-chip" data-target="datasets" title="Buka direktori datasets/">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
             <span>datasets/</span>
           </button>
           <button class="quick-chip" data-target="modelsLLM" title="Buka direktori modelsLLM/">
-            <svg class="chip-svg chip-svg-model" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 0-4 4v1H6a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v1a4 4 0 0 0 8 0v-1h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V6a4 4 0 0 0-4-4z"></path></svg>
+            <svg class="chip-svg chip-svg-model" width="11" height="11" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path
+                d="M12 2a4 4 0 0 0-4 4v1H6a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2v1a4 4 0 0 0 8 0v-1h2a3 3 0 0 0 3-3v-4a3 3 0 0 0-3-3h-2V6a4 4 0 0 0-4-4z">
+              </path>
+            </svg>
             <span>modelsLLM/</span>
           </button>
           <button class="quick-chip" data-target="server.py" title="Buka berkas server.py">
@@ -884,31 +1027,59 @@
         <!-- Quick Chips: DATABASE mode -->
         <div class="tree-quick-access" id="quick-chips-db" style="display:none;">
           <button class="quick-chip quick-chip--db" data-col="users" title="Tabel users">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
             <span>users</span>
           </button>
           <button class="quick-chip quick-chip--db" data-col="user_profiles" title="Tabel user_profiles">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
             <span>user_profiles</span>
           </button>
           <button class="quick-chip quick-chip--db" data-col="nakes" title="Tabel nakes">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+              <line x1="12" y1="11" x2="12" y2="17" />
+            </svg>
             <span>nakes</span>
           </button>
           <button class="quick-chip quick-chip--db" data-col="consultations" title="Tabel consultations">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
             <span>consultations</span>
           </button>
           <button class="quick-chip quick-chip--db" data-col="prediction_records" title="Tabel prediction_records">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4l3 3" />
+            </svg>
             <span>prediction_records</span>
           </button>
           <button class="quick-chip quick-chip--db" data-col="research_dispatches" title="Tabel research_dispatches">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
             <span>research_dispatches</span>
           </button>
           <button class="quick-chip quick-chip--db" data-col="sessions" title="Penyimpanan sessions">
-            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <svg class="chip-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
             <span>sessions</span>
           </button>
         </div>
@@ -979,15 +1150,19 @@
         </div>
         <div class="modal-form-group">
           <label for="new-node-desc">Deskripsi Singkat</label>
-          <textarea id="new-node-desc" rows="2" placeholder="Fungsi dan tanggung jawab modul..." class="modal-input"></textarea>
+          <textarea id="new-node-desc" rows="2" placeholder="Fungsi dan tanggung jawab modul..."
+            class="modal-input"></textarea>
         </div>
         <div class="modal-form-group">
           <label>Kategori &amp; Tag</label>
           <div class="modal-tag-selector">
-            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Core" checked> <span>Core</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Core" checked>
+              <span>Core</span></label>
             <label class="tag-opt"><input type="radio" name="new-node-tag" value="API"> <span>API</span></label>
-            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Frontend"> <span>Frontend</span></label>
-            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Model AI"> <span>Model AI</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Frontend">
+              <span>Frontend</span></label>
+            <label class="tag-opt"><input type="radio" name="new-node-tag" value="Model AI"> <span>Model
+                AI</span></label>
             <label class="tag-opt"><input type="radio" name="new-node-tag" value="Klinis"> <span>Klinis</span></label>
           </div>
         </div>
@@ -1000,7 +1175,9 @@
   </div>
 
   <!-- CODE PREVIEW DRAWER (SLIDING PANEL SISI KANAN) -->
-  <div class="drawer-backdrop" id="drawer-backdrop" onclick="window.closeCodeDrawer && window.closeCodeDrawer(event); window.closeDatabaseDrawer && window.closeDatabaseDrawer(event);"></div>
+  <div class="drawer-backdrop" id="drawer-backdrop"
+    onclick="window.closeCodeDrawer && window.closeCodeDrawer(event); window.closeDatabaseDrawer && window.closeDatabaseDrawer(event);">
+  </div>
   <aside class="code-preview-drawer" id="code-preview-drawer" aria-label="Pratinjau Kode Berkas">
     <div class="drawer-header">
       <span class="drawer-header-icon" id="drawer-file-icon">📄</span>
@@ -1011,9 +1188,13 @@
       <div class="drawer-header-actions">
         <span class="drawer-lang-badge" id="drawer-lang-badge">—</span>
         <button class="drawer-copy-btn" id="btn-drawer-copy" title="Salin Seluruh Kode">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
         </button>
-        <button class="drawer-close-btn" id="btn-drawer-close" title="Tutup Panel" onclick="window.closeCodeDrawer && window.closeCodeDrawer(event)">
+        <button class="drawer-close-btn" id="btn-drawer-close" title="Tutup Panel"
+          onclick="window.closeCodeDrawer && window.closeCodeDrawer(event)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1049,7 +1230,8 @@
   <aside class="db-showcase-drawer" id="db-showcase-drawer" aria-label="Pratinjau Koleksi Database">
     <div class="drawer-header">
       <span class="drawer-header-icon" id="db-drawer-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
           <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
           <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
@@ -1062,9 +1244,13 @@
       <div class="drawer-header-actions">
         <span class="drawer-lang-badge db-type-badge" id="db-drawer-type-badge">MYSQL</span>
         <button class="drawer-copy-btn" id="btn-db-copy-json" title="Salin Data JSON Koleksi">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
         </button>
-        <button class="drawer-close-btn" id="btn-db-drawer-close" title="Tutup Panel" onclick="window.closeDatabaseDrawer && window.closeDatabaseDrawer(event)">
+        <button class="drawer-close-btn" id="btn-db-drawer-close" title="Tutup Panel"
+          onclick="window.closeDatabaseDrawer && window.closeDatabaseDrawer(event)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1076,8 +1262,12 @@
     <!-- Quick Search & Stats Filter inside Drawer -->
     <div class="db-drawer-toolbar">
       <div class="db-drawer-search">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="db-drawer-search-input" placeholder="Cari dokumen, atribut, atau ID..." autocomplete="off">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="db-drawer-search-input" placeholder="Cari dokumen, atribut, atau ID..."
+          autocomplete="off">
       </div>
       <span class="db-drawer-count" id="db-drawer-count">0 Dokumen</span>
     </div>
@@ -1111,7 +1301,8 @@
 
   <!-- MODAL: SCAFFOLD HALAMAN BARU (LIVE ENVIRONMENT WIZARD) -->
   <div class="scaffold-modal-backdrop" id="scaffold-modal-backdrop" style="display:none;">
-    <div class="scaffold-modal-card" id="scaffold-modal-card" role="dialog" aria-modal="true" aria-labelledby="scaffold-modal-title">
+    <div class="scaffold-modal-card" id="scaffold-modal-card" role="dialog" aria-modal="true"
+      aria-labelledby="scaffold-modal-title">
       <!-- Mini Terminal Window Topbar (Neura Design System) -->
       <div class="scaffold-win-topbar">
         <div class="gcard-preview-dots">
@@ -1119,15 +1310,20 @@
           <span class="preview-dot dot-yellow"></span>
           <span class="preview-dot dot-green"></span>
         </div>
-        <span class="gcard-preview-path" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;">scaffold / new_module_wizard</span>
-        <span class="scaffold-win-badge"><span class="status-pulse-dot" style="width:5px;height:5px;background:#10b981;border-radius:50%;display:inline-block;"></span>LIVE CANVAS</span>
+        <span class="gcard-preview-path"
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;">scaffold /
+          new_module_wizard</span>
+        <span class="scaffold-win-badge"><span class="status-pulse-dot"
+            style="width:5px;height:5px;background:#10b981;border-radius:50%;display:inline-block;"></span>LIVE
+          CANVAS</span>
       </div>
 
       <!-- Modal Header -->
       <div class="scaffold-modal-header">
         <div class="scaffold-header-left">
           <div class="scaffold-header-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
               <polyline points="14 2 14 8 20 8"></polyline>
               <line x1="12" y1="18" x2="12" y2="12"></line>
@@ -1171,7 +1367,8 @@
         <div class="scaffold-step-pane active" id="scaffold-step-1">
           <div class="scaffold-form-group">
             <label for="scaffold-page-name">Nama Halaman / Modul <span class="req">*</span></label>
-            <input type="text" id="scaffold-page-name" class="scaffold-input" placeholder="Contoh: Jadwal Dokter Spesialis" autocomplete="off">
+            <input type="text" id="scaffold-page-name" class="scaffold-input"
+              placeholder="Contoh: Jadwal Dokter Spesialis" autocomplete="off">
             <span class="scaffold-help">Nama yang akan tampil pada judul halaman dan label kartu kanvas.</span>
           </div>
 
@@ -1179,14 +1376,17 @@
             <label for="scaffold-page-slug">Slug URL Route <span class="req">*</span></label>
             <div class="scaffold-slug-input-wrap">
               <span class="scaffold-slug-prefix">http://localhost:5000/</span>
-              <input type="text" id="scaffold-page-slug" class="scaffold-input scaffold-input-slug" placeholder="jadwal-dokter" autocomplete="off">
+              <input type="text" id="scaffold-page-slug" class="scaffold-input scaffold-input-slug"
+                placeholder="jadwal-dokter" autocomplete="off">
             </div>
-            <div class="scaffold-slug-feedback" id="scaffold-slug-feedback">Endpoint: <strong id="scaffold-preview-route">/jadwal-dokter</strong></div>
+            <div class="scaffold-slug-feedback" id="scaffold-slug-feedback">Endpoint: <strong
+                id="scaffold-preview-route">/jadwal-dokter</strong></div>
           </div>
 
           <div class="scaffold-form-group">
             <label for="scaffold-page-desc">Deskripsi Singkat (Opsional)</label>
-            <textarea id="scaffold-page-desc" class="scaffold-textarea" rows="2" placeholder="Jelaskan tujuan atau fungsi modul ini..."></textarea>
+            <textarea id="scaffold-page-desc" class="scaffold-textarea" rows="2"
+              placeholder="Jelaskan tujuan atau fungsi modul ini..."></textarea>
           </div>
         </div>
 
@@ -1233,10 +1433,13 @@
           <div class="scaffold-form-group">
             <label>Role yang Memiliki Akses</label>
             <div class="scaffold-role-chips" id="scaffold-role-chips">
-              <label class="role-chip active"><input type="checkbox" value="user" checked hidden><span>Pasien / User</span></label>
-              <label class="role-chip active"><input type="checkbox" value="nakes" checked hidden><span>Dokter / Nakes</span></label>
+              <label class="role-chip active"><input type="checkbox" value="user" checked hidden><span>Pasien /
+                  User</span></label>
+              <label class="role-chip active"><input type="checkbox" value="nakes" checked hidden><span>Dokter /
+                  Nakes</span></label>
               <label class="role-chip"><input type="checkbox" value="admin" hidden><span>Administrator</span></label>
-              <label class="role-chip"><input type="checkbox" value="public" hidden><span>Publik (Tanpa Login)</span></label>
+              <label class="role-chip"><input type="checkbox" value="public" hidden><span>Publik (Tanpa
+                  Login)</span></label>
             </div>
           </div>
         </div>
@@ -1277,29 +1480,38 @@
           <div class="scaffold-summary-box">
             <div class="summary-title">Berkas yang Akan Dibuat Otomatis:</div>
             <ul class="summary-file-list" id="scaffold-summary-file-list">
-              <li><span class="file-tag tag-html">HTML</span> public/<strong class="sum-slug">jadwal-dokter</strong>.html</li>
-              <li><span class="file-tag tag-css">CSS</span> public/css/<strong class="sum-slug">jadwal-dokter</strong>.css</li>
-              <li><span class="file-tag tag-js">JS</span> public/js/<strong class="sum-slug">jadwal-dokter</strong>.js</li>
-              <li><span class="file-tag tag-py">ROUTE</span> Daftarkan route <code class="sum-route">/jadwal-dokter</code> ke Flask</li>
+              <li><span class="file-tag tag-html">HTML</span> public/<strong
+                  class="sum-slug">jadwal-dokter</strong>.html</li>
+              <li><span class="file-tag tag-css">CSS</span> public/css/<strong
+                  class="sum-slug">jadwal-dokter</strong>.css</li>
+              <li><span class="file-tag tag-js">JS</span> public/js/<strong class="sum-slug">jadwal-dokter</strong>.js
+              </li>
+              <li><span class="file-tag tag-py">ROUTE</span> Daftarkan route <code
+                  class="sum-route">/jadwal-dokter</code> ke Flask</li>
             </ul>
           </div>
         </div>
 
         <!-- PROGRESS / LOADING STATE -->
-        <div class="scaffold-step-pane" id="scaffold-step-loading" style="display:none; text-align:center; padding: 2.5rem 1rem;">
+        <div class="scaffold-step-pane" id="scaffold-step-loading"
+          style="display:none; text-align:center; padding: 2.5rem 1rem;">
           <div class="scaffold-spinner"></div>
-          <h4 id="scaffold-loading-title" style="margin-top: 1.25rem; font-size: 1.15rem;">Membuat Berkas &amp; Menyiapkan Node...</h4>
-          <p id="scaffold-loading-desc" style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">Sistem sedang men-generate HTML, CSS, JS, dan mendaftarkan route ke server.</p>
+          <h4 id="scaffold-loading-title" style="margin-top: 1.25rem; font-size: 1.15rem;">Membuat Berkas &amp;
+            Menyiapkan Node...</h4>
+          <p id="scaffold-loading-desc" style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">Sistem sedang
+            men-generate HTML, CSS, JS, dan mendaftarkan route ke server.</p>
         </div>
       </div>
 
       <!-- Modal Footer -->
       <div class="scaffold-modal-footer">
-        <button class="scaffold-btn scaffold-btn-ghost" id="btn-scaffold-prev" style="display:none;">&larr; Kembali</button>
+        <button class="scaffold-btn scaffold-btn-ghost" id="btn-scaffold-prev" style="display:none;">&larr;
+          Kembali</button>
         <div style="flex:1;"></div>
         <button class="scaffold-btn scaffold-btn-ghost" id="btn-scaffold-cancel">Batal</button>
         <button class="scaffold-btn scaffold-btn-primary" id="btn-scaffold-next">Lanjut &rarr;</button>
-        <button class="scaffold-btn scaffold-btn-success" id="btn-scaffold-submit" style="display:none;">🚀 Buat Halaman Sekarang</button>
+        <button class="scaffold-btn scaffold-btn-success" id="btn-scaffold-submit" style="display:none;">🚀 Buat Halaman
+          Sekarang</button>
       </div>
     </div>
   </div>
@@ -1313,10 +1525,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=4"></script>
   <script src="/js/notification-manager.js?v=1"></script>
-  <script src="/js/struktur.js?v=9.8"></script>
+  <script src="/js/struktur.js?v=10.0"></script>
   <script src="/js/admin-device-guard.js?v=2.0"></script>
   <script src="/js/admin-presence.js?v=2.0"></script>
 </body>
 
 </html>
-

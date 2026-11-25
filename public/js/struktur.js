@@ -3,7 +3,7 @@
  * Version 2.0 (Folder & File Cards, Code Showcase Drawer, Relations, Minimap, Context Menu)
  */
 
-;(function () {
+; (function () {
   'use strict';
 
   /* =====================================================================
@@ -26,7 +26,7 @@
      1A. GENERAL ARCHITECTURE TOPOLOGY (Living Network Data-Flow)
      5 Pillars: UI Pages, Subsystems & Routers, LLM & AI, CSV Lake, Database
      ===================================================================== */
-      const GENERAL_NODES = [
+  const GENERAL_NODES = [
     // =========================================================================
     // KOLOM 1: WEB & CLIENT ENTRY (x = 80)
     // =========================================================================
@@ -488,53 +488,53 @@
       x: 2240, y: 920,
     },
   ];
-    const GENERAL_CONNECTIONS = [
+  const GENERAL_CONNECTIONS = [
     // Tahap 1 -> Tahap 2: Web Entry ke Auth Lifecycle
-    ['page-welcome',          'auth-login',             'stream',   'Open Login Modal',          'onboarding'],
-    ['page-welcome',          'auth-register',          'stream',   'Create New Account',        'onboarding'],
+    ['page-welcome', 'auth-login', 'stream', 'Open Login Modal', 'onboarding'],
+    ['page-welcome', 'auth-register', 'stream', 'Create New Account', 'onboarding'],
 
     // Tahap 2: Hubungan Lifecycle Autentikasi
-    ['auth-login',            'auth-forgot',            'packet',   'Request Password Reset',    'onboarding'],
-    ['auth-register',         'auth-otp',               'packet',   'Issue 6-Digit OTP',         'onboarding'],
-    ['auth-register',         'auth-profile',           'packet',   'Fill Profile Details',      'onboarding'],
+    ['auth-login', 'auth-forgot', 'packet', 'Request Password Reset', 'onboarding'],
+    ['auth-register', 'auth-otp', 'packet', 'Issue 6-Digit OTP', 'onboarding'],
+    ['auth-register', 'auth-profile', 'packet', 'Fill Profile Details', 'onboarding'],
 
     // Tahap 2 -> Tahap 3: Auth ke Security Guard Gates
-    ['auth-login',            'gate-auth-check',        'auth',     'Verify Credentials',        'onboarding'],
-    ['auth-otp',              'gate-email-verify',      'auth',     'Validate OTP Code',         'onboarding'],
-    ['auth-profile',          'gate-license-check',     'auth',     'Verify Doctor STR',         'onboarding'],
-    ['gate-auth-check',       'gate-role-check',        'stream',   'Session Validated',         'onboarding'],
+    ['auth-login', 'gate-auth-check', 'auth', 'Verify Credentials', 'onboarding'],
+    ['auth-otp', 'gate-email-verify', 'auth', 'Validate OTP Code', 'onboarding'],
+    ['auth-profile', 'gate-license-check', 'auth', 'Verify Doctor STR', 'onboarding'],
+    ['gate-auth-check', 'gate-role-check', 'stream', 'Session Validated', 'onboarding'],
 
     // Tahap 3 -> Tahap 4: RBAC Routing ke Dashboards
-    ['gate-role-check',       'dash-user',              'stream',   'Route: Role Patient',       'screening'],
-    ['gate-role-check',       'dash-nakes',             'stream',   'Route: Role Doctor',        'telemed'],
-    ['gate-role-check',       'dash-admin',             'stream',   'Route: Role Admin',         'governance'],
-    ['page-welcome',          'dash-riset',             'stream',   'Open Studio Riset',         'research'],
+    ['gate-role-check', 'dash-user', 'stream', 'Route: Role Patient', 'screening'],
+    ['gate-role-check', 'dash-nakes', 'stream', 'Route: Role Doctor', 'telemed'],
+    ['gate-role-check', 'dash-admin', 'stream', 'Route: Role Admin', 'governance'],
+    ['page-welcome', 'dash-riset', 'stream', 'Open Studio Riset', 'research'],
 
     // Tahap 4 -> Tahap 5: Dashboards ke Input & Processing Engines
-    ['dash-user',             'input-biomarkers',       'stream',   'Fill 35 Biomarkers',        'screening'],
-    ['dash-user',             'input-voice',            'stream',   'Record Vocal Audio',        'screening'],
-    ['dash-user',             'engine-livekit-rtc',     'stream',   'Patient Video Call Stream', 'telemed'],
-    ['dash-nakes',            'engine-livekit-rtc',     'stream',   'Doctor Video Call Stream',  'telemed'],
-    ['dash-nakes',            'engine-llm-clinical',    'stream',   'Clinical Consultation Q&A', 'telemed'],
-    ['dash-riset',            'engine-llm-clinical',    'stream',   'Manuscript AI Polish',      'research'],
-    ['dash-admin',            'db-ml_logs',             'stream',   'Audit & Telemetry Trail',   'governance'],
+    ['dash-user', 'input-biomarkers', 'stream', 'Fill 35 Biomarkers', 'screening'],
+    ['dash-user', 'input-voice', 'stream', 'Record Vocal Audio', 'screening'],
+    ['dash-user', 'engine-livekit-rtc', 'stream', 'Patient Video Call Stream', 'telemed'],
+    ['dash-nakes', 'engine-livekit-rtc', 'stream', 'Doctor Video Call Stream', 'telemed'],
+    ['dash-nakes', 'engine-llm-clinical', 'stream', 'Clinical Consultation Q&A', 'telemed'],
+    ['dash-riset', 'engine-llm-clinical', 'stream', 'Manuscript AI Polish', 'research'],
+    ['dash-admin', 'db-ml_logs', 'stream', 'Audit & Telemetry Trail', 'governance'],
 
     // Tahap 5: Pemrosesan Komputasi & AI Pipeline
-    ['input-biomarkers',      'engine-biomarker-pipe',  'packet',   'Raw 35 Features',           'screening'],
-    ['input-voice',           'engine-voice-pipe',      'packet',   'Raw WAV Audio Stream',      'screening'],
-    ['engine-biomarker-pipe', 'engine-ml-alzheimer',    'packet',   'Normalized Tensor',         'screening'],
-    ['engine-voice-pipe',     'engine-ml-alzheimer',    'packet',   'Acoustic Tremor Tensor',    'screening'],
-    ['db-csv-lake',           'engine-ml-alzheimer',    'dataflow', 'OASIS Cohort Benchmark',    'screening'],
-    ['engine-ml-alzheimer',   'engine-report-sink',     'stream',   'CDR Risk Evaluation',       'screening'],
-    ['engine-llm-clinical',   'engine-report-sink',     'packet',   'Clinical Diagnosis Notes',  'screening'],
+    ['input-biomarkers', 'engine-biomarker-pipe', 'packet', 'Raw 35 Features', 'screening'],
+    ['input-voice', 'engine-voice-pipe', 'packet', 'Raw WAV Audio Stream', 'screening'],
+    ['engine-biomarker-pipe', 'engine-ml-alzheimer', 'packet', 'Normalized Tensor', 'screening'],
+    ['engine-voice-pipe', 'engine-ml-alzheimer', 'packet', 'Acoustic Tremor Tensor', 'screening'],
+    ['db-csv-lake', 'engine-ml-alzheimer', 'dataflow', 'OASIS Cohort Benchmark', 'screening'],
+    ['engine-ml-alzheimer', 'engine-report-sink', 'stream', 'CDR Risk Evaluation', 'screening'],
+    ['engine-llm-clinical', 'engine-report-sink', 'packet', 'Clinical Diagnosis Notes', 'screening'],
 
     // Tahap 5 & 3 -> Tahap 6: Persistensi & Data Lake
-    ['gate-auth-check',       'db-sessions',            'auth',     'Token Cache & Expiry Guard','governance'],
-    ['auth-profile',          'db-users',               'dataflow', 'Save Verified Profile',     'onboarding'],
-    ['engine-livekit-rtc',    'db-consultations',       'dataflow', 'Save Call Records & Transcript','telemed'],
-    ['engine-report-sink',    'db-consultations',       'dataflow', 'Save Final Report PDF',     'screening'],
-    ['engine-ml-alzheimer',   'db-predictions',         'packet',   'Save CDR Probabilities',    'screening'],
-    ['engine-ml-alzheimer',   'db-ml_logs',             'core',     'GPU Latency & Telemetry',   'governance'],
+    ['gate-auth-check', 'db-sessions', 'auth', 'Token Cache & Expiry Guard', 'governance'],
+    ['auth-profile', 'db-users', 'dataflow', 'Save Verified Profile', 'onboarding'],
+    ['engine-livekit-rtc', 'db-consultations', 'dataflow', 'Save Call Records & Transcript', 'telemed'],
+    ['engine-report-sink', 'db-consultations', 'dataflow', 'Save Final Report PDF', 'screening'],
+    ['engine-ml-alzheimer', 'db-predictions', 'packet', 'Save CDR Probabilities', 'screening'],
+    ['engine-ml-alzheimer', 'db-ml_logs', 'core', 'GPU Latency & Telemetry', 'governance'],
   ];
   const INITIAL_NODES = [
     // --- COLUMN 1 (Frontend & Styles) ---
@@ -855,33 +855,33 @@
   /* Comprehensive Relations: [sourceId, targetId, type, label] */
   const INITIAL_CONNECTIONS = [
     // Column 4 linkages
-    ['node-app',      'node-core',          'calls',      'Extends Core'],
-    ['node-features', 'node-ml',            'provides',   'Biomarker Feats'],
-    ['node-training', 'node-ml',            'provides',   'Weights & Model'],
-    ['node-configs',  'node-core',          'provides',   'Environment'],
-    ['node-data-raw', 'node-data',          'contains',   'Raw Lake'],
+    ['node-app', 'node-core', 'calls', 'Extends Core'],
+    ['node-features', 'node-ml', 'provides', 'Biomarker Feats'],
+    ['node-training', 'node-ml', 'provides', 'Weights & Model'],
+    ['node-configs', 'node-core', 'provides', 'Environment'],
+    ['node-data-raw', 'node-data', 'contains', 'Raw Lake'],
 
     // Folder to File (contains)
-    ['node-core',     'file-server-py',     'contains',   'Entry Point'],
-    ['node-core',     'file-core-logger',   'contains',   'Logging Hub'],
-    ['node-api',      'file-admin-auth',    'contains',   'Contains'],
-    ['node-riset',    'file-riset-js',      'contains',   'Contains'],
-    ['node-frontend', 'file-style-css',     'contains',   'Contains'],
-    ['node-data',     'file-research-json', 'contains',   'Contains'],
+    ['node-core', 'file-server-py', 'contains', 'Entry Point'],
+    ['node-core', 'file-core-logger', 'contains', 'Logging Hub'],
+    ['node-api', 'file-admin-auth', 'contains', 'Contains'],
+    ['node-riset', 'file-riset-js', 'contains', 'Contains'],
+    ['node-frontend', 'file-style-css', 'contains', 'Contains'],
+    ['node-data', 'file-research-json', 'contains', 'Contains'],
 
     // File to File / Calls
-    ['file-server-py',    'file-core-logger', 'imports',  'get_logger'],
-    ['file-server-py',    'node-api',         'calls',    'Blueprint Mount'],
-    ['file-admin-auth',   'file-core-logger', 'imports',  'get_logger'],
-    ['file-riset-js',     'node-ml',          'calls',    'AI Polish'],
+    ['file-server-py', 'file-core-logger', 'imports', 'get_logger'],
+    ['file-server-py', 'node-api', 'calls', 'Blueprint Mount'],
+    ['file-admin-auth', 'file-core-logger', 'imports', 'get_logger'],
+    ['file-riset-js', 'node-ml', 'calls', 'AI Polish'],
 
     // High level module to module
-    ['node-core',     'node-frontend',  'default', 'Serve HTML'],
-    ['node-core',     'node-ml',        'core',    'Warmup Pipe'],
-    ['node-api',      'node-ml',        'ml',      'Predict API'],
-    ['node-frontend', 'node-riset',     'default', 'Studio Link'],
-    ['node-ml',       'node-data',      'ml',      'OASIS Feed'],
-    ['node-core',     'node-scripts',   'default', 'Toolchain'],
+    ['node-core', 'node-frontend', 'default', 'Serve HTML'],
+    ['node-core', 'node-ml', 'core', 'Warmup Pipe'],
+    ['node-api', 'node-ml', 'ml', 'Predict API'],
+    ['node-frontend', 'node-riset', 'default', 'Studio Link'],
+    ['node-ml', 'node-data', 'ml', 'OASIS Feed'],
+    ['node-core', 'node-scripts', 'default', 'Toolchain'],
   ];
 
   /* Sticky notes — placed in empty space ABOVE the first node row (y=150) with generous gap */
@@ -1007,18 +1007,18 @@
       ['initPageMode', initPageMode],
     ];
     for (const [name, fn] of steps) {
-      try { fn(); } catch(err) { console.error(`[Init] Error in ${name}:`, err); }
+      try { fn(); } catch (err) { console.error(`[Init] Error in ${name}:`, err); }
     }
   });
 
   async function initPageMode() {
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view') || urlParams.get('mode');
-    const colParam  = urlParams.get('col');
+    const colParam = urlParams.get('col');
     let savedCanvas = null;
     try {
       savedCanvas = localStorage.getItem('neura_active_canvas') || localStorage.getItem('neura_active_mode');
-    } catch(e) {}
+    } catch (e) { }
 
     const target = viewParam || savedCanvas || 'general';
 
@@ -1648,70 +1648,70 @@
   }
 
   function cacheDOMRefs() {
-    viewport        = $('#canvas-viewport');
-    nodesLayer      = $('#canvas-nodes-layer');
-    connSvg         = $('#canvas-connections-svg');
-    pathsGroup      = $('#connections-paths-group');
-    badgesGroup     = $('#connections-badges-group');
+    viewport = $('#canvas-viewport');
+    nodesLayer = $('#canvas-nodes-layer');
+    connSvg = $('#canvas-connections-svg');
+    pathsGroup = $('#connections-paths-group');
+    badgesGroup = $('#connections-badges-group');
     canvasContainer = $('#canvas-container');
-    zoomBadge       = $('#zoom-badge');
-    sidebar         = $('#struktur-tree-sidebar');
+    zoomBadge = $('#zoom-badge');
+    sidebar = $('#struktur-tree-sidebar');
     toggleSidebarBtn = $('#btn-toggle-sidebar');
-    treeRootEl      = $('#folder-tree-root');
+    treeRootEl = $('#folder-tree-root');
     treeSummaryStats = $('#tree-summary-stats');
-    topbarSearch    = $('#topbar-search-input');
-    detailName      = $('#detail-item-name');
-    detailPath      = $('#detail-item-path');
+    topbarSearch = $('#topbar-search-input');
+    detailName = $('#detail-item-name');
+    detailPath = $('#detail-item-path');
     detailTypeBadge = $('#detail-type-badge');
-    btnFocusCanvas  = $('#btn-focus-in-canvas');
-    statusSyncText  = $('#status-sync-text');
-    nodeCountEl     = $('#canvas-node-count');
-    relCountEl      = $('#canvas-relation-count');
+    btnFocusCanvas = $('#btn-focus-in-canvas');
+    statusSyncText = $('#status-sync-text');
+    nodeCountEl = $('#canvas-node-count');
+    relCountEl = $('#canvas-relation-count');
 
     // Code Drawer
-    codeDrawer         = $('#code-preview-drawer');
-    drawerBackdrop     = $('#drawer-backdrop');
-    drawerFileName     = $('#drawer-file-name');
-    drawerFilePath     = $('#drawer-file-path');
-    drawerLangBadge    = $('#drawer-lang-badge');
-    drawerCodeBlock    = $('#drawer-code-block');
-    drawerLineNumbers  = $('#drawer-line-numbers');
-    drawerOutline      = $('#drawer-outline');
-    drawerOutlineList  = $('#drawer-outline-list');
+    codeDrawer = $('#code-preview-drawer');
+    drawerBackdrop = $('#drawer-backdrop');
+    drawerFileName = $('#drawer-file-name');
+    drawerFilePath = $('#drawer-file-path');
+    drawerLangBadge = $('#drawer-lang-badge');
+    drawerCodeBlock = $('#drawer-code-block');
+    drawerLineNumbers = $('#drawer-line-numbers');
+    drawerOutline = $('#drawer-outline');
+    drawerOutlineList = $('#drawer-outline-list');
     drawerRelationsPills = $('#drawer-relations-pills');
-    btnDrawerCopy      = $('#btn-drawer-copy');
-    btnDrawerClose     = $('#btn-drawer-close');
+    btnDrawerCopy = $('#btn-drawer-copy');
+    btnDrawerClose = $('#btn-drawer-close');
 
     // Context menu & minimap
-    contextMenu        = $('#node-context-menu');
-    minimapCanvas      = $('#minimap-nodes');
+    contextMenu = $('#node-context-menu');
+    minimapCanvas = $('#minimap-nodes');
     minimapViewportRect = $('#minimap-viewport-rect');
 
     // Explorer Mode & Database refs
-    canvasBreadcrumb   = $('#canvas-breadcrumb');
-    btnToggleExplorer  = $('#btn-toggle-explorer');
-    btnToggleDb        = $('#btn-toggle-db');
-    dbDrawer           = $('#db-showcase-drawer');
-    btnDbDrawerClose   = $('#btn-db-drawer-close');
-    dbDrawerTitle      = $('#db-drawer-title');
-    dbDrawerSubtitle   = $('#db-drawer-subtitle');
-    dbDrawerTypeBadge  = $('#db-drawer-type-badge');
-    dbDrawerCount      = $('#db-drawer-count');
+    canvasBreadcrumb = $('#canvas-breadcrumb');
+    btnToggleExplorer = $('#btn-toggle-explorer');
+    btnToggleDb = $('#btn-toggle-db');
+    dbDrawer = $('#db-showcase-drawer');
+    btnDbDrawerClose = $('#btn-db-drawer-close');
+    dbDrawerTitle = $('#db-drawer-title');
+    dbDrawerSubtitle = $('#db-drawer-subtitle');
+    dbDrawerTypeBadge = $('#db-drawer-type-badge');
+    dbDrawerCount = $('#db-drawer-count');
     dbDrawerSearchInput = $('#db-drawer-search-input');
     dbDrawerSchemaPills = $('#db-schema-pills') || $('#db-drawer-schema-pills');
     dbDrawerAlertBox = $('#db-drawer-alert-box');
-    dbRecordsThead     = $('#db-records-thead');
-    dbRecordsTbody     = $('#db-records-tbody');
-    dbDocInspector     = $('#db-doc-inspector');
-    dbInspectorId      = $('#db-inspector-id');
-    dbInspectorCode    = $('#db-inspector-code');
-    btnDbCopyJson      = $('#btn-db-copy-json');
-    btnCloseInspector  = $('#btn-close-inspector');
-    tabBtnFiles        = $('#tab-btn-files');
-    tabBtnDb           = $('#tab-btn-db');
-    paneTabFiles       = $('#pane-tab-files');
-    paneTabDb          = $('#pane-tab-db');
-    sidebarDbList      = $('#sidebar-db-list');
+    dbRecordsThead = $('#db-records-thead');
+    dbRecordsTbody = $('#db-records-tbody');
+    dbDocInspector = $('#db-doc-inspector');
+    dbInspectorId = $('#db-inspector-id');
+    dbInspectorCode = $('#db-inspector-code');
+    btnDbCopyJson = $('#btn-db-copy-json');
+    btnCloseInspector = $('#btn-close-inspector');
+    tabBtnFiles = $('#tab-btn-files');
+    tabBtnDb = $('#tab-btn-db');
+    paneTabFiles = $('#pane-tab-files');
+    paneTabDb = $('#pane-tab-db');
+    sidebarDbList = $('#sidebar-db-list');
   }
 
   /* =====================================================================
@@ -1719,7 +1719,7 @@
      ===================================================================== */
   function applyTransform(animate = false) {
     viewport.style.transition = animate ? 'transform 0.4s cubic-bezier(.4,0,.2,1)' : 'none';
-    viewport.style.transform  = `matrix(${STATE.scale},0,0,${STATE.scale},${STATE.tx},${STATE.ty})`;
+    viewport.style.transform = `matrix(${STATE.scale},0,0,${STATE.scale},${STATE.tx},${STATE.ty})`;
     const gs = 24 * STATE.scale;
     canvasContainer.style.backgroundSize = `${gs}px ${gs}px`;
     canvasContainer.style.backgroundPosition = `${STATE.tx}px ${STATE.ty}px`;
@@ -1736,9 +1736,9 @@
     // Zoom with mouse wheel or pinch gesture; 2-finger pan on trackpad
     canvasContainer.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const rect  = canvasContainer.getBoundingClientRect();
-      const mx    = e.clientX - rect.left;
-      const my    = e.clientY - rect.top;
+      const rect = canvasContainer.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
 
       // Trackpad 2-finger pan without Ctrl key
       if (!e.ctrlKey && (Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) > 50)) {
@@ -1752,10 +1752,10 @@
 
       const delta = e.deltaY < 0 ? 1.1 : 0.909;
       const newScale = clamp(STATE.scale * delta, STATE.minScale, STATE.maxScale);
-      const ratio    = newScale / STATE.scale;
-      STATE.tx       = mx - ratio * (mx - STATE.tx);
-      STATE.ty       = my - ratio * (my - STATE.ty);
-      STATE.scale    = newScale;
+      const ratio = newScale / STATE.scale;
+      STATE.tx = mx - ratio * (mx - STATE.tx);
+      STATE.ty = my - ratio * (my - STATE.ty);
+      STATE.scale = newScale;
       applyTransform();
     }, { passive: false });
 
@@ -1824,12 +1824,12 @@
     });
 
     document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup',   onKeyUp);
+    document.addEventListener('keyup', onKeyUp);
   }
 
   function startPan(e) {
     if (e.button === 2) return;
-    try { e.preventDefault(); } catch(err) {}
+    try { e.preventDefault(); } catch (err) { }
     STATE.isPanning = true;
     STATE.panStartX = e.clientX;
     STATE.panStartY = e.clientY;
@@ -1837,13 +1837,13 @@
     STATE.panStartTy = STATE.ty;
     canvasContainer.classList.add('is-panning');
     if (e.pointerId !== undefined) {
-      try { canvasContainer.setPointerCapture(e.pointerId); } catch(err) {}
+      try { canvasContainer.setPointerCapture(e.pointerId); } catch (err) { }
     }
   }
 
   function onPointerMove(e) {
     if (!STATE.isPanning) return;
-    try { e.preventDefault(); } catch(err) {}
+    try { e.preventDefault(); } catch (err) { }
     const dx = e.clientX - STATE.panStartX;
     const dy = e.clientY - STATE.panStartY;
     STATE.tx = STATE.panStartTx + dx;
@@ -1860,7 +1860,7 @@
           if (canvasContainer.hasPointerCapture(e.pointerId)) {
             canvasContainer.releasePointerCapture(e.pointerId);
           }
-        } catch(err) {}
+        } catch (err) { }
       }
     }
   }
@@ -1871,7 +1871,7 @@
       spacePressed = true;
       canvasContainer.classList.add('pan-cursor');
     }
-        if (!e.target.matches('input,textarea') && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+    if (!e.target.matches('input,textarea') && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
       if (e.code === 'Digit1') switchCanvasView('general');
       if (e.code === 'Digit2') switchCanvasView('explorer', []);
       if (e.code === 'Digit3') switchCanvasView('database');
@@ -1921,14 +1921,14 @@
   }
 
   function zoomStep(factor) {
-    const rect  = canvasContainer.getBoundingClientRect();
-    const mx    = rect.width / 2;
-    const my    = rect.height / 2;
+    const rect = canvasContainer.getBoundingClientRect();
+    const mx = rect.width / 2;
+    const my = rect.height / 2;
     const newScale = clamp(STATE.scale * factor, STATE.minScale, STATE.maxScale);
-    const ratio    = newScale / STATE.scale;
-    STATE.tx       = mx - ratio * (mx - STATE.tx);
-    STATE.ty       = my - ratio * (my - STATE.ty);
-    STATE.scale    = newScale;
+    const ratio = newScale / STATE.scale;
+    STATE.tx = mx - ratio * (mx - STATE.tx);
+    STATE.ty = my - ratio * (my - STATE.ty);
+    STATE.scale = newScale;
     applyTransform();
   }
 
@@ -1960,14 +1960,14 @@
     const maxX = Math.max(...allItems.map(i => i.x + i.w)) + pad;
     const maxY = Math.max(...allItems.map(i => i.y + i.h)) + pad;
 
-    const viewW  = (canvasContainer && canvasContainer.offsetWidth)  || window.innerWidth  || 800;
-    const viewH  = (canvasContainer && canvasContainer.offsetHeight) || window.innerHeight || 600;
-    const spanX  = Math.max(maxX - minX, 100);
-    const spanY  = Math.max(maxY - minY, 100);
+    const viewW = (canvasContainer && canvasContainer.offsetWidth) || window.innerWidth || 800;
+    const viewH = (canvasContainer && canvasContainer.offsetHeight) || window.innerHeight || 600;
+    const spanX = Math.max(maxX - minX, 100);
+    const spanY = Math.max(maxY - minY, 100);
     const scaleX = viewW / spanX;
     const scaleY = viewH / spanY;
     const rawScale = Math.min(scaleX, scaleY);
-    const scale  = clamp(Number.isFinite(rawScale) ? rawScale : 1.0, STATE.minScale, 1.2);
+    const scale = clamp(Number.isFinite(rawScale) ? rawScale : 1.0, STATE.minScale, 1.2);
 
     STATE.scale = scale;
     const newTx = (viewW - spanX * scale) / 2 - minX * scale;
@@ -1980,7 +1980,7 @@
   function focusNode(nodeId, animate = true) {
     const node = STATE.nodes.find(n => n.id === nodeId);
     if (!node) return;
-    const viewW = canvasContainer.offsetWidth  || 800;
+    const viewW = canvasContainer.offsetWidth || 800;
     const viewH = canvasContainer.offsetHeight || 600;
     const scale = clamp(STATE.scale, 0.7, 1.3);
     const nodeW = 122;
@@ -2090,7 +2090,7 @@
       default:
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`;
     }
-  }  function renderPortsHtml(node) {
+  } function renderPortsHtml(node) {
     const ports = node.ports || [
       { side: 'top', type: 'green', symbol: '+' },
       { side: 'bottom', type: 'green', symbol: '+' },
@@ -2106,9 +2106,9 @@
   function renderFolderCard(node) {
     const el = document.createElement('div');
     el.className = `canvas-node ${node.borderVariant || 'card-border-neutral'}`;
-    el.id        = node.id;
+    el.id = node.id;
     el.style.left = `${node.x}px`;
-    el.style.top  = `${node.y}px`;
+    el.style.top = `${node.y}px`;
 
     const iconHtml = getNodeSvgIcon(node.iconType || 'folder');
     const alertHtml = node.alert ? `<div class="card-alert-badge" title="Warning / Alert">!</div>` : '';
@@ -2134,10 +2134,10 @@
   function renderFileCard(node) {
     const el = document.createElement('div');
     el.className = `file-card ${node.borderVariant || 'card-border-neutral'}`;
-    el.id        = node.id;
+    el.id = node.id;
     el.dataset.lang = (node.lang || 'python').toLowerCase();
     el.style.left = `${node.x}px`;
-    el.style.top  = `${node.y}px`;
+    el.style.top = `${node.y}px`;
 
     const iconHtml = getNodeSvgIcon(node.iconType || (node.lang === 'python' ? 'python' : 'code'));
     const alertHtml = node.alert ? `<div class="card-alert-badge" title="Security trigger / alert">!</div>` : '';
@@ -2200,12 +2200,12 @@
 
       const rect = canvasContainer.getBoundingClientRect();
       const wx = (e.clientX - rect.left - STATE.tx) / STATE.scale;
-      const wy = (e.clientY - rect.top  - STATE.ty) / STATE.scale;
+      const wy = (e.clientY - rect.top - STATE.ty) / STATE.scale;
       STATE.draggingNode = node.id;
       STATE.dragOffX = wx - node.x;
       STATE.dragOffY = wy - node.y;
 
-      try { el.setPointerCapture(e.pointerId); } catch(err) {}
+      try { el.setPointerCapture(e.pointerId); } catch (err) { }
       el.classList.add('node-dragging');
       setActiveNode(node.id);
       snapshotUndo();
@@ -2219,18 +2219,18 @@
       }
       const rect = canvasContainer.getBoundingClientRect();
       const wx = (e.clientX - rect.left - STATE.tx) / STATE.scale - STATE.dragOffX;
-      const wy = (e.clientY - rect.top  - STATE.ty) / STATE.scale - STATE.dragOffY;
+      const wy = (e.clientY - rect.top - STATE.ty) / STATE.scale - STATE.dragOffY;
       node.x = wx;
       node.y = wy;
       el.style.left = `${wx}px`;
-      el.style.top  = `${wy}px`;
+      el.style.top = `${wy}px`;
       renderAllConnections();
       updateMinimap();
     });
 
     const finishDrag = (e) => {
       if (STATE.draggingNode === node.id) {
-        try { if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId); } catch(err) {}
+        try { if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId); } catch (err) { }
         el.classList.remove('node-dragging');
         STATE.draggingNode = null;
         if (isMoved) {
@@ -2351,7 +2351,7 @@
     el.className = 'canvas-sticky-note';
     el.id = note.id;
     el.style.left = `${note.x}px`;
-    el.style.top  = `${note.y}px`;
+    el.style.top = `${note.y}px`;
 
     el.innerHTML = `
       <div class="sticky-note-header">
@@ -2376,26 +2376,26 @@
       e.stopPropagation();
       const rect = canvasContainer.getBoundingClientRect();
       const wx = (e.clientX - rect.left - STATE.tx) / STATE.scale;
-      const wy = (e.clientY - rect.top  - STATE.ty) / STATE.scale;
+      const wy = (e.clientY - rect.top - STATE.ty) / STATE.scale;
       offX = wx - note.x;
       offY = wy - note.y;
       dragging = true;
       el.classList.add('note-dragging');
-      try { el.setPointerCapture(e.pointerId); } catch(err) {}
+      try { el.setPointerCapture(e.pointerId); } catch (err) { }
     });
     el.addEventListener('pointermove', (e) => {
       if (!dragging) return;
       note.x = (e.clientX - canvasContainer.getBoundingClientRect().left - STATE.tx) / STATE.scale - offX;
-      note.y = (e.clientY - canvasContainer.getBoundingClientRect().top  - STATE.ty) / STATE.scale - offY;
+      note.y = (e.clientY - canvasContainer.getBoundingClientRect().top - STATE.ty) / STATE.scale - offY;
       el.style.left = `${note.x}px`;
-      el.style.top  = `${note.y}px`;
+      el.style.top = `${note.y}px`;
     });
     const finishNoteDrag = (e) => {
       if (dragging) {
         dragging = false;
         el.classList.remove('note-dragging');
         if (e && e.pointerId !== undefined) {
-          try { if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId); } catch(err) {}
+          try { if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId); } catch (err) { }
         }
       }
     };
@@ -2424,22 +2424,22 @@
     const node = STATE.nodes.find(n => n.id === nodeId);
     if (!node) return { x: 0, y: 0 };
     const el = document.getElementById(nodeId);
-    
+
     // Exact element dimensions with robust fallbacks
     const W = (el && el.offsetWidth > 0) ? el.offsetWidth : (node.kind === 'database' || nodeId.startsWith('db-') ? 260 : 252);
     const H = (el && el.offsetHeight > 0) ? el.offsetHeight : (node.kind === 'database' || nodeId.startsWith('db-') ? 80 : 64);
-    
+
     // Exact position: prioritize live element position, fallback to node coordinates
     const posX = (el && typeof el.offsetLeft === 'number' && !isNaN(el.offsetLeft)) ? el.offsetLeft : (node.x || 0);
     const posY = (el && typeof el.offsetTop === 'number' && !isNaN(el.offsetTop)) ? el.offsetTop : (node.y || 0);
 
     // Pixel-perfect port center mapping matching .node-port in CSS (centered directly on border)
     switch (side) {
-      case 'right':  return { x: posX + W,      y: posY + H / 2 };
-      case 'left':   return { x: posX,          y: posY + H / 2 };
-      case 'bottom': return { x: posX + W / 2,  y: posY + H };
-      case 'top':    return { x: posX + W / 2,  y: posY };
-      default:       return { x: posX + W,      y: posY + H / 2 };
+      case 'right': return { x: posX + W, y: posY + H / 2 };
+      case 'left': return { x: posX, y: posY + H / 2 };
+      case 'bottom': return { x: posX + W / 2, y: posY + H };
+      case 'top': return { x: posX + W / 2, y: posY };
+      default: return { x: posX + W, y: posY + H / 2 };
     }
   }
 
@@ -2469,7 +2469,7 @@
 
   function renderAllConnections() {
     if (!pathsGroup || !badgesGroup) return;
-    pathsGroup.innerHTML  = '';
+    pathsGroup.innerHTML = '';
     badgesGroup.innerHTML = '';
 
     STATE.connections.forEach(([srcId, dstId, type, label], idx) => {
@@ -2490,14 +2490,14 @@
       let cx1 = p1.x, cy1 = p1.y;
       let cx2 = p2.x, cy2 = p2.y;
 
-      if (srcSide === 'right')  cx1 = p1.x + offsetX;
-      if (srcSide === 'left')   cx1 = p1.x - offsetX;
+      if (srcSide === 'right') cx1 = p1.x + offsetX;
+      if (srcSide === 'left') cx1 = p1.x - offsetX;
       if (srcSide === 'bottom') cy1 = p1.y + offsetY;
-      if (srcSide === 'top')    cy1 = p1.y - offsetY;
+      if (srcSide === 'top') cy1 = p1.y - offsetY;
 
-      if (dstSide === 'left')   cx2 = p2.x - offsetX;
-      if (dstSide === 'right')  cx2 = p2.x + offsetX;
-      if (dstSide === 'top')    cy2 = p2.y - offsetY;
+      if (dstSide === 'left') cx2 = p2.x - offsetX;
+      if (dstSide === 'right') cx2 = p2.x + offsetX;
+      if (dstSide === 'top') cy2 = p2.y - offsetY;
       if (dstSide === 'bottom') cy2 = p2.y + offsetY;
 
       const d = `M ${p1.x} ${p1.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p2.x} ${p2.y}`;
@@ -3011,7 +3011,7 @@
     }
     // Detach real-time listener saat drawer ditutup
     if (activeFirestoreUnsubscribe) {
-      try { activeFirestoreUnsubscribe(); } catch (_) {}
+      try { activeFirestoreUnsubscribe(); } catch (_) { }
       activeFirestoreUnsubscribe = null;
     }
     if (dbDrawer) dbDrawer.classList.remove('drawer-open');
@@ -3054,7 +3054,7 @@
       }
 
       dbRecordsTbody.innerHTML = docs.map((doc, idx) => {
-        const idVal = doc.id || `doc-${idx+1}`;
+        const idVal = doc.id || `doc-${idx + 1}`;
         const rowCells = cols.slice(0, 4).map(c => {
           const val = (doc.data && doc.data[c] !== undefined) ? doc.data[c] : (doc[c] !== undefined ? doc[c] : '');
           const str = (typeof val === 'object' && val !== null) ? JSON.stringify(val) : String(val ?? '—');
@@ -3134,34 +3134,34 @@
 
   // SVG icons for DB collections & MySQL tables
   const DB_SVG_ICONS = {
-    users:                 `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    patient_profiles:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-    oauth_identities:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>`,
-    nakes_profiles:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
-    admin_profiles:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-    medical_documents:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
-    consultation_sessions:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+    users: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    patient_profiles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    oauth_identities: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>`,
+    nakes_profiles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
+    admin_profiles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    medical_documents: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+    consultation_sessions: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
     clinical_validations: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>`,
     document_attachments: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
-    patient_biomarkers:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
-    prediction_runs:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
-    prediction_attributions:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-    auth_sessions:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-    auth_otp_codes:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
-    system_cache:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    patient_biomarkers: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+    prediction_runs: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
+    prediction_attributions: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    auth_sessions: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    auth_otp_codes: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+    system_cache: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
     system_notifications: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
-    audit_logs:           `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`,
-    research_articles:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    audit_logs: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`,
+    research_articles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
     research_subscribers: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
     // Legacy compat
-    user_profiles:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
-    nakes:                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
-    consultations:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
-    prediction_records:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
-    research_dispatches:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
-    sessions:             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-    dataset:              `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-    default:              `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+    user_profiles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+    nakes: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>`,
+    consultations: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.8 19.8 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+    prediction_records: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"/></svg>`,
+    research_dispatches: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+    sessions: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    dataset: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    default: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
   };
 
   function getDbSvgIcon(col) {
@@ -3202,37 +3202,37 @@
   // 4-Column Domain Swimlane Layout for Database Mode
   const DATABASE_DOMAIN_LAYOUT = {
     // === Kolom 0 (x = 80): IAM, Kredensial, Autentikasi & Cache ===
-    'users':                 { col: 0, x: 80, y: 80 },
-    'admin_profiles':        { col: 0, x: 80, y: 260 },
-    'oauth_identities':      { col: 0, x: 80, y: 440 },
-    'auth_sessions':         { col: 0, x: 80, y: 620 },
-    'auth_otp_codes':        { col: 0, x: 80, y: 800 },
-    'system_cache':          { col: 0, x: 80, y: 980 },
-    'sessions':              { col: 0, x: 80, y: 1160 },
+    'users': { col: 0, x: 80, y: 80 },
+    'admin_profiles': { col: 0, x: 80, y: 260 },
+    'oauth_identities': { col: 0, x: 80, y: 440 },
+    'auth_sessions': { col: 0, x: 80, y: 620 },
+    'auth_otp_codes': { col: 0, x: 80, y: 800 },
+    'system_cache': { col: 0, x: 80, y: 980 },
+    'sessions': { col: 0, x: 80, y: 1160 },
 
     // === Kolom 1 (x = 480): Profil Pasien, Nakes & Audit Trail ===
-    'patient_profiles':      { col: 1, x: 480, y: 80 },
-    'nakes_profiles':        { col: 1, x: 480, y: 260 },
-    'nakes':                 { col: 1, x: 480, y: 440 },
-    'system_notifications':  { col: 1, x: 480, y: 620 },
-    'audit_logs':            { col: 1, x: 480, y: 800 },
+    'patient_profiles': { col: 1, x: 480, y: 80 },
+    'nakes_profiles': { col: 1, x: 480, y: 260 },
+    'nakes': { col: 1, x: 480, y: 440 },
+    'system_notifications': { col: 1, x: 480, y: 620 },
+    'audit_logs': { col: 1, x: 480, y: 800 },
 
     // === Kolom 2 (x = 880): EMR, Sesi Konsultasi & Rekam Medis ===
-    'medical_documents':     { col: 2, x: 880, y: 80 },
+    'medical_documents': { col: 2, x: 880, y: 80 },
     'consultation_sessions': { col: 2, x: 880, y: 260 },
-    'clinical_validations':  { col: 2, x: 880, y: 440 },
-    'consultations':         { col: 2, x: 880, y: 620 },
-    'document_attachments':  { col: 2, x: 880, y: 800 },
+    'clinical_validations': { col: 2, x: 880, y: 440 },
+    'consultations': { col: 2, x: 880, y: 620 },
+    'document_attachments': { col: 2, x: 880, y: 800 },
 
     // === Kolom 3 (x = 1280): AI Inference, Biomarkers, Data Lake & Riset ===
-    'patient_biomarkers':          { col: 3, x: 1280, y: 80 },
-    'prediction_runs':             { col: 3, x: 1280, y: 260 },
-    'prediction_attributions':     { col: 3, x: 1280, y: 440 },
-    'prediction_records':          { col: 3, x: 1280, y: 620 },
+    'patient_biomarkers': { col: 3, x: 1280, y: 80 },
+    'prediction_runs': { col: 3, x: 1280, y: 260 },
+    'prediction_attributions': { col: 3, x: 1280, y: 440 },
+    'prediction_records': { col: 3, x: 1280, y: 620 },
     'alzheimers_disease_data.csv': { col: 3, x: 1280, y: 800 },
-    'research_articles':           { col: 3, x: 1280, y: 980 },
-    'research_subscribers':        { col: 3, x: 1280, y: 1160 },
-    'research_dispatches':         { col: 3, x: 1280, y: 1340 },
+    'research_articles': { col: 3, x: 1280, y: 980 },
+    'research_subscribers': { col: 3, x: 1280, y: 1160 },
+    'research_dispatches': { col: 3, x: 1280, y: 1340 },
   };
 
   function resolveCardCollisions(nodes, cardW = 340, cardH = 170) {
@@ -3277,7 +3277,7 @@
         }
       });
       localStorage.setItem('neura_db_card_positions', JSON.stringify(positions));
-    } catch(e) {}
+    } catch (e) { }
   }
 
   function layoutDatabaseGrid(collections, forceReset = false) {
@@ -3301,7 +3301,7 @@
           savedPositions = {};
           localStorage.removeItem('neura_db_card_positions');
         }
-      } catch(e) {
+      } catch (e) {
         savedPositions = {};
       }
     }
@@ -3395,7 +3395,7 @@
     const view = STATE.canvasView || 'general';
 
     if (view === 'database') {
-      try { localStorage.removeItem('neura_db_card_positions'); } catch(e) {}
+      try { localStorage.removeItem('neura_db_card_positions'); } catch (e) { }
       const collections = (STATE.dbCollections && STATE.dbCollections.length) ? STATE.dbCollections : FALLBACK_DB_COLLECTIONS;
       const newNodes = layoutDatabaseGrid(collections, true);
       applyLayoutCoordinates(newNodes, smooth, '✓ Auto Layout: 19+ Tabel Database berhasil ditata rapi per domain!');
@@ -3447,7 +3447,7 @@
       url.searchParams.set('view', 'database');
       url.searchParams.delete('mode');
       window.history.replaceState({}, '', url);
-    } catch(e) {}
+    } catch (e) { }
 
     // Fetch database collections if not yet cached
     if (!STATE.dbCollections || !STATE.dbCollections.length) {
@@ -3480,20 +3480,10 @@
     dbNodes.forEach(node => renderDatabaseCard(node));
     renderAllConnections();
 
-    // Show database breadcrumb
+    // Show database breadcrumb — Database aktif di kiri, General Canvas (tombol kembali) di kanan
     if (canvasBreadcrumb) {
       canvasBreadcrumb.style.display = 'flex';
       canvasBreadcrumb.innerHTML = `
-        <button class="bc-item bc-root" onclick="window.exitDatabaseMode && window.exitDatabaseMode()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          <span>General Canvas</span>
-        </button>
-        <span class="bc-sep">›</span>
         <div class="bc-item bc-current">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -3502,6 +3492,16 @@
           </svg>
           <span>Database &amp; Collections Canvas</span>
         </div>
+        <span class="bc-sep" style="margin:0 4px">|</span>
+        <button class="bc-item bc-general-nav" title="Kembali ke General Canvas" onclick="window.exitDatabaseMode && window.exitDatabaseMode()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>General Canvas</span>
+        </button>
       `;
     }
 
@@ -3553,7 +3553,7 @@
       onlineUsersTimer = null;
     }
     if (activeFirestoreUnsubscribe) {
-      try { activeFirestoreUnsubscribe(); } catch (_) {}
+      try { activeFirestoreUnsubscribe(); } catch (_) { }
       activeFirestoreUnsubscribe = null;
     }
 
@@ -3602,7 +3602,7 @@
       if (data && data.status === 'success' && Array.isArray(data.users)) {
         cachedOnlineUsers = data.users;
       }
-    } catch(err) {
+    } catch (err) {
       console.warn('[OnlineUsers] Gagal fetch status online:', err);
     }
 
@@ -3652,7 +3652,7 @@
     el.className = `canvas-node db-card ${isDataset ? 'db-card-dataset' : ''}`;
     el.id = node.id;
     el.style.left = `${node.x}px`;
-    el.style.top  = `${node.y}px`;
+    el.style.top = `${node.y}px`;
     el.setAttribute('data-col-name', node.name);
     el.setAttribute('data-dbl-hint', 'Klik 2x untuk lihat isi rekaman tabel');
 
@@ -3970,13 +3970,13 @@
 
         // Update detail card
         const badgeEl = $('#detail-type-badge');
-        const nameEl  = $('#detail-item-name');
-        const pathEl  = $('#detail-item-path');
+        const nameEl = $('#detail-item-name');
+        const pathEl = $('#detail-item-path');
         const btnFocus = $('#btn-focus-in-canvas');
 
         if (badgeEl) badgeEl.textContent = (node.category || node.kind || 'MODUL').toUpperCase();
-        if (nameEl)  nameEl.textContent = node.title;
-        if (pathEl)  pathEl.textContent = node.desc || (node.path ? `Path: ${node.path}` : 'Modul Terhubung di Arsitektur');
+        if (nameEl) nameEl.textContent = node.title;
+        if (pathEl) pathEl.textContent = node.desc || (node.path ? `Path: ${node.path}` : 'Modul Terhubung di Arsitektur');
 
         if (btnFocus) {
           btnFocus.onclick = () => focusNode(nodeId, true);
@@ -4010,26 +4010,26 @@
 
   function switchSidebarTab(tab) {
     const isGen = (tab === 'general');
-    const isDb  = (tab === 'database');
+    const isDb = (tab === 'database');
     const isFiles = (!isGen && !isDb);
 
     // --- Panes ---
     const paneGen = $('#pane-tab-gen');
-    if (paneGen)      paneGen.style.display      = isGen   ? 'flex' : 'none';
+    if (paneGen) paneGen.style.display = isGen ? 'flex' : 'none';
     if (paneTabFiles) paneTabFiles.style.display = isFiles ? 'flex' : 'none';
-    if (paneTabDb)    paneTabDb.style.display    = isDb    ? 'flex' : 'none';
+    if (paneTabDb) paneTabDb.style.display = isDb ? 'flex' : 'none';
 
     // --- Sidebar icons ---
-    const iconGen    = $('#sidebar-icon-gen');
+    const iconGen = $('#sidebar-icon-gen');
     const iconFolder = $('#sidebar-icon-folder');
-    const iconDb     = $('#sidebar-icon-db');
-    if (iconGen)    iconGen.style.display    = isGen   ? 'block' : 'none';
+    const iconDb = $('#sidebar-icon-db');
+    if (iconGen) iconGen.style.display = isGen ? 'block' : 'none';
     if (iconFolder) iconFolder.style.display = isFiles ? 'block' : 'none';
-    if (iconDb)     iconDb.style.display     = isDb    ? 'block' : 'none';
+    if (iconDb) iconDb.style.display = isDb ? 'block' : 'none';
 
     // --- Sidebar title & summary stats ---
     const sidebarTitle = $('#sidebar-title');
-    const treeStats    = $('#tree-summary-stats');
+    const treeStats = $('#tree-summary-stats');
     if (isGen) {
       if (sidebarTitle) sidebarTitle.textContent = 'Arsitektur Sistem';
       if (treeStats) {
@@ -4039,19 +4039,19 @@
       }
     } else if (isDb) {
       if (sidebarTitle) sidebarTitle.textContent = 'Koleksi Basis Data';
-      if (treeStats)    treeStats.textContent = '6 Koleksi Basis Data & Dataset';
+      if (treeStats) treeStats.textContent = '6 Koleksi Basis Data & Dataset';
     } else {
       if (sidebarTitle) sidebarTitle.textContent = 'Struktur Folder';
-      if (treeStats)    treeStats.textContent = 'Struktur Direktori Neura';
+      if (treeStats) treeStats.textContent = 'Struktur Direktori Neura';
     }
 
     // --- Actions ---
-    const actGen   = $('#sidebar-actions-gen');
+    const actGen = $('#sidebar-actions-gen');
     const actFiles = $('#sidebar-actions-files');
-    const actDb    = $('#sidebar-actions-db');
-    if (actGen)   actGen.style.display   = isGen   ? 'flex' : 'none';
+    const actDb = $('#sidebar-actions-db');
+    if (actGen) actGen.style.display = isGen ? 'flex' : 'none';
     if (actFiles) actFiles.style.display = isFiles ? 'flex' : 'none';
-    if (actDb)    actDb.style.display    = isDb    ? 'flex' : 'none';
+    if (actDb) actDb.style.display = isDb ? 'flex' : 'none';
 
     // --- Search placeholder & input value ---
     const searchInput = $('#tree-search-input');
@@ -4067,29 +4067,29 @@
     }
 
     // --- Quick chips ---
-    const chipsGen   = $('#quick-chips-gen');
+    const chipsGen = $('#quick-chips-gen');
     const chipsFiles = $('#quick-chips-files');
-    const chipsDb    = $('#quick-chips-db');
-    if (chipsGen)   chipsGen.style.display   = isGen   ? 'flex' : 'none';
+    const chipsDb = $('#quick-chips-db');
+    if (chipsGen) chipsGen.style.display = isGen ? 'flex' : 'none';
     if (chipsFiles) chipsFiles.style.display = isFiles ? 'flex' : 'none';
-    if (chipsDb)    chipsDb.style.display    = isDb    ? 'flex' : 'none';
+    if (chipsDb) chipsDb.style.display = isDb ? 'flex' : 'none';
 
     // --- Detail card default label ---
     const detailBadge = $('#detail-type-badge');
-    const detailName  = $('#detail-item-name');
-    const detailPath  = $('#detail-item-path');
+    const detailName = $('#detail-item-name');
+    const detailPath = $('#detail-item-path');
     if (isGen) {
       if (detailBadge) detailBadge.textContent = 'ARSITEKTUR';
-      if (detailName)  detailName.textContent  = 'Pilih modul atau entitas';
-      if (detailPath)  detailPath.textContent  = 'Klik salah satu item untuk fokus & melihat detail di kanvas';
+      if (detailName) detailName.textContent = 'Pilih modul atau entitas';
+      if (detailPath) detailPath.textContent = 'Klik salah satu item untuk fokus & melihat detail di kanvas';
     } else if (isDb) {
       if (detailBadge) detailBadge.textContent = 'BASIS DATA';
-      if (detailName)  detailName.textContent  = 'Pilih koleksi atau dokumen';
-      if (detailPath)  detailPath.textContent  = 'Klik kartu koleksi untuk membuka Database Viewer';
+      if (detailName) detailName.textContent = 'Pilih koleksi atau dokumen';
+      if (detailPath) detailPath.textContent = 'Klik kartu koleksi untuk membuka Database Viewer';
     } else {
       if (detailBadge) detailBadge.textContent = 'DIREKTORI';
-      if (detailName)  detailName.textContent  = 'Pilih berkas atau folder';
-      if (detailPath)  detailPath.textContent  = 'Klik salah satu item untuk melihat detail & relasinya';
+      if (detailName) detailName.textContent = 'Pilih berkas atau folder';
+      if (detailPath) detailPath.textContent = 'Klik salah satu item untuk melihat detail & relasinya';
     }
 
     if (isGen) {
@@ -4315,7 +4315,7 @@
           ` : ''}
         `;
       }
-    } 
+    }
     // KASUS 2: Klik Kanan pada KANVAS KOSONG (BLANK CANVAS)
     else {
       if (STATE.databaseMode) {
@@ -4463,7 +4463,7 @@
     const posX = Math.min(x, window.innerWidth - menuW - 14);
     const posY = Math.min(y, window.innerHeight - menuH - 14);
     contextMenu.style.left = `${Math.max(12, posX)}px`;
-    contextMenu.style.top  = `${Math.max(12, posY)}px`;
+    contextMenu.style.top = `${Math.max(12, posY)}px`;
   }
 
   function hideContextMenu() {
@@ -4491,7 +4491,7 @@
 
       hideContextMenu();
 
-      switch(action) {
+      switch (action) {
         // Database card actions
         case 'db-showcase':
           if (node) openDatabaseDrawer(node.name || node.title, node);
@@ -4595,7 +4595,7 @@
         case 'canvas-add-sticky-at': {
           const rect = canvasContainer.getBoundingClientRect();
           const wx = ((coords?.x || window.innerWidth / 2) - rect.left - STATE.tx) / STATE.scale;
-          const wy = ((coords?.y || window.innerHeight / 2) - rect.top  - STATE.ty) / STATE.scale;
+          const wy = ((coords?.y || window.innerHeight / 2) - rect.top - STATE.ty) / STATE.scale;
           addStickyNote(wx, wy);
           break;
         }
@@ -4630,9 +4630,9 @@
   function attachFilterBarEvents() {
     // Helper: setup one dropdown (btn + menu + options)
     function setupDropdown(btnId, menuId, labelId) {
-      const btn  = $(btnId);
+      const btn = $(btnId);
       const menu = $(menuId);
-      const lbl  = $(labelId);
+      const lbl = $(labelId);
       if (!btn || !menu) return;
 
       // Toggle open/close
@@ -4673,7 +4673,7 @@
     }
 
     setupDropdown('#filter-dropdown-btn-files', '#filter-menu-files', '#filter-label-files');
-    setupDropdown('#filter-dropdown-btn-db',    '#filter-menu-db',    '#filter-label-db');
+    setupDropdown('#filter-dropdown-btn-db', '#filter-menu-db', '#filter-label-db');
 
     // Close dropdowns when clicking outside
     document.addEventListener('click', () => {
@@ -4808,14 +4808,14 @@
     const viewW = canvasContainer.offsetWidth || 800;
     const viewH = canvasContainer.offsetHeight || 600;
 
-    const vLeft = ( -STATE.tx / STATE.scale - minX ) / rangeX * 100;
-    const vTop  = ( -STATE.ty / STATE.scale - minY ) / rangeY * 100;
-    const vW    = ( viewW / STATE.scale ) / rangeX * 100;
-    const vH    = ( viewH / STATE.scale ) / rangeY * 100;
+    const vLeft = (-STATE.tx / STATE.scale - minX) / rangeX * 100;
+    const vTop = (-STATE.ty / STATE.scale - minY) / rangeY * 100;
+    const vW = (viewW / STATE.scale) / rangeX * 100;
+    const vH = (viewH / STATE.scale) / rangeY * 100;
 
-    minimapViewportRect.style.left   = `${clamp(vLeft, 0, 100)}%`;
-    minimapViewportRect.style.top    = `${clamp(vTop, 0, 100)}%`;
-    minimapViewportRect.style.width  = `${clamp(vW, 2, 100)}%`;
+    minimapViewportRect.style.left = `${clamp(vLeft, 0, 100)}%`;
+    minimapViewportRect.style.top = `${clamp(vTop, 0, 100)}%`;
+    minimapViewportRect.style.width = `${clamp(vW, 2, 100)}%`;
     minimapViewportRect.style.height = `${clamp(vH, 2, 100)}%`;
   }
 
@@ -4831,18 +4831,18 @@
     $('#tool-add-node')?.addEventListener('click', () => openAddNodeModal());
     $('#tool-add-note')?.addEventListener('click', addStickyNote);
 
-    $('#tool-zoom-in')?.addEventListener('click',  () => zoomStep(1.15));
+    $('#tool-zoom-in')?.addEventListener('click', () => zoomStep(1.15));
     $('#tool-zoom-out')?.addEventListener('click', () => zoomStep(0.87));
     $('#tool-fit-view')?.addEventListener('click', () => fitView());
 
     // Zoom badge: click = reset 100%
     $('#zoom-badge')?.addEventListener('click', () => {
-      const rect  = canvasContainer.getBoundingClientRect();
-      const mx    = rect.width  / 2;
-      const my    = rect.height / 2;
+      const rect = canvasContainer.getBoundingClientRect();
+      const mx = rect.width / 2;
+      const my = rect.height / 2;
       const ratio = 1 / STATE.scale;
-      STATE.tx    = mx - ratio * (mx - STATE.tx);
-      STATE.ty    = my - ratio * (my - STATE.ty);
+      STATE.tx = mx - ratio * (mx - STATE.tx);
+      STATE.ty = my - ratio * (my - STATE.ty);
       STATE.scale = 1;
       applyTransform(true);
     });
@@ -4930,7 +4930,7 @@
       wx = customX - 80;
       wy = customY - 40;
     } else {
-      const viewW = canvasContainer.offsetWidth  || 800;
+      const viewW = canvasContainer.offsetWidth || 800;
       const viewH = canvasContainer.offsetHeight || 600;
       wx = (viewW / 2 - STATE.tx) / STATE.scale - 100;
       wy = (viewH / 2 - STATE.ty) / STATE.scale - 60;
@@ -4961,28 +4961,28 @@
     const isFile = node.kind === 'file' || node.kind === 'llm' || node.kind === 'csv' || node.kind === 'report' || node.kind === 'livekit' || node.kind === 'voice' || node.kind === 'auth' || node.kind === 'gate' || node.kind === 'input' || node.kind === 'engine';
     const isNodeDisabled = (node.enabled === false);
     el.className = `${isFile ? 'file-card' : 'canvas-node'} ${node.borderVariant || 'card-border-neutral'} general-card ${isNodeDisabled ? 'is-disabled' : ''}`;
-    el.id        = node.id;
+    el.id = node.id;
     el.style.left = `${node.x}px`;
-    el.style.top  = `${node.y}px`;
+    el.style.top = `${node.y}px`;
     el.dataset.nodeKind = node.kind;
 
-    const iconHtml  = getNodeSvgIcon(node.iconType || 'folder');
+    const iconHtml = getNodeSvgIcon(node.iconType || 'folder');
     const portsHtml = renderPortsHtml(node);
 
     // Build category + badge chips
     let badgeHtml = '';
-    if (node.kind === 'page')       badgeHtml = '<span class="gcard-badge gcard-badge-page">WEB</span>';
-    else if (node.kind === 'auth')    badgeHtml = '<span class="gcard-badge gcard-badge-auth">AUTH</span>';
-    else if (node.kind === 'gate')    badgeHtml = '<span class="gcard-badge gcard-badge-gate">GUARD</span>';
-    else if (node.kind === 'dash')    badgeHtml = '<span class="gcard-badge gcard-badge-dash">DASHBOARD</span>';
-    else if (node.kind === 'input')   badgeHtml = '<span class="gcard-badge gcard-badge-input">INPUT</span>';
-    else if (node.kind === 'engine')  badgeHtml = '<span class="gcard-badge gcard-badge-engine">ENGINE</span>';
-    else if (node.kind === 'llm')     badgeHtml = '<span class="gcard-badge gcard-badge-llm">LLM</span>';
-    else if (node.kind === 'csv')     badgeHtml = '<span class="gcard-badge gcard-badge-csv">CSV</span>';
-    else if (node.kind === 'database')badgeHtml = '<span class="gcard-badge gcard-badge-db">DB</span>';
-    else if (node.kind === 'report')  badgeHtml = '<span class="gcard-badge gcard-badge-report">REPORT</span>';
+    if (node.kind === 'page') badgeHtml = '<span class="gcard-badge gcard-badge-page">WEB</span>';
+    else if (node.kind === 'auth') badgeHtml = '<span class="gcard-badge gcard-badge-auth">AUTH</span>';
+    else if (node.kind === 'gate') badgeHtml = '<span class="gcard-badge gcard-badge-gate">GUARD</span>';
+    else if (node.kind === 'dash') badgeHtml = '<span class="gcard-badge gcard-badge-dash">DASHBOARD</span>';
+    else if (node.kind === 'input') badgeHtml = '<span class="gcard-badge gcard-badge-input">INPUT</span>';
+    else if (node.kind === 'engine') badgeHtml = '<span class="gcard-badge gcard-badge-engine">ENGINE</span>';
+    else if (node.kind === 'llm') badgeHtml = '<span class="gcard-badge gcard-badge-llm">LLM</span>';
+    else if (node.kind === 'csv') badgeHtml = '<span class="gcard-badge gcard-badge-csv">CSV</span>';
+    else if (node.kind === 'database') badgeHtml = '<span class="gcard-badge gcard-badge-db">DB</span>';
+    else if (node.kind === 'report') badgeHtml = '<span class="gcard-badge gcard-badge-report">REPORT</span>';
     else if (node.kind === 'livekit') badgeHtml = '<span class="gcard-badge gcard-badge-livekit">WEBRTC</span>';
-    else if (node.kind === 'voice')   badgeHtml = '<span class="gcard-badge gcard-badge-voice">VOICE</span>';
+    else if (node.kind === 'voice') badgeHtml = '<span class="gcard-badge gcard-badge-voice">VOICE</span>';
 
     // Preview widgets
     let previewHtml = '';
@@ -5395,7 +5395,7 @@
               if (countBadge) countBadge.textContent = `${data.available_models.length} MODEL`;
               modelsCont.innerHTML = data.available_models.map(m => {
                 const isAct = !!m.active;
-                const sizeStr = m.size_mb ? (m.size_mb > 1000 ? (m.size_mb/1024).toFixed(2) + ' GB' : m.size_mb.toFixed(0) + ' MB') : '—';
+                const sizeStr = m.size_mb ? (m.size_mb > 1000 ? (m.size_mb / 1024).toFixed(2) + ' GB' : m.size_mb.toFixed(0) + ' MB') : '—';
                 const nameStr = m.display_name || m.filename.replace(/\.[^/.]+$/, '');
                 return `
                   <div class="gcard-llm-model-row ${isAct ? 'active' : ''}" title="${escapeHtml(m.filename)}">
@@ -5416,8 +5416,8 @@
               }).join('');
             }
           })
-          .catch(() => {});
-      } catch (_) {}
+          .catch(() => { });
+      } catch (_) { }
     }
 
     const llmPreviewEl = el.querySelector('.gcard-llm-preview-top');
@@ -5466,7 +5466,7 @@
       url.searchParams.set('view', 'general');
       url.searchParams.delete('col');
       window.history.replaceState({}, '', url);
-    } catch(e) {}
+    } catch (e) { }
 
     // Update Topbar 3-button segmented control
     $$('.mode-seg-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'general'));
@@ -5554,7 +5554,7 @@
       url.searchParams.set('view', viewName);
       if (viewName !== 'database') url.searchParams.delete('col');
       window.history.replaceState({}, '', url);
-    } catch(e) {}
+    } catch (e) { }
 
     // Update Topbar segmented buttons
     $$('.mode-seg-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === viewName));
@@ -5634,7 +5634,7 @@
       const next = isDark ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       updateThemeIcons(next);
-      try { localStorage.setItem('neura_theme_v1', next); } catch(e) {}
+      try { localStorage.setItem('neura_theme_v1', next); } catch (e) { }
       showToast(next === 'light' ? 'â˜€ï¸ Mode Terang Diaktifkan' : '🌙 Mode Gelap Diaktifkan', 1800);
     });
 
@@ -5843,7 +5843,7 @@
         return;
       }
       const title = el.querySelector('.card-title-main, .node-module-title, .file-card-name')?.textContent.toLowerCase() || '';
-      const cat   = el.querySelector('.card-category-label, .node-module-path')?.textContent.toLowerCase() || '';
+      const cat = el.querySelector('.card-category-label, .node-module-path')?.textContent.toLowerCase() || '';
       const match = title.includes(query) || cat.includes(query);
       if (match) {
         el.classList.remove('node-dimmed');
@@ -6031,49 +6031,49 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
   // Curated architectural relation connectors for root modules
   const ROOT_EXPLORER_CONNECTIONS = [
     // Web Server Connections
-    ['exp-server-py', 'exp-bootstrap', 'imports',  'Boot App'],
-    ['exp-server-py', 'exp-routes',    'calls',    'Register Routes'],
-    ['exp-server-py', 'exp-public',    'default',  'Serve SPA'],
+    ['exp-server-py', 'exp-bootstrap', 'imports', 'Boot App'],
+    ['exp-server-py', 'exp-routes', 'calls', 'Register Routes'],
+    ['exp-server-py', 'exp-public', 'default', 'Serve SPA'],
 
     // CLI Console Connections
-    ['exp-nterli-py', 'exp-app',       'calls',    'Invoke Commands'],
-    ['exp-nterli-py', 'exp-database',  'calls',    'Migrate / Seed'],
+    ['exp-nterli-py', 'exp-app', 'calls', 'Invoke Commands'],
+    ['exp-nterli-py', 'exp-database', 'calls', 'Migrate / Seed'],
 
     // Clean Architecture Interconnections
-    ['exp-routes',    'exp-app',       'calls',    'Controllers'],
-    ['exp-app',       'exp-config',    'imports',  'Load Config'],
-    ['exp-app',       'exp-database',  'contains', 'MySQL Models'],
-    ['exp-app',       'exp-storage',   'contains', 'Inference & Sessions'],
+    ['exp-routes', 'exp-app', 'calls', 'Controllers'],
+    ['exp-app', 'exp-config', 'imports', 'Load Config'],
+    ['exp-app', 'exp-database', 'contains', 'MySQL Models'],
+    ['exp-app', 'exp-storage', 'contains', 'Inference & Sessions'],
 
     // Quality & Toolchain
-    ['exp-scripts',   'exp-storage',   'default',  'Model Weights'],
-    ['exp-tests',     'exp-app',       'default',  'Run Feature Tests'],
+    ['exp-scripts', 'exp-storage', 'default', 'Model Weights'],
+    ['exp-tests', 'exp-app', 'default', 'Run Feature Tests'],
   ];
 
   // Specific architectural layout for root cards (coords + roles)
   const ROOT_ARCHITECTURAL_LAYOUT = {
     // Row 0: Runtime Runners & CLI (y = 80)
-    'server.py':            { x: 340,  y: 80,  category: '⚡ WEB RUNNER',        icon: 'server',   border: 'card-border-server', hero: true },
-    'nterli.py':            { x: 670,  y: 80,  category: 'CLI CONSOLE',         icon: 'terminal', border: 'card-border-emerald', hero: true },
-    'README.md':            { x: 1000, y: 80,  category: 'DOCUMENTATION',       icon: 'code',     border: 'card-border-neutral' },
+    'server.py': { x: 340, y: 80, category: '⚡ WEB RUNNER', icon: 'server', border: 'card-border-server', hero: true },
+    'nterli.py': { x: 670, y: 80, category: 'CLI CONSOLE', icon: 'terminal', border: 'card-border-emerald', hero: true },
+    'README.md': { x: 1000, y: 80, category: 'DOCUMENTATION', icon: 'code', border: 'card-border-neutral' },
 
     // Row 1: Core Clean Architecture & Routes (y = 220)
-    'app':                  { x: 130,  y: 220, category: 'CLEAN ARCHITECTURE',  icon: 'cyclone',  border: 'card-border-emerald', hero: true },
-    'bootstrap':            { x: 420,  y: 220, category: 'APP BOOTSTRAPPER',    icon: 'cyclone',  border: 'card-border-cyan' },
-    'config':               { x: 710,  y: 220, category: 'SYSTEM CONFIG',       icon: 'folder',   border: 'card-border-neutral' },
-    'routes':               { x: 1000, y: 220, category: 'REST API ROUTER',     icon: 'api',      border: 'card-border-blue' },
+    'app': { x: 130, y: 220, category: 'CLEAN ARCHITECTURE', icon: 'cyclone', border: 'card-border-emerald', hero: true },
+    'bootstrap': { x: 420, y: 220, category: 'APP BOOTSTRAPPER', icon: 'cyclone', border: 'card-border-cyan' },
+    'config': { x: 710, y: 220, category: 'SYSTEM CONFIG', icon: 'folder', border: 'card-border-neutral' },
+    'routes': { x: 1000, y: 220, category: 'REST API ROUTER', icon: 'api', border: 'card-border-blue' },
 
     // Row 2: Presentation & Persistence (y = 360)
-    'public':               { x: 130,  y: 360, category: 'UI / FRONTEND SPA',   icon: 'palette',  border: 'card-border-emerald' },
-    'database':             { x: 420,  y: 360, category: 'MYSQL MIGRATIONS',    icon: 'database', border: 'card-border-amber' },
-    'storage':              { x: 710,  y: 360, category: 'MODELS & SESSIONS',   icon: 'database', border: 'card-border-purple' },
-    'scripts':              { x: 1000, y: 360, category: 'ML & TOOLCHAIN',      icon: 'terminal', border: 'card-border-amber' },
+    'public': { x: 130, y: 360, category: 'UI / FRONTEND SPA', icon: 'palette', border: 'card-border-emerald' },
+    'database': { x: 420, y: 360, category: 'MYSQL MIGRATIONS', icon: 'database', border: 'card-border-amber' },
+    'storage': { x: 710, y: 360, category: 'MODELS & SESSIONS', icon: 'database', border: 'card-border-purple' },
+    'scripts': { x: 1000, y: 360, category: 'ML & TOOLCHAIN', icon: 'terminal', border: 'card-border-amber' },
 
     // Row 3: Quality Assurance & Specifications (y = 500)
-    'tests':                { x: 130,  y: 500, category: 'TEST SUITES',         icon: 'folder',   border: 'card-border-neutral' },
-    'docs':                 { x: 420,  y: 500, category: 'ARCHITECTURE DOCS',   icon: 'folder',   border: 'card-border-neutral' },
-    'requirements.txt':     { x: 710,  y: 500, category: 'DEPENDENCIES',        icon: 'code',     border: 'card-border-neutral' },
-    'requirements-dev.txt': { x: 1000, y: 500, category: 'DEV DEPS',            icon: 'code',     border: 'card-border-neutral' },
+    'tests': { x: 130, y: 500, category: 'TEST SUITES', icon: 'folder', border: 'card-border-neutral' },
+    'docs': { x: 420, y: 500, category: 'ARCHITECTURE DOCS', icon: 'folder', border: 'card-border-neutral' },
+    'requirements.txt': { x: 710, y: 500, category: 'DEPENDENCIES', icon: 'code', border: 'card-border-neutral' },
+    'requirements-dev.txt': { x: 1000, y: 500, category: 'DEV DEPS', icon: 'code', border: 'card-border-neutral' },
   };
 
   function getItemsAtPath(tree, pathArray) {
@@ -6125,10 +6125,10 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
             x: layoutMeta.x,
             y: layoutMeta.y,
             ports: [
-              { side: 'top',    type: 'green', symbol: '+' },
+              { side: 'top', type: 'green', symbol: '+' },
               { side: 'bottom', type: 'green', symbol: '+' },
-              { side: 'left',   type: 'green', symbol: '+' },
-              { side: 'right',  type: 'green', symbol: '+' },
+              { side: 'left', type: 'green', symbol: '+' },
+              { side: 'right', type: 'green', symbol: '+' },
             ]
           });
         }
@@ -6157,10 +6157,10 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
           x: 130 + col * (244 + 46),
           y: 900 + row * (68 + 40),
           ports: [
-            { side: 'top',    type: 'green', symbol: '+' },
+            { side: 'top', type: 'green', symbol: '+' },
             { side: 'bottom', type: 'green', symbol: '+' },
-            { side: 'left',   type: 'green', symbol: '+' },
-            { side: 'right',  type: 'green', symbol: '+' },
+            { side: 'left', type: 'green', symbol: '+' },
+            { side: 'right', type: 'green', symbol: '+' },
           ]
         });
       });
@@ -6177,8 +6177,8 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     const START_X = 100;
     const START_Y = 80;
 
-    const dirs = list.filter(i => i.type === 'directory').sort((a,b) => (a.name||'').localeCompare(b.name||''));
-    const files = list.filter(i => i.type !== 'directory').sort((a,b) => (a.name||'').localeCompare(b.name||''));
+    const dirs = list.filter(i => i.type === 'directory').sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    const files = list.filter(i => i.type !== 'directory').sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
     const result = [];
 
@@ -6209,10 +6209,10 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         x: START_X + col * (CARD_W + GAP_X),
         y: START_Y + row * (CARD_H + GAP_Y),
         ports: [
-          { side: 'top',    type: 'green', symbol: '+' },
+          { side: 'top', type: 'green', symbol: '+' },
           { side: 'bottom', type: 'green', symbol: '+' },
-          { side: 'left',   type: 'green', symbol: '+' },
-          { side: 'right',  type: 'green', symbol: '+' },
+          { side: 'left', type: 'green', symbol: '+' },
+          { side: 'right', type: 'green', symbol: '+' },
         ]
       });
     });
@@ -6248,10 +6248,10 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         x: START_X + col * (CARD_W + GAP_X),
         y: filesStartY + row * (CARD_H + GAP_Y),
         ports: [
-          { side: 'top',    type: 'green', symbol: '+' },
+          { side: 'top', type: 'green', symbol: '+' },
           { side: 'bottom', type: 'green', symbol: '+' },
-          { side: 'left',   type: 'green', symbol: '+' },
-          { side: 'right',  type: 'green', symbol: '+' },
+          { side: 'left', type: 'green', symbol: '+' },
+          { side: 'right', type: 'green', symbol: '+' },
         ]
       });
     });
@@ -6282,7 +6282,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         url.searchParams.set('view', 'explorer');
         url.searchParams.delete('col');
         window.history.replaceState({}, '', url);
-      } catch(e) {}
+      } catch (e) { }
 
       // Fetch directory tree if not yet cached or if partial
       if (!STATE.explorerTreeCache || !STATE.explorerTreeCache.length || STATE.explorerTreeCache.length < 10) {
@@ -6296,7 +6296,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
               STATE.explorerTreeCache = data.tree;
               STATE.treeData = data.tree;
             }
-          } catch(e) {
+          } catch (e) {
             console.warn('[ExplorerMode] Gagal fetch project-structure, fallback to FALLBACK_TREE:', e);
             STATE.explorerTreeCache = FALLBACK_TREE;
           }
@@ -6429,7 +6429,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
 
     // Prevent breadcrumb interactions from triggering canvas pan or lasso
     canvasBreadcrumb.onpointerdown = (e) => e.stopPropagation();
-    canvasBreadcrumb.onmousedown   = (e) => e.stopPropagation();
+    canvasBreadcrumb.onmousedown = (e) => e.stopPropagation();
 
     // 1. Root button
     const rootBtn = document.createElement('button');
@@ -6482,13 +6482,14 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
 
     const archBtn = document.createElement('button');
     archBtn.type = 'button';
-    archBtn.className = 'bc-item';
+    archBtn.className = 'bc-item bc-general-nav';
     archBtn.title = 'Kembali ke General Canvas';
     archBtn.innerHTML = `
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="2" y1="12" x2="22" y2="12"></line>
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
       </svg>
       <span>General Canvas</span>
     `;
@@ -6620,7 +6621,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     }
     // Update minimap after flex transition completes
     setTimeout(() => {
-      try { updateMinimap(); } catch(e) {}
+      try { updateMinimap(); } catch (e) { }
     }, 340);
   }
   window.toggleSidebar = toggleSidebar;
@@ -6972,10 +6973,10 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     if (name === 'logger.py') return 'file-core-logger';
 
     if (p.startsWith('public')) return 'node-frontend';
-    if (p.startsWith('api'))     return 'node-api';
-    if (p.includes('riset'))     return 'node-riset';
+    if (p.startsWith('api')) return 'node-api';
+    if (p.includes('riset')) return 'node-riset';
     if (p.startsWith('modelsllm') || p.startsWith('training') || p.startsWith('features')) return 'node-ml';
-    if (p.startsWith('datasets') || p.startsWith('data'))  return 'node-data';
+    if (p.startsWith('datasets') || p.startsWith('data')) return 'node-data';
     if (p.startsWith('scripts') || p.startsWith('configs') || p.startsWith('tests')) return 'node-scripts';
     if (p.startsWith('core')) return 'node-core';
     return null;
@@ -6983,19 +6984,19 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
 
   function syncTreeToNode(nodeId) {
     const pathMap = {
-      'node-core':     ['server.py', 'core'],
-      'file-server-py':['server.py'],
-      'file-core-logger':['core'],
-      'node-api':      ['api'],
-      'file-admin-auth':['admin_auth.py'],
+      'node-core': ['server.py', 'core'],
+      'file-server-py': ['server.py'],
+      'file-core-logger': ['core'],
+      'node-api': ['api'],
+      'file-admin-auth': ['admin_auth.py'],
       'node-frontend': ['public'],
-      'file-style-css':['style.css'],
-      'node-riset':    ['riset.html', 'riset.js'],
+      'file-style-css': ['style.css'],
+      'node-riset': ['riset.html', 'riset.js'],
       'file-riset-js': ['riset.js'],
-      'node-ml':       ['modelsLLM', 'training', 'features'],
-      'node-data':     ['datasets', 'data'],
-      'file-research-json':['research_updates.json'],
-      'node-scripts':  ['scripts', 'configs', 'tests'],
+      'node-ml': ['modelsLLM', 'training', 'features'],
+      'node-data': ['datasets', 'data'],
+      'file-research-json': ['research_updates.json'],
+      'node-scripts': ['scripts', 'configs', 'tests'],
     };
     const targets = pathMap[nodeId] || [];
     if (!targets.length) return;
@@ -7084,17 +7085,17 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
   }
 
   $('#modal-close-node')?.addEventListener('click', closeAllModals);
-  $('#btn-cancel-node')?.addEventListener('click',  closeAllModals);
+  $('#btn-cancel-node')?.addEventListener('click', closeAllModals);
   $('#modal-add-node')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeAllModals();
   });
 
   document.getElementById('btn-save-new-node')?.addEventListener('click', () => {
     const title = $('#new-node-title').value.trim() || 'Modul Baru';
-    const desc  = $('#new-node-desc').value.trim()  || 'Deskripsi modul...';
-    const tag   = $('input[name="new-node-tag"]:checked')?.value || 'Core';
+    const desc = $('#new-node-desc').value.trim() || 'Deskripsi modul...';
+    const tag = $('input[name="new-node-tag"]:checked')?.value || 'Core';
 
-    const viewW = canvasContainer.offsetWidth  || 800;
+    const viewW = canvasContainer.offsetWidth || 800;
     const viewH = canvasContainer.offsetHeight || 600;
     const x = (viewW / 2 - STATE.tx) / STATE.scale - 134;
     const y = (viewH / 2 - STATE.ty) / STATE.scale - 90;
@@ -7119,7 +7120,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
     updateStatusBar();
     updateMinimap();
     $('#new-node-title').value = '';
-    $('#new-node-desc').value  = '';
+    $('#new-node-desc').value = '';
   });
 
   /* =====================================================================
@@ -7137,60 +7138,80 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
      18. FALLBACK STATIC TREE
      ===================================================================== */
   const FALLBACK_TREE = [
-    { name: 'api', type: 'directory', path: 'api', count: 5, children: [
-      { name: 'admin', type: 'directory', path: 'api/admin', count: 4, children: [
-        { name: 'admin_auth.py', type: 'file', path: 'api/admin/admin_auth.py', size: 8192, ext: '.py' },
-        { name: 'admin_ml.py', type: 'file', path: 'api/admin/admin_ml.py', size: 6144, ext: '.py' },
-        { name: 'admin_nakes.py', type: 'file', path: 'api/admin/admin_nakes.py', size: 5120, ext: '.py' },
-        { name: 'admin_research.py', type: 'file', path: 'api/admin/admin_research.py', size: 9216, ext: '.py' },
-      ]},
-      { name: 'nakes', type: 'directory', path: 'api/nakes', count: 2, children: [
-        { name: 'nakes_auth.py', type: 'file', path: 'api/nakes/nakes_auth.py', size: 4096, ext: '.py' },
-        { name: 'nakes_consultation.py', type: 'file', path: 'api/nakes/nakes_consultation.py', size: 7168, ext: '.py' },
-      ]},
-      { name: 'shared', type: 'directory', path: 'api/shared', count: 3, children: [
-        { name: 'firebase_routes.py', type: 'file', path: 'api/shared/firebase_routes.py', size: 3072, ext: '.py' },
-        { name: 'session_middleware.py', type: 'file', path: 'api/shared/session_middleware.py', size: 2048, ext: '.py' },
-        { name: 'status_routes.py', type: 'file', path: 'api/shared/status_routes.py', size: 1536, ext: '.py' },
-      ]},
-      { name: 'user', type: 'directory', path: 'api/user', count: 6, children: [
-        { name: 'user_chat.py', type: 'file', path: 'api/user/user_chat.py', size: 10240, ext: '.py' },
-        { name: 'user_predict.py', type: 'file', path: 'api/user/user_predict.py', size: 8192, ext: '.py' },
-        { name: 'user_profile.py', type: 'file', path: 'api/user/user_profile.py', size: 5120, ext: '.py' },
-        { name: 'user_session.py', type: 'file', path: 'api/user/user_session.py', size: 4096, ext: '.py' },
-        { name: 'user_consultation.py', type: 'file', path: 'api/user/user_consultation.py', size: 6144, ext: '.py' },
-        { name: 'user_livekit.py', type: 'file', path: 'api/user/user_livekit.py', size: 3072, ext: '.py' },
-      ]},
-      { name: 'ml', type: 'directory', path: 'api/ml', count: 2, children: [] }
-    ]},
+    {
+      name: 'api', type: 'directory', path: 'api', count: 5, children: [
+        {
+          name: 'admin', type: 'directory', path: 'api/admin', count: 4, children: [
+            { name: 'admin_auth.py', type: 'file', path: 'api/admin/admin_auth.py', size: 8192, ext: '.py' },
+            { name: 'admin_ml.py', type: 'file', path: 'api/admin/admin_ml.py', size: 6144, ext: '.py' },
+            { name: 'admin_nakes.py', type: 'file', path: 'api/admin/admin_nakes.py', size: 5120, ext: '.py' },
+            { name: 'admin_research.py', type: 'file', path: 'api/admin/admin_research.py', size: 9216, ext: '.py' },
+          ]
+        },
+        {
+          name: 'nakes', type: 'directory', path: 'api/nakes', count: 2, children: [
+            { name: 'nakes_auth.py', type: 'file', path: 'api/nakes/nakes_auth.py', size: 4096, ext: '.py' },
+            { name: 'nakes_consultation.py', type: 'file', path: 'api/nakes/nakes_consultation.py', size: 7168, ext: '.py' },
+          ]
+        },
+        {
+          name: 'shared', type: 'directory', path: 'api/shared', count: 3, children: [
+            { name: 'firebase_routes.py', type: 'file', path: 'api/shared/firebase_routes.py', size: 3072, ext: '.py' },
+            { name: 'session_middleware.py', type: 'file', path: 'api/shared/session_middleware.py', size: 2048, ext: '.py' },
+            { name: 'status_routes.py', type: 'file', path: 'api/shared/status_routes.py', size: 1536, ext: '.py' },
+          ]
+        },
+        {
+          name: 'user', type: 'directory', path: 'api/user', count: 6, children: [
+            { name: 'user_chat.py', type: 'file', path: 'api/user/user_chat.py', size: 10240, ext: '.py' },
+            { name: 'user_predict.py', type: 'file', path: 'api/user/user_predict.py', size: 8192, ext: '.py' },
+            { name: 'user_profile.py', type: 'file', path: 'api/user/user_profile.py', size: 5120, ext: '.py' },
+            { name: 'user_session.py', type: 'file', path: 'api/user/user_session.py', size: 4096, ext: '.py' },
+            { name: 'user_consultation.py', type: 'file', path: 'api/user/user_consultation.py', size: 6144, ext: '.py' },
+            { name: 'user_livekit.py', type: 'file', path: 'api/user/user_livekit.py', size: 3072, ext: '.py' },
+          ]
+        },
+        { name: 'ml', type: 'directory', path: 'api/ml', count: 2, children: [] }
+      ]
+    },
     { name: 'app', type: 'directory', path: 'app', count: 5, children: [] },
     { name: 'configs', type: 'directory', path: 'configs', count: 3, children: [] },
-    { name: 'core', type: 'directory', path: 'core', count: 9, children: [
-      { name: 'logger.py', type: 'file', path: 'core/logger.py', size: 2048, ext: '.py' },
-    ]},
+    {
+      name: 'core', type: 'directory', path: 'core', count: 9, children: [
+        { name: 'logger.py', type: 'file', path: 'core/logger.py', size: 2048, ext: '.py' },
+      ]
+    },
     { name: 'data', type: 'directory', path: 'data', count: 7, children: [] },
-    { name: 'datasets', type: 'directory', path: 'datasets', count: 7, children: [
-      { name: 'research_updates.json', type: 'file', path: 'datasets/research_updates.json', size: 15360, ext: '.json' },
-    ]},
+    {
+      name: 'datasets', type: 'directory', path: 'datasets', count: 7, children: [
+        { name: 'research_updates.json', type: 'file', path: 'datasets/research_updates.json', size: 15360, ext: '.json' },
+      ]
+    },
     { name: 'features', type: 'directory', path: 'features', count: 7, children: [] },
     { name: 'modelsLLM', type: 'directory', path: 'modelsLLM', count: 2, children: [] },
     { name: 'notebooks', type: 'directory', path: 'notebooks', count: 0, children: [] },
-    { name: 'public', type: 'directory', path: 'public', count: 14, children: [
-      { name: 'css', type: 'directory', path: 'public/css', count: 5, children: [
-        { name: 'style.css', type: 'file', path: 'public/css/style.css', size: 92160, ext: '.css' },
-        { name: 'riset.css', type: 'file', path: 'public/css/riset.css', size: 61440, ext: '.css' },
-        { name: 'struktur.css', type: 'file', path: 'public/css/struktur.css', size: 24500, ext: '.css' },
-        { name: 'welcome.css', type: 'file', path: 'public/css/welcome.css', size: 45056, ext: '.css' },
-      ]},
-      { name: 'js', type: 'directory', path: 'public/js', count: 4, children: [
-        { name: 'riset.js', type: 'file', path: 'public/js/riset.js', size: 81920, ext: '.js' },
-        { name: 'struktur.js', type: 'file', path: 'public/js/struktur.js', size: 35000, ext: '.js' },
-      ]},
-      { name: 'index.html', type: 'file', path: 'public/index.html', size: 204800, ext: '.html' },
-      { name: 'riset.html', type: 'file', path: 'public/riset.html', size: 102400, ext: '.html' },
-      { name: 'struktur.html', type: 'file', path: 'public/struktur.html', size: 22000, ext: '.html' },
-      { name: 'welcome.html', type: 'file', path: 'public/welcome.html', size: 61440, ext: '.html' },
-    ]},
+    {
+      name: 'public', type: 'directory', path: 'public', count: 14, children: [
+        {
+          name: 'css', type: 'directory', path: 'public/css', count: 5, children: [
+            { name: 'style.css', type: 'file', path: 'public/css/style.css', size: 92160, ext: '.css' },
+            { name: 'riset.css', type: 'file', path: 'public/css/riset.css', size: 61440, ext: '.css' },
+            { name: 'struktur.css', type: 'file', path: 'public/css/struktur.css', size: 24500, ext: '.css' },
+            { name: 'welcome.css', type: 'file', path: 'public/css/welcome.css', size: 45056, ext: '.css' },
+          ]
+        },
+        {
+          name: 'js', type: 'directory', path: 'public/js', count: 4, children: [
+            { name: 'riset.js', type: 'file', path: 'public/js/riset.js', size: 81920, ext: '.js' },
+            { name: 'struktur.js', type: 'file', path: 'public/js/struktur.js', size: 35000, ext: '.js' },
+          ]
+        },
+        { name: 'index.html', type: 'file', path: 'public/index.html', size: 204800, ext: '.html' },
+        { name: 'riset.html', type: 'file', path: 'public/riset.html', size: 102400, ext: '.html' },
+        { name: 'struktur.html', type: 'file', path: 'public/struktur.html', size: 22000, ext: '.html' },
+        { name: 'welcome.html', type: 'file', path: 'public/welcome.html', size: 61440, ext: '.html' },
+      ]
+    },
     { name: 'scratch', type: 'directory', path: 'scratch', count: 5, children: [] },
     { name: 'scripts', type: 'directory', path: 'scripts', count: 9, children: [] },
     { name: 'tests', type: 'directory', path: 'tests', count: 4, children: [] },
@@ -7270,7 +7291,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       e.stopPropagation();
 
       const nodeId = port.dataset.node;
-      const side   = port.dataset.side;
+      const side = port.dataset.side;
 
       if (STATE.mode !== 'connect') {
         // Direct click on a port (+ button): switch to connect mode and start connecting from this port!
@@ -7294,7 +7315,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
           cancelConnectSource();
           return;
         }
-        const type  = STATE.connectType;
+        const type = STATE.connectType;
         const srcId = STATE.connectSource.nodeId;
         // Avoid duplicate
         const dup = STATE.connections.find(([s, d]) => s === srcId && d === nodeId);
@@ -7326,13 +7347,13 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       const p1 = getNodeCenter(src.nodeId, src.side);
       const rect = canvasContainer.getBoundingClientRect();
       const mx = (e.clientX - rect.left - STATE.tx) / STATE.scale;
-      const my = (e.clientY - rect.top  - STATE.ty) / STATE.scale;
+      const my = (e.clientY - rect.top - STATE.ty) / STATE.scale;
       const offset = Math.abs(mx - p1.x) * 0.5 || 80;
       let cx1 = p1.x, cy1 = p1.y;
-      if (src.side === 'right')  cx1 = p1.x + offset;
-      if (src.side === 'left')   cx1 = p1.x - offset;
+      if (src.side === 'right') cx1 = p1.x + offset;
+      if (src.side === 'left') cx1 = p1.x - offset;
       if (src.side === 'bottom') cy1 = p1.y + offset;
-      if (src.side === 'top')    cy1 = p1.y - offset;
+      if (src.side === 'top') cy1 = p1.y - offset;
       const d = `M ${p1.x} ${p1.y} C ${cx1} ${cy1}, ${mx} ${my}, ${mx} ${my}`;
       wirePreviewPath.setAttribute('d', d);
     });
@@ -7385,11 +7406,11 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       STATE.lassoActive = true;
       clearLassoSelection();
       lassoBox.style.display = 'block';
-      lassoBox.style.left   = `${lassoOrigin.x}px`;
-      lassoBox.style.top    = `${lassoOrigin.y}px`;
-      lassoBox.style.width  = '0px';
+      lassoBox.style.left = `${lassoOrigin.x}px`;
+      lassoBox.style.top = `${lassoOrigin.y}px`;
+      lassoBox.style.width = '0px';
       lassoBox.style.height = '0px';
-      try { canvasContainer.setPointerCapture(e.pointerId); } catch(err) {}
+      try { canvasContainer.setPointerCapture(e.pointerId); } catch (err) { }
     });
 
     canvasContainer.addEventListener('pointermove', (e) => {
@@ -7401,9 +7422,9 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       const ly = Math.min(cy, lassoOrigin.y);
       const lw = Math.abs(cx - lassoOrigin.x);
       const lh = Math.abs(cy - lassoOrigin.y);
-      lassoBox.style.left   = `${lx}px`;
-      lassoBox.style.top    = `${ly}px`;
-      lassoBox.style.width  = `${lw}px`;
+      lassoBox.style.left = `${lx}px`;
+      lassoBox.style.top = `${ly}px`;
+      lassoBox.style.width = `${lw}px`;
       lassoBox.style.height = `${lh}px`;
 
       // Live highlight overlapping nodes
@@ -7419,7 +7440,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
         const nw = el.offsetWidth;
         const nh = el.offsetHeight;
         const hit = nx + nw > selectRect.x && nx < selectRect.x + selectRect.w &&
-                    ny + nh > selectRect.y && ny < selectRect.y + selectRect.h;
+          ny + nh > selectRect.y && ny < selectRect.y + selectRect.h;
         if (hit) {
           el.classList.add('lasso-selected');
           STATE.lassoSelected.add(el.id);
@@ -7435,7 +7456,7 @@ ${STATE.connections.map(c => `- ${c[0]} --[${c[3] || c[2]}]--> ${c[1]}`).join('\
       STATE.lassoActive = false;
       if (lassoBox) lassoBox.style.display = 'none';
       if (e && e.pointerId !== undefined) {
-        try { if (canvasContainer.hasPointerCapture(e.pointerId)) canvasContainer.releasePointerCapture(e.pointerId); } catch(err) {}
+        try { if (canvasContainer.hasPointerCapture(e.pointerId)) canvasContainer.releasePointerCapture(e.pointerId); } catch (err) { }
       }
       const count = STATE.lassoSelected.size;
       if (count) showToast(`${count} node terpilih`, 1200);
