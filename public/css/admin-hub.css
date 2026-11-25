@@ -701,69 +701,172 @@ button {
   margin: 28px 0;
 }
 
-/* ── Hero Welcome Banner (Abstract Dark Minimalist) ── */
+/* ── Hero Welcome Banner (Abstract Dark Minimalist Premium) ── */
 .hub-welcome-hero {
   position: relative;
   overflow: hidden;
   border-radius: 16px;
-  padding: 24px 28px 26px;
-  margin-bottom: 26px;
-  background: #080808;
+  padding: 22px 26px 20px;
+  margin-bottom: 22px;
+  background: linear-gradient(135deg, #090908 0%, #121110 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 20px rgba(0, 0, 0, 0.25);
   color: #FFFFFF;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
 }
 
-.welcome-hero-glow {
-  display: none;
+.welcome-abstract-art {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 360px;
+  pointer-events: none;
+  color: #A1A1AA;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.4) 25%, #000 85%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.4) 25%, #000 85%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.welcome-draft-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hub-welcome-hero:hover .welcome-abstract-art {
+  transform: scale(1.02);
+}
+
+.welcome-hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .welcome-hero-top {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-  position: relative;
-  z-index: 1;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
-.welcome-sparkle {
-  width: 30px;
-  height: 30px;
-  display: flex;
+.welcome-badge-pill {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  color: #D97757;
+  gap: 6px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  background: rgba(217, 119, 87, 0.08);
+  border: 1px solid rgba(217, 119, 87, 0.28);
+}
+
+.welcome-sparkle-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #D97757;
 }
 
 .welcome-kicker {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: #D97757;
-  line-height: 1.25;
+  line-height: 1;
 }
 
-.welcome-role-sub {
-  font-size: 11.5px;
-  color: #9CA3AF;
-  line-height: 1.3;
+.welcome-meta-sep {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.welcome-role-tag {
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+  color: #A1A1AA;
+  line-height: 1;
+}
+
+.welcome-access-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  color: #A1A1AA;
+}
+
+.access-dot-pulse {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #16A34A;
+}
+
+.welcome-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .welcome-hero-name {
-  font-size: 27px;
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   color: #FFFFFF;
-  margin-bottom: 5px;
-  position: relative;
-  z-index: 1;
+  line-height: 1.15;
+}
+
+.welcome-verified-chip {
+  font-family: var(--hub-font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #D4D4D8;
+}
+
+.welcome-hero-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .welcome-hero-sub {
-  font-size: 13px;
+  font-size: 12.5px;
   color: #A1A1AA;
-  position: relative;
-  z-index: 1;
+}
+
+.welcome-meta-specs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--hub-font-mono);
+  font-size: 10.5px;
+  color: #71717A;
+}
+
+.meta-spec-sep {
+  opacity: 0.4;
+}
+
+@media (max-width: 768px) {
+  .welcome-abstract-art {
+    display: none;
+  }
 }
 
 /* ── Dataset Bento Grid ── */
@@ -802,39 +905,94 @@ button {
   padding: 22px 24px 20px 136px;
 }
 
-/* Abstract Tilted Spreadsheet Art */
+/* Abstract Tilted Spreadsheet Art (Minimalist & Premium) */
 .bento-sheet-art {
   position: absolute;
-  left: -18px;
-  top: 22px;
-  width: 128px;
-  border-radius: 10px;
+  left: -14px;
+  top: 24px;
+  width: 138px;
+  border-radius: 12px;
   border: 1px solid var(--hub-border);
   background: var(--hub-bg-subtle);
-  transform: rotate(-11deg);
+  transform: rotate(-10deg);
   overflow: hidden;
-  opacity: 0.9;
+  opacity: 0.92;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(135deg, #000 42%, transparent 98%);
+  mask-image: linear-gradient(135deg, #000 42%, transparent 98%);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+
+.bento-card-original:hover .bento-sheet-art {
+  transform: rotate(-7deg) translate(4px, -2px);
+  opacity: 1;
 }
 
 .bento-sheet-art .sheet-head {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 22px;
+  grid-template-columns: 24px 1fr 1fr;
+  height: 24px;
   background: var(--hub-bg-preview);
   border-bottom: 1px solid var(--hub-border);
 }
 
 .bento-sheet-art .sheet-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 24px;
+  grid-template-columns: 24px 1fr 1fr;
+  height: 25px;
   border-bottom: 1px solid var(--hub-border);
 }
 
-.bento-sheet-art .sheet-head span:first-child,
-.bento-sheet-art .sheet-row span:first-child {
+.bento-sheet-art .sheet-row:last-child {
+  border-bottom: none;
+}
+
+.bento-sheet-art .sheet-head span,
+.bento-sheet-art .sheet-row span {
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
   border-right: 1px solid var(--hub-border);
+}
+
+.bento-sheet-art .sheet-head span:last-child,
+.bento-sheet-art .sheet-row span:last-child {
+  border-right: none;
+}
+
+.bento-sheet-art .bar {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--hub-border-strong);
+  opacity: 0.7;
+}
+
+.bento-sheet-art .bar--dot {
+  width: 6px;
+  height: 6px;
+  background: var(--hub-accent);
+  opacity: 0.85;
+  margin: 0 auto;
+}
+
+.bento-sheet-art .bar--head {
+  width: 65%;
+  height: 4px;
+  background: var(--hub-text-muted);
+  opacity: 0.45;
+}
+
+.bento-sheet-art .bar--idx {
+  width: 8px;
+  height: 3.5px;
+  opacity: 0.45;
+  margin: 0 auto;
+}
+
+.bento-sheet-art .bar--accent {
+  background: var(--hub-accent);
+  opacity: 0.75;
 }
 
 .bento-original-content {

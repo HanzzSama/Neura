@@ -25,7 +25,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="/css/admin-hub.css?v=1.9" />
+  <link rel="stylesheet" href="/css/admin-hub.css?v=2.1" />
   <style id="auth-shield-style">
     body:not(.auth-cleared) {
       visibility: hidden !important;
@@ -280,22 +280,56 @@
             <button class="hub-clear-filter-btn" id="hub-clear-filter-btn">Reset Filter</button>
           </div>
 
-          <!-- HERO WELCOME BANNER -->
+          <!-- HERO WELCOME BANNER (Abstract Minimalist Premium) -->
           <section class="hub-welcome-hero" id="hub-welcome-banner" data-section="overview">
-            <div class="welcome-hero-glow" aria-hidden="true"></div>
-            <div class="welcome-hero-top">
-              <div class="welcome-sparkle" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
-                </svg>
+            <!-- Abstract Precision Geometric Drafting Art -->
+            <div class="welcome-abstract-art" aria-hidden="true">
+              <svg class="welcome-draft-svg" viewBox="0 0 380 160" fill="none">
+                <!-- Concentric ellipses / orbital coordinate geometry -->
+                <ellipse cx="290" cy="80" rx="120" ry="60" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.32" />
+                <ellipse cx="290" cy="80" rx="84" ry="42" stroke="currentColor" stroke-width="1" opacity="0.45" />
+                <ellipse cx="290" cy="80" rx="52" ry="26" stroke="currentColor" stroke-width="1.2" opacity="0.65" />
+                <circle cx="290" cy="80" r="3" fill="#D97757" />
+                <!-- Perspective grid lines -->
+                <line x1="120" y1="80" x2="370" y2="80" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity="0.25" />
+                <line x1="290" y1="10" x2="290" y2="150" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity="0.25" />
+                <line x1="170" y1="30" x2="340" y2="130" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <line x1="170" y1="130" x2="340" y2="30" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <!-- Precision coordinate nodes -->
+                <circle cx="238" cy="55" r="2.5" fill="currentColor" opacity="0.55" />
+                <circle cx="335" cy="102" r="2.5" fill="currentColor" opacity="0.55" />
+                <polygon points="290,32 296,42 284,42" stroke="#D97757" stroke-width="1" fill="none" opacity="0.75" />
+              </svg>
+            </div>
+
+            <div class="welcome-hero-content">
+              <div class="welcome-hero-top">
+                <div class="welcome-badge-pill">
+                  <span class="welcome-sparkle-dot"></span>
+                  <span class="welcome-kicker">Selamat Datang</span>
+                </div>
+                <span class="welcome-meta-sep">&bull;</span>
+                <span class="welcome-role-tag">Neura &bull; Admin</span>
+                <span class="welcome-access-badge">
+                  <span class="access-dot-pulse"></span>
+                  <span>Active Session</span>
+                </span>
               </div>
-              <div>
-                <div class="welcome-kicker">Selamat Datang</div>
-                <div class="welcome-role-sub">Neura - Admin</div>
+
+              <div class="welcome-name-row">
+                <h1 class="welcome-hero-name" id="hub-welcome-name">HanzzSama</h1>
+                <span class="welcome-verified-chip">Verified</span>
+              </div>
+
+              <div class="welcome-hero-bottom">
+                <p class="welcome-hero-sub">di halaman Dashboard Admin &mdash; access successfully granted</p>
+                <div class="welcome-meta-specs">
+                  <span class="meta-spec-item"><code>SYS://PROD-01</code></span>
+                  <span class="meta-spec-sep">/</span>
+                  <span class="meta-spec-item"><code>32 BIOMARKERS</code></span>
+                </div>
               </div>
             </div>
-            <h1 class="welcome-hero-name" id="hub-welcome-name">HanzzSama</h1>
-            <p class="welcome-hero-sub">di halaman Dashboard Admin - access successfully</p>
           </section>
 
           <!-- SMART INSIGHT STRIP (High-Clarity Live Telemetry) -->
@@ -333,11 +367,31 @@
               <!-- Left Large Card: Dataset - Original -->
               <div class="bento-card bento-card-original" data-bento-id="dataset-original">
                 <div class="bento-sheet-art" aria-hidden="true">
-                  <div class="sheet-head"><span></span><span></span></div>
-                  <div class="sheet-row"><span></span><span></span></div>
-                  <div class="sheet-row"><span></span><span></span></div>
-                  <div class="sheet-row"><span></span><span></span></div>
-                  <div class="sheet-row"><span></span><span></span></div>
+                  <div class="sheet-head">
+                    <span><i class="bar bar--dot"></i></span>
+                    <span><i class="bar bar--head"></i></span>
+                    <span><i class="bar bar--head"></i></span>
+                  </div>
+                  <div class="sheet-row">
+                    <span><i class="bar bar--idx"></i></span>
+                    <span><i class="bar bar--accent" style="width:68%"></i></span>
+                    <span><i class="bar" style="width:52%"></i></span>
+                  </div>
+                  <div class="sheet-row">
+                    <span><i class="bar bar--idx"></i></span>
+                    <span><i class="bar" style="width:82%"></i></span>
+                    <span><i class="bar" style="width:64%"></i></span>
+                  </div>
+                  <div class="sheet-row">
+                    <span><i class="bar bar--idx"></i></span>
+                    <span><i class="bar" style="width:58%"></i></span>
+                    <span><i class="bar bar--accent" style="width:74%"></i></span>
+                  </div>
+                  <div class="sheet-row">
+                    <span><i class="bar bar--idx"></i></span>
+                    <span><i class="bar" style="width:72%"></i></span>
+                    <span><i class="bar" style="width:45%"></i></span>
+                  </div>
                 </div>
                 <div class="bento-original-content">
                   <div class="bento-title-row">
