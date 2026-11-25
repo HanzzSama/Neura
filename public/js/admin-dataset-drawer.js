@@ -37,22 +37,48 @@
     }
   }
 
+  function renderSkeleton(lines = 5) {
+    return Array.from({ length: lines }, (_, i) =>
+      `<div class="hub-skeleton" style="width:${95 - (i % 3) * 14}%"></div>`
+    ).join('');
+  }
+
   async function renderDatasetPreview(key, meta) {
-    bodyEl().innerHTML = '<p style="color:var(--hub-text-muted)">Memuat sampel dataset...</p>';
+    const isSplitDataset = ['dataset-original', 'dataset-training', 'dataset-testing'].includes(key);
+    const tabsHtml = isSplitDataset ? `
+      <div class="drawer-tabs" role="tablist">
+        <button type="button" class="drawer-tab-btn ${key === 'dataset-original' ? 'active' : ''}" data-split-key="dataset-original">Original (100%)</button>
+        <button type="button" class="drawer-tab-btn ${key === 'dataset-training' ? 'active' : ''}" data-split-key="dataset-training">Training (80%)</button>
+        <button type="button" class="drawer-tab-btn ${key === 'dataset-testing' ? 'active' : ''}" data-split-key="dataset-testing">Testing (20%)</button>
+      </div>
+    ` : '';
+
+    bodyEl().innerHTML = `${tabsHtml}${renderSkeleton(6)}`;
     try {
-      const res = await fetch(`/api/admin/datasets/${encodeURIComponent(key)}/preview?limit=15`);
+      const res = await fetch(`/api/admin/datasets/${encodeURIComponent(key)}/preview?limit=25`);
       const data = await res.json();
       if (!data.success) {
-        bodyEl().innerHTML = `<p style="color:#dc2626">${escHtml(data.error || 'Gagal memuat dataset.')}</p>`;
+        bodyEl().innerHTML = `${tabsHtml}<p style="color:#dc2626">${escHtml(data.error || 'Gagal memuat dataset.')}</p>`;
         return;
       }
 
       const headersHtml = (data.headers || []).map(h => `<th>${escHtml(h)}</th>`).join('');
-      const rowsHtml = (data.rows || []).map(row =>
-        `<tr>${row.map(cell => `<td>${escHtml(cell)}</td>`).join('')}</tr>`
-      ).join('');
+      const allRows = data.rows || [];
+
+      const renderRows = (q) => {
+        const term = (q || '').trim().toLowerCase();
+        const filtered = term
+          ? allRows.filter(r => r.some(c => String(c).toLowerCase().includes(term)))
+          : allRows;
+        return filtered.map(row =>
+          `<tr>${row.map(cell => `<td>${escHtml(cell)}</td>`).join('')}</tr>`
+        ).join('') || '<tr><td colspan="4">Tidak ada baris yang cocok</td></tr>';
+      };
+
+      const splitLabel = key === 'dataset-training' ? '80% Train' : (key === 'dataset-testing' ? '20% Test' : (meta.badge || '100% CSV'));
 
       bodyEl().innerHTML = `
+        ${tabsHtml}
         <div class="drawer-kpi-row">
           <div class="drawer-kpi-card">
             <div class="drawer-kpi-label">Total Baris</div>
@@ -64,21 +90,33 @@
           </div>
           <div class="drawer-kpi-card">
             <div class="drawer-kpi-label">Tipe Split</div>
-            <div class="drawer-kpi-val">${escHtml(meta.badge || 'CSV')}</div>
+            <div class="drawer-kpi-val">${escHtml(splitLabel)}</div>
           </div>
         </div>
-        <p style="font-size:12px;color:var(--hub-text-muted);margin-bottom:10px;">
-          Menampilkan 15 baris pertama (maksimal 12 kolom awal) dari <code>${escHtml(key)}</code>:
-        </p>
+        <input type="text" class="drawer-filter-input" id="drawer-row-filter" placeholder="Filter nilai pada sampel baris..." autocomplete="off" />
         <div class="drawer-table-wrap">
           <table class="drawer-table">
             <thead><tr>${headersHtml}</tr></thead>
-            <tbody>${rowsHtml || '<tr><td colspan="4">Tidak ada baris data</td></tr>'}</tbody>
+            <tbody id="drawer-table-tbody">${renderRows('')}</tbody>
           </table>
         </div>
       `;
+
+      bodyEl().querySelectorAll('[data-split-key]').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const nextKey = tab.dataset.splitKey;
+          if (nextKey && nextKey !== key) {
+            renderDatasetPreview(nextKey, meta);
+          }
+        });
+      });
+
+      document.getElementById('drawer-row-filter')?.addEventListener('input', (e) => {
+        const tbody = document.getElementById('drawer-table-tbody');
+        if (tbody) tbody.innerHTML = renderRows(e.target.value);
+      });
     } catch (err) {
-      bodyEl().innerHTML = `<p style="color:#dc2626">Terjadi kesalahan jaringan: ${escHtml(err.message)}</p>`;
+      bodyEl().innerHTML = `${tabsHtml}<p style="color:#dc2626">Terjadi kesalahan jaringan: ${escHtml(err.message)}</p>`;
     }
   }
 

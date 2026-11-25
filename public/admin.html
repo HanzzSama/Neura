@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/css/admin-hub.css?v=1.5" />
+  <link rel="stylesheet" href="/css/admin-hub.css?v=1.6" />
   <style id="auth-shield-style">
     body:not(.auth-cleared) {
       visibility: hidden !important;
@@ -283,6 +283,30 @@
             <h1 class="welcome-hero-name" id="hub-welcome-name">HanzzSama</h1>
             <p class="welcome-hero-sub">di halaman Dashboard Admin - access successfully</p>
           </section>
+
+          <!-- SMART INSIGHT STRIP (High-Clarity Live Telemetry) -->
+          <div class="hub-insight-strip" id="hub-insight-strip" aria-label="Ringkasan Sistem">
+            <button type="button" class="insight-chip" data-bento-open="dataset-original">
+              <span class="insight-dot insight-dot--ok"></span>
+              <span class="insight-label">Datasets</span>
+              <span class="insight-val" id="insight-datasets-val">2,149 · 80/20</span>
+            </button>
+            <button type="button" class="insight-chip" id="insight-eval-chip">
+              <span class="insight-dot insight-dot--accent"></span>
+              <span class="insight-label">Model Acc</span>
+              <span class="insight-val" id="insight-model-val">95.35%</span>
+            </button>
+            <button type="button" class="insight-chip" data-bento-open="data-nakes">
+              <span class="insight-dot insight-dot--neutral"></span>
+              <span class="insight-label">Verified Nakes</span>
+              <span class="insight-val" id="insight-nakes-val">--</span>
+            </button>
+            <button type="button" class="insight-chip" data-bento-open="database-explorer">
+              <span class="insight-dot insight-dot--ok"></span>
+              <span class="insight-label">Infra</span>
+              <span class="insight-val" id="insight-infra-val">MySQL &amp; API OK</span>
+            </button>
+          </div>
 
           <!-- DATASET BENTO SECTION -->
           <section class="hub-section hub-bento-section" id="hub-dataset-bento-section" data-section="datasets">
@@ -560,9 +584,34 @@
     </aside>
   </div>
 
+  <!-- ═══ GLOBAL COMMAND PALETTE (Ctrl+K) ═══ -->
+  <div class="cmd-palette-backdrop" id="cmd-palette-backdrop" aria-hidden="true">
+    <div class="cmd-palette" role="dialog" aria-modal="true" aria-label="Command Palette">
+      <div class="cmd-palette-input-row">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="cmd-palette-input" class="cmd-palette-input" placeholder="Ketik perintah, dataset, atau halaman..." autocomplete="off" />
+        <kbd class="hub-search-kbd">Esc</kbd>
+      </div>
+      <div class="cmd-palette-list" id="cmd-palette-list">
+        <!-- Populated by admin-hub.js -->
+      </div>
+      <div class="cmd-palette-footer">
+        <span><kbd>↑↓</kbd> Navigasi</span>
+        <span><kbd>Enter</kbd> Jalankan</span>
+        <span><kbd>Esc</kbd> Tutup</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MINIMAL TOAST CONTAINER ═══ -->
+  <div class="hub-toast-container" id="hub-toast-container" aria-live="polite"></div>
+
   <script src="/js/auth-guard.js?v=1.1"></script>
-  <script src="/js/admin-dataset-drawer.js?v=1.0"></script>
-  <script src="/js/admin-hub.js?v=1.4"></script>
+  <script src="/js/admin-dataset-drawer.js?v=1.2"></script>
+  <script src="/js/admin-hub.js?v=1.6"></script>
 </body>
 
 </html>

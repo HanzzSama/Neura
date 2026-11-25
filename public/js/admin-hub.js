@@ -422,7 +422,14 @@
       btn.addEventListener('click', () => {
         sb2List.querySelectorAll('.sb2-item').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const item = findCardById(btn.dataset.sb2Id);
+        const id = btn.dataset.sb2Id;
+        const targetCard = document.querySelector(`[data-card-id="${id}"], [data-bento-id="${id}"], [data-bento-open="${id}"]`);
+        if (targetCard) {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetCard.classList.add('hub-card-focus');
+          setTimeout(() => targetCard.classList.remove('hub-card-focus'), 1200);
+        }
+        const item = findCardById(id);
         if (!item) return;
         if (item.previewType) {
           window.AdminHubDrawer.open(item);
@@ -472,6 +479,11 @@
           card.badge = `${info.rows.toLocaleString()} rows`;
         }
       });
+      const orig = data.datasets['dataset-original'];
+      const insightDs = document.getElementById('insight-datasets-val');
+      if (insightDs && orig && typeof orig.rows === 'number') {
+        insightDs.textContent = `${orig.rows.toLocaleString()} · 80/20`;
+      }
     } catch (e) {
       // Keep default badges silently
     }
@@ -693,7 +705,7 @@
     }
   }
 
-  async function hydrateTelemetryAndRadar() {
+  async function hydrateTelemetryAndRadar(showToastFeedback = false) {
     const onlineBadge = document.getElementById('radar-online-badge');
     if (onlineBadge) onlineBadge.textContent = 'Checking...';
 
@@ -718,6 +730,12 @@
 
       const accBadge = document.getElementById('ai-accuracy-badge');
       if (accBadge && kpis.ai_model_accuracy) accBadge.textContent = `${kpis.ai_model_accuracy} Acc`;
+
+      const insightModel = document.getElementById('insight-model-val');
+      if (insightModel && kpis.ai_model_accuracy) insightModel.textContent = kpis.ai_model_accuracy;
+
+      const insightNakes = document.getElementById('insight-nakes-val');
+      if (insightNakes) insightNakes.textContent = `${kpis.total_verified_nakes ?? nakes} aktif`;
 
       const circ = 188.5;
       const pLen = (pasien / total) * circ;
@@ -757,23 +775,168 @@
       if (adminsVal) adminsVal.textContent = `${Math.max(1, admins.length)} online`;
 
       if (onlineBadge) onlineBadge.textContent = 'All Systems OK';
+      const insightInfra = document.getElementById('insight-infra-val');
+      if (insightInfra) insightInfra.textContent = 'MySQL & API OK';
+      if (showToastFeedback) showHubToast('System Health & Telemetry diperbarui');
     } catch (e) {
       if (onlineBadge) onlineBadge.textContent = 'Partial';
     }
   }
 
+  function showHubToast(message) {
+    const container = document.getElementById('hub-toast-container');
+    if (!container || !message) return;
+    const toast = document.createElement('div');
+    toast.className = 'hub-toast';
+    toast.innerHTML = `<span class="hub-toast-dot"></span><span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.2s';
+      setTimeout(() => toast.remove(), 220);
+    }, 2800);
+  }
+
+  let _cmdSelectedIdx = 0;
+  let _cmdFilteredItems = [];
+
+  function getCommandPaletteItems() {
+    return [
+      { group: 'Quick Actions', title: 'Run /eval (Evaluasi Model)', meta: 'API', run: () => runInlineEvaluate() },
+      { group: 'Quick Actions', title: 'Train 5 Epochs (XGBoost)', meta: 'ML', run: () => runInlineTrain() },
+      { group: 'Quick Actions', title: 'Refresh System Health Radar', meta: 'Check', run: () => hydrateTelemetryAndRadar(true) },
+      { group: 'Quick Actions', title: 'Ganti Tema (Light / Dark)', meta: 'UI', run: () => document.getElementById('hub-theme-btn')?.click() },
+      { group: 'Datasets', title: 'Inspect dataset-original', meta: 'CSV', run: () => window.AdminHubDrawer.open(findCardById('dataset-original')) },
+      { group: 'Datasets', title: 'Inspect dataset-training (80%)', meta: 'Split', run: () => window.AdminHubDrawer.open(findCardById('dataset-training')) },
+      { group: 'Datasets', title: 'Inspect dataset-testing (20%)', meta: 'Split', run: () => window.AdminHubDrawer.open(findCardById('dataset-testing')) },
+      { group: 'Datasets', title: 'Inspect Chat & Voice Intents', meta: 'JSON', run: () => window.AdminHubDrawer.open(findCardById('dataset-intents')) },
+      { group: 'Navigation', title: 'Buka Neura Chat Admin', meta: '/chat', run: () => { window.location.href = '/chat'; } },
+      { group: 'Navigation', title: 'Buka Studio Riset', meta: '/app/riset', run: () => { window.location.href = '/app/riset'; } },
+      { group: 'Navigation', title: 'Buka Manajemen Struktur', meta: '/app/struktur', run: () => { window.location.href = '/app/struktur'; } },
+      { group: 'Navigation', title: 'Buka Welcome Page', meta: '/welcome', run: () => { window.location.href = '/welcome'; } },
+    ];
+  }
+
+  function renderCommandPaletteList(query) {
+    const listEl = document.getElementById('cmd-palette-list');
+    if (!listEl) return;
+    const q = (query || '').trim().toLowerCase();
+    const all = getCommandPaletteItems();
+    _cmdFilteredItems = q
+      ? all.filter(it => it.title.toLowerCase().includes(q) || it.group.toLowerCase().includes(q) || it.meta.toLowerCase().includes(q))
+      : all;
+
+    if (_cmdSelectedIdx >= _cmdFilteredItems.length) _cmdSelectedIdx = 0;
+
+    let lastGroup = '';
+    let html = '';
+    _cmdFilteredItems.forEach((it, idx) => {
+      if (it.group !== lastGroup) {
+        lastGroup = it.group;
+        html += `<div class="cmd-palette-group">${it.group}</div>`;
+      }
+      html += `
+        <button type="button" class="cmd-palette-item ${idx === _cmdSelectedIdx ? 'is-selected' : ''}" data-cmd-idx="${idx}">
+          <span class="cmd-palette-title">${it.title}</span>
+          <span class="cmd-palette-meta">${it.meta}</span>
+        </button>
+      `;
+    });
+
+    listEl.innerHTML = html || '<div class="cmd-palette-group">Tidak ada perintah yang cocok</div>';
+    listEl.querySelectorAll('[data-cmd-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.cmdIdx);
+        executeCommandPaletteItem(idx);
+      });
+    });
+  }
+
+  function openCommandPalette() {
+    const bd = document.getElementById('cmd-palette-backdrop');
+    const inp = document.getElementById('cmd-palette-input');
+    if (!bd) return;
+    bd.classList.add('open');
+    bd.setAttribute('aria-hidden', 'false');
+    _cmdSelectedIdx = 0;
+    if (inp) {
+      inp.value = '';
+      renderCommandPaletteList('');
+      setTimeout(() => inp.focus(), 20);
+    }
+  }
+
+  function closeCommandPalette() {
+    const bd = document.getElementById('cmd-palette-backdrop');
+    if (!bd) return;
+    bd.classList.remove('open');
+    bd.setAttribute('aria-hidden', 'true');
+  }
+
+  function executeCommandPaletteItem(idx) {
+    const item = _cmdFilteredItems[idx];
+    closeCommandPalette();
+    if (item && typeof item.run === 'function') item.run();
+  }
+
+  function initCommandPalette() {
+    const bd = document.getElementById('cmd-palette-backdrop');
+    const inp = document.getElementById('cmd-palette-input');
+    bd?.addEventListener('click', (e) => {
+      if (e.target === bd) closeCommandPalette();
+    });
+    inp?.addEventListener('input', (e) => {
+      _cmdSelectedIdx = 0;
+      renderCommandPaletteList(e.target.value);
+    });
+    inp?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (_cmdFilteredItems.length) {
+          _cmdSelectedIdx = (_cmdSelectedIdx + 1) % _cmdFilteredItems.length;
+          renderCommandPaletteList(inp.value);
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (_cmdFilteredItems.length) {
+          _cmdSelectedIdx = (_cmdSelectedIdx - 1 + _cmdFilteredItems.length) % _cmdFilteredItems.length;
+          renderCommandPaletteList(inp.value);
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommandPaletteItem(_cmdSelectedIdx);
+      } else if (e.key === 'Escape') {
+        closeCommandPalette();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      const bd = document.getElementById('cmd-palette-backdrop');
+      if (bd?.classList.contains('open')) closeCommandPalette();
+      else openCommandPalette();
+    }
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
     window.AdminHubDrawer.init();
     initThemeToggle();
     initEvents();
+    initCommandPalette();
     hydrateAdminAvatar();
     renderAll();
     hydrateLiveDatasetBadges();
     hydrateTelemetryAndRadar();
 
     document.getElementById('btn-inline-eval')?.addEventListener('click', runInlineEvaluate);
+    document.getElementById('insight-eval-chip')?.addEventListener('click', runInlineEvaluate);
     document.getElementById('btn-inline-train')?.addEventListener('click', runInlineTrain);
-    document.getElementById('btn-radar-refresh')?.addEventListener('click', hydrateTelemetryAndRadar);
+    document.getElementById('btn-radar-refresh')?.addEventListener('click', () => hydrateTelemetryAndRadar(true));
+    document.getElementById('hub-test-mode-toggle')?.addEventListener('change', (e) => {
+      showHubToast(e.target.checked ? 'Test mode diaktifkan' : 'Test mode dinonaktifkan');
+    });
 
     document.querySelectorAll('.cmd-chip[data-cmd]').forEach(chip => {
       chip.addEventListener('click', () => {
