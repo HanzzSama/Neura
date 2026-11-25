@@ -471,7 +471,9 @@
       if (welcomeCountdown) welcomeCountdown.textContent = timeLeft;
       if (timeLeft <= 0) {
         stopWelcomeCountdown();
-        window.location.href = '/app';
+        var isAdminDest = (localStorage.getItem('neura_user_role') === 'Admin') ||
+                          (localStorage.getItem('neura_admin_authenticated') === 'true');
+        window.location.href = isAdminDest ? '/admin' : '/app';
       }
     }, 1000);
   }
@@ -2385,7 +2387,7 @@
           if (isAdmin && rawUser) {
             var parsed = JSON.parse(rawUser);
             if (parsed && (parsed.role === 'Admin' || (parsed.email && parsed.email.toLowerCase().endsWith('@neura.dr.id')))) {
-              window.location.replace('/app');
+              window.location.replace('/admin');
               return;
             }
           }

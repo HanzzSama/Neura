@@ -482,7 +482,7 @@
             <!-- Profile Action Pills -->
             <div class="profile-actions-stack">
               <button type="button" class="profile-action-pill" id="btn-logged-workspace"
-                onclick="window.location.href='/app';">
+                onclick="window.location.href = (localStorage.getItem('neura_user_role') === 'Admin' || localStorage.getItem('neura_admin_authenticated') === 'true') ? '/admin' : '/app';">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
                   stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -1641,7 +1641,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js?v=2"></script>
   <script src="/js/notification-manager.js?v=1"></script>
-  <script src="/js/auth-hero.js?v=110"></script>
+  <script src="/js/auth-hero.js?v=111"></script>
 
   <!-- NeuraPet Welcome Preview Interactions (Optimized: Viewport-aware, zero layout thrashing) -->
   <script>

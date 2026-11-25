@@ -22,7 +22,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/css/admin-hub.css?v=1.0" />
+  <link rel="stylesheet" href="/css/admin-hub.css?v=1.1" />
+  <style id="auth-shield-style">
+    body:not(.auth-cleared) {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+  </style>
 </head>
 
 <body class="admin-hub-body">
@@ -39,7 +45,15 @@
           </svg>
         </button>
         <a href="/admin" class="hub-brand">
-          <img src="/assets/favicon-32x32.png" alt="Neura" class="hub-brand-logo" />
+          <span class="hub-brand-mark" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="7" cy="7" r="2.5" />
+              <circle cx="17" cy="7" r="2.5" />
+              <circle cx="7" cy="17" r="2.5" />
+              <circle cx="17" cy="17" r="2.5" />
+              <path d="M9.5 7h5M7 9.5v5M17 9.5v5M9.5 17h5M9 9l6 6" />
+            </svg>
+          </span>
           <span class="hub-brand-name">Neura</span>
         </a>
         <span class="hub-brand-sep">/</span>
@@ -101,6 +115,12 @@
               </svg>
               <span>Overview</span>
             </button>
+            <a href="/chat" class="sb1-item" id="sb1-neura-chat-menu" title="Buka Workspace Neura Chat Admin">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>Neura Chat Admin</span>
+            </a>
             <button class="sb1-item" data-nav="nakes" data-expand="nakes">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -207,14 +227,14 @@
             <span class="hub-switch-track"></span>
           </label>
 
-          <a href="/chat" class="sb1-item sb1-logout">
+          <button class="sb1-item sb1-logout" id="hub-logout-btn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            <span>Kembali ke App</span>
-          </a>
+            <span>Log out</span>
+          </button>
         </div>
       </aside>
 
@@ -328,8 +348,9 @@
     </aside>
   </div>
 
+  <script src="/js/auth-guard.js?v=1.1"></script>
   <script src="/js/admin-dataset-drawer.js?v=1.0"></script>
-  <script src="/js/admin-hub.js?v=1.0"></script>
+  <script src="/js/admin-hub.js?v=1.1"></script>
 </body>
 
 </html>

@@ -25,21 +25,30 @@
     } catch (e) {}
   }
 
-  function isSpecialAuthenticated() {
-    // 1. Cek Sesi Admin 2FA Terautentikasi
+  function isAdminSessionActive() {
     try {
       var isAdminAuth = localStorage.getItem('neura_admin_authenticated') === 'true' ||
                         sessionStorage.getItem('neura_admin_session') === 'true';
+      var savedRole = localStorage.getItem('neura_user_role') || '';
+      if (isAdminAuth && savedRole.toLowerCase() === 'admin') {
+        return true;
+      }
       var rawUser = localStorage.getItem('neura_auth_user');
       if (isAdminAuth && rawUser) {
         var user = JSON.parse(rawUser);
         var email = (user && user.email ? user.email.toLowerCase().trim() : '');
-        var role = (user && user.role ? user.role : (localStorage.getItem('neura_user_role') || ''));
+        var role = (user && user.role ? user.role : savedRole);
         if (role === 'Admin' || (role && role.toLowerCase() === 'admin') || email.endsWith('@neura.dr.id') || email === 'muhammadhasan.cg@gmail.com') {
           return true;
         }
       }
     } catch (e) {}
+    return false;
+  }
+
+  function isSpecialAuthenticated() {
+    // 1. Cek Sesi Admin 2FA Terautentikasi
+    if (isAdminSessionActive()) return true;
 
     // 2. Cek Mode Demo Klinis
     try {
@@ -124,6 +133,22 @@
   }
 
   function runGuard(fb) {
+    var path = (window.location && window.location.pathname) ? window.location.pathname.replace(/\/+$/, '') : '';
+    var isAdminPage = (path === '/admin' || path === '/app/admin' || path === '/admin.html');
+
+    // Jika Admin membuka /app (default entry), arahkan ke /admin (Neura Admin Hub).
+    // /chat tetap dapat diakses langsung sebagai menu Neura Chat Admin.
+    if (path === '/app' && isAdminSessionActive()) {
+      window.location.replace('/admin');
+      return;
+    }
+
+    // Lindungi /admin agar hanya Admin terautentikasi yang dapat masuk
+    if (isAdminPage && !isAdminSessionActive()) {
+      redirectToWelcome('not_logged_in');
+      return;
+    }
+
     if (isSpecialAuthenticated()) {
       releaseShield();
       verifyAdminSessionWithServer();

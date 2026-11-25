@@ -493,12 +493,48 @@
       const item = findCardById('system-settings');
       if (item) window.AdminHubDrawer.open(item);
     });
+
+    // Logout admin
+    document.getElementById('hub-logout-btn')?.addEventListener('click', async () => {
+      const token = localStorage.getItem('neura_admin_token') || sessionStorage.getItem('neura_admin_token') || '';
+      try {
+        await fetch('/api/admin/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+      } catch (e) {}
+      try {
+        localStorage.removeItem('neura_admin_token');
+        localStorage.removeItem('neura_admin_authenticated');
+        localStorage.removeItem('neura_admin_name');
+        localStorage.removeItem('neura_user_role');
+        localStorage.removeItem('neura_auth_user');
+        sessionStorage.removeItem('neura_admin_session');
+        sessionStorage.removeItem('neura_admin_token');
+      } catch (e) {}
+      window.location.replace('/welcome?logged_out=true');
+    });
+  }
+
+  function hydrateAdminAvatar() {
+    try {
+      const raw = localStorage.getItem('neura_auth_user');
+      const user = raw ? JSON.parse(raw) : null;
+      const name = (user && user.displayName) || localStorage.getItem('neura_admin_name') || 'Admin';
+      const el = document.getElementById('hub-admin-avatar');
+      if (el) {
+        el.textContent = String(name).trim().charAt(0).toUpperCase() || 'A';
+        el.title = name;
+      }
+    } catch (e) {}
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     window.AdminHubDrawer.init();
     initThemeToggle();
     initEvents();
+    hydrateAdminAvatar();
     renderAll();
     hydrateLiveDatasetBadges();
   });
