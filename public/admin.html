@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/css/admin-hub.css?v=1.1" />
+  <link rel="stylesheet" href="/css/admin-hub.css?v=1.5" />
   <style id="auth-shield-style">
     body:not(.auth-cleared) {
       visibility: hidden !important;
@@ -266,18 +266,230 @@
             <button class="hub-clear-filter-btn" id="hub-clear-filter-btn">Reset Filter</button>
           </div>
 
-          <!-- SECTION 1: Core Workspace (4-Column Featured Cards) -->
-          <section class="hub-section" data-section="platform">
+          <!-- HERO WELCOME BANNER -->
+          <section class="hub-welcome-hero" id="hub-welcome-banner" data-section="overview">
+            <div class="welcome-hero-glow" aria-hidden="true"></div>
+            <div class="welcome-hero-top">
+              <div class="welcome-sparkle" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
+                </svg>
+              </div>
+              <div>
+                <div class="welcome-kicker">Selamat Datang</div>
+                <div class="welcome-role-sub">Neura - Admin</div>
+              </div>
+            </div>
+            <h1 class="welcome-hero-name" id="hub-welcome-name">HanzzSama</h1>
+            <p class="welcome-hero-sub">di halaman Dashboard Admin - access successfully</p>
+          </section>
+
+          <!-- DATASET BENTO SECTION -->
+          <section class="hub-section hub-bento-section" id="hub-dataset-bento-section" data-section="datasets">
+            <div class="hub-section-head" style="margin-bottom: 12px;">
+              <h2 class="bento-section-label">Dataset</h2>
+              <button class="hub-link-btn" data-expand-trigger="datasets">Browse all</button>
+            </div>
+
+            <div class="hub-bento-grid">
+              <!-- Left Large Card: Dataset - Original -->
+              <div class="bento-card bento-card-original" data-bento-id="dataset-original">
+                <div class="bento-sheet-art" aria-hidden="true">
+                  <div class="sheet-head"><span></span><span></span></div>
+                  <div class="sheet-row"><span></span><span></span></div>
+                  <div class="sheet-row"><span></span><span></span></div>
+                  <div class="sheet-row"><span></span><span></span></div>
+                  <div class="sheet-row"><span></span><span></span></div>
+                </div>
+                <div class="bento-original-content">
+                  <div class="bento-title-row">
+                    <h3 class="bento-title-lg">Dataset - Original</h3>
+                    <span class="compact-badge" id="bento-badge-dataset-original">CSV</span>
+                  </div>
+                  <div class="bento-file-name">alzheimers_disease_data.CSV</div>
+                  <p class="bento-desc">
+                    Data klinis mentah lengkap sebelum proses pemecahan dataset training dan testing untuk model AI Neura.
+                  </p>
+                  <div class="bento-actions">
+                    <button type="button" class="bento-open-btn" data-bento-open="dataset-original">Open</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Stacked Cards: Training & Testing -->
+              <div class="bento-stack">
+                <button type="button" class="bento-card bento-card-sm" data-bento-open="dataset-training">
+                  <div class="bento-sm-orb" aria-hidden="true"></div>
+                  <div class="bento-title-row">
+                    <h3 class="bento-title-sm">Dataset - Training</h3>
+                    <span class="compact-badge" id="bento-badge-dataset-training">80% Split</span>
+                  </div>
+                  <p class="bento-desc-sm">Data hasil pembagian data original</p>
+                </button>
+
+                <button type="button" class="bento-card bento-card-sm" data-bento-open="dataset-testing">
+                  <div class="bento-sm-orb bento-sm-orb--alt" aria-hidden="true"></div>
+                  <div class="bento-title-row">
+                    <h3 class="bento-title-sm">Dataset - Testing</h3>
+                    <span class="compact-badge" id="bento-badge-dataset-testing">20% Split</span>
+                  </div>
+                  <p class="bento-desc-sm">Data hasil pembagian data original</p>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <div class="hub-divider"></div>
+
+          <!-- SECTION: AI ENGINE & NEURA CHAT LAUNCHER (Interactive Bento) -->
+          <section class="hub-section" id="hub-ai-bento-section" data-section="datasets">
+            <div class="hub-section-head" style="margin-bottom: 12px;">
+              <h2 class="bento-section-label">AI Engine &amp; Quick Commands</h2>
+              <a href="/chat" class="hub-link-btn">Open Neura Chat &rarr;</a>
+            </div>
+
+            <div class="hub-bento-2col">
+              <!-- Card A: AI Engine & Live Training Pulse -->
+              <div class="bento-card bento-ai-card">
+                <svg class="ai-sparkline-art" viewBox="0 0 220 70" fill="none" aria-hidden="true">
+                  <path d="M4 58 L38 48 L72 52 L106 30 L142 34 L176 16 L216 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="216" cy="12" r="3.5" fill="currentColor" />
+                </svg>
+
+                <div class="bento-card-inner">
+                  <div class="bento-title-row">
+                    <h3 class="bento-title-sm">AI Engine &amp; Training Pulse</h3>
+                    <span class="compact-badge" id="ai-accuracy-badge">95.35% Acc</span>
+                  </div>
+                  <p class="bento-desc-sm" id="ai-engine-subtitle">XGBoost Classifier &bull; 32 Biomarkers &bull; Ready</p>
+
+                  <!-- Inline Live Progress Bar (shown when training/evaluating) -->
+                  <div class="ai-inline-status" id="ai-inline-status" style="display:none;">
+                    <div class="ai-inline-status-row">
+                      <span id="ai-inline-msg">Memproses...</span>
+                      <span class="ai-inline-pct" id="ai-inline-pct">0%</span>
+                    </div>
+                    <div class="ai-progress-track">
+                      <div class="ai-progress-fill" id="ai-progress-fill" style="width:0%"></div>
+                    </div>
+                  </div>
+
+                  <div class="bento-inline-actions">
+                    <button type="button" class="bento-pill-btn" id="btn-inline-eval">Evaluate</button>
+                    <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="btn-inline-train">Train 5 Epochs</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card B: Neura Chat & Command Launcher -->
+              <div class="bento-card bento-chat-card">
+                <div class="chat-wireframe-art" aria-hidden="true">
+                  <div class="cw-bubble cw-bubble-1"></div>
+                  <div class="cw-bubble cw-bubble-2"></div>
+                  <div class="cw-bubble cw-bubble-3"></div>
+                </div>
+
+                <div class="bento-card-inner">
+                  <div class="bento-title-row">
+                    <h3 class="bento-title-sm">Neura Chat &amp; Commands</h3>
+                    <span class="compact-badge">/chat</span>
+                  </div>
+                  <p class="bento-desc-sm">Eksekusi cepat perintah ML atau masuk ke ruang konsultasi AI admin.</p>
+
+                  <div class="cmd-chips-row">
+                    <button type="button" class="cmd-chip" data-cmd="status">/status</button>
+                    <button type="button" class="cmd-chip" data-cmd="eval">/eval</button>
+                    <button type="button" class="cmd-chip" data-cmd="progress">/progress</button>
+                    <button type="button" class="cmd-chip" data-cmd="predict">/predict</button>
+                  </div>
+
+                  <div class="bento-inline-actions">
+                    <a href="/chat" class="bento-open-btn bento-open-btn--sm">Open Chat</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="hub-divider"></div>
+
+          <!-- SECTION 1: Platform Ecosystem (3 Abstract Character Cards) -->
+          <section class="hub-section" id="hub-platform-section" data-section="platform">
             <div class="hub-section-head">
               <div>
-                <h1 class="hub-section-title">Core Workspace</h1>
+                <h1 class="hub-section-title">Platform Ecosystem</h1>
                 <p class="hub-section-sub">Akses modul utama platform Neura AI dan kelola alur kerja riset maupun arsitektur.</p>
               </div>
               <button class="hub-browse-btn" data-expand-trigger="platform">Browse all</button>
             </div>
 
-            <div class="hub-featured-grid" id="hub-featured-grid">
-              <!-- Populated by admin-hub.js -->
+            <div class="hub-ecosystem-grid" id="hub-featured-grid">
+              <!-- Populated by admin-hub.js with bespoke abstract art -->
+            </div>
+          </section>
+
+          <div class="hub-divider"></div>
+
+          <!-- SECTION: NAKES TELEMETRY & LIVE SYSTEM RADAR -->
+          <section class="hub-section" id="hub-telemetry-bento-section" data-section="operations">
+            <div class="hub-section-head" style="margin-bottom: 12px;">
+              <h2 class="bento-section-label">Telemetry &amp; System Radar</h2>
+              <button type="button" class="hub-link-btn" id="btn-radar-refresh">Refresh Check</button>
+            </div>
+
+            <div class="hub-bento-2col">
+              <!-- Card C: Nakes & Consultation Ring -->
+              <div class="bento-card bento-telemetry-card">
+                <div class="telemetry-ring-wrap">
+                  <svg class="telemetry-donut" viewBox="0 0 80 80" aria-hidden="true">
+                    <circle class="donut-track" cx="40" cy="40" r="30" />
+                    <circle class="donut-seg-pasien" id="donut-seg-pasien" cx="40" cy="40" r="30" stroke-dasharray="150 188.5" stroke-dashoffset="0" />
+                    <circle class="donut-seg-nakes" id="donut-seg-nakes" cx="40" cy="40" r="30" stroke-dasharray="30 188.5" stroke-dashoffset="-150" />
+                  </svg>
+                  <div class="donut-center-text">
+                    <span id="telemetry-total-users">--</span>
+                    <small>Users</small>
+                  </div>
+                </div>
+
+                <div class="telemetry-info">
+                  <div class="bento-title-row">
+                    <h3 class="bento-title-sm">Nakes &amp; Consultation</h3>
+                    <span class="compact-badge" id="telemetry-docs-badge">-- docs</span>
+                  </div>
+                  <p class="bento-desc-sm" id="telemetry-breakdown-text">Memuat proporsi pasien &amp; tenaga kesehatan...</p>
+                  <div class="bento-inline-actions" style="margin-top: 12px;">
+                    <button type="button" class="bento-pill-btn" data-bento-open="data-nakes">View Directory</button>
+                    <button type="button" class="bento-pill-btn" data-bento-open="statistik-analytics">Stats</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card D: System Health & Active Presence Radar -->
+              <div class="bento-card bento-radar-card">
+                <div class="bento-title-row" style="margin-bottom: 10px;">
+                  <h3 class="bento-title-sm">System Health &amp; Presence</h3>
+                  <span class="compact-badge" id="radar-online-badge">Checking...</span>
+                </div>
+
+                <div class="radar-matrix">
+                  <div class="radar-row">
+                    <span class="radar-dot radar-dot--ok" id="radar-dot-db"></span>
+                    <span class="radar-label">MySQL &amp; Collections</span>
+                    <span class="radar-val" id="radar-val-db">Ready</span>
+                  </div>
+                  <div class="radar-row">
+                    <span class="radar-dot radar-dot--ok" id="radar-dot-ai"></span>
+                    <span class="radar-label">AI Inference Engine</span>
+                    <span class="radar-val" id="radar-val-ai">Online</span>
+                  </div>
+                  <div class="radar-row">
+                    <span class="radar-dot radar-dot--accent" id="radar-dot-admins"></span>
+                    <span class="radar-label">Active Admins</span>
+                    <span class="radar-val" id="radar-val-admins">1 online</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -350,7 +562,7 @@
 
   <script src="/js/auth-guard.js?v=1.1"></script>
   <script src="/js/admin-dataset-drawer.js?v=1.0"></script>
-  <script src="/js/admin-hub.js?v=1.1"></script>
+  <script src="/js/admin-hub.js?v=1.4"></script>
 </body>
 
 </html>

@@ -65,7 +65,7 @@
     },
   ];
 
-  const DATASET_CARDS = [
+  const BENTO_DATASETS = [
     {
       id: 'dataset-original',
       category: 'datasets',
@@ -102,6 +102,9 @@
       actionLabel: 'Jalankan /eval di Chat',
       href: '/chat',
     },
+  ];
+
+  const DATASET_CARDS = [
     {
       id: 'dataset-intents',
       category: 'datasets',
@@ -239,11 +242,50 @@
   let searchQuery = '';
 
   function allCompactCards() {
-    return [...DATASET_CARDS, ...OPERATION_CARDS];
+    return [...BENTO_DATASETS, ...DATASET_CARDS, ...OPERATION_CARDS];
   }
 
   function findCardById(id) {
     return [...FEATURED_CARDS, ...allCompactCards()].find(c => c.id === id);
+  }
+
+  function getEcosystemArt(id) {
+    if (id === 'welcome') {
+      return `
+        <div class="eco-browser" aria-hidden="true">
+          <div class="eco-browser-dots"><span></span><span></span><span></span></div>
+          <div class="eco-browser-hero"><div class="eco-browser-pill"></div></div>
+        </div>
+      `;
+    }
+    if (id === 'riset') {
+      return `
+        <div class="eco-editorial" aria-hidden="true">
+          <div class="eco-doc eco-doc-back"></div>
+          <div class="eco-doc eco-doc-front">
+            <div class="eco-doc-line eco-doc-line--accent"></div>
+            <div class="eco-doc-line"></div>
+            <div class="eco-doc-line" style="width:72%"></div>
+          </div>
+        </div>
+      `;
+    }
+    if (id === 'manajemen-struktur') {
+      return `
+        <svg class="eco-nodes-svg" viewBox="0 0 150 76" fill="none" aria-hidden="true">
+          <line x1="28" y1="24" x2="75" y2="38" stroke="currentColor" stroke-width="1.4" opacity="0.45" />
+          <line x1="75" y1="38" x2="122" y2="20" stroke="currentColor" stroke-width="1.4" opacity="0.45" />
+          <line x1="75" y1="38" x2="118" y2="58" stroke="currentColor" stroke-width="1.4" opacity="0.45" />
+          <line x1="28" y1="24" x2="36" y2="56" stroke="currentColor" stroke-width="1.4" opacity="0.35" />
+          <circle class="node-circle" cx="28" cy="24" r="6" fill="var(--hub-bg)" stroke="currentColor" stroke-width="1.6" />
+          <circle class="node-circle" cx="36" cy="56" r="5" fill="var(--hub-bg)" stroke="currentColor" stroke-width="1.5" />
+          <circle class="node-circle node-accent" cx="75" cy="38" r="7" />
+          <circle class="node-circle" cx="122" cy="20" r="5.5" fill="var(--hub-bg)" stroke="currentColor" stroke-width="1.5" />
+          <circle class="node-circle" cx="118" cy="58" r="5.5" fill="var(--hub-bg)" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      `;
+    }
+    return '';
   }
 
   function renderFeatured() {
@@ -251,6 +293,7 @@
     if (!grid) return;
     const q = searchQuery.trim().toLowerCase();
     const list = FEATURED_CARDS.filter(c => {
+      if (c.id === 'neura-chat') return false;
       const catMatch = activeCategory === 'all' || activeCategory === c.category;
       const qMatch = !q || c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q) || c.id.includes(q);
       return catMatch && qMatch;
@@ -260,13 +303,10 @@
     if (sec) sec.style.display = list.length ? '' : 'none';
 
     grid.innerHTML = list.map(c => `
-      <a href="${c.href}" class="featured-card" data-card-id="${c.id}">
-        <div class="featured-preview">
-          <span class="featured-preview-tag">${c.tag}</span>
-          <div class="featured-preview-label">
-            ${c.icon}
-            <span>${c.title}</span>
-          </div>
+      <a href="${c.href}" class="eco-card" data-card-id="${c.id}">
+        <div class="eco-art-box">
+          <span class="eco-tag" id="eco-tag-${c.id}">${c.tag}</span>
+          ${getEcosystemArt(c.id)}
         </div>
         <div class="featured-title">${c.title}</div>
         <div class="featured-desc">${c.desc}</div>
@@ -312,6 +352,33 @@
   }
 
   function renderAll() {
+    const q = searchQuery.trim().toLowerCase();
+    const welcomeBanner = document.getElementById('hub-welcome-banner');
+    if (welcomeBanner) {
+      welcomeBanner.style.display = (activeCategory === 'all' && !q) ? '' : 'none';
+    }
+
+    const bentoSection = document.getElementById('hub-dataset-bento-section');
+    if (bentoSection) {
+      const showBento = (activeCategory === 'all' || activeCategory === 'datasets') &&
+        (!q || 'dataset original training testing alzheimers csv'.includes(q) || q.includes('dataset'));
+      bentoSection.style.display = showBento ? '' : 'none';
+    }
+
+    const aiBentoSection = document.getElementById('hub-ai-bento-section');
+    if (aiBentoSection) {
+      const showAi = (activeCategory === 'all' || activeCategory === 'datasets' || activeCategory === 'platform') &&
+        (!q || 'ai engine train eval neura chat commands status predict progress'.includes(q));
+      aiBentoSection.style.display = showAi ? '' : 'none';
+    }
+
+    const telemetrySection = document.getElementById('hub-telemetry-bento-section');
+    if (telemetrySection) {
+      const showTel = (activeCategory === 'all' || activeCategory === 'nakes' || activeCategory === 'operations') &&
+        (!q || 'nakes telemetry system health presence mysql radar'.includes(q));
+      telemetrySection.style.display = showTel ? '' : 'none';
+    }
+
     renderFeatured();
     renderCompactGrid('hub-datasets-grid', DATASET_CARDS);
     renderCompactGrid('hub-operations-grid', OPERATION_CARDS);
@@ -396,7 +463,11 @@
         if (badge && typeof info.rows === 'number') {
           badge.textContent = `${info.rows.toLocaleString()} rows`;
         }
-        const card = DATASET_CARDS.find(d => d.id === key);
+        const bentoBadge = document.getElementById(`bento-badge-${key}`);
+        if (bentoBadge && typeof info.rows === 'number') {
+          bentoBadge.textContent = `${info.rows.toLocaleString()} rows`;
+        }
+        const card = [...BENTO_DATASETS, ...DATASET_CARDS].find(d => d.id === key);
         if (card && info.columns) {
           card.badge = `${info.rows.toLocaleString()} rows`;
         }
@@ -488,6 +559,14 @@
       if (item) window.AdminHubDrawer.open(item);
     });
 
+    // Bento dataset cards & Open button
+    document.querySelectorAll('[data-bento-open]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = findCardById(btn.dataset.bentoOpen);
+        if (item) window.AdminHubDrawer.open(item);
+      });
+    });
+
     // Settings quick view
     document.getElementById('sb1-settings-btn')?.addEventListener('click', () => {
       const item = findCardById('system-settings');
@@ -527,7 +606,160 @@
         el.textContent = String(name).trim().charAt(0).toUpperCase() || 'A';
         el.title = name;
       }
+      const heroNameEl = document.getElementById('hub-welcome-name');
+      if (heroNameEl) {
+        heroNameEl.textContent = name;
+      }
     } catch (e) {}
+  }
+
+  let _trainPollTimer = null;
+
+  function setInlineAiStatus(visible, msg, pct) {
+    const box = document.getElementById('ai-inline-status');
+    const msgEl = document.getElementById('ai-inline-msg');
+    const pctEl = document.getElementById('ai-inline-pct');
+    const fillEl = document.getElementById('ai-progress-fill');
+    if (!box) return;
+    box.style.display = visible ? 'block' : 'none';
+    if (msgEl && msg !== undefined) msgEl.textContent = msg;
+    if (pctEl && pct !== undefined) pctEl.textContent = `${pct}%`;
+    if (fillEl && pct !== undefined) fillEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  }
+
+  async function runInlineEvaluate() {
+    setInlineAiStatus(true, 'Menjalankan evaluasi model...', 45);
+    try {
+      const res = await fetch('/api/evaluate');
+      const data = await res.json();
+      const acc = data.accuracy ?? data.test_accuracy ?? data.metrics?.accuracy;
+      if (acc !== undefined) {
+        const pct = Number(acc) <= 1 ? (Number(acc) * 100).toFixed(2) : Number(acc).toFixed(2);
+        const badge = document.getElementById('ai-accuracy-badge');
+        if (badge) badge.textContent = `${pct}% Acc`;
+        setInlineAiStatus(true, `Evaluasi selesai: Akurasi ${pct}%`, 100);
+      } else {
+        setInlineAiStatus(true, data.message || 'Evaluasi selesai.', 100);
+      }
+    } catch (err) {
+      setInlineAiStatus(true, `Gagal evaluasi: ${err.message}`, 0);
+    }
+  }
+
+  function pollTrainProgress() {
+    if (_trainPollTimer) clearInterval(_trainPollTimer);
+    _trainPollTimer = setInterval(async () => {
+      try {
+        const res = await fetch('/api/train/progress');
+        const data = await res.json();
+        const prog = Array.isArray(data.progress) ? data.progress : [];
+        const total = data.total_epochs || 5;
+        const pct = total > 0 ? Math.min(100, Math.round((prog.length / total) * 100)) : 50;
+        if (data.running) {
+          setInlineAiStatus(true, `Training Epoch ${prog.length}/${total}...`, pct);
+        } else {
+          clearInterval(_trainPollTimer);
+          _trainPollTimer = null;
+          setInlineAiStatus(true, data.error ? `Error: ${data.error}` : 'Training selesai!', data.error ? 0 : 100);
+        }
+      } catch (e) {
+        clearInterval(_trainPollTimer);
+        _trainPollTimer = null;
+      }
+    }, 1200);
+  }
+
+  async function runInlineTrain() {
+    setInlineAiStatus(true, 'Memulai training 5 epochs...', 10);
+    try {
+      const res = await fetch('/api/train', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Neura-Role': 'admin' },
+        body: JSON.stringify({ epochs: 5, role: 'admin' }),
+      });
+      const data = await res.json();
+      if (res.status === 409) {
+        setInlineAiStatus(true, 'Training sedang berjalan, memantau progress...', 35);
+        pollTrainProgress();
+        return;
+      }
+      if (!res.ok) {
+        setInlineAiStatus(true, data.error || 'Gagal memulai training.', 0);
+        return;
+      }
+      pollTrainProgress();
+    } catch (err) {
+      setInlineAiStatus(true, `Gagal memulai training: ${err.message}`, 0);
+    }
+  }
+
+  async function hydrateTelemetryAndRadar() {
+    const onlineBadge = document.getElementById('radar-online-badge');
+    if (onlineBadge) onlineBadge.textContent = 'Checking...';
+
+    // 1. Platform Stats & Donut Ring
+    try {
+      const res = await fetch('/api/admin/stats');
+      const data = await res.json();
+      const kpis = data.platform_kpis || {};
+      const bd = data.user_breakdown || {};
+      const total = Math.max(1, Number(kpis.total_users || 0));
+      const pasien = Number(bd.pasien || 0);
+      const nakes = Number(bd.nakes || 0);
+
+      const totalEl = document.getElementById('telemetry-total-users');
+      if (totalEl) totalEl.textContent = kpis.total_users ?? '--';
+
+      const docsEl = document.getElementById('telemetry-docs-badge');
+      if (docsEl) docsEl.textContent = `${kpis.total_consultation_docs ?? 0} docs`;
+
+      const textEl = document.getElementById('telemetry-breakdown-text');
+      if (textEl) textEl.textContent = `${pasien} Pasien · ${nakes} Nakes · ${bd.admin ?? 0} Admin`;
+
+      const accBadge = document.getElementById('ai-accuracy-badge');
+      if (accBadge && kpis.ai_model_accuracy) accBadge.textContent = `${kpis.ai_model_accuracy} Acc`;
+
+      const circ = 188.5;
+      const pLen = (pasien / total) * circ;
+      const nLen = (nakes / total) * circ;
+      const segP = document.getElementById('donut-seg-pasien');
+      const segN = document.getElementById('donut-seg-nakes');
+      if (segP && segN) {
+        segP.setAttribute('stroke-dasharray', `${pLen.toFixed(1)} ${circ}`);
+        segN.setAttribute('stroke-dasharray', `${nLen.toFixed(1)} ${circ}`);
+        segN.setAttribute('stroke-dashoffset', `${(-pLen).toFixed(1)}`);
+      }
+    } catch (e) {}
+
+    // 2. Research Articles Count
+    try {
+      const res = await fetch('/api/research');
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : (data.articles || data.data || []);
+      const ecoTag = document.getElementById('eco-tag-riset');
+      if (ecoTag && items.length) ecoTag.textContent = `${items.length} artikel`;
+    } catch (e) {}
+
+    // 3. Database & Active Admins Radar
+    try {
+      const [colRes, presRes] = await Promise.all([
+        fetch('/api/database/collections').then(r => r.json()).catch(() => null),
+        fetch('/api/admin/active-collaborators').then(r => r.json()).catch(() => null),
+      ]);
+
+      const dbVal = document.getElementById('radar-val-db');
+      if (dbVal && colRes?.collections) {
+        dbVal.textContent = `${colRes.collections.length} collections`;
+      }
+
+      const admins = presRes?.collaborators || presRes?.active || [];
+      const adminsVal = document.getElementById('radar-val-admins');
+      if (adminsVal) adminsVal.textContent = `${Math.max(1, admins.length)} online`;
+
+      if (onlineBadge) onlineBadge.textContent = 'All Systems OK';
+    } catch (e) {
+      if (onlineBadge) onlineBadge.textContent = 'Partial';
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -537,5 +769,24 @@
     hydrateAdminAvatar();
     renderAll();
     hydrateLiveDatasetBadges();
+    hydrateTelemetryAndRadar();
+
+    document.getElementById('btn-inline-eval')?.addEventListener('click', runInlineEvaluate);
+    document.getElementById('btn-inline-train')?.addEventListener('click', runInlineTrain);
+    document.getElementById('btn-radar-refresh')?.addEventListener('click', hydrateTelemetryAndRadar);
+
+    document.querySelectorAll('.cmd-chip[data-cmd]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const cmd = chip.dataset.cmd;
+        if (cmd === 'eval') {
+          runInlineEvaluate();
+        } else if (cmd === 'progress') {
+          setInlineAiStatus(true, 'Memeriksa progress training...', 50);
+          pollTrainProgress();
+        } else {
+          window.location.href = '/chat';
+        }
+      });
+    });
   });
 })();
