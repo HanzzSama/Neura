@@ -289,30 +289,33 @@
 
       function applyFormatAndVersion(mat, mask) {
         const fmt = computeFormatBits(mask);
+        // Copy 1 (top-left): b14..b9 -> (8, 0..5), b8 -> (8,7), b7 -> (8,8), b6 -> (7,8), b5..b0 -> (5..0, 8)
+        // Copy 2 (bottom-left & top-right): b14..b8 -> (size-1..size-7, 8), b7..b0 -> (8, size-8..size-1)
+        const bit = (idx) => (fmt >> idx) & 1;
         for (let i = 0; i < 6; i++) {
-          const bit = (fmt >> i) & 1;
-          mat[8][i] = bit;
-          mat[size - 1 - i][8] = bit;
+          const b = bit(14 - i);
+          mat[8][i] = b;
+          mat[size - 1 - i][8] = b;
         }
-        mat[8][7] = (fmt >> 6) & 1;
-        mat[size - 7][8] = (fmt >> 6) & 1;
-        mat[8][8] = (fmt >> 7) & 1;
-        mat[8][size - 8] = (fmt >> 7) & 1;
-        mat[7][8] = (fmt >> 8) & 1;
-        mat[8][size - 7] = (fmt >> 8) & 1;
-        for (let i = 9; i < 15; i++) {
-          const bit = (fmt >> i) & 1;
-          mat[14 - i][8] = bit;
-          mat[8][size - 15 + i] = bit;
+        mat[8][7] = bit(8);
+        mat[size - 7][8] = bit(8);
+        mat[8][8] = bit(7);
+        mat[8][size - 8] = bit(7);
+        mat[7][8] = bit(6);
+        mat[8][size - 7] = bit(6);
+        for (let i = 0; i < 6; i++) {
+          const b = bit(5 - i);
+          mat[5 - i][8] = b;
+          mat[8][size - 6 + i] = b;
         }
         if (version >= 7) {
           const vb = computeVersionBits(version);
           for (let i = 0; i < 18; i++) {
-            const bit = (vb >> i) & 1;
+            const vbit = (vb >> i) & 1;
             const a = Math.floor(i / 3);
             const b = i % 3;
-            mat[a][size - 11 + b] = bit;
-            mat[size - 11 + b][a] = bit;
+            mat[a][size - 11 + b] = vbit;
+            mat[size - 11 + b][a] = vbit;
           }
         }
       }
@@ -369,7 +372,7 @@
     function toSvg(text) {
       const { version, size, codewords } = encodeData(text);
       const mat = buildMatrix(version, size, codewords);
-      const quiet = 2;
+      const quiet = 4;
       const dim = size + quiet * 2;
       let rects = "";
       for (let r = 0; r < size; r++) {
@@ -379,7 +382,7 @@
           }
         }
       }
-      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${dim} ${dim}" role="img" aria-label="QR Code">${rects}</svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${dim} ${dim}" role="img" aria-label="QR Code"><rect width="${dim}" height="${dim}" fill="#ffffff"/><g fill="#000000">${rects}</g></svg>`;
     }
 
     return { toSvg };
