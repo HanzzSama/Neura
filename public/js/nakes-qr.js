@@ -521,18 +521,41 @@
     }
   }
 
+  async function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (_) {}
+    }
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "-9999px";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch (_) {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
   if (elCopyCodeBtn) {
     elCopyCodeBtn.addEventListener("click", async () => {
       if (!state.code) return;
-      try {
-        await navigator.clipboard.writeText(state.code);
-        elCopyCodeBtn.textContent = "Tersalin";
-        setTimeout(() => {
-          elCopyCodeBtn.textContent = "Salin Kode";
-        }, 1600);
-      } catch (_) {
-        elCopyCodeBtn.textContent = state.code;
-      }
+      const ok = await copyToClipboard(state.code);
+      elCopyCodeBtn.textContent = ok ? "Tersalin" : "Gagal Salin";
+      setTimeout(() => {
+        elCopyCodeBtn.textContent = "Salin Kode";
+      }, 1600);
     });
   }
 

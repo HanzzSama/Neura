@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neura AI — Registrasi Tenaga Kesehatan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
+    rel="stylesheet" />
   <style>
     :root {
       --bg: #141413;
@@ -45,7 +48,9 @@
       --err-bg: rgba(220, 38, 38, 0.08);
     }
 
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
     }
 
@@ -53,7 +58,8 @@
       display: none !important;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       min-height: 100%;
@@ -72,8 +78,10 @@
     }
 
     /* Minimal Topbar */
+    /* Topbar */
     .cl-topbar {
-      max-width: 520px;
+      max-width: 580px;
+      max-width: 540px;
       width: 100%;
       margin: 0 auto;
       display: flex;
@@ -124,6 +132,8 @@
       border: 1px solid var(--border);
       background: var(--surface);
       font-size: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
       font-weight: 500;
       color: var(--text-secondary);
       white-space: nowrap;
@@ -165,6 +175,7 @@
     }
 
     /* Main Centered Card */
+    /* Main Card */
     .cl-main {
       display: flex;
       align-items: center;
@@ -174,308 +185,479 @@
 
     .cl-card {
       width: 100%;
-      max-width: 500px;
+      max-width: 580px;
+      max-width: 540px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 32px;
+      padding: 36px 40px;
+      padding: 34px 38px;
       display: flex;
       flex-direction: column;
+      gap: 24px;
       gap: 22px;
     }
 
     .cl-header {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
 
-    .cl-kicker {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    .cl-ttl {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .cl-title {
-      margin: 0;
-      font-family: var(--font-serif);
-      font-size: 28px;
-      font-weight: 500;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      color: var(--text);
-    }
-
-    .cl-subtitle {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-    }
-
-    .cl-subtitle code {
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      color: var(--text);
-      background: var(--input-bg);
-      padding: 1px 6px;
-      border-radius: 5px;
-    }
-
-    /* Form */
-    .cl-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .cl-row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .cl-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .cl-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .cl-hint {
-      font-size: 11.5px;
-      color: var(--text-muted);
-    }
-
-    .cl-input,
-    .cl-select {
-      width: 100%;
-      min-height: 42px;
-      padding: 10px 13px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      color: var(--text);
-      font-family: var(--font-sans);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.16s ease, background 0.16s ease;
-    }
-
-    .cl-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .cl-input:focus,
-    .cl-select:focus {
-      border-color: var(--accent);
-    }
-
-    .cl-input.mono {
-      font-family: var(--font-mono);
-      font-size: 13.5px;
-      letter-spacing: 0.04em;
-    }
-
-    .cl-code-row {
-      display: flex;
-      gap: 8px;
-      align-items: stretch;
-    }
-
-    .cl-code-row .cl-input {
-      flex: 1;
-      min-width: 0;
-      text-transform: uppercase;
-    }
-
-    .cl-verify-btn {
-      min-height: 42px;
-      padding: 0 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border-strong);
-      background: var(--surface);
-      color: var(--text);
-      font-family: var(--font-sans);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: border-color 0.16s ease, background 0.16s ease;
-    }
-
-    .cl-verify-btn:hover {
-      border-color: var(--accent);
-    }
-
-    .cl-alert {
-      padding: 11px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text-secondary);
-    }
-
-    .cl-alert.err {
-      border-color: rgba(248, 113, 113, 0.35);
-      background: var(--err-bg);
-      color: var(--err);
-    }
-
-    .cl-alert.ok {
-      border-color: rgba(52, 211, 153, 0.35);
-      background: var(--ok-bg);
-      color: var(--ok);
-    }
-
-    .cl-submit-btn {
-      width: 100%;
-      min-height: 46px;
-      margin-top: 4px;
-      border: none;
-      border-radius: 10px;
-      background: var(--accent);
-      color: #ffffff;
-      font-family: var(--font-sans);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.16s ease, opacity 0.16s ease;
-    }
-
-    .cl-submit-btn:hover:not(:disabled) {
-      background: var(--accent-hover);
-    }
-
-    .cl-submit-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    /* Success Credentials */
-    .cl-cred-box {
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .cl-cred-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .cl-cred-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .cl-cred-row span {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .cl-cred-row strong {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      user-select: all;
-      word-break: break-all;
-    }
-
-    .cl-primary-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 46px;
-      border-radius: 10px;
-      background: var(--accent);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      transition: background 0.16s ease;
-    }
-
-    .cl-primary-link:hover {
-      background: var(--accent-hover);
-    }
-
-    .cl-footer {
-      max-width: 520px;
-      width: 100%;
-      margin: 0 auto;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    @media (max-width: 560px) {
-      .cl-shell {
-        padding: 14px;
-      }
-      .cl-main {
-        padding: 16px 0;
-      }
-      .cl-card {
-        border-radius: 16px;
-        padding: 22px 18px;
-        gap: 18px;
-      }
-      .cl-title {
-        font-size: 24px;
-      }
-      .cl-row-2 {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .cl-input,
-      .cl-select {
-        font-size: 16px;
-        min-height: 44px;
-      }
-      .cl-input.mono {
-        font-size: 15px;
-      }
-      .cl-verify-btn {
-        min-height: 44px;
-      }
-      .cl-cred-row {
+      /* Telemetry Step Bar */
+      .cl-telemetry-head {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
+        gap: 8px;
+        gap: 10px;
       }
-    }
+
+      .cl-kicker {
+        .cl-telemetry-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 12px;
+          gap: 10px;
+          font-family: var(--font-mono);
+          font-size: 11px;
+          letter-spacing: 0.04em;
+        }
+
+        .cl-step-tag {
+          color: var(--accent);
+          font-weight: 500;
+          font-weight: 600;
+        }
+
+        .cl-ttl {
+          font-family: var(--font-mono);
+          font-size: 11px;
+
+          .cl-ttl-tag {
+            color: var(--text-muted);
+          }
+
+          .cl-rail {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+          }
+
+          .cl-rail-seg {
+            height: 3px;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background 0.22s ease;
+          }
+
+          .cl-rail-seg.is-done,
+          .cl-rail-seg.is-active {
+            background: var(--accent);
+          }
+
+          /* Slides */
+          .cl-slide {
+            display: none;
+            flex-direction: column;
+            gap: 18px;
+          }
+
+          .cl-slide.is-active {
+            display: flex;
+          }
+
+          .cl-slide.anim-next {
+            animation: slideInNext 240ms cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          .cl-slide.anim-prev {
+            animation: slideInPrev 240ms cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          @keyframes slideInNext {
+            from {
+              opacity: 0;
+              transform: translateX(14px);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          @keyframes slideInPrev {
+            from {
+              opacity: 0;
+              transform: translateX(-14px);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          .cl-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+          }
+
+          .cl-title {
+            margin: 0;
+            font-family: var(--font-serif);
+            font-size: 28px;
+            font-size: 27px;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: var(--text);
+          }
+
+          .cl-subtitle {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.55;
+            color: var(--text-secondary);
+          }
+
+          .cl-subtitle code {
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            color: var(--text);
+            background: var(--input-bg);
+            padding: 1px 6px;
+            border-radius: 5px;
+          }
+
+          /* Form */
+          .cl-form {
+
+            /* Fields */
+            .cl-fields {
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              gap: 14px;
+            }
+
+            .cl-row-2 {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+              gap: 14px;
+            }
+
+            .cl-field {
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+            }
+
+            .cl-label {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              font-size: 12.5px;
+              font-weight: 500;
+              color: var(--text-secondary);
+            }
+
+            .cl-hint {
+              font-size: 11.5px;
+              font-family: var(--font-mono);
+              font-size: 11px;
+              color: var(--text-muted);
+            }
+
+            .cl-input,
+            .cl-select {
+              width: 100%;
+              min-height: 42px;
+              padding: 10px 13px;
+              min-height: 44px;
+              padding: 10px 14px;
+              border-radius: 10px;
+              border: 1px solid var(--border);
+              background: var(--input-bg);
+              color: var(--text);
+              font-family: var(--font-sans);
+              font-size: 14px;
+              outline: none;
+              transition: border-color 0.16s ease, background 0.16s ease;
+              transition: border-color 0.16s ease;
+            }
+
+            .cl-select {
+              appearance: none;
+              -webkit-appearance: none;
+              padding-right: 36px;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238a8880' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+              background-repeat: no-repeat;
+              background-position: right 12px center;
+              cursor: pointer;
+            }
+
+            .cl-input::placeholder {
+              color: var(--text-muted);
+            }
+
+            .cl-input:focus,
+            .cl-select:focus {
+              border-color: var(--accent);
+            }
+
+            .cl-input.mono {
+              font-family: var(--font-mono);
+              font-size: 13.5px;
+              letter-spacing: 0.04em;
+              font-size: 14px;
+              letter-spacing: 0.05em;
+            }
+
+            .cl-code-row {
+              display: flex;
+              gap: 8px;
+              align-items: stretch;
+            }
+
+            .cl-code-row .cl-input {
+              flex: 1;
+              min-width: 0;
+
+              .cl-input.code-lg {
+                font-family: var(--font-mono);
+                font-size: 18px;
+                font-weight: 600;
+                letter-spacing: 0.12em;
+                text-align: center;
+                text-transform: uppercase;
+                min-height: 52px;
+              }
+
+              .cl-verify-btn {
+                min-height: 42px;
+                padding: 0 14px;
+                border-radius: 10px;
+                border: 1px solid var(--border-strong);
+                background: var(--surface);
+                color: var(--text);
+                font-family: var(--font-sans);
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: border-color 0.16s ease, background 0.16s ease;
+              }
+
+              .cl-verify-btn:hover {
+                border-color: var(--accent);
+              }
+
+              .cl-alert {
+                padding: 11px 14px;
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                background: var(--input-bg);
+                font-size: 13px;
+                line-height: 1.5;
+                color: var(--text-secondary);
+              }
+
+              .cl-alert.err {
+                border-color: rgba(248, 113, 113, 0.35);
+                background: var(--err-bg);
+                color: var(--err);
+              }
+
+              .cl-alert.ok {
+                border-color: rgba(52, 211, 153, 0.35);
+                background: var(--ok-bg);
+                color: var(--ok);
+
+                /* Slide Navigation */
+                .cl-nav {
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 10px;
+                  padding-top: 6px;
+                }
+
+                .cl-submit-btn {
+                  width: 100%;
+                  min-height: 46px;
+                  margin-top: 4px;
+
+                  .cl-btn-back {
+                    min-height: 44px;
+                    padding: 0 18px;
+                    border-radius: 10px;
+                    border: 1px solid var(--border-strong);
+                    background: transparent;
+                    color: var(--text-secondary);
+                    font-family: var(--font-sans);
+                    font-size: 14px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: border-color 0.16s ease, color 0.16s ease;
+                  }
+
+                  .cl-btn-back:hover {
+                    border-color: var(--text-muted);
+                    color: var(--text);
+                  }
+
+                  .cl-btn-next {
+                    flex: 1;
+                    min-height: 44px;
+                    padding: 0 20px;
+                    border: none;
+                    border-radius: 10px;
+                    background: var(--accent);
+                    color: #ffffff;
+                    font-family: var(--font-sans);
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: background 0.16s ease, opacity 0.16s ease;
+                  }
+
+                  .cl-submit-btn:hover:not(:disabled) {
+                    .cl-btn-next:hover:not(:disabled) {
+                      background: var(--accent-hover);
+                    }
+
+                    .cl-submit-btn:disabled {
+                      .cl-btn-next:disabled {
+                        opacity: 0.55;
+                        cursor: not-allowed;
+                      }
+
+                      /* Success Credentials */
+                      /* Success Card */
+                      .cl-cred-box {
+                        border: 1px solid var(--border);
+                        background: var(--input-bg);
+                        border-radius: 12px;
+                        padding: 16px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+                      }
+
+                      .cl-cred-row {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 12px;
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid var(--border);
+                      }
+
+                      .cl-cred-row:last-child {
+                        border-bottom: none;
+                        padding-bottom: 0;
+                      }
+
+                      .cl-cred-row span {
+                        font-size: 12px;
+                        color: var(--text-muted);
+                      }
+
+                      .cl-cred-row strong {
+                        font-family: var(--font-mono);
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: var(--text);
+                        user-select: all;
+                        word-break: break-all;
+                      }
+
+                      .cl-success-actions {
+                        display: flex;
+                        gap: 10px;
+                      }
+
+                      .cl-primary-link {
+                        flex: 1;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 100%;
+                        min-height: 46px;
+                        border-radius: 10px;
+                        background: var(--accent);
+                        color: #ffffff;
+                        text-decoration: none;
+                        font-size: 14px;
+                        font-weight: 600;
+                        transition: background 0.16s ease;
+                      }
+
+                      .cl-primary-link:hover {
+                        background: var(--accent-hover);
+                      }
+
+                      .cl-footer {
+                        max-width: 520px;
+                        max-width: 540px;
+                        width: 100%;
+                        margin: 0 auto;
+                        text-align: center;
+                        font-size: 12px;
+                        color: var(--text-muted);
+                      }
+
+                      @media (max-width: 560px) {
+                        .cl-shell {
+                          padding: 14px;
+                        }
+
+                        .cl-main {
+                          padding: 16px 0;
+                        }
+
+                        .cl-card {
+                          border-radius: 16px;
+                          padding: 22px 18px;
+                          gap: 18px;
+                        }
+
+                        .cl-title {
+                          font-size: 24px;
+                        }
+
+                        .cl-row-2 {
+                          grid-template-columns: 1fr;
+                          gap: 14px;
+                        }
+
+                        .cl-input,
+                        .cl-select {
+                          font-size: 16px;
+                          min-height: 44px;
+                        }
+
+                        .cl-input.mono {
+                          font-size: 15px;
+                        }
+
+                        .cl-verify-btn {
+                          min-height: 44px;
+                        }
+
+                        .cl-cred-row {
+                          flex-direction: column;
+                          align-items: flex-start;
+                          gap: 4px;
+                        }
+
+                        .cl-success-actions {
+                          flex-direction: column;
+                        }
+                      }
   </style>
 </head>
+
 <body>
   <div class="cl-shell">
     <header class="cl-topbar">
@@ -487,6 +669,7 @@
         <span class="cl-status-pill">
           <span class="cl-dot" id="nrInviteDot"></span>
           <span id="nrInviteStatus">Cek Kode</span>
+          <span id="nrInviteStatus">CEK KODE</span>
         </span>
         <button type="button" class="cl-theme-btn" id="nrThemeBtn">
           <span id="nrThemeLabel">Terang</span>
@@ -496,89 +679,237 @@
 
     <main class="cl-main">
       <!-- Registration Form Card -->
+      <!-- Wizard Card -->
       <section class="cl-card" id="nrFormCard">
         <div class="cl-header">
           <div class="cl-kicker">
             <span>Registrasi Tenaga Kesehatan</span>
             <span class="cl-ttl" id="nrCodeTtlTag">TTL 180s</span>
-          </div>
-          <h1 class="cl-title">Buat akun profesional Anda</h1>
-          <p class="cl-subtitle">
-            Lengkapi identitas klinis dengan kode undangan aktif untuk mendapatkan akses <code>@neura.ns.id</code>.
-          </p>
-        </div>
-
-        <div class="cl-alert" id="nrFeedbackBox" hidden></div>
-
-        <form class="cl-form" id="nrRegisterForm" novalidate>
-          <div class="cl-field">
-            <label class="cl-label" for="nrInviteCode">
-              <span>Kode Undangan</span>
-              <span class="cl-hint" id="nrInviteValidHint">Berlaku 3 menit</span>
-            </label>
-            <div class="cl-code-row">
-              <input class="cl-input mono" id="nrInviteCode" name="invite_code" placeholder="NKS-XXXX-XXXX" required />
-              <button type="button" class="cl-verify-btn" id="nrVerifyBtn">Verifikasi</button>
+            <!-- Telemetry Header & Progress Rail -->
+            <div class="cl-telemetry-head">
+              <div class="cl-telemetry-meta">
+                <span class="cl-step-tag" id="nrStepTag">STEP 01 / 04 · INVITE</span>
+                <span class="cl-ttl-tag" id="nrCodeTtlTag">TTL 180s</span>
+              </div>
+              <h1 class="cl-title">Buat akun profesional Anda</h1>
+              <p class="cl-subtitle">
+                Lengkapi identitas klinis dengan kode undangan aktif untuk mendapatkan akses <code>@neura.ns.id</code>.
+              </p>
+              <div class="cl-rail" aria-hidden="true">
+                <span class="cl-rail-seg is-active" data-rail="1"></span>
+                <span class="cl-rail-seg" data-rail="2"></span>
+                <span class="cl-rail-seg" data-rail="3"></span>
+                <span class="cl-rail-seg" data-rail="4"></span>
+              </div>
             </div>
-          </div>
 
-          <div class="cl-field">
-            <label class="cl-label" for="nrName">Nama Lengkap &amp; Gelar *</label>
-            <input class="cl-input" id="nrName" name="name" placeholder="dr. Budi Santoso, Sp.N" required />
-          </div>
+            <div class="cl-alert" id="nrFeedbackBox" hidden></div>
 
-          <div class="cl-row-2">
-            <div class="cl-field">
-              <label class="cl-label" for="nrProfession">Profesi / Spesialisasi *</label>
-              <select class="cl-select" id="nrProfession" name="profession">
-                <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi (Sp.N)</option>
-                <option value="Dokter Spesialis Geriatri (Sp.PD-KGer)">Dokter Spesialis Geriatri (Sp.PD-KGer)</option>
-                <option value="Dokter Umum">Dokter Umum</option>
-                <option value="Psikolog Klinis">Psikolog Klinis</option>
-                <option value="Perawat Neurologi / Geriatri">Perawat Neurologi / Geriatri</option>
-              </select>
-            </div>
-            <div class="cl-field">
-              <label class="cl-label" for="nrInstitution">Instansi / Faskes *</label>
-              <input class="cl-input" id="nrInstitution" name="institution" placeholder="RSUPN Dr. Cipto Mangunkusumo" required />
-            </div>
-          </div>
+            <form class="cl-form" id="nrRegisterForm" novalidate>
+              <div class="cl-field">
+                <label class="cl-label" for="nrInviteCode">
+                  <span>Kode Undangan</span>
+                  <span class="cl-hint" id="nrInviteValidHint">Berlaku 3 menit</span>
+                </label>
+                <div class="cl-code-row">
+                  <input class="cl-input mono" id="nrInviteCode" name="invite_code" placeholder="NKS-XXXX-XXXX"
+                    required />
+                  <button type="button" class="cl-verify-btn" id="nrVerifyBtn">Verifikasi</button>
+                  <form id="nrRegisterForm" novalidate>
+                    <!-- SLIDE 1: INVITE -->
+                    <div class="cl-slide is-active" data-step="1">
+                      <div class="cl-header">
+                        <h1 class="cl-title">Verifikasi kode undangan</h1>
+                        <p class="cl-subtitle">
+                          Masukkan kode undangan aktif 3-menit dari layar QR Administrator untuk memulai registrasi
+                          Nakes.
+                        </p>
+                      </div>
+                      <div class="cl-fields">
+                        <div class="cl-field">
+                          <label class="cl-label" for="nrInviteCode">
+                            <span>Kode Undangan</span>
+                            <span class="cl-hint" id="nrInviteValidHint">Berlaku 3 menit</span>
+                          </label>
+                          <input class="cl-input code-lg" id="nrInviteCode" name="invite_code"
+                            placeholder="NKS-XXXX-XXXX" autocomplete="off" spellcheck="false" required />
+                        </div>
+                      </div>
+                      <div class="cl-nav">
+                        <button type="button" class="cl-btn-next" id="nrNext1Btn">Verifikasi &amp; Lanjut →</button>
+                      </div>
+                    </div>
 
-          <div class="cl-row-2">
-            <div class="cl-field">
-              <label class="cl-label" for="nrStr">Nomor STR *</label>
-              <input class="cl-input mono" id="nrStr" name="str_number" placeholder="31.1.1.100.1.24.123456" required />
-            </div>
-            <div class="cl-field">
-              <label class="cl-label" for="nrSip">Nomor SIP (Opsional)</label>
-              <input class="cl-input mono" id="nrSip" name="sip_number" placeholder="503/SIP/123/Dinkes/2026" />
-            </div>
-          </div>
+                    <div class="cl-field">
+                      <label class="cl-label" for="nrName">Nama Lengkap &amp; Gelar *</label>
+                      <input class="cl-input" id="nrName" name="name" placeholder="dr. Budi Santoso, Sp.N" required />
+                      <!-- SLIDE 2: IDENTITY -->
+                      <div class="cl-slide" data-step="2">
+                        <div class="cl-header">
+                          <h1 class="cl-title">Identitas profesional</h1>
+                          <p class="cl-subtitle">
+                            Nama dan spesialisasi Anda akan tampil pada direktori klinis dan sesi konsultasi pasien.
+                          </p>
+                        </div>
+                        <div class="cl-fields">
+                          <div class="cl-field">
+                            <label class="cl-label" for="nrName">Nama Lengkap &amp; Gelar *</label>
+                            <input class="cl-input" id="nrName" name="name" placeholder="dr. Budi Santoso, Sp.N"
+                              required />
+                          </div>
+                          <div class="cl-field">
+                            <label class="cl-label" for="nrProfession">Profesi / Spesialisasi *</label>
+                            <select class="cl-select" id="nrProfession" name="profession">
+                              <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi (Sp.N)
+                              </option>
+                              <option value="Dokter Spesialis Geriatri (Sp.PD-KGer)">Dokter Spesialis Geriatri
+                                (Sp.PD-KGer)</option>
+                              <option value="Dokter Umum">Dokter Umum</option>
+                              <option value="Psikolog Klinis">Psikolog Klinis</option>
+                              <option value="Perawat Neurologi / Geriatri">Perawat Neurologi / Geriatri</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="cl-nav">
+                          <button type="button" class="cl-btn-back" data-prev="1">← Kembali</button>
+                          <button type="button" class="cl-btn-next" data-next="3">Lanjut →</button>
+                        </div>
+                      </div>
 
-          <div class="cl-row-2">
-            <div class="cl-field">
-              <label class="cl-label" for="nrEmail">Email Pribadi *</label>
-              <input class="cl-input" id="nrEmail" name="real_email" type="email" placeholder="nama@klinik.id" required />
-            </div>
-            <div class="cl-field">
-              <label class="cl-label" for="nrPhone">No. Telepon / WA</label>
-              <input class="cl-input" id="nrPhone" name="phone" type="tel" placeholder="0812xxxxxxxx" />
-            </div>
-          </div>
+                      <div class="cl-field">
+                        <label class="cl-label" for="nrProfession">Profesi / Spesialisasi *</label>
+                        <select class="cl-select" id="nrProfession" name="profession">
+                          <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi (Sp.N)</option>
+                          <option value="Dokter Spesialis Geriatri (Sp.PD-KGer)">Dokter Spesialis Geriatri (Sp.PD-KGer)
+                          </option>
+                          <option value="Dokter Umum">Dokter Umum</option>
+                          <option value="Psikolog Klinis">Psikolog Klinis</option>
+                          <option value="Perawat Neurologi / Geriatri">Perawat Neurologi / Geriatri</option>
+                        </select>
+                      </div>
 
-          <div class="cl-field">
-            <label class="cl-label" for="nrPassword">Kata Sandi (Opsional, min. 6 karakter)</label>
-            <input class="cl-input" id="nrPassword" name="password" type="password" placeholder="Kosongkan untuk sandi otomatis" />
-          </div>
+                      <div class="cl-field">
+                        <label class="cl-label" for="nrInstitution">Instansi / Faskes *</label>
+                        <input class="cl-input" id="nrInstitution" name="institution"
+                          placeholder="RSUPN Dr. Cipto Mangunkusumo" required />
+                      </div>
 
-          <button type="submit" class="cl-submit-btn" id="nrSubmitBtn">
-            Daftarkan Akun Nakes
-          </button>
-        </form>
+                      <div class="cl-row-2">
+                        <div class="cl-field">
+                          <label class="cl-label" for="nrStr">Nomor STR *</label>
+                          <input class="cl-input mono" id="nrStr" name="str_number" placeholder="31.1.1.100.1.24.123456"
+                            required />
+                          <!-- SLIDE 3: CREDENTIALS -->
+                          <div class="cl-slide" data-step="3">
+                            <div class="cl-header">
+                              <h1 class="cl-title">Lisensi &amp; instansi klinis</h1>
+                              <p class="cl-subtitle">
+                                Lengkapi fasilitas kesehatan dan nomor registrasi praktik untuk validasi direktori
+                                Nakes.
+                              </p>
+                            </div>
+                            <div class="cl-field">
+                              <label class="cl-label" for="nrSip">Nomor SIP (Opsional)</label>
+                              <input class="cl-input mono" id="nrSip" name="sip_number"
+                                placeholder="503/SIP/123/Dinkes/2026" />
+                              <div class="cl-fields">
+                                <div class="cl-field">
+                                  <label class="cl-label" for="nrInstitution">Instansi / Faskes *</label>
+                                  <input class="cl-input" id="nrInstitution" name="institution"
+                                    placeholder="RSUPN Dr. Cipto Mangunkusumo" required />
+                                </div>
+                                <div class="cl-row-2">
+                                  <div class="cl-field">
+                                    <label class="cl-label" for="nrStr">Nomor STR *</label>
+                                    <input class="cl-input mono" id="nrStr" name="str_number"
+                                      placeholder="31.1.1.100.1.24.123456" required />
+                                  </div>
+                                  <div class="cl-field">
+                                    <label class="cl-label" for="nrSip">Nomor SIP (Opsional)</label>
+                                    <input class="cl-input mono" id="nrSip" name="sip_number"
+                                      placeholder="503/SIP/123/Dinkes/2026" />
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="cl-nav">
+                                <button type="button" class="cl-btn-back" data-prev="2">← Kembali</button>
+                                <button type="button" class="cl-btn-next" data-next="4">Lanjut →</button>
+                              </div>
+                            </div>
+
+                            <div class="cl-row-2">
+                              <div class="cl-field">
+                                <label class="cl-label" for="nrEmail">Email Pribadi *</label>
+                                <input class="cl-input" id="nrEmail" name="real_email" type="email"
+                                  placeholder="nama@klinik.id" required />
+                                <!-- SLIDE 4: ACCESS -->
+                                <div class="cl-slide" data-step="4">
+                                  <div class="cl-header">
+                                    <h1 class="cl-title">Kontak &amp; akses akun</h1>
+                                    <p class="cl-subtitle">
+                                      Email pribadi digunakan untuk membuat alamat klinis <code>@neura.ns.id</code> Anda
+                                      secara otomatis.
+                                    </p>
+                                  </div>
+                                  <div class="cl-field">
+                                    <label class="cl-label" for="nrPhone">No. Telepon / WA</label>
+                                    <input class="cl-input" id="nrPhone" name="phone" type="tel"
+                                      placeholder="0812xxxxxxxx" />
+                                    <div class="cl-fields">
+                                      <div class="cl-row-2">
+                                        <div class="cl-field">
+                                          <label class="cl-label" for="nrEmail">Email Pribadi *</label>
+                                          <input class="cl-input" id="nrEmail" name="real_email" type="email"
+                                            placeholder="nama@klinik.id" required />
+                                        </div>
+                                        <div class="cl-field">
+                                          <label class="cl-label" for="nrPhone">No. Telepon / WA</label>
+                                          <input class="cl-input" id="nrPhone" name="phone" type="tel"
+                                            placeholder="0812xxxxxxxx" />
+                                        </div>
+                                      </div>
+                                      <div class="cl-field">
+                                        <label class="cl-label" for="nrPassword">Kata Sandi (Opsional, min. 6
+                                          karakter)</label>
+                                        <input class="cl-input" id="nrPassword" name="password" type="password"
+                                          placeholder="Kosongkan untuk sandi otomatis" />
+                                      </div>
+                                    </div>
+                                    <div class="cl-nav">
+                                      <button type="button" class="cl-btn-back" data-prev="3">← Kembali</button>
+                                      <button type="submit" class="cl-btn-next" id="nrSubmitBtn">Daftarkan Akun
+                                        Nakes</button>
+                                    </div>
+                                  </div>
+
+                                  <div class="cl-field">
+                                    <label class="cl-label" for="nrPassword">Kata Sandi (Opsional, min. 6
+                                      karakter)</label>
+                                    <input class="cl-input" id="nrPassword" name="password" type="password"
+                                      placeholder="Kosongkan untuk sandi otomatis" />
+                                  </div>
+
+                                  <button type="submit" class="cl-submit-btn" id="nrSubmitBtn">
+                                    Daftarkan Akun Nakes
+                                  </button>
+                  </form>
       </section>
 
       <!-- Success Credential Card -->
       <section class="cl-card" id="nrSuccessCard" hidden>
+        <div class="cl-telemetry-head">
+          <div class="cl-telemetry-meta">
+            <span class="cl-step-tag">VERIFIED · @NEURA.NS.ID</span>
+            <span class="cl-ttl-tag">COMPLETE</span>
+          </div>
+          <div class="cl-rail" aria-hidden="true">
+            <span class="cl-rail-seg is-done"></span>
+            <span class="cl-rail-seg is-done"></span>
+            <span class="cl-rail-seg is-done"></span>
+            <span class="cl-rail-seg is-done"></span>
+          </div>
+        </div>
+
         <div class="cl-header">
           <div class="cl-kicker">
             <span>Registrasi Terverifikasi</span>
@@ -609,6 +940,10 @@
         </div>
 
         <a href="/welcome" class="cl-primary-link">Lanjut ke Halaman Masuk →</a>
+        <div class="cl-success-actions">
+          <button type="button" class="cl-btn-back" id="nrCopyCredBtn">Salin Kredensial</button>
+          <a href="/welcome" class="cl-primary-link">Lanjut ke Halaman Masuk →</a>
+        </div>
       </section>
     </main>
 
@@ -621,22 +956,36 @@
     (function () {
       "use strict";
 
+      const STEP_LABELS = {
+        1: "STEP 01 / 04 · INVITE",
+        2: "STEP 02 / 04 · IDENTITY",
+        3: "STEP 03 / 04 · CREDENTIALS",
+        4: "STEP 04 / 04 · ACCESS",
+      };
+
       const params = new URLSearchParams(window.location.search);
       const initialCode = (params.get("code") || "").trim().toUpperCase();
 
       const elCodeInput = document.getElementById("nrInviteCode");
       const elVerifyBtn = document.getElementById("nrVerifyBtn");
+      const elNext1Btn = document.getElementById("nrNext1Btn");
       const elInviteDot = document.getElementById("nrInviteDot");
       const elInviteStatus = document.getElementById("nrInviteStatus");
       const elInviteHint = document.getElementById("nrInviteValidHint");
       const elTtlTag = document.getElementById("nrCodeTtlTag");
+      const elStepTag = document.getElementById("nrStepTag");
       const elFeedback = document.getElementById("nrFeedbackBox");
       const elForm = document.getElementById("nrRegisterForm");
       const elSubmitBtn = document.getElementById("nrSubmitBtn");
       const elFormCard = document.getElementById("nrFormCard");
       const elSuccessCard = document.getElementById("nrSuccessCard");
+      const elCopyCredBtn = document.getElementById("nrCopyCredBtn");
       const elThemeBtn = document.getElementById("nrThemeBtn");
       const elThemeLabel = document.getElementById("nrThemeLabel");
+
+      let currentStep = 1;
+      let codeVerified = false;
+      let createdCreds = null;
 
       function applyTheme(theme) {
         document.documentElement.setAttribute("data-theme", theme);
@@ -650,93 +999,265 @@
       });
 
       function showFeedback(msg, kind) {
-        elFeedback.hidden = false;
-        elFeedback.textContent = msg;
-        elFeedback.className = "cl-alert" + (kind ? " " + kind : "");
-      }
-
-      async function verifyCode(code) {
-        const cleaned = (code || "").trim().toUpperCase();
-        if (!cleaned) {
-          elInviteDot.className = "cl-dot";
-          elInviteStatus.textContent = "Kode Kosong";
-          elInviteHint.textContent = "Masukkan kode";
-          return false;
-        }
-        try {
-          const res = await fetch(`/api/nakes/invite/verify?code=${encodeURIComponent(cleaned)}`, { cache: "no-store" });
-          const json = await res.json();
-          const data = json && json.data;
-          if (data && data.valid) {
-            elInviteDot.className = "cl-dot active";
-            elInviteStatus.textContent = "Kode Valid";
-            elInviteHint.textContent = `Aktif (${data.remaining_seconds}s)`;
-            elTtlTag.textContent = `Sisa ${data.remaining_seconds}s`;
-            return true;
-          }
-          elInviteDot.className = "cl-dot locked";
-          elInviteStatus.textContent = "Kode Invalid";
-          elInviteHint.textContent = (data && data.reason) || "Kedaluwarsa";
-          elTtlTag.textContent = "Kedaluwarsa";
-          return false;
-        } catch (_) {
-          elInviteStatus.textContent = "Error";
-          return false;
-        }
-      }
-
-      if (initialCode) {
-        elCodeInput.value = initialCode;
-        verifyCode(initialCode);
-      }
-
-      elVerifyBtn.addEventListener("click", () => verifyCode(elCodeInput.value));
-
-      elForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        elFeedback.hidden = true;
-
-        const payload = {
-          invite_code: elCodeInput.value.trim().toUpperCase(),
-          name: document.getElementById("nrName").value.trim(),
-          profession: document.getElementById("nrProfession").value,
-          institution: document.getElementById("nrInstitution").value.trim(),
-          str_number: document.getElementById("nrStr").value.trim(),
-          sip_number: document.getElementById("nrSip").value.trim(),
-          real_email: document.getElementById("nrEmail").value.trim(),
-          phone: document.getElementById("nrPhone").value.trim(),
-          password: document.getElementById("nrPassword").value,
-        };
-
-        elSubmitBtn.disabled = true;
-        elSubmitBtn.textContent = "Memproses Registrasi...";
-
-        try {
-          const res = await fetch("/api/nakes/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          const json = await res.json();
-          if (!res.ok || !json.success) {
-            showFeedback(json.error || "Registrasi gagal. Periksa kembali data dan kode undangan.", "err");
+        function showFeedback(msg) {
+          if (!msg) {
+            elFeedback.hidden = true;
+            elFeedback.textContent = "";
             return;
           }
-          const d = json.data || {};
-          document.getElementById("nrOutId").textContent = d.id || "—";
-          document.getElementById("nrOutName").textContent = d.name || "—";
-          document.getElementById("nrOutEmail").textContent = d.nakes_email || "—";
-          document.getElementById("nrOutPwd").textContent = d.password || "—";
-          elFormCard.hidden = true;
-          elSuccessCard.hidden = false;
-        } catch (_) {
-          showFeedback("Koneksi ke server terputus. Coba lagi.", "err");
-        } finally {
-          elSubmitBtn.disabled = false;
-          elSubmitBtn.textContent = "Daftarkan Akun Nakes";
+          elFeedback.hidden = false;
+          elFeedback.textContent = msg;
+          elFeedback.className = "cl-alert" + (kind ? " " + kind : "");
+          elFeedback.className = "cl-alert err";
         }
-      });
-    })();
+
+        function goToStep(target) {
+          const dir = target >= currentStep ? "anim-next" : "anim-prev";
+          currentStep = target;
+          showFeedback("");
+
+          document.querySelectorAll(".cl-slide").forEach((el) => {
+            const stepNum = Number(el.getAttribute("data-step"));
+            el.classList.remove("is-active", "anim-next", "anim-prev");
+            if (stepNum === currentStep) {
+              el.classList.add("is-active", dir);
+            }
+          });
+
+          document.querySelectorAll(".cl-rail-seg").forEach((seg) => {
+            const n = Number(seg.getAttribute("data-rail"));
+            seg.classList.toggle("is-done", n < currentStep);
+            seg.classList.toggle("is-active", n === currentStep);
+          });
+
+          if (elStepTag) {
+            elStepTag.textContent = STEP_LABELS[currentStep] || "";
+          }
+        }
+
+        async function verifyCode(code) {
+          const cleaned = (code || "").trim().toUpperCase();
+          if (!cleaned) {
+            elInviteDot.className = "cl-dot";
+            elInviteStatus.textContent = "Kode Kosong";
+            elInviteStatus.textContent = "KODE KOSONG";
+            elInviteHint.textContent = "Masukkan kode";
+            return false;
+            codeVerified = false;
+            return { valid: false, reason: "Kode undangan wajib diisi." };
+          }
+          try {
+            const res = await fetch(`/api/nakes/invite/verify?code=${encodeURIComponent(cleaned)}`, { cache: "no-store" });
+            const json = await res.json();
+            const data = json && json.data;
+            if (data && data.valid) {
+              elInviteDot.className = "cl-dot active";
+              elInviteStatus.textContent = "Kode Valid";
+              elInviteStatus.textContent = "KODE VALID";
+              elInviteHint.textContent = `Aktif (${data.remaining_seconds}s)`;
+              elTtlTag.textContent = `Sisa ${data.remaining_seconds}s`;
+              return true;
+              elTtlTag.textContent = `SISA ${data.remaining_seconds}s`;
+              codeVerified = true;
+              return { valid: true };
+            }
+            elInviteDot.className = "cl-dot locked";
+            elInviteStatus.textContent = "Kode Invalid";
+            elInviteStatus.textContent = "KODE INVALID";
+            elInviteHint.textContent = (data && data.reason) || "Kedaluwarsa";
+            elTtlTag.textContent = "Kedaluwarsa";
+            return false;
+            elTtlTag.textContent = "EXPIRED";
+            codeVerified = false;
+            return { valid: false, reason: (data && data.reason) || "Kode undangan tidak valid atau kedaluwarsa." };
+          } catch (_) {
+            elInviteStatus.textContent = "Error";
+            return false;
+            elInviteStatus.textContent = "ERROR";
+            codeVerified = false;
+            return { valid: false, reason: "Gagal menghubungi server verifikasi." };
+          }
+        }
+
+        elCodeInput.addEventListener("input", () => {
+          elCodeInput.value = elCodeInput.value.toUpperCase();
+          codeVerified = false;
+          showFeedback("");
+        });
+
+        if (initialCode) {
+          elCodeInput.value = initialCode;
+          verifyCode(initialCode);
+          verifyCode(initialCode).then((res) => {
+            if (res.valid) goToStep(2);
+          });
+        }
+
+        elVerifyBtn.addEventListener("click", () => verifyCode(elCodeInput.value));
+        elNext1Btn.addEventListener("click", async () => {
+          elNext1Btn.disabled = true;
+          elNext1Btn.textContent = "Memverifikasi...";
+          const res = await verifyCode(elCodeInput.value);
+          elNext1Btn.disabled = false;
+          elNext1Btn.textContent = "Verifikasi & Lanjut →";
+          if (!res.valid) {
+            showFeedback(res.reason);
+            elCodeInput.focus();
+            return;
+          }
+          goToStep(2);
+        });
+
+        function validateStep(step) {
+          if (step === 2) {
+            const name = document.getElementById("nrName").value.trim();
+            if (!name) {
+              showFeedback("Nama lengkap beserta gelar wajib diisi.");
+              document.getElementById("nrName").focus();
+              return false;
+            }
+          }
+          if (step === 3) {
+            const inst = document.getElementById("nrInstitution").value.trim();
+            const str = document.getElementById("nrStr").value.trim();
+            if (!inst) {
+              showFeedback("Nama instansi / faskes wajib diisi.");
+              document.getElementById("nrInstitution").focus();
+              return false;
+            }
+            if (!str) {
+              showFeedback("Nomor STR wajib diisi.");
+              document.getElementById("nrStr").focus();
+              return false;
+            }
+          }
+          return true;
+        }
+
+        document.querySelectorAll("[data-next]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = Number(btn.getAttribute("data-next"));
+            if (!validateStep(currentStep)) return;
+            goToStep(target);
+          });
+        });
+
+        document.querySelectorAll("[data-prev]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            goToStep(Number(btn.getAttribute("data-prev")));
+          });
+        });
+
+        elForm.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            if (currentStep === 1) {
+              e.preventDefault();
+              elNext1Btn.click();
+            } else if (currentStep < 4) {
+              e.preventDefault();
+              const nextBtn = elForm.querySelector(`.cl-slide[data-step="${currentStep}"] [data-next]`);
+              if (nextBtn) nextBtn.click();
+            }
+          }
+        });
+
+        elForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          elFeedback.hidden = true;
+          showFeedback("");
+
+          const email = document.getElementById("nrEmail").value.trim();
+          const password = document.getElementById("nrPassword").value;
+          if (!email || !email.includes("@")) {
+            showFeedback("Email pribadi yang valid wajib diisi.");
+            document.getElementById("nrEmail").focus();
+            return;
+          }
+          if (password && password.length < 6) {
+            showFeedback("Kata sandi minimal 6 karakter.");
+            document.getElementById("nrPassword").focus();
+            return;
+          }
+
+          const payload = {
+            invite_code: elCodeInput.value.trim().toUpperCase(),
+            name: document.getElementById("nrName").value.trim(),
+            profession: document.getElementById("nrProfession").value,
+            institution: document.getElementById("nrInstitution").value.trim(),
+            str_number: document.getElementById("nrStr").value.trim(),
+            sip_number: document.getElementById("nrSip").value.trim(),
+            real_email: document.getElementById("nrEmail").value.trim(),
+            real_email: email,
+            phone: document.getElementById("nrPhone").value.trim(),
+            password: document.getElementById("nrPassword").value,
+            password: password,
+          };
+
+          elSubmitBtn.disabled = true;
+          elSubmitBtn.textContent = "Memproses Registrasi...";
+
+          try {
+            const res = await fetch("/api/nakes/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            const json = await res.json();
+            if (!res.ok || !json.success) {
+              showFeedback(json.error || "Registrasi gagal. Periksa kembali data dan kode undangan.", "err");
+              showFeedback(json.error || "Registrasi gagal. Periksa kembali data dan kode undangan.");
+              return;
+            }
+            const d = json.data || {};
+            createdCreds = d;
+            document.getElementById("nrOutId").textContent = d.id || "—";
+            document.getElementById("nrOutName").textContent = d.name || "—";
+            document.getElementById("nrOutEmail").textContent = d.nakes_email || "—";
+            document.getElementById("nrOutPwd").textContent = d.password || "—";
+            elFormCard.hidden = true;
+            elSuccessCard.hidden = false;
+          } catch (_) {
+            showFeedback("Koneksi ke server terputus. Coba lagi.", "err");
+            showFeedback("Koneksi ke server terputus. Coba lagi.");
+          } finally {
+            elSubmitBtn.disabled = false;
+            elSubmitBtn.textContent = "Daftarkan Akun Nakes";
+          }
+        });
+
+        async function copyText(text) {
+          if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(text);
+              return true;
+            } catch (_) { }
+          }
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.top = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          ta.setSelectionRange(0, text.length);
+          let ok = false;
+          try { ok = document.execCommand("copy"); } catch (_) { }
+          document.body.removeChild(ta);
+          return ok;
+        }
+
+        if (elCopyCredBtn) {
+          elCopyCredBtn.addEventListener("click", async () => {
+            if (!createdCreds) return;
+            const summary = `ID: ${createdCreds.id}\nEmail: ${createdCreds.nakes_email}\nPassword: ${createdCreds.password}`;
+            const ok = await copyText(summary);
+            elCopyCredBtn.textContent = ok ? "Tersalin" : "Gagal Salin";
+            setTimeout(() => { elCopyCredBtn.textContent = "Salin Kredensial"; }, 1600);
+          });
+        }
+      }) ();
   </script>
 </body>
+
 </html>

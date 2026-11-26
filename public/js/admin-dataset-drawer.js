@@ -270,13 +270,21 @@
             setQrFeedback('URL belum tersedia. Pastikan server Flask sudah di-restart lalu klik Generate URL Baru.');
             return;
           }
-          try {
-            await navigator.clipboard.writeText(urlInput.value);
-            copyBtn.textContent = 'Tersalin';
-            setTimeout(() => { copyBtn.textContent = 'Salin URL'; }, 1500);
-          } catch (_) {
-            urlInput.select();
+          let copied = false;
+          if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(urlInput.value);
+              copied = true;
+            } catch (_) {}
           }
+          if (!copied) {
+            urlInput.focus();
+            urlInput.select();
+            urlInput.setSelectionRange(0, urlInput.value.length);
+            try { copied = document.execCommand('copy'); } catch (_) {}
+          }
+          copyBtn.textContent = copied ? 'Tersalin' : 'Pilih & Ctrl+C';
+          setTimeout(() => { copyBtn.textContent = 'Salin URL'; }, 1600);
         });
       }
 
