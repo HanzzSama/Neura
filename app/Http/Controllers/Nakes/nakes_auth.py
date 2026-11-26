@@ -257,3 +257,146 @@ def api_nakes_update_password():
         "success": True,
         "message": "Kata sandi Nakes berhasil diperbarui. Silakan gunakan kata sandi baru untuk login berikutnya."
     })
+
+
+# -----------------------------------------------------------------------
+# Public QR Invite Session & Self-Registration Endpoints
+# -----------------------------------------------------------------------
+
+@nakes_auth_bp.route("/qr-session", methods=["GET"])
+def api_nakes_qr_session():
+    """Mengambil sesi QR & kode unik 3-menit berdasarkan parameter ?live=."""
+    from app.Services.NakesInviteService import get_qr_session
+    live_id = (request.args.get("live") or "").strip()
+    session_data = get_qr_session(live_id)
+    base = (request.host_url or "").rstrip("/")
+    register_url = (
+        f"{base}/nakes/register?code={session_data['code']}"
+        if session_data.get("active") and session_data.get("code")
+        else ""
+    )
+    return jsonify({
+        "success": True,
+        "data": {
+            **session_data,
+            "register_url": register_url,
+        },
+    })
+
+
+@nakes_auth_bp.route("/invite/verify", methods=["GET"])
+def api_nakes_invite_verify():
+    """Memverifikasi apakah kode undangan 3-menit masih aktif dan valid."""
+    from app.Services.NakesInviteService import verify_invite_code
+    code = (request.args.get("code") or "").strip()
+    result = verify_invite_code(code)
+    return jsonify({
+        "success": True,
+        "data": result,
+    })
+
+
+@nakes_auth_bp.route("/register", methods=["POST"])
+def api_nakes_self_register():
+    """
+    Registrasi mandiri Nakes melalui QR Code / kode undangan 3-menit.
+    Membuat akun Nakes baru di direktori (JSON + MySQL) setelah memvalidasi kode.
+    """
+    import re
+    import time
+    import random
+    from app.Services.NakesInviteService import verify_invite_code, increment_registration_count
+
+    body = request.get_json(silent=True) or {}
+    invite_code = (body.get("invite_code") or body.get("code") or "").strip()
+    verification = verify_invite_code(invite_code)
+    if not verification.get("valid"):
+        return jsonify({
+            "success": False,
+            "error": verification.get("reason") or "Kode undangan tidak valid atau telah kedaluwarsa.",
+        }), 403
+
+    name        = (body.get("name") or "").strip()
+    profession  = (body.get("profession") or "Dokter Spesialis Neurologi (Sp.N)").strip()
+    str_number  = (body.get("str_number") or "").strip()
+    sip_number  = (body.get("sip_number") or "").strip()
+    institution = (body.get("institution") or "").strip()
+    phone       = (body.get("phone") or "").strip()
+    real_email  = (body.get("real_email") or "").strip().lower()
+    custom_pwd  = str(body.get("password") or "").strip()
+
+    if not name:
+        return jsonify({"success": False, "error": "Nama lengkap beserta gelar wajib diisi."}), 400
+    if not real_email or "@" not in real_email:
+        return jsonify({"success": False, "error": "Email pribadi yang valid wajib diisi."}), 400
+    if not str_number:
+        return jsonify({"success": False, "error": "Nomor STR wajib diisi untuk verifikasi klinis."}), 400
+    if not institution:
+        return jsonify({"success": False, "error": "Nama instansi / faskes wajib diisi."}), 400
+    if custom_pwd and len(custom_pwd) < 6:
+        return jsonify({"success": False, "error": "Kata sandi minimal 6 karakter."}), 400
+
+    username   = real_email.split("@")[0].strip()
+    clean_user = re.sub(r"[^a-zA-Z0-9._-]", "", username) or "nakes"
+    nakes_email = f"{clean_user}@neura.ns.id"
+
+    items = _load_nakes_db()
+    for item in items:
+        if item.get("real_email", "").lower() == real_email:
+            return jsonify({"success": False, "error": f"Email {real_email} sudah terdaftar di direktori Nakes."}), 400
+        if item.get("nakes_email", "").lower() == nakes_email:
+            nakes_email = f"{clean_user}.{random.randint(10, 99)}@neura.ns.id"
+
+    new_id = f"NKS-{time.strftime('%Y')}-{len(items) + 1:03d}"
+    id_parts = new_id.split("-")
+    default_pwd = f"nks{''.join(id_parts[1:])}"
+    password = custom_pwd or default_pwd
+
+    record = {
+        "id":          new_id,
+        "name":        name,
+        "profession":  profession,
+        "str_number":  str_number,
+        "sip_number":  sip_number or f"503/SIP/{random.randint(100,999)}/Dinkes/{time.strftime('%Y')}",
+        "institution": institution,
+        "phone":       phone,
+        "real_email":  real_email,
+        "nakes_email": nakes_email,
+        "password":    password,
+        "status":      "Terverifikasi KKI",
+        "registered_via": "QR-INVITE",
+        "created_at":  time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+
+    items.insert(0, record)
+    _save_nakes_db(items)
+
+    try:
+        from app.Services.Database.DatabaseManager import execute_insert
+        if execute_insert:
+            execute_insert(
+                "INSERT INTO nakes (sip, str, nip, full_name, specialization, facility_name, phone_number, email, status_validation) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'ACTIVE') "
+                "ON DUPLICATE KEY UPDATE full_name=VALUES(full_name), facility_name=VALUES(facility_name)",
+                (record["sip_number"], record["str_number"], record["id"], record["name"], record["profession"], record["institution"], record["phone"], record["nakes_email"])
+            )
+    except Exception as e:
+        logger.warning(f"MySQL self-register nakes warning: {e}")
+
+    increment_registration_count()
+    logger.info(f"[Nakes Register] Nakes baru {new_id} ({name}) terdaftar via QR invite.")
+
+    return jsonify({
+        "success": True,
+        "message": "Registrasi Nakes berhasil. Kredensial akses telah dibuat.",
+        "data": {
+            "id":          record["id"],
+            "name":        record["name"],
+            "profession":  record["profession"],
+            "institution": record["institution"],
+            "nakes_email": record["nakes_email"],
+            "password":    record["password"],
+            "status":      record["status"],
+        },
+    }), 201
+

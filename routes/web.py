@@ -76,6 +76,14 @@ def register_web_routes(app: Flask):
     def admin_hub_page():
         return send_from_directory(PUBLIC_DIR, "admin.html")
 
+    @app.route("/welcome/nakes/qr-code", strict_slashes=False)
+    def nakes_qr_invite_page():
+        return send_from_directory(PUBLIC_DIR, "nakes-qr.html")
+
+    @app.route("/nakes/register", strict_slashes=False)
+    def nakes_self_register_page():
+        return send_from_directory(PUBLIC_DIR, "nakes-register.html")
+
     @app.route("/api/project-structure", methods=["GET"])
     def get_project_structure():
         ignored_dirs = {".git", ".ipynb_checkpoints", ".flask_sessions", "venv", "__pycache__", ".gemini", "node_modules"}

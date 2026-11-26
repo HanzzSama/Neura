@@ -221,3 +221,81 @@ def api_delete_nakes(nakes_id):
     _save_nakes_db(items)
     return jsonify({"success": True, "message": f"Data nakes {nakes_id} berhasil dihapus."})
 
+
+# -----------------------------------------------------------------------
+# Live QR Invite Link Controls (Admin)
+# -----------------------------------------------------------------------
+
+def _build_qr_url(live_id: str) -> str:
+    base = (request.host_url or "").rstrip("/")
+    return f"{base}/welcome/nakes/qr-code?live={live_id}"
+
+
+@admin_nakes_bp.route("/nakes-qr-link", methods=["GET"])
+def api_get_nakes_qr_link():
+    """Mengambil status Live URL QR registrasi Nakes untuk Admin Hub."""
+    from app.Services.NakesInviteService import get_live_link_status
+    status = get_live_link_status()
+    return jsonify({
+        "success": True,
+        "data": {
+            **status,
+            "qr_url": _build_qr_url(status["live_id"]),
+        },
+    })
+
+
+@admin_nakes_bp.route("/nakes-qr-link/generate", methods=["POST"])
+def api_generate_nakes_qr_link():
+    """Membuat Live URL QR baru (nks-res-...) dan merotasi kode undangan."""
+    from app.Services.NakesInviteService import generate_new_live_link
+    status = generate_new_live_link()
+    return jsonify({
+        "success": True,
+        "message": "Live URL QR registrasi Nakes baru berhasil dibuat.",
+        "data": {
+            **status,
+            "qr_url": _build_qr_url(status["live_id"]),
+        },
+    })
+
+
+@admin_nakes_bp.route("/nakes-qr-link/toggle", methods=["POST"])
+def api_toggle_nakes_qr_link():
+    """Mengaktifkan atau menonaktifkan Live URL QR registrasi Nakes."""
+    from app.Services.NakesInviteService import get_live_link_status, toggle_live_link
+    body = request.get_json(silent=True) or {}
+    if "active" in body:
+        active = bool(body["active"])
+    else:
+        active = not bool(get_live_link_status().get("active"))
+    status = toggle_live_link(active)
+    state_label = "diaktifkan" if status["active"] else "dinonaktifkan"
+    return jsonify({
+        "success": True,
+        "message": f"Tautan QR registrasi Nakes berhasil {state_label}.",
+        "data": {
+            **status,
+            "qr_url": _build_qr_url(status["live_id"]),
+        },
+    })
+
+
+@admin_nakes_bp.route("/nakes-qr-link/rotate-code", methods=["POST"])
+def api_rotate_nakes_qr_code():
+    """Memaksa rotasi kode unik undangan Nakes (3 menit TTL)."""
+    from app.Services.NakesInviteService import rotate_invite_code, get_live_link_status
+    code_info = rotate_invite_code()
+    status = get_live_link_status()
+    return jsonify({
+        "success": True,
+        "message": "Kode undangan Nakes berhasil dirotasi.",
+        "data": {
+            **code_info,
+            "live_id": status["live_id"],
+            "active": status["active"],
+            "qr_url": _build_qr_url(status["live_id"]),
+        },
+    })
+
+

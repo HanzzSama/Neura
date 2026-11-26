@@ -3808,3 +3808,110 @@ button {
 .logout-confirm-btn:hover {
   filter: brightness(1.08);
 }
+
+/* Live QR Invite Link Admin Card (Zero Glow) */
+.nakes-qr-admin-card {
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-subtle);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nakes-qr-admin-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nakes-qr-admin-kicker {
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--hub-accent);
+  font-weight: 600;
+}
+
+.nakes-qr-admin-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hub-text);
+  margin-top: 2px;
+}
+
+.nakes-qr-status-pill {
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--hub-border);
+}
+
+.nakes-qr-status-pill.is-active {
+  color: #16a34a;
+  border-color: rgba(22, 163, 74, 0.35);
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.nakes-qr-status-pill.is-inactive {
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.nakes-qr-url-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nakes-qr-url-input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-card);
+  color: var(--hub-text);
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+}
+
+.nakes-qr-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nakes-qr-btn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 7px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-card);
+  color: var(--hub-text);
+  font-size: 11.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.nakes-qr-btn:hover {
+  border-color: var(--hub-accent);
+}
+
+.nakes-qr-btn--primary {
+  background: var(--hub-accent);
+  border-color: var(--hub-accent);
+  color: #ffffff;
+}

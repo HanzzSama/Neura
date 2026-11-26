@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neura AI — Gerbang QR Registrasi Nakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/nakes-qr.css" />
+</head>
+<body>
+  <!-- Abstract Geometric Telemetry Backdrop (Zero Glow) -->
+  <div class="nqr-grid-bg" aria-hidden="true"></div>
+  <svg class="nqr-geo-overlay" viewBox="0 0 1440 900" fill="none" aria-hidden="true">
+    <line x1="120" y1="0" x2="120" y2="900" class="geo-hairline" />
+    <line x1="1320" y1="0" x2="1320" y2="900" class="geo-hairline" />
+    <line x1="0" y1="120" x2="1440" y2="120" class="geo-hairline" />
+    <line x1="0" y1="780" x2="1440" y2="780" class="geo-hairline" />
+    <circle cx="720" cy="450" r="310" class="geo-ring" stroke-dasharray="4 6" />
+    <circle cx="720" cy="450" r="420" class="geo-ring-subtle" />
+    <path d="M120 120 L144 120 M120 120 L120 144" class="geo-cross" />
+    <path d="M1320 120 L1296 120 M1320 120 L1320 144" class="geo-cross" />
+    <path d="M120 780 L144 780 M120 780 L120 756" class="geo-cross" />
+    <path d="M1320 780 L1296 780 M1320 780 L1320 756" class="geo-cross" />
+  </svg>
+
+  <div class="nqr-shell">
+    <!-- Top Telemetry Bar -->
+    <header class="nqr-topbar">
+      <a href="/welcome" class="nqr-brand">
+        <span class="nqr-brand-mark">N</span>
+        <span class="nqr-brand-text">NEURA<span class="nqr-brand-sub"> // NAKES GATEWAY</span></span>
+      </a>
+      <div class="nqr-topbar-right">
+        <span class="nqr-telemetry-pill" id="nqrStatusPill">
+          <span class="nqr-status-dot" id="nqrStatusDot"></span>
+          <span id="nqrStatusText">MEMERIKSA SESI</span>
+        </span>
+        <button type="button" class="nqr-theme-btn" id="nqrThemeBtn" title="Ganti Tema">
+          <span id="nqrThemeLabel">LIGHT</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Centered Card -->
+    <main class="nqr-main">
+      <!-- Active QR Session Panel -->
+      <section class="nqr-card" id="nqrActivePanel">
+        <!-- Corner Geometric Brackets -->
+        <span class="nqr-corner tl" aria-hidden="true"></span>
+        <span class="nqr-corner tr" aria-hidden="true"></span>
+        <span class="nqr-corner bl" aria-hidden="true"></span>
+        <span class="nqr-corner br" aria-hidden="true"></span>
+
+        <div class="nqr-card-header">
+          <div class="nqr-meta-row">
+            <span class="nqr-mono-tag">REGISTRASI TENAGA KESEHATAN</span>
+            <span class="nqr-mono-tag muted" id="nqrLiveIdTag">LIVE: —</span>
+          </div>
+          <h1 class="nqr-title">Pindai QR atau Gunakan Kode Undangan</h1>
+          <p class="nqr-subtitle">
+            Arahkan kamera perangkat mobile Anda ke kode QR untuk membuka formulir registrasi Nakes secara langsung.
+          </p>
+        </div>
+
+        <!-- QR Matrix Frame -->
+        <div class="nqr-qr-stage">
+          <div class="nqr-qr-frame">
+            <div id="nqrQrMount" class="nqr-qr-mount" aria-label="QR Code Registrasi Nakes"></div>
+          </div>
+          <div class="nqr-scan-caption">
+            <span>TARGET</span>
+            <code id="nqrTargetPath">/nakes/register</code>
+          </div>
+        </div>
+
+        <!-- Telemetry Progress & 3-Minute Timer -->
+        <div class="nqr-telemetry-block">
+          <div class="nqr-telemetry-head">
+            <span class="nqr-telemetry-label">ROTASI OTOMATIS (3 MENIT)</span>
+            <span class="nqr-timer-value" id="nqrTimerText">03:00</span>
+          </div>
+          <div class="nqr-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="180" aria-valuenow="180">
+            <div class="nqr-progress-fill" id="nqrProgressFill"></div>
+          </div>
+        </div>
+
+        <!-- Random-Unique Code Box -->
+        <div class="nqr-code-panel">
+          <div class="nqr-code-meta">
+            <span>KODE UNIK AKTIF</span>
+            <button type="button" class="nqr-copy-btn" id="nqrCopyCodeBtn">Salin Kode</button>
+          </div>
+          <div class="nqr-code-display" id="nqrCodeText">NKS-····-····</div>
+          <div class="nqr-code-actions">
+            <a href="/nakes/register" class="nqr-primary-link" id="nqrDirectLink">
+              Buka Halaman Registrasi Nakes →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Locked / Inactive State Panel -->
+      <section class="nqr-card nqr-locked-card" id="nqrLockedPanel" hidden>
+        <span class="nqr-corner tl" aria-hidden="true"></span>
+        <span class="nqr-corner tr" aria-hidden="true"></span>
+        <span class="nqr-corner bl" aria-hidden="true"></span>
+        <span class="nqr-corner br" aria-hidden="true"></span>
+
+        <div class="nqr-locked-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="4" y="11" width="16" height="9" rx="1.5" />
+            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          </svg>
+        </div>
+        <span class="nqr-mono-tag">ACCESS LOCKED // 403</span>
+        <h2 class="nqr-title">Tautan Undangan Tidak Aktif</h2>
+        <p class="nqr-subtitle" id="nqrLockedReason">
+          Tautan QR registrasi Nakes ini telah dinonaktifkan oleh Administrator atau parameter tautan tidak valid.
+        </p>
+        <div class="nqr-locked-actions">
+          <a href="/nakes/register" class="nqr-secondary-link">Masuk dengan Kode Manual</a>
+          <a href="/welcome" class="nqr-secondary-link">Kembali ke Beranda</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Telemetry Footer -->
+    <footer class="nqr-footer">
+      <span>NEURA CLINICAL IDENTITY TELEMETRY</span>
+      <span>TTL: 180s // ZERO-GLOW GEOMETRY</span>
+    </footer>
+  </div>
+
+  <script src="/js/nakes-qr.js"></script>
+</body>
+</html>

@@ -158,17 +158,47 @@
   async function renderNakesPreview() {
     bodyEl().innerHTML = '<p style="color:var(--hub-text-muted)">Memuat direktori tenaga kesehatan...</p>';
     try {
-      const res = await fetch('/api/admin/nakes');
-      const data = await res.json();
+      const [resNakes, resQr] = await Promise.all([
+        fetch('/api/admin/nakes'),
+        fetch('/api/admin/nakes-qr-link')
+      ]);
+      const data = await resNakes.json();
+      const qrJson = await resQr.json().catch(() => ({}));
+      let qrState = (qrJson && qrJson.data) || { live_id: '', active: false, qr_url: '' };
+
       const list = Array.isArray(data) ? data : (data.nakes || data.data || []);
       const rows = list.slice(0, 12).map(n => `
         <tr>
           <td>${escHtml(n.name || n.nama || '-')}</td>
-          <td>${escHtml(n.email || '-')}</td>
-          <td>${escHtml(n.specialty || n.spesialis || 'Umum')}</td>
+          <td>${escHtml(n.nakes_email || n.email || '-')}</td>
+          <td>${escHtml(n.profession || n.specialty || n.spesialis || 'Umum')}</td>
         </tr>
       `).join('');
+
       bodyEl().innerHTML = `
+        <div class="nakes-qr-admin-card" id="nakesQrAdminCard">
+          <div class="nakes-qr-admin-head">
+            <div>
+              <div class="nakes-qr-admin-kicker">LIVE QR INVITE LINK</div>
+              <div class="nakes-qr-admin-title">Tautan Undangan Registrasi Nakes</div>
+            </div>
+            <span class="nakes-qr-status-pill ${qrState.active ? 'is-active' : 'is-inactive'}" id="nakesQrStatusPill">
+              ${qrState.active ? 'AKTIF' : 'NONAKTIF'}
+            </span>
+          </div>
+          <div class="nakes-qr-url-row">
+            <input type="text" class="nakes-qr-url-input" id="nakesQrUrlInput" readonly value="${escHtml(qrState.qr_url || '')}" />
+            <button type="button" class="nakes-qr-btn" id="nakesQrCopyBtn">Salin URL</button>
+          </div>
+          <div class="nakes-qr-actions-row">
+            <button type="button" class="nakes-qr-btn nakes-qr-btn--primary" id="nakesQrToggleBtn">
+              ${qrState.active ? 'Nonaktifkan URL' : 'Aktifkan URL'}
+            </button>
+            <button type="button" class="nakes-qr-btn" id="nakesQrGenerateBtn">Generate URL Baru</button>
+            <a class="nakes-qr-btn" id="nakesQrOpenLink" href="${escHtml(qrState.qr_url || '#')}" target="_blank" rel="noopener">Buka Halaman QR ↗</a>
+          </div>
+        </div>
+
         <div class="drawer-kpi-row">
           <div class="drawer-kpi-card">
             <div class="drawer-kpi-label">Total Nakes</div>
@@ -190,6 +220,68 @@
           </table>
         </div>
       `;
+
+      const urlInput = document.getElementById('nakesQrUrlInput');
+      const statusPill = document.getElementById('nakesQrStatusPill');
+      const toggleBtn = document.getElementById('nakesQrToggleBtn');
+      const copyBtn = document.getElementById('nakesQrCopyBtn');
+      const genBtn = document.getElementById('nakesQrGenerateBtn');
+      const openLink = document.getElementById('nakesQrOpenLink');
+
+      function syncQrUi(next) {
+        qrState = next || qrState;
+        if (urlInput) urlInput.value = qrState.qr_url || '';
+        if (openLink) openLink.href = qrState.qr_url || '#';
+        if (statusPill) {
+          statusPill.textContent = qrState.active ? 'AKTIF' : 'NONAKTIF';
+          statusPill.className = 'nakes-qr-status-pill ' + (qrState.active ? 'is-active' : 'is-inactive');
+        }
+        if (toggleBtn) {
+          toggleBtn.textContent = qrState.active ? 'Nonaktifkan URL' : 'Aktifkan URL';
+        }
+      }
+
+      if (copyBtn && urlInput) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(urlInput.value);
+            copyBtn.textContent = 'Tersalin';
+            setTimeout(() => { copyBtn.textContent = 'Salin URL'; }, 1500);
+          } catch (_) {
+            urlInput.select();
+          }
+        });
+      }
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', async () => {
+          toggleBtn.disabled = true;
+          try {
+            const r = await fetch('/api/admin/nakes-qr-link/toggle', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ active: !qrState.active })
+            });
+            const j = await r.json();
+            if (j && j.success && j.data) syncQrUi(j.data);
+          } finally {
+            toggleBtn.disabled = false;
+          }
+        });
+      }
+
+      if (genBtn) {
+        genBtn.addEventListener('click', async () => {
+          genBtn.disabled = true;
+          try {
+            const r = await fetch('/api/admin/nakes-qr-link/generate', { method: 'POST' });
+            const j = await r.json();
+            if (j && j.success && j.data) syncQrUi(j.data);
+          } finally {
+            genBtn.disabled = false;
+          }
+        });
+      }
     } catch (err) {
       bodyEl().innerHTML = `<p style="color:#dc2626">${escHtml(err.message)}</p>`;
     }

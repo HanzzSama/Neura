@@ -1,0 +1,539 @@
+/* ==========================================================================
+   NEURA AI — Nakes QR Registration Telemetry Page
+   Aesthetic: Minimalist, Abstract, Telemetry, Geometry, Premium, ZERO GLOW
+   ========================================================================== */
+
+:root {
+  --nqr-bg: #0b0c0e;
+  --nqr-surface: #121417;
+  --nqr-surface-2: #181b20;
+  --nqr-border: #262a31;
+  --nqr-border-strong: #3a404a;
+  --nqr-text: #f3f4f6;
+  --nqr-muted: #9ca3af;
+  --nqr-dim: #6b7280;
+  --nqr-accent: #c96442;
+  --nqr-accent-soft: rgba(201, 100, 66, 0.14);
+  --nqr-ok: #22c55e;
+  --nqr-warn: #f59e0b;
+  --nqr-err: #ef4444;
+  --nqr-grid: rgba(255, 255, 255, 0.035);
+  --nqr-geo: rgba(255, 255, 255, 0.08);
+  --nqr-qr-bg: #ffffff;
+  --nqr-qr-fg: #0b0c0e;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html[data-theme="light"] {
+  --nqr-bg: #f6f5f2;
+  --nqr-surface: #ffffff;
+  --nqr-surface-2: #f1efea;
+  --nqr-border: #e2dfd7;
+  --nqr-border-strong: #c9c4b8;
+  --nqr-text: #141518;
+  --nqr-muted: #555962;
+  --nqr-dim: #818691;
+  --nqr-accent: #b85332;
+  --nqr-accent-soft: rgba(184, 83, 50, 0.1);
+  --nqr-grid: rgba(20, 21, 24, 0.045);
+  --nqr-geo: rgba(20, 21, 24, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--nqr-bg);
+  color: var(--nqr-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Abstract Geometric Grid & Hairlines (No Glow) */
+.nqr-grid-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--nqr-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--nqr-grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+}
+
+.nqr-geo-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.geo-hairline {
+  stroke: var(--nqr-geo);
+  stroke-width: 1;
+}
+
+.geo-ring {
+  stroke: var(--nqr-geo);
+  stroke-width: 1;
+}
+
+.geo-ring-subtle {
+  stroke: var(--nqr-grid);
+  stroke-width: 1;
+}
+
+.geo-cross {
+  stroke: var(--nqr-accent);
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+
+/* Layout Shell */
+.nqr-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 28px;
+}
+
+/* Topbar */
+.nqr-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.nqr-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--nqr-text);
+}
+
+.nqr-brand-mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--nqr-border-strong);
+  background: var(--nqr-surface);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--nqr-accent);
+}
+
+.nqr-brand-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.nqr-brand-sub {
+  color: var(--nqr-dim);
+  font-weight: 400;
+}
+
+.nqr-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nqr-telemetry-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--nqr-border);
+  background: var(--nqr-surface);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--nqr-muted);
+}
+
+.nqr-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nqr-dim);
+}
+
+.nqr-status-dot.active {
+  background: var(--nqr-ok);
+}
+
+.nqr-status-dot.locked {
+  background: var(--nqr-err);
+}
+
+.nqr-theme-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--nqr-border);
+  background: var(--nqr-surface);
+  color: var(--nqr-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.nqr-theme-btn:hover {
+  border-color: var(--nqr-accent);
+}
+
+/* Main Card */
+.nqr-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 0;
+}
+
+.nqr-card {
+  position: relative;
+  width: 100%;
+  max-width: 470px;
+  background: var(--nqr-surface);
+  border: 1px solid var(--nqr-border);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Crisp Geometric Corner Brackets */
+.nqr-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}
+
+.nqr-corner.tl {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--nqr-accent);
+  border-left: 2px solid var(--nqr-accent);
+}
+
+.nqr-corner.tr {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid var(--nqr-accent);
+  border-right: 2px solid var(--nqr-accent);
+}
+
+.nqr-corner.bl {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid var(--nqr-accent);
+  border-left: 2px solid var(--nqr-accent);
+}
+
+.nqr-corner.br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--nqr-accent);
+  border-right: 2px solid var(--nqr-accent);
+}
+
+.nqr-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.nqr-mono-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--nqr-accent);
+  text-transform: uppercase;
+}
+
+.nqr-mono-tag.muted {
+  color: var(--nqr-dim);
+}
+
+.nqr-title {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.nqr-subtitle {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--nqr-muted);
+}
+
+/* QR Stage */
+.nqr-qr-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid var(--nqr-border);
+  background: var(--nqr-surface-2);
+}
+
+.nqr-qr-frame {
+  padding: 14px;
+  background: var(--nqr-qr-bg);
+  border: 1px solid var(--nqr-border-strong);
+  display: grid;
+  place-items: center;
+}
+
+.nqr-qr-mount {
+  width: 204px;
+  height: 204px;
+  display: grid;
+  place-items: center;
+}
+
+.nqr-qr-mount svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  shape-rendering: crispEdges;
+}
+
+.nqr-scan-caption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--nqr-dim);
+}
+
+.nqr-scan-caption code {
+  color: var(--nqr-muted);
+  background: var(--nqr-surface);
+  border: 1px solid var(--nqr-border);
+  padding: 2px 7px;
+  font-size: 11px;
+}
+
+/* Telemetry Timer */
+.nqr-telemetry-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nqr-telemetry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.nqr-telemetry-label {
+  color: var(--nqr-muted);
+  letter-spacing: 0.06em;
+}
+
+.nqr-timer-value {
+  font-weight: 700;
+  color: var(--nqr-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.nqr-timer-value.urgent {
+  color: var(--nqr-warn);
+}
+
+.nqr-progress-track {
+  width: 100%;
+  height: 4px;
+  background: var(--nqr-surface-2);
+  border: 1px solid var(--nqr-border);
+  overflow: hidden;
+}
+
+.nqr-progress-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--nqr-accent);
+  transition: width 0.5s linear;
+}
+
+/* Random-Unique Code Box */
+.nqr-code-panel {
+  border: 1px solid var(--nqr-border);
+  background: var(--nqr-surface-2);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nqr-code-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--nqr-dim);
+}
+
+.nqr-copy-btn {
+  border: 1px solid var(--nqr-border-strong);
+  background: var(--nqr-surface);
+  color: var(--nqr-text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.nqr-copy-btn:hover {
+  border-color: var(--nqr-accent);
+  color: var(--nqr-accent);
+}
+
+.nqr-code-display {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: center;
+  padding: 8px 0;
+  color: var(--nqr-text);
+  border-top: 1px dashed var(--nqr-border);
+  border-bottom: 1px dashed var(--nqr-border);
+  user-select: all;
+}
+
+.nqr-code-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.nqr-primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--nqr-accent);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  transition: opacity 0.18s ease;
+}
+
+.nqr-primary-link:hover {
+  opacity: 0.92;
+}
+
+/* Locked Panel */
+.nqr-locked-card {
+  text-align: center;
+  align-items: center;
+  padding: 36px 28px;
+}
+
+.nqr-locked-icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--nqr-border-strong);
+  background: var(--nqr-surface-2);
+  color: var(--nqr-err);
+}
+
+.nqr-locked-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.nqr-secondary-link {
+  padding: 9px 14px;
+  border: 1px solid var(--nqr-border-strong);
+  background: var(--nqr-surface-2);
+  color: var(--nqr-text);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  transition: border-color 0.18s ease;
+}
+
+.nqr-secondary-link:hover {
+  border-color: var(--nqr-accent);
+}
+
+/* Footer */
+.nqr-footer {
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--nqr-dim);
+}
+
+@media (max-width: 560px) {
+  .nqr-shell {
+    padding: 16px;
+  }
+  .nqr-card {
+    padding: 20px;
+  }
+  .nqr-code-display {
+    font-size: 20px;
+    letter-spacing: 0.1em;
+  }
+  .nqr-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
