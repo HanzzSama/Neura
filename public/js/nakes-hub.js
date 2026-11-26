@@ -985,29 +985,32 @@
       wrap.innerHTML = '<div class="nh-preview-empty">Belum ada data pasien.</div>';
       return;
     }
-    const W = 760, H = 165, padL = 34, padR = 16, padT = 14, padB = 24;
+    const W = 760, H = 175, padL = 36, padR = 18, padT = 14, padB = 24;
     const activeCode = state.activeDoc ? getDocCode(state.activeDoc) : '';
     const dots = state.consultations.map(it => {
       const s = getBiomarkerStats(it);
-      const age = Math.max(20, Math.min(95, Number(s.age) || 65));
+      const age = Math.max(18, Math.min(95, Number(s.age) || 65));
       const mmse = Math.max(0, Math.min(30, Number(s.mmse) || 24));
-      const x = padL + ((age - 20) / 75) * (W - padL - padR);
+      const x = padL + 8 + ((age - 18) / 77) * (W - padL - padR - 14);
       const y = padT + (1 - mmse / 30) * (H - padT - padB);
       const code = getDocCode(it);
       const high = isDocHighRisk(it);
       const fill = high ? '#dc2626' : (mmse < 24 ? '#d97706' : '#16a34a');
       const isSel = code === activeCode;
-      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isSel ? 6 : 4}" fill="${fill}" fill-opacity="${isSel ? 1 : 0.72}" stroke="${isSel ? '#ffffff' : 'none'}" stroke-width="1.5" class="nh-scatter-dot" data-sc-code="${esc(code)}" data-sc-tip="${esc(getPatientName(it))} (${esc(code)}) · Usia ${age} · MMSE ${mmse}/30"/>`;
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isSel ? 5.5 : 3.8}" fill="${fill}" fill-opacity="${isSel ? 1 : 0.78}" stroke="${isSel ? '#ffffff' : 'none'}" stroke-width="1.5" class="nh-scatter-dot" data-sc-code="${esc(code)}" data-sc-tip="${esc(getPatientName(it))} (${esc(code)}) · Usia ${age} · MMSE ${mmse}/30"/>`;
     }).join('');
+    const y24 = (padT + (1 - 24 / 30) * (H - padT - padB)).toFixed(1);
 
     wrap.innerHTML = `
-      <svg class="nh-scatter-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-        <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
-        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
-        <text x="${padL}" y="${H - 6}" font-size="10" fill="currentColor" opacity="0.5">20 thn</text>
+      <svg class="nh-scatter-svg" viewBox="0 0 ${W} ${H}">
+        <line x1="${padL}" y1="${y24}" x2="${W - padR}" y2="${y24}" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
+        <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.18"/>
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.18"/>
+        <text x="${padL + 4}" y="${H - 6}" font-size="10" fill="currentColor" opacity="0.5">18 thn</text>
         <text x="${W - padR}" y="${H - 6}" text-anchor="end" font-size="10" fill="currentColor" opacity="0.5">95 thn</text>
-        <text x="4" y="${padT + 8}" font-size="10" fill="currentColor" opacity="0.5">30</text>
-        <text x="8" y="${H - padB}" font-size="10" fill="currentColor" opacity="0.5">0</text>
+        <text x="6" y="${padT + 8}" font-size="10" fill="currentColor" opacity="0.5">30</text>
+        <text x="6" y="${Number(y24) + 3}" font-size="9" fill="currentColor" opacity="0.45">24</text>
+        <text x="10" y="${H - padB}" font-size="10" fill="currentColor" opacity="0.5">0</text>
         ${dots}
       </svg>
       <div class="nh-scatter-tip" id="nh-scatter-tip">Klik titik mana saja untuk memuat dossier pasien</div>

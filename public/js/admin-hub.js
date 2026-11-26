@@ -1589,6 +1589,7 @@
     let dsCache = null;
     let consultCache = [];
     let nakesCache = [];
+    let activeConsult = null;
     let qrState = { live_id: '', active: false, qr_url: '' };
     let radarMode = 'ml';
     let statTab = 'users';
@@ -1596,25 +1597,77 @@
 
     const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+    function setRadarTab(mode) {
+      radarMode = mode;
+      document.querySelectorAll('#ah-radar-tabs .ah-seg-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-ah-radar') === mode);
+      });
+      renderDomainRadar();
+    }
+
+    function selectConsultation(doc) {
+      activeConsult = doc || null;
+      const prev = document.getElementById('ah-lookup-preview');
+      const tag = document.getElementById('ah-lookup-tag');
+      const inp = document.getElementById('ah-lookup-input');
+      if (doc) {
+        const code = doc.nakes_code || doc.doc_id || '';
+        const p = doc.patient || {};
+        const prob = doc.prediction && doc.prediction.probability != null ? `${Math.round(Number(doc.prediction.probability))}%` : '—';
+        if (inp && code) inp.value = code;
+        if (tag) tag.textContent = code || 'PASIEN';
+        if (prev) prev.innerHTML = `<strong>${esc(p.name || 'Pasien')}</strong> (${esc(code)})<br>Risiko: <strong>${esc(prob)}</strong> · Status: ${esc(doc.status || 'ACTIVE')}`;
+        setRadarTab('patient');
+      } else {
+        renderDomainRadar();
+      }
+      renderScatter();
+    }
+
     // 1. Domain Radar (5-Axis SVG)
     function renderDomainRadar() {
       const wrap = document.getElementById('ah-radar-wrap');
       if (!wrap) return;
-      const axes = radarMode === 'ml'
-        ? [
-            { label: 'Accuracy', norm: 0.9535, raw: '95.35%' },
-            { label: 'Precision', norm: 0.952, raw: '0.952' },
-            { label: 'F1-Score', norm: 0.948, raw: '0.948' },
-            { label: 'AUC-ROC', norm: 0.974, raw: '0.974' },
-            { label: 'Recall', norm: 0.944, raw: '0.944' }
-          ]
-        : [
-            { label: 'DB Sync', norm: 0.98, raw: 'MySQL OK' },
-            { label: 'Nakes KKI', norm: Math.min(1, Math.max(0.4, (nakesCache.length || 3) / 5)), raw: `${nakesCache.length || 3} aktif` },
-            { label: '2FA Guard', norm: 0.96, raw: 'Verified' },
-            { label: 'Dataset', norm: 0.92, raw: '80/20 Split' },
-            { label: 'Uptime', norm: 0.99, raw: '99.9%' }
-          ];
+      let axes;
+      if (radarMode === 'patient') {
+        const doc = activeConsult || consultCache[0];
+        if (!doc) {
+          wrap.innerHTML = '<div class="ah-lookup-preview">Belum ada dokumen pasien dipilih.</div>';
+          return;
+        }
+        const p = doc.patient || {};
+        const b = doc.all_32_biomarkers || doc.raw_features || {};
+        const cog = doc.cognitive_scores || {};
+        const mmse = Number(cog.mmse ?? b.MMSE ?? 24);
+        const adl = Number(cog.adl ?? b.ADL ?? 7);
+        const sbp = Number(p.systolic_bp ?? b.SystolicBP ?? 120);
+        const chol = Number(b.CholesterolTotal ?? 190);
+        const bmi = Number(p.bmi ?? b.BMI ?? 23);
+        const clamp01 = (v) => Math.max(0.1, Math.min(1, v));
+        axes = [
+          { label: 'MMSE', norm: clamp01(mmse / 30), raw: `${mmse}/30` },
+          { label: 'ADL', norm: clamp01(adl / 10), raw: `${adl}/10` },
+          { label: 'Vaskular', norm: clamp01(1 - Math.max(0, sbp - 110) / 110), raw: `${sbp} mmHg` },
+          { label: 'Lipid', norm: clamp01(1 - Math.max(0, chol - 150) / 300), raw: `${chol} mg/dL` },
+          { label: 'BMI', norm: clamp01(1 - Math.abs(bmi - 22) / 22), raw: `${bmi} kg/m²` }
+        ];
+      } else if (radarMode === 'ml') {
+        axes = [
+          { label: 'Accuracy', norm: 0.9535, raw: '95.35%' },
+          { label: 'Precision', norm: 0.952, raw: '0.952' },
+          { label: 'F1-Score', norm: 0.948, raw: '0.948' },
+          { label: 'AUC-ROC', norm: 0.974, raw: '0.974' },
+          { label: 'Recall', norm: 0.944, raw: '0.944' }
+        ];
+      } else {
+        axes = [
+          { label: 'DB Sync', norm: 0.98, raw: 'MySQL OK' },
+          { label: 'Nakes KKI', norm: Math.min(1, Math.max(0.4, (nakesCache.length || 3) / 5)), raw: `${nakesCache.length || 3} aktif` },
+          { label: '2FA Guard', norm: 0.96, raw: 'Verified' },
+          { label: 'Dataset', norm: 0.92, raw: '80/20 Split' },
+          { label: 'Uptime', norm: 0.99, raw: '99.9%' }
+        ];
+      }
 
       const cx = 110, cy = 100, R = 66;
       const pt = (i, r) => {
@@ -1653,10 +1706,7 @@
 
     document.querySelectorAll('#ah-radar-tabs [data-ah-radar]').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('#ah-radar-tabs .ah-seg-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        radarMode = btn.getAttribute('data-ah-radar');
-        renderDomainRadar();
+        setRadarTab(btn.getAttribute('data-ah-radar'));
       });
     });
 
@@ -1723,9 +1773,7 @@
         String((c.patient && c.patient.name) || '').toLowerCase().includes(q)
       );
       if (cMatch) {
-        if (tag) tag.textContent = cMatch.nakes_code || 'PASIEN';
-        const prob = cMatch.prediction && cMatch.prediction.probability != null ? `${Math.round(Number(cMatch.prediction.probability))}%` : '—';
-        prev.innerHTML = `<strong>${esc((cMatch.patient && cMatch.patient.name) || 'Pasien')}</strong> (${esc(cMatch.nakes_code)})<br>Risiko: <strong>${esc(prob)}</strong> · Status: ${esc(cMatch.status || 'ACTIVE')}`;
+        selectConsultation(cMatch);
         return;
       }
       const nMatch = nakesCache.find(n => String(n.name || '').toLowerCase().includes(q) || String(n.nakes_email || '').toLowerCase().includes(q));
@@ -1746,35 +1794,50 @@
         wrap.innerHTML = '<div class="ah-lookup-preview">Belum ada data konsultasi pasien.</div>';
         return;
       }
-      const W = 760, H = 160, padL = 34, padR = 16, padT = 14, padB = 22;
+      const W = 540, H = 175, padL = 36, padR = 18, padT = 14, padB = 24;
+      const activeCode = activeConsult ? (activeConsult.nakes_code || activeConsult.doc_id || '') : '';
       const dots = consultCache.map(it => {
         const p = it.patient || {};
         const b = it.all_32_biomarkers || it.raw_features || {};
         const cog = it.cognitive_scores || {};
-        const age = Math.max(20, Math.min(95, Number(p.age ?? b.Age ?? 65)));
+        const age = Math.max(18, Math.min(95, Number(p.age ?? b.Age ?? 65)));
         const mmse = Math.max(0, Math.min(30, Number(cog.mmse ?? b.MMSE ?? 24)));
-        const x = padL + ((age - 20) / 75) * (W - padL - padR);
+        const x = padL + 8 + ((age - 18) / 77) * (W - padL - padR - 14);
         const y = padT + (1 - mmse / 30) * (H - padT - padB);
+        const code = it.nakes_code || it.doc_id || '';
         const rl = String((it.prediction && it.prediction.risk_level) || '').toLowerCase();
         const isHigh = Boolean(it.prediction && it.prediction.is_positive) || rl.includes('high') || rl.includes('tinggi');
         const fill = isHigh ? '#dc2626' : (mmse < 24 ? '#d97706' : '#16a34a');
-        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${fill}" fill-opacity="0.75" class="ah-scatter-dot" data-tip="${esc(p.name || 'Pasien')} (${esc(it.nakes_code || '')}) · Usia ${age} · MMSE ${mmse}/30"/>`;
+        const isSel = activeCode && code === activeCode;
+        const opacity = activeCode ? (isSel ? 1 : 0.28) : 0.82;
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isSel ? 6 : 3.8}" fill="${fill}" fill-opacity="${opacity}" stroke="${isSel ? '#ffffff' : 'none'}" stroke-width="1.6" class="ah-scatter-dot" data-sc-code="${esc(code)}" data-tip="${esc(p.name || 'Pasien')} (${esc(code)}) · Usia ${age} · MMSE ${mmse}/30"/>`;
       }).join('');
+      const y24 = (padT + (1 - 24 / 30) * (H - padT - padB)).toFixed(1);
+      const defaultTip = activeConsult
+        ? `Terpilih: ${esc((activeConsult.patient && activeConsult.patient.name) || 'Pasien')} (${esc(activeCode)})`
+        : 'Arahkan kursor atau klik titik pasien untuk menyinkronkan data';
       wrap.innerHTML = `
-        <svg class="ah-scatter-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-          <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
-          <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
-          <text x="${padL}" y="${H - 5}" font-size="10" fill="currentColor" opacity="0.5">20 thn</text>
-          <text x="${W - padR}" y="${H - 5}" text-anchor="end" font-size="10" fill="currentColor" opacity="0.5">95 thn</text>
-          <text x="6" y="${padT + 8}" font-size="10" fill="currentColor" opacity="0.5">30</text>
-          <text x="8" y="${H - padB}" font-size="10" fill="currentColor" opacity="0.5">0</text>
+        <svg class="ah-scatter-svg" viewBox="0 0 ${W} ${H}">
+          <line x1="${padL}" y1="${y24}" x2="${W - padR}" y2="${y24}" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
+          <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.2"/>
+          <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.2"/>
+          <text x="${padL + 4}" y="${H - 6}" font-size="9.5" fill="currentColor" opacity="0.5">18 thn</text>
+          <text x="${W - padR}" y="${H - 6}" text-anchor="end" font-size="9.5" fill="currentColor" opacity="0.5">95 thn</text>
+          <text x="8" y="${padT + 6}" font-size="9.5" fill="currentColor" opacity="0.5">30</text>
+          <text x="8" y="${Number(y24) + 3}" font-size="9" fill="currentColor" opacity="0.45">24</text>
+          <text x="12" y="${H - padB}" font-size="9.5" fill="currentColor" opacity="0.5">0</text>
           ${dots}
         </svg>
-        <div class="ah-scatter-tip" id="ah-scatter-tip">Arahkan kursor ke titik pasien untuk melihat ringkasan</div>
+        <div class="ah-scatter-tip" id="ah-scatter-tip">${defaultTip}</div>
       `;
       const tip = document.getElementById('ah-scatter-tip');
       wrap.querySelectorAll('.ah-scatter-dot').forEach(d => {
         d.addEventListener('mouseenter', () => { if (tip) tip.textContent = d.getAttribute('data-tip'); });
+        d.addEventListener('click', () => {
+          const code = d.getAttribute('data-sc-code');
+          const found = consultCache.find(c => (c.nakes_code || c.doc_id) === code);
+          if (found) selectConsultation(found);
+        });
       });
     }
 

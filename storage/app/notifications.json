@@ -134,5 +134,22 @@
     },
     "created_at": "2026-11-26 13:42:55",
     "read": false
+  },
+  {
+    "id": "notif_1795676562757",
+    "target_role": "admin",
+    "title": "🛡️ Admin Baru Saja Login",
+    "body": "Ridho Romadhani (tsaritsaanastasya@neura.dr.id) baru saja masuk ke sistem melalui Android Phone.",
+    "category": "auth",
+    "urgency": "high",
+    "action_url": "/struktur.html",
+    "meta": {
+      "admin_email": "tsaritsaanastasya@neura.dr.id",
+      "admin_name": "Ridho Romadhani",
+      "client_info": "Android Phone",
+      "timestamp": 1795676562.7575974
+    },
+    "created_at": "2026-11-26 14:02:42",
+    "read": false
   }
 ]

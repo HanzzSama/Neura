@@ -1076,23 +1076,31 @@
             </div>
 
             <div class="ah-bento-12">
-              <!-- Card 1 (4 cols): Model & System Domain Radar -->
-              <article class="bento-card ah-card ah-span-4">
+              <!-- Card 1 (5 cols): Quick Lookup (NKS / Nakes / Dataset) -->
+              <article class="bento-card ah-card ah-span-5">
                 <div class="bento-card-header">
                   <div>
-                    <div class="ah-kicker">DOMAIN RADAR</div>
-                    <h3 class="bento-title-sm">Profil Metrik 5-Sumbu</h3>
+                    <div class="ah-kicker">QUICK LOOKUP</div>
+                    <h3 class="bento-title-sm">Pencarian Cepat Data</h3>
                   </div>
-                  <div class="ah-seg-tabs" id="ah-radar-tabs">
-                    <button type="button" class="ah-seg-btn active" data-ah-radar="ml">Model ML</button>
-                    <button type="button" class="ah-seg-btn" data-ah-radar="platform">Platform</button>
-                  </div>
+                  <span class="bento-tag" id="ah-lookup-tag">READY</span>
                 </div>
-                <div id="ah-radar-wrap" class="ah-radar-wrap"></div>
+                <form class="ah-qr-url-box" id="ah-lookup-form">
+                  <input type="text" id="ah-lookup-input" class="ah-mono-field" placeholder="Kode NKS / Nama Nakes..." autocomplete="off" list="ah-lookup-datalist" />
+                  <datalist id="ah-lookup-datalist"></datalist>
+                  <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Cari</button>
+                </form>
+                <div class="ah-lookup-preview" id="ah-lookup-preview">
+                  Ketik kode konsultasi (<code>NKS-...</code>) atau nama Nakes untuk menyinkronkan Profil Metrik &amp; Scatter Matrix.
+                </div>
               </article>
 
-              <!-- Card 2 (4 cols): Inline Live QR & Nakes Invite Control -->
-              <article class="bento-card ah-card ah-span-4">
+              <!-- Card 2 (7 cols): Inline Live QR & Nakes Invite Control -->
+              <article class="bento-card ah-card ah-span-7">
+                <svg class="ah-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                  <rect x="65" y="10" width="44" height="44" rx="6" stroke="currentColor" stroke-dasharray="3 3" />
+                  <circle cx="87" cy="32" r="4" fill="#D97757" fill-opacity="0.55" />
+                </svg>
                 <div class="bento-card-header">
                   <div>
                     <div class="ah-kicker">NAKES INVITE GATE</div>
@@ -1102,43 +1110,47 @@
                 </div>
                 <div class="ah-qr-url-box">
                   <input type="text" id="ah-qr-url-input" class="ah-mono-field" readonly placeholder="Memuat Live URL..." />
-                  <button type="button" class="bento-pill-btn" id="ah-qr-copy">Salin</button>
+                  <button type="button" class="bento-pill-btn" id="ah-qr-copy">Salin URL</button>
                 </div>
                 <div class="ah-qr-actions">
                   <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="ah-qr-toggle">Aktifkan</button>
-                  <button type="button" class="bento-pill-btn" id="ah-qr-gen">Generate Baru</button>
-                  <a href="#" target="_blank" rel="noopener" class="bento-pill-btn" id="ah-qr-open">Buka QR ↗</a>
+                  <button type="button" class="bento-pill-btn" id="ah-qr-gen">Generate URL Baru</button>
+                  <a href="#" target="_blank" rel="noopener" class="bento-pill-btn" id="ah-qr-open">Buka Halaman QR ↗</a>
+                </div>
+                <div class="ah-lookup-preview">
+                  Bagikan tautan di atas ke calon Tenaga Kesehatan. Kode QR dan token undangan di dalamnya berotasi otomatis setiap 3 menit.
                 </div>
               </article>
 
-              <!-- Card 3 (4 cols): Quick Lookup (NKS / Nakes / Dataset) -->
-              <article class="bento-card ah-card ah-span-4">
+              <!-- Card 3 (5 cols): Model, Platform & Patient Domain Radar -->
+              <article class="bento-card ah-card ah-span-5">
+                <svg class="ah-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                  <circle cx="100" cy="20" r="44" stroke="currentColor" stroke-dasharray="3 4" />
+                  <circle cx="100" cy="20" r="22" stroke="#D97757" stroke-opacity="0.55" />
+                </svg>
                 <div class="bento-card-header">
                   <div>
-                    <div class="ah-kicker">QUICK LOOKUP</div>
-                    <h3 class="bento-title-sm">Pencarian Cepat Data</h3>
+                    <div class="ah-kicker">DOMAIN RADAR</div>
+                    <h3 class="bento-title-sm">Profil Metrik 5-Sumbu</h3>
                   </div>
-                  <span class="bento-tag" id="ah-lookup-tag">READY</span>
+                  <div class="ah-seg-tabs" id="ah-radar-tabs">
+                    <button type="button" class="ah-seg-btn active" data-ah-radar="ml">Model ML</button>
+                    <button type="button" class="ah-seg-btn" data-ah-radar="platform">Platform</button>
+                    <button type="button" class="ah-seg-btn" data-ah-radar="patient">Pasien</button>
+                  </div>
                 </div>
-                <form class="ah-qr-url-box" id="ah-lookup-form">
-                  <input type="text" id="ah-lookup-input" class="ah-mono-field" placeholder="Kode NKS / Nama Nakes / Dataset..." autocomplete="off" list="ah-lookup-datalist" />
-                  <datalist id="ah-lookup-datalist"></datalist>
-                  <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Cari</button>
-                </form>
-                <div class="ah-lookup-preview" id="ah-lookup-preview">
-                  Ketik kode konsultasi (<code>NKS-...</code>) atau nama Nakes untuk melihat ringkasan data secara instan.
-                </div>
+                <div id="ah-radar-wrap" class="ah-radar-wrap"></div>
               </article>
 
-              <!-- Card 4 (12 cols): Global Cohort Scatter Matrix -->
-              <article class="bento-card ah-card ah-span-12">
+              <!-- Card 4 (7 cols): Global Cohort Scatter Matrix -->
+              <article class="bento-card ah-card ah-span-7">
                 <div class="bento-card-header">
                   <div>
                     <div class="ah-kicker">COHORT SCATTER MATRIX</div>
-                    <h3 class="bento-title-sm">Sebaran Usia vs Skor MMSE Seluruh Konsultasi Pasien</h3>
+                    <h3 class="bento-title-sm">Sebaran Usia vs Skor MMSE Pasien</h3>
                   </div>
                   <div class="ah-legend-row">
-                    <span class="ah-legend-dot"><i style="background:#dc2626"></i>Risiko Tinggi</span>
+                    <span class="ah-legend-dot"><i style="background:#dc2626"></i>Tinggi</span>
                     <span class="ah-legend-dot"><i style="background:#d97706"></i>Sedang</span>
                     <span class="ah-legend-dot"><i style="background:#16a34a"></i>Rendah</span>
                   </div>
