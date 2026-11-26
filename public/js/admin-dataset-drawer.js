@@ -159,7 +159,7 @@
     bodyEl().innerHTML = '<p style="color:var(--hub-text-muted)">Memuat direktori tenaga kesehatan...</p>';
     try {
       const [resNakes, resQr] = await Promise.all([
-        fetch('/api/admin/nakes'),
+        fetch('/api/admin/nakes', { cache: 'no-store' }),
         fetch('/api/admin/nakes-qr-link', { cache: 'no-store' })
       ]);
       const data = await resNakes.json();
