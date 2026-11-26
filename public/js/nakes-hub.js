@@ -28,7 +28,7 @@
     let profile = {};
     try {
       profile = JSON.parse(localStorage.getItem('neura_nakes_session') || '{}') || {};
-    } catch (_) {}
+    } catch (_) { }
     if (!profile.email) {
       try {
         const u = JSON.parse(localStorage.getItem('neura_auth_user') || '{}') || {};
@@ -39,7 +39,7 @@
           profession: u.profession || 'Dokter Spesialis',
           institution: u.institution || 'Fasilitas Kesehatan Mitra Neura'
         };
-      } catch (_) {}
+      } catch (_) { }
     }
     state.nakes = profile;
 
@@ -61,7 +61,7 @@
         const cur = document.documentElement.getAttribute('data-theme') || 'light';
         const next = cur === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
-        try { localStorage.setItem('neura_theme_v1', next); } catch (_) {}
+        try { localStorage.setItem('neura_theme_v1', next); } catch (_) { }
       });
     }
 
@@ -100,7 +100,7 @@
         localStorage.removeItem('neura_nakes_session');
         localStorage.removeItem('neura_auth_user');
         localStorage.removeItem('neura_user_role');
-      } catch (_) {}
+      } catch (_) { }
       window.location.replace('/welcome');
     };
     document.getElementById('nh-logout-btn')?.addEventListener('click', doLogout);
@@ -257,8 +257,11 @@
       if (advanceToStep2) {
         unlockAndGoToStep(2);
       } else if (!isSameDoc) {
-        state.maxUnlockedStep = 1;
+        state.maxUnlockedStep = 2;
         goToNakesStep(1, true);
+      } else {
+        state.maxUnlockedStep = Math.max(state.maxUnlockedStep || 1, 2);
+        refreshStepperLockState();
       }
 
       if (openDossierAfter) openDrawer('documents');
@@ -855,7 +858,7 @@
 
     document.getElementById('nh-main-code-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
-      selectPatientByCode(document.getElementById('nh-main-code-input')?.value, false, true);
+      selectPatientByCode(document.getElementById('nh-main-code-input')?.value, false, false);
     });
 
     document.getElementById('nh-btn-open-patients')?.addEventListener('click', () => openDrawer('patients'));
@@ -905,6 +908,101 @@
   let _diseaseStatsTab = 'prevalence';
   let _workingSymptoms = {};
   let _workingMeds = [];
+  let _drugCatalog = [];
+  let _fuManualOverride = false;
+
+  async function fetchDrugCatalog() {
+    try {
+      const res = await fetch('/api/consultation/drugs/catalog', { cache: 'no-store' });
+      const j = await res.json();
+      if (j && j.success && Array.isArray(j.data)) {
+        _drugCatalog = j.data;
+        renderDrugCatalogUI();
+      }
+    } catch (_) { }
+  }
+
+  function renderDrugCatalogUI() {
+    const dl = document.getElementById('nh-rx-datalist');
+    if (dl) {
+      dl.innerHTML = _drugCatalog
+        .map(d => `<option value="${esc(d.name)}">${esc(d.default_dose || '')} · ${esc(d.default_frequency || '')} (${esc(d.category || 'Umum')})</option>`)
+        .join('');
+    }
+    const presets = document.getElementById('nh-rx-presets');
+    if (presets && _drugCatalog.length) {
+      presets.innerHTML = _drugCatalog.slice(0, 8).map(d => {
+        const payload = `${d.name}|${d.default_dose || '-'}|${d.default_frequency || '1x1'}|${d.default_duration || '30 hari'}`;
+        return `<button type="button" class="nh-chip" data-rx="${esc(payload)}">+ ${esc(d.name)}</button>`;
+      }).join('');
+    }
+  }
+
+  function computeAutoFollowUp(doc) {
+    const b = (doc && (doc.all_32_biomarkers || doc.raw_features)) || {};
+    const s = doc ? getBiomarkerStats(doc) : { mmse: 24 };
+    const mmse = Number(s.mmse);
+    const pred = (doc && doc.prediction) || {};
+    const rawProb = pred.probability_positive ?? pred.probability ?? doc?.risk_probability;
+    const probPct = rawProb != null ? (Number(rawProb) > 1 ? Number(rawProb) : Number(rawProb) * 100) : 0;
+
+    const activeKeys = SYMPTOM_META
+      .filter(([k]) => _workingSymptoms[k] === 'confirmed')
+      .map(([k]) => k);
+    const severeKeys = ['Disorientation', 'Confusion', 'BehavioralProblems', 'PersonalityChanges', 'DifficultyCompletingTasks'];
+    const severeCount = activeKeys.filter(k => severeKeys.includes(k)).length;
+    const totalActive = activeKeys.length;
+
+    let days = 30;
+    let priority = 'RUTIN_30_HARI';
+    let reason = `Pola ringan (${totalActive} gejala aktif, MMSE ${isNaN(mmse) ? '—' : mmse}) → Kontrol rutin 30 hari.`;
+
+    if (severeCount >= 2 || (!isNaN(mmse) && mmse < 15) || probPct >= 75) {
+      days = 3;
+      priority = 'RUJUKAN_SEGERA';
+      reason = `Pola risiko tinggi (${severeCount} gejala kognitif berat, MMSE ${isNaN(mmse) ? '—' : mmse}) → Rujukan segera (+3 hari).`;
+    } else if (totalActive >= 2 || (!isNaN(mmse) && mmse < 22)) {
+      days = 7;
+      priority = 'KONTROL_7_HARI';
+      reason = `Pola gejala progresif (${totalActive} gejala aktif, MMSE ${isNaN(mmse) ? '—' : mmse}) → Kontrol cepat (+7 hari).`;
+    }
+
+    const dt = new Date();
+    dt.setDate(dt.getDate() + days);
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    return { date: `${yyyy}-${mm}-${dd}`, priority, reason, totalActive };
+  }
+
+  function applyAutoFollowUp(doc, forceAuto) {
+    if (!doc) return;
+    const cr = doc.clinical_record || {};
+    const fu = cr.follow_up || {};
+    const fuDate = document.getElementById('nh-fu-date');
+    const fuPrio = document.getElementById('nh-fu-priority');
+    const fuTag = document.getElementById('nh-fu-tag');
+    const fuReason = document.getElementById('nh-fu-auto-reason');
+    const fuMode = document.getElementById('nh-fu-mode-label');
+
+    const auto = computeAutoFollowUp(doc);
+    if (fuReason) fuReason.textContent = auto.reason;
+
+    if (!forceAuto && fu.manual_override && fu.date) {
+      _fuManualOverride = true;
+      if (fuDate) fuDate.value = fu.date;
+      if (fuPrio && fu.priority) fuPrio.value = fu.priority;
+      if (fuTag) fuTag.textContent = 'MANUAL';
+      if (fuMode) fuMode.textContent = 'Mode: Diubah Manual oleh Nakes';
+      return;
+    }
+
+    _fuManualOverride = false;
+    if (fuDate) fuDate.value = auto.date;
+    if (fuPrio) fuPrio.value = auto.priority;
+    if (fuTag) fuTag.textContent = 'AUTO';
+    if (fuMode) fuMode.textContent = `Mode: Otomatis (${auto.totalActive} Gejala Aktif)`;
+  }
 
   async function fetchDiseaseStats() {
     try {
@@ -914,7 +1012,7 @@
         _diseaseStatsCache = j.data;
         renderDiseaseStats();
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function renderDiseaseStats() {
@@ -975,11 +1073,8 @@
     renderRxList();
 
     const fu = cr.follow_up || {};
-    const fuDate = document.getElementById('nh-fu-date');
-    const fuPrio = document.getElementById('nh-fu-priority');
     const careNotes = document.getElementById('nh-care-notes');
-    if (fuDate) fuDate.value = fu.date || '';
-    if (fuPrio && fu.priority) fuPrio.value = fu.priority;
+    applyAutoFollowUp(doc, false);
     if (careNotes) {
       const recs = Array.isArray(cr.recommendations) && cr.recommendations.length
         ? cr.recommendations.join('\n')
@@ -1008,6 +1103,7 @@
         const k = btn.getAttribute('data-sym-key');
         _workingSymptoms[k] = _workingSymptoms[k] === 'confirmed' ? 'cleared' : 'confirmed';
         renderSymptomVerifyGrid();
+        if (!_fuManualOverride && state.activeDoc) applyAutoFollowUp(state.activeDoc, false);
       });
     });
   }
@@ -1114,6 +1210,19 @@
   }
 
   function bindClinicalWorkflows() {
+    fetchDrugCatalog();
+
+    document.getElementById('nh-rx-presets')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-rx]');
+      if (!btn) return;
+      const [name, dose, frequency, duration] = btn.getAttribute('data-rx').split('|');
+      if (!name) return;
+      _workingMeds.push({ name, dose: dose || '-', frequency: frequency || '1x1', duration: duration || '30 hari' });
+      renderRxList();
+      const hint = document.getElementById('nh-rx-pattern-hint');
+      if (hint) hint.textContent = `Ditambahkan dari template: ${name} (${dose || '-'} · ${frequency || '1x1'})`;
+    });
+
     document.querySelectorAll('#nh-dstat-tabs [data-nh-dstat]').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('#nh-dstat-tabs .nh-mini-tab').forEach(t => t.classList.remove('active'));
@@ -1127,29 +1236,78 @@
       saveClinicalRecord({ verified_symptoms: _workingSymptoms }, 'nh-sym-save-msg');
     });
 
-    document.querySelectorAll('#nh-rx-presets [data-rx]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const [name, dose, frequency, duration] = btn.getAttribute('data-rx').split('|');
-        _workingMeds.push({ name, dose, frequency, duration });
-        renderRxList();
-      });
+    const rxNameIn = document.getElementById('nh-rx-name');
+    const rxDoseIn = document.getElementById('nh-rx-dose');
+    const rxFreqIn = document.getElementById('nh-rx-freq');
+    const rxDurIn = document.getElementById('nh-rx-dur');
+    const rxHint = document.getElementById('nh-rx-pattern-hint');
+
+    rxNameIn?.addEventListener('input', () => {
+      const q = rxNameIn.value.trim().toLowerCase();
+      if (!q) {
+        if (rxHint) rxHint.textContent = 'Ketik nama obat untuk mengenali pola dosis otomatis atau simpan obat baru.';
+        return;
+      }
+      const exact = _drugCatalog.find(d => String(d.name || '').toLowerCase() === q);
+      const partial = exact || _drugCatalog.find(d => String(d.name || '').toLowerCase().startsWith(q));
+      if (exact) {
+        if (rxDoseIn && !rxDoseIn.value.trim()) rxDoseIn.value = exact.default_dose || '';
+        if (rxFreqIn && !rxFreqIn.value.trim()) rxFreqIn.value = exact.default_frequency || '';
+        if (rxDurIn && !rxDurIn.value.trim()) rxDurIn.value = exact.default_duration || '';
+        if (rxHint) rxHint.textContent = `Pola dikenali: ${exact.name} (${exact.default_dose || '-'} · ${exact.default_frequency || '-'})`;
+      } else if (partial) {
+        if (rxHint) rxHint.textContent = `Saran pola: ${partial.name} (${partial.default_dose || '-'} · ${partial.default_frequency || '-'})`;
+      } else {
+        if (rxHint) rxHint.textContent = `Obat baru "${rxNameIn.value.trim()}" — akan otomatis disimpan ke katalog obat.`;
+      }
     });
 
-    document.getElementById('nh-rx-form')?.addEventListener('submit', (e) => {
+    document.getElementById('nh-rx-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('nh-rx-name')?.value.trim();
+      const name = rxNameIn?.value.trim();
       if (!name) return;
-      _workingMeds.push({
-        name,
-        dose: document.getElementById('nh-rx-dose')?.value.trim() || '-',
-        frequency: document.getElementById('nh-rx-freq')?.value.trim() || '1x1',
-        duration: document.getElementById('nh-rx-dur')?.value.trim() || '30 hari'
-      });
-      document.getElementById('nh-rx-name').value = '';
-      document.getElementById('nh-rx-dose').value = '';
-      document.getElementById('nh-rx-freq').value = '';
-      document.getElementById('nh-rx-dur').value = '';
+      const dose = rxDoseIn?.value.trim() || '-';
+      const frequency = rxFreqIn?.value.trim() || '1x1';
+      const duration = rxDurIn?.value.trim() || '30 hari';
+
+      _workingMeds.push({ name, dose, frequency, duration });
       renderRxList();
+
+      try {
+        const res = await fetch('/api/consultation/drugs/learn', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, dose, frequency, duration })
+        });
+        const j = await res.json();
+        if (j && j.success && Array.isArray(j.catalog)) {
+          _drugCatalog = j.catalog;
+          renderDrugCatalogUI();
+          if (rxHint) {
+            rxHint.textContent = j.is_new
+              ? `Obat baru "${name}" berhasil ditambahkan ke katalog pola obat.`
+              : `Pola obat "${name}" diperbarui di katalog.`;
+          }
+        }
+      } catch (_) { }
+
+      rxNameIn.value = '';
+      if (rxDoseIn) rxDoseIn.value = '';
+      if (rxFreqIn) rxFreqIn.value = '';
+      if (rxDurIn) rxDurIn.value = '';
+    });
+
+    const markManualFollowUp = () => {
+      _fuManualOverride = true;
+      const fuTag = document.getElementById('nh-fu-tag');
+      const fuMode = document.getElementById('nh-fu-mode-label');
+      if (fuTag) fuTag.textContent = 'MANUAL';
+      if (fuMode) fuMode.textContent = 'Mode: Diubah Manual oleh Nakes';
+    };
+    document.getElementById('nh-fu-date')?.addEventListener('change', markManualFollowUp);
+    document.getElementById('nh-fu-priority')?.addEventListener('change', markManualFollowUp);
+    document.getElementById('nh-fu-auto-btn')?.addEventListener('click', () => {
+      if (state.activeDoc) applyAutoFollowUp(state.activeDoc, true);
     });
 
     document.getElementById('nh-rx-save-btn')?.addEventListener('click', () => {
@@ -1172,7 +1330,8 @@
         follow_up: {
           date: document.getElementById('nh-fu-date')?.value || '',
           priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
-          notes: notesRaw
+          notes: notesRaw,
+          manual_override: _fuManualOverride
         }
       }, 'nh-fu-save-msg');
     });
@@ -1594,7 +1753,8 @@
         follow_up: {
           date: document.getElementById('nh-fu-date')?.value || '',
           priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
-          notes: document.getElementById('nh-care-notes')?.value.trim() || ''
+          notes: document.getElementById('nh-care-notes')?.value.trim() || '',
+          manual_override: _fuManualOverride
         }
       }, 'nh-rx-save-msg');
       unlockAndGoToStep(5);
@@ -1608,7 +1768,8 @@
         follow_up: {
           date: document.getElementById('nh-fu-date')?.value || '',
           priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
-          notes: notesRaw
+          notes: notesRaw,
+          manual_override: _fuManualOverride
         }
       }, 'nh-fu-save-msg');
       document.getElementById('nh-triage-submit')?.click();
@@ -1625,7 +1786,8 @@
         follow_up: {
           date: document.getElementById('nh-fu-date')?.value || '',
           priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
-          notes: notesRaw
+          notes: notesRaw,
+          manual_override: _fuManualOverride
         }
       }, 'nh-step6-save-msg');
       if (state.activeDoc) renderOfficialDossierPreview(state.activeDoc);

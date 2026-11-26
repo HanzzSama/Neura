@@ -416,9 +416,17 @@
   color: var(--hub-text);
 }
 
-.nh-kpi-val.is-ok { color: #16a34a; }
-.nh-kpi-val.is-warn { color: #d97706; }
-.nh-kpi-val.is-risk { color: #dc2626; }
+.nh-kpi-val.is-ok {
+  color: #16a34a;
+}
+
+.nh-kpi-val.is-warn {
+  color: #d97706;
+}
+
+.nh-kpi-val.is-risk {
+  color: #dc2626;
+}
 
 .nh-telemetry-foot {
   display: flex;
@@ -467,9 +475,17 @@
   background: var(--hub-accent);
 }
 
-.nh-bar-fill.is-ok { background: #16a34a; }
-.nh-bar-fill.is-warn { background: #d97706; }
-.nh-bar-fill.is-risk { background: #dc2626; }
+.nh-bar-fill.is-ok {
+  background: #16a34a;
+}
+
+.nh-bar-fill.is-warn {
+  background: #d97706;
+}
+
+.nh-bar-fill.is-risk {
+  background: #dc2626;
+}
 
 .nh-bar-val {
   font-family: var(--hub-font-mono);
@@ -697,10 +713,12 @@
 }
 
 @media (max-width: 980px) {
+
   .nh-bento-2col,
   .nh-bento-asymmetric {
     grid-template-columns: 1fr;
   }
+
   .nh-span-7,
   .nh-span-6,
   .nh-span-5,
@@ -782,16 +800,17 @@
 
 .nh-rx-form {
   display: grid;
-  grid-template-columns: 1.5fr 0.8fr 0.9fr 0.8fr auto;
-  gap: 6px;
-  margin-bottom: 10px;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .nh-rx-in {
+  min-width: 0;
   text-transform: none;
   font-family: var(--hub-font-sans);
   font-size: 12px;
-  height: 32px;
+  height: 34px;
 }
 
 .nh-rx-list {
@@ -840,6 +859,7 @@
   .nh-symptom-verify-grid {
     grid-template-columns: 1fr 1fr;
   }
+
   .nh-rx-form,
   .nh-fu-grid {
     grid-template-columns: 1fr;
@@ -847,11 +867,13 @@
 }
 
 @media print {
+
   .hub-shell,
   .nh-drawer-backdrop,
   .nh-cmd-backdrop {
     display: none !important;
   }
+
   .nh-print-sheet {
     display: block !important;
     padding: 24px;
@@ -861,11 +883,13 @@
     font-size: 12px;
     line-height: 1.5;
   }
+
   .nh-print-table {
     width: 100%;
     border-collapse: collapse;
     margin: 12px 0;
   }
+
   .nh-print-table th,
   .nh-print-table td {
     border: 1px solid #d1d5db;
@@ -1174,6 +1198,7 @@
 }
 
 @media print {
+
   .hub-topbar,
   .hub-sidebar-1,
   .hub-sidebar-2,
@@ -1354,53 +1379,60 @@
 .nh-pv-sections {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 14px;
+  gap: 22px;
+  margin-top: 14px;
+  margin-bottom: 20px;
 }
 
 .nh-pv-group {
-  padding-top: 10px;
+  padding-top: 18px;
   border-top: 1px dashed var(--hub-border);
 }
 
 .nh-pv-group:first-child {
-  padding-top: 0;
+  padding-top: 4px;
   border-top: none;
 }
 
 .nh-pv-group-title {
   font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--hub-text-muted);
-  margin-bottom: 8px;
+  color: var(--hub-accent);
+  opacity: 0.9;
+  margin-bottom: 12px;
 }
 
 .nh-pv-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px 12px;
+  gap: 14px 16px;
 }
 
 .nh-pv-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--hub-text-muted);
 }
 
 .nh-pv-input {
   width: 100%;
-  height: 36px;
-  padding: 0 11px;
-  border-radius: 8px;
+  height: 40px;
+  padding: 0 13px;
+  border-radius: 9px;
   border: 1px solid var(--hub-border);
   background: var(--hub-bg-subtle);
   color: var(--hub-text);
   font-family: var(--hub-font-sans);
-  font-size: 13px;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   box-sizing: border-box;
   transition: border-color 160ms ease, background 160ms ease;
 }
@@ -1474,6 +1506,7 @@
     opacity: 0;
     transform: translateX(14px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1485,10 +1518,20 @@
     opacity: 0;
     transform: translateX(-14px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+.nh-pipeline-stage {
+  margin-bottom: 36px;
+}
+
+.nh-pipeline-stage+.hub-section {
+  padding-top: 24px;
+  border-top: 1px dashed var(--hub-border);
 }
 
 .nh-step-footer {
@@ -1497,8 +1540,8 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 14px;
-  padding-top: 12px;
+  margin-top: 18px;
+  padding: 14px 0 4px;
   border-top: 1px solid var(--hub-border);
 }
 
@@ -1568,6 +1611,7 @@
   .nh-stepper-tabs {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
   .nh-doc-grid {
     grid-template-columns: 1fr;
   }

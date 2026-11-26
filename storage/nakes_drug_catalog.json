@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Donepezil",
+    "default_dose": "5 mg",
+    "default_frequency": "1x1 malam",
+    "default_duration": "30 hari",
+    "category": "Kolinesterase Inhibitor",
+    "usage_count": 12
+  },
+  {
+    "name": "Memantine",
+    "default_dose": "10 mg",
+    "default_frequency": "1x1 pagi",
+    "default_duration": "30 hari",
+    "category": "NMDA Antagonist",
+    "usage_count": 9
+  },
+  {
+    "name": "Rivastigmine Patch",
+    "default_dose": "4.6 mg",
+    "default_frequency": "1x1 tempel",
+    "default_duration": "30 hari",
+    "category": "Kolinesterase Inhibitor",
+    "usage_count": 7
+  },
+  {
+    "name": "Galantamine",
+    "default_dose": "8 mg",
+    "default_frequency": "1x1 pagi",
+    "default_duration": "30 hari",
+    "category": "Kolinesterase Inhibitor",
+    "usage_count": 5
+  },
+  {
+    "name": "Vitamin B12 Neuro",
+    "default_dose": "500 mcg",
+    "default_frequency": "1x1 sesudah makan",
+    "default_duration": "30 hari",
+    "category": "Suplemen Neuro",
+    "usage_count": 10
+  },
+  {
+    "name": "Amlodipine",
+    "default_dose": "5 mg",
+    "default_frequency": "1x1 pagi",
+    "default_duration": "30 hari",
+    "category": "Antihipertensi",
+    "usage_count": 6
+  },
+  {
+    "name": "Atorvastatin",
+    "default_dose": "20 mg",
+    "default_frequency": "1x1 malam",
+    "default_duration": "30 hari",
+    "category": "Lipid / Vaskular",
+    "usage_count": 6
+  },
+  {
+    "name": "Metformin",
+    "default_dose": "500 mg",
+    "default_frequency": "2x1 sesudah makan",
+    "default_duration": "30 hari",
+    "category": "Metabolik",
+    "usage_count": 5
+  },
+  {
+    "name": "Sertraline",
+    "default_dose": "50 mg",
+    "default_frequency": "1x1 pagi",
+    "default_duration": "30 hari",
+    "category": "Neuropsikiatri",
+    "usage_count": 4
+  }
+]

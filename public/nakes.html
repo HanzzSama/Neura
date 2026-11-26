@@ -376,7 +376,7 @@
                     <input type="text" id="nh-main-code-input" class="nh-code-field" placeholder="Contoh: NKS-26-7745-ALZ"
                       autocomplete="off" list="nh-code-datalist" />
                     <datalist id="nh-code-datalist"></datalist>
-                    <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Periksa Kode →</button>
+                    <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Tampilkan Ringkasan</button>
                   </form>
 
                   <div class="nh-active-patient-preview" id="nh-active-preview">
@@ -433,6 +433,11 @@
                   </div>
                 </article>
 
+                <div class="nh-step-footer nh-span-12" style="margin-top:4px;margin-bottom:2px">
+                  <span class="nh-step-hint">Langkah 1 dari 6 · Periksa ringkasan pasien lalu lanjut ke verifikasi</span>
+                  <button type="button" class="bento-pill-btn bento-pill-btn--accent" data-nh-goto="2">Next: Verifikasi &amp; Validasi →</button>
+                </div>
+
                 <!-- Card 3 (12 cols): History Pasien & History Dokumen -->
                 <article class="bento-card nh-card nh-span-12">
                   <div class="bento-card-header">
@@ -449,10 +454,6 @@
                     <div class="nh-preview-empty">Memuat riwayat klinis...</div>
                   </div>
                 </article>
-              </div>
-              <div class="nh-step-footer">
-                <span class="nh-step-hint">Langkah 1 dari 6 · Pilih atau masukkan kode dokumen pasien</span>
-                <button type="button" class="bento-pill-btn bento-pill-btn--accent" data-nh-goto="2">Lanjut: Verifikasi &amp; Validasi →</button>
               </div>
             </section>
 
@@ -659,12 +660,14 @@
                     <button type="button" class="nh-chip" data-rx="Vitamin B12 Neuro|500 mcg|1x1 sesudah makan|30 hari">+ Vit B12</button>
                   </div>
                   <form class="nh-rx-form" id="nh-rx-form">
-                    <input type="text" id="nh-rx-name" class="nh-code-field nh-rx-in" placeholder="Nama Obat" required />
+                    <input type="text" id="nh-rx-name" class="nh-code-field nh-rx-in" placeholder="Nama Obat" list="nh-rx-datalist" autocomplete="off" required />
+                    <datalist id="nh-rx-datalist"></datalist>
                     <input type="text" id="nh-rx-dose" class="nh-code-field nh-rx-in" placeholder="Dosis (5 mg)" />
                     <input type="text" id="nh-rx-freq" class="nh-code-field nh-rx-in" placeholder="Aturan (1x1)" />
                     <input type="text" id="nh-rx-dur" class="nh-code-field nh-rx-in" placeholder="Durasi (30 hr)" />
                     <button type="submit" class="bento-pill-btn">Tambah</button>
                   </form>
+                  <div class="nh-wl-code" id="nh-rx-pattern-hint" style="margin:-4px 0 8px">Ketik nama obat untuk mengenali pola dosis otomatis atau simpan obat baru.</div>
                   <div class="nh-rx-list" id="nh-rx-list">
                     <div class="nh-preview-empty">Belum ada obat ditambahkan untuk pasien ini.</div>
                   </div>
@@ -680,7 +683,7 @@
                       <div class="nh-card-kicker">FOLLOW-UP SCHEDULE</div>
                       <h2 class="bento-title-sm">Jadwal Tindak Lanjut Klinis</h2>
                     </div>
-                    <span class="bento-tag" id="nh-fu-tag">JADWAL</span>
+                    <span class="bento-tag" id="nh-fu-tag">AUTO</span>
                   </div>
                   <div class="nh-fu-grid">
                     <input type="date" id="nh-fu-date" class="nh-code-field nh-rx-in" title="Tanggal Kontrol Ulang" />
@@ -690,7 +693,11 @@
                       <option value="RUJUKAN_SEGERA">Rujukan Segera</option>
                     </select>
                   </div>
-                  <p class="nh-fu-helper">Atur tanggal kontrol ulang pasien dan tingkat prioritas tindak lanjut sebelum menyusun rekomendasi akhir.</p>
+                  <p class="nh-fu-helper" id="nh-fu-auto-reason">Jadwal otomatis dihitung dari pola gejala pasien; Anda tetap dapat mengubah tanggal &amp; prioritas kapan saja.</p>
+                  <div class="nh-triage-foot" style="margin-top:10px">
+                    <span class="nh-wl-code" id="nh-fu-mode-label">Mode: Otomatis (Pola Gejala)</span>
+                    <button type="button" class="bento-pill-btn" id="nh-fu-auto-btn">Terapkan Jadwal Otomatis</button>
+                  </div>
                 </article>
               </div>
               <div class="nh-step-footer">

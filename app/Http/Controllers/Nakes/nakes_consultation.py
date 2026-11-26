@@ -8,6 +8,8 @@ Nakes Consultation routes:
   GET  /api/consultation/<code>/dossier        — Ambil dossier medis lengkap
 """
 
+import os
+import json
 import traceback
 from datetime import datetime
 from flask import Blueprint, request, jsonify
@@ -620,6 +622,18 @@ def api_consultation_clinical_record(code_or_id):
             store[doc["doc_id"]] = doc
 
         try:
+            for med in (record.get("medications") or []):
+                if isinstance(med, dict) and med.get("name"):
+                    _learn_drug_pattern(
+                        med.get("name"),
+                        med.get("dose", ""),
+                        med.get("frequency", ""),
+                        med.get("duration", ""),
+                    )
+        except Exception:
+            pass
+
+        try:
             from app.Http.Controllers.User.user_consultation import save_consultations_store
             save_consultations_store()
         except Exception:
@@ -633,3 +647,110 @@ def api_consultation_clinical_record(code_or_id):
     except Exception as e:
         logger.error(f"Error saving clinical record: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ==============================================================================
+# DRUG PATTERN CATALOG & LEARNING ENDPOINTS
+# ==============================================================================
+
+_DRUG_CATALOG_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
+    "storage",
+    "nakes_drug_catalog.json",
+)
+
+_DEFAULT_DRUG_CATALOG = [
+    {"name": "Donepezil", "default_dose": "5 mg", "default_frequency": "1x1 malam", "default_duration": "30 hari", "category": "Kolinesterase Inhibitor", "usage_count": 12},
+    {"name": "Memantine", "default_dose": "10 mg", "default_frequency": "1x1 pagi", "default_duration": "30 hari", "category": "NMDA Antagonist", "usage_count": 9},
+    {"name": "Rivastigmine Patch", "default_dose": "4.6 mg", "default_frequency": "1x1 tempel", "default_duration": "30 hari", "category": "Kolinesterase Inhibitor", "usage_count": 7},
+    {"name": "Galantamine", "default_dose": "8 mg", "default_frequency": "1x1 pagi", "default_duration": "30 hari", "category": "Kolinesterase Inhibitor", "usage_count": 5},
+    {"name": "Vitamin B12 Neuro", "default_dose": "500 mcg", "default_frequency": "1x1 sesudah makan", "default_duration": "30 hari", "category": "Suplemen Neuro", "usage_count": 10},
+    {"name": "Amlodipine", "default_dose": "5 mg", "default_frequency": "1x1 pagi", "default_duration": "30 hari", "category": "Antihipertensi", "usage_count": 6},
+    {"name": "Atorvastatin", "default_dose": "20 mg", "default_frequency": "1x1 malam", "default_duration": "30 hari", "category": "Lipid / Vaskular", "usage_count": 6},
+    {"name": "Metformin", "default_dose": "500 mg", "default_frequency": "2x1 sesudah makan", "default_duration": "30 hari", "category": "Metabolik", "usage_count": 5},
+    {"name": "Sertraline", "default_dose": "50 mg", "default_frequency": "1x1 pagi", "default_duration": "30 hari", "category": "Neuropsikiatri", "usage_count": 4},
+]
+
+
+def _load_drug_catalog():
+    if os.path.exists(_DRUG_CATALOG_PATH):
+        try:
+            with open(_DRUG_CATALOG_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list) and data:
+                return data
+        except Exception:
+            pass
+    return [dict(item) for item in _DEFAULT_DRUG_CATALOG]
+
+
+def _save_drug_catalog(items):
+    os.makedirs(os.path.dirname(_DRUG_CATALOG_PATH), exist_ok=True)
+    with open(_DRUG_CATALOG_PATH, "w", encoding="utf-8") as f:
+        json.dump(items, f, ensure_ascii=False, indent=2)
+
+
+def _learn_drug_pattern(name, dose="", frequency="", duration=""):
+    clean_name = " ".join(str(name or "").strip().split())
+    if not clean_name:
+        return None, False
+
+    catalog = _load_drug_catalog()
+    key = clean_name.lower()
+    matched = None
+    for item in catalog:
+        if str(item.get("name", "")).strip().lower() == key:
+            matched = item
+            break
+
+    is_new = False
+    if matched is None:
+        is_new = True
+        matched = {
+            "name": clean_name,
+            "default_dose": str(dose or "-").strip() or "-",
+            "default_frequency": str(frequency or "1x1").strip() or "1x1",
+            "default_duration": str(duration or "30 hari").strip() or "30 hari",
+            "category": "Kustom Nakes",
+            "usage_count": 1,
+        }
+        catalog.insert(0, matched)
+    else:
+        matched["usage_count"] = int(matched.get("usage_count", 0)) + 1
+        if dose and matched.get("default_dose") in ("", "-"):
+            matched["default_dose"] = str(dose).strip()
+        if frequency and not matched.get("default_frequency"):
+            matched["default_frequency"] = str(frequency).strip()
+        if duration and not matched.get("default_duration"):
+            matched["default_duration"] = str(duration).strip()
+
+    _save_drug_catalog(catalog)
+    return matched, is_new
+
+
+@nakes_consult_bp.route("/drugs/catalog", methods=["GET"])
+def api_drugs_catalog():
+    q = str(request.args.get("q") or "").strip().lower()
+    catalog = _load_drug_catalog()
+    if q:
+        catalog = [c for c in catalog if q in str(c.get("name", "")).lower() or q in str(c.get("category", "")).lower()]
+    return jsonify({"success": True, "data": catalog})
+
+
+@nakes_consult_bp.route("/drugs/learn", methods=["POST"])
+def api_drugs_learn():
+    body = request.get_json(silent=True) or {}
+    item, is_new = _learn_drug_pattern(
+        body.get("name"),
+        body.get("dose", ""),
+        body.get("frequency", ""),
+        body.get("duration", ""),
+    )
+    if not item:
+        return jsonify({"success": False, "error": "Nama obat wajib diisi."}), 400
+    return jsonify({
+        "success": True,
+        "is_new": is_new,
+        "item": item,
+        "catalog": _load_drug_catalog(),
+    })
