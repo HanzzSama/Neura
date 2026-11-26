@@ -278,7 +278,9 @@
               <div class="nh-hero-actions">
                 <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-btn-open-patients">Direktori Pasien</button>
                 <button type="button" class="bento-pill-btn" id="nh-btn-toggle-queue">Panel Antrean</button>
-                <button type="button" class="bento-pill-btn" id="nh-btn-refresh">Muat Ulang Data</button>
+                <button type="button" class="bento-pill-btn" id="nh-btn-open-compare">Bandingkan 2 Pasien</button>
+                <button type="button" class="bento-pill-btn" id="nh-btn-cmd-open">Cari Cepat <kbd class="nh-kbd">Ctrl K</kbd></button>
+                <button type="button" class="bento-pill-btn" id="nh-btn-refresh">Muat Ulang</button>
               </div>
             </div>
           </section>
@@ -393,6 +395,101 @@
                 <div class="nh-preview-empty">Muat kode pasien untuk memvisualisasikan deviasi biomarker kognitif &amp; vaskular.</div>
               </div>
             </article>
+
+            <!-- Card 5 (4 cols): Cognitive & Vascular Domain Radar -->
+            <article class="bento-card nh-card nh-span-4">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">DOMAIN RADAR</div>
+                  <h2 class="bento-title-sm">Profil 5 Domain Klinis</h2>
+                </div>
+                <span class="bento-tag" id="nh-radar-tag">SVG</span>
+              </div>
+              <div id="nh-radar-wrap" class="nh-radar-wrap">
+                <div class="nh-preview-empty">Pilih pasien untuk merender radar domain.</div>
+              </div>
+            </article>
+
+            <!-- Card 6 (4 cols): Interactive What-If Biomarker Simulator -->
+            <article class="bento-card nh-card nh-span-4">
+              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                <line x1="25" y1="20" x2="105" y2="20" stroke="currentColor" stroke-dasharray="2 3" />
+                <circle cx="72" cy="20" r="3" fill="#D97757" fill-opacity="0.65" />
+                <line x1="35" y1="36" x2="105" y2="36" stroke="currentColor" stroke-dasharray="2 3" />
+                <circle cx="52" cy="36" r="3" fill="currentColor" fill-opacity="0.45" />
+              </svg>
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">WHAT-IF SIMULATOR</div>
+                  <h2 class="bento-title-sm">Simulasi Intervensi Klinis</h2>
+                </div>
+                <button type="button" class="bento-pill-btn" id="nh-sim-reset">Reset</button>
+              </div>
+              <div class="nh-sim-body">
+                <div class="nh-sim-row">
+                  <div class="nh-sim-lbl"><span>MMSE</span><strong id="nh-sim-mmse-val">24</strong></div>
+                  <input type="range" id="nh-sim-mmse" min="0" max="30" step="0.5" value="24" class="nh-range" />
+                </div>
+                <div class="nh-sim-row">
+                  <div class="nh-sim-lbl"><span>ADL</span><strong id="nh-sim-adl-val">7</strong></div>
+                  <input type="range" id="nh-sim-adl" min="0" max="10" step="0.5" value="7" class="nh-range" />
+                </div>
+                <div class="nh-sim-row">
+                  <div class="nh-sim-lbl"><span>TD Sistolik</span><strong id="nh-sim-sbp-val">120</strong></div>
+                  <input type="range" id="nh-sim-sbp" min="90" max="200" step="1" value="120" class="nh-range" />
+                </div>
+                <div class="nh-sim-toggles">
+                  <label class="nh-sim-chk"><input type="checkbox" id="nh-sim-mem" /> Keluhan Memori</label>
+                  <label class="nh-sim-chk"><input type="checkbox" id="nh-sim-dis" /> Disorientasi</label>
+                </div>
+                <div class="nh-sim-result">
+                  <div>
+                    <span class="nh-kpi-lbl">Estimasi Risiko Simulasi</span>
+                    <strong class="nh-sim-score" id="nh-sim-score">—</strong>
+                  </div>
+                  <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-sim-run">Uji /api/predict</button>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 7 (4 cols): Inline Clinical Triage & Quick Validation -->
+            <article class="bento-card nh-card nh-span-4">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">INLINE TRIAGE</div>
+                  <h2 class="bento-title-sm">Pengesahan Cepat Dokter</h2>
+                </div>
+                <span class="bento-tag" id="nh-triage-status">READY</span>
+              </div>
+              <div class="nh-triage-chips" id="nh-triage-chips">
+                <button type="button" class="nh-chip active" data-triage="TERKONFIRMASI_KLINIS">Terkonfirmasi</button>
+                <button type="button" class="nh-chip" data-triage="PERLU_RUJUKAN_LANJUTAN">Rujukan MRI</button>
+                <button type="button" class="nh-chip" data-triage="PEMANTAUAN_BERKALA">Pantau</button>
+              </div>
+              <textarea id="nh-triage-notes" class="nh-triage-notes" rows="3" placeholder="Catatan klinis / terapi singkat..."></textarea>
+              <div class="nh-triage-foot">
+                <span class="nh-wl-code" id="nh-triage-sig">SIG: —</span>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-triage-submit">Sahkan Sekarang</button>
+              </div>
+            </article>
+
+            <!-- Card 8 (12 cols): Cohort Scatter Matrix (Usia vs MMSE) -->
+            <article class="bento-card nh-card nh-span-12">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">COHORT SCATTER MATRIX</div>
+                  <h2 class="bento-title-sm">Distribusi Usia vs Skor MMSE (Klik Node untuk Memilih Pasien)</h2>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <span class="nh-legend-dot"><i style="background:#dc2626"></i>Risiko Tinggi</span>
+                  <span class="nh-legend-dot"><i style="background:#d97706"></i>Sedang</span>
+                  <span class="nh-legend-dot"><i style="background:#16a34a"></i>Rendah</span>
+                </div>
+              </div>
+              <div id="nh-scatter-wrap" class="nh-scatter-wrap">
+                <div class="nh-preview-empty">Memuat matriks sebaran pasien...</div>
+              </div>
+            </article>
           </section>
 
           <!-- ROW 3: Clinical Ecosystem (3 Abstract Wireframe Bento Cards) -->
@@ -474,6 +571,17 @@
       </div>
       <div class="drawer-body" id="nh-drawer-body"></div>
     </aside>
+  </div>
+
+  <!-- ═══ CLINICAL COMMAND PALETTE (Ctrl+K) ═══ -->
+  <div class="nh-cmd-backdrop" id="nh-cmd-backdrop" hidden>
+    <div class="nh-cmd-modal" role="dialog" aria-modal="true" aria-label="Clinical Command Palette">
+      <div class="nh-cmd-head">
+        <input type="text" id="nh-cmd-input" class="nh-cmd-input" placeholder="Cari pasien, kode NKS, atau aksi cepat..." autocomplete="off" />
+        <kbd class="nh-kbd">Esc</kbd>
+      </div>
+      <div class="nh-cmd-list" id="nh-cmd-list"></div>
+    </div>
   </div>
 
   <script src="/js/auth-guard.js?v=2.0"></script>

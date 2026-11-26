@@ -140,6 +140,7 @@
       renderSidebarWorklist();
       renderHistoryList();
       populateCodeDatalist();
+      renderScatterMatrix();
 
       if (!state.activeDoc && state.consultations.length > 0) {
         const firstCode = getDocCode(state.consultations[0]);
@@ -243,6 +244,10 @@
 
       renderActivePatientPreview(doc);
       renderBiomarkerViz(doc);
+      renderDomainRadar(doc);
+      syncSimulatorFromDoc(doc);
+      syncInlineTriage(doc);
+      renderScatterMatrix();
       renderSidebarWorklist();
       if (openDossierAfter) openDrawer('documents');
     } catch (err) {
@@ -664,6 +669,59 @@
       return;
     }
 
+    if (type === 'compare') {
+      kicker.textContent = 'SIDE-BY-SIDE COMPARISON';
+      title.textContent = 'Bandingkan 2 Pasien';
+      if (state.consultations.length < 2) {
+        body.innerHTML = '<div class="nh-preview-empty">Minimal dibutuhkan 2 data pasien untuk melakukan perbandingan.</div>';
+        return;
+      }
+      const opts = state.consultations.slice(0, 30).map(it =>
+        `<option value="${esc(getDocCode(it))}">${esc(getPatientName(it))} (${esc(getDocCode(it))})</option>`
+      ).join('');
+      body.innerHTML = `
+        <div class="nh-compare-grid">
+          <div class="nh-form-field"><label>Pasien A</label><select id="nh-cmp-a">${opts}</select></div>
+          <div class="nh-form-field"><label>Pasien B</label><select id="nh-cmp-b">${opts}</select></div>
+        </div>
+        <div id="nh-cmp-table-wrap"></div>
+      `;
+      const selA = document.getElementById('nh-cmp-a');
+      const selB = document.getElementById('nh-cmp-b');
+      if (state.activeDoc) selA.value = getDocCode(state.activeDoc);
+      selB.selectedIndex = selA.selectedIndex === 0 ? 1 : 0;
+
+      const renderCmp = () => {
+        const docA = state.consultations.find(x => getDocCode(x) === selA.value);
+        const docB = state.consultations.find(x => getDocCode(x) === selB.value);
+        if (!docA || !docB) return;
+        const a = getBiomarkerStats(docA);
+        const b = getBiomarkerStats(docB);
+        const rows = [
+          ['Usia / Gender', `${a.age} Thn · ${a.gender}`, `${b.age} Thn · ${b.gender}`],
+          ['Skor MMSE', `${a.mmse} / 30`, `${b.mmse} / 30`],
+          ['Kemandirian ADL', `${a.adl} / 10`, `${b.adl} / 10`],
+          ['Tekanan Darah', `${a.sbp}/${a.dbp} mmHg`, `${b.sbp}/${b.dbp} mmHg`],
+          ['Kolesterol Total', `${a.chol} mg/dL`, `${b.chol} mg/dL`],
+          ['Trigliserida', `${a.trig} mg/dL`, `${b.trig} mg/dL`],
+          ['BMI', `${a.bmi} kg/m²`, `${b.bmi} kg/m²`],
+          ['Risiko', isDocHighRisk(docA) ? 'Tinggi' : 'Rendah', isDocHighRisk(docB) ? 'Tinggi' : 'Rendah']
+        ].map(([lbl, va, vb]) => `<tr><td><strong>${esc(lbl)}</strong></td><td>${esc(va)}</td><td>${esc(vb)}</td></tr>`).join('');
+        document.getElementById('nh-cmp-table-wrap').innerHTML = `
+          <div class="drawer-table-wrap">
+            <table class="drawer-table">
+              <thead><tr><th>Indikator</th><th>${esc(getPatientName(docA))}</th><th>${esc(getPatientName(docB))}</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        `;
+      };
+      selA.addEventListener('change', renderCmp);
+      selB.addEventListener('change', renderCmp);
+      renderCmp();
+      return;
+    }
+
     if (type === 'history') {
       kicker.textContent = 'CLINICAL AUDIT LOG';
       title.textContent = 'History Pasien & Dokumen';
@@ -789,14 +847,306 @@
     });
 
     document.getElementById('nh-btn-open-patients')?.addEventListener('click', () => openDrawer('patients'));
+    document.getElementById('nh-btn-open-compare')?.addEventListener('click', () => openDrawer('compare'));
+    document.getElementById('nh-btn-cmd-open')?.addEventListener('click', openCmdPalette);
     document.getElementById('nh-btn-open-analysis')?.addEventListener('click', () => openDrawer('analytics'));
     document.getElementById('nh-btn-refresh')?.addEventListener('click', fetchWorkspaceData);
     document.getElementById('nh-drawer-close')?.addEventListener('click', closeDrawer);
     document.getElementById('nh-drawer-backdrop')?.addEventListener('click', (e) => {
       if (e.target.id === 'nh-drawer-backdrop') closeDrawer();
     });
+    document.getElementById('nh-cmd-backdrop')?.addEventListener('click', (e) => {
+      if (e.target.id === 'nh-cmd-backdrop') closeCmdPalette();
+    });
+    document.getElementById('nh-cmd-input')?.addEventListener('input', (e) => renderCmdList(e.target.value));
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeDrawer();
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openCmdPalette();
+      } else if (e.key === 'Escape') {
+        closeCmdPalette();
+        closeDrawer();
+      }
+    });
+
+    bindSimulatorAndTriage();
+  }
+
+  // ------------------------------------------------------------------------
+  // Interactive Domain Radar (5-Axis SVG), Simulator, Triage, Scatter, Compare
+  // ------------------------------------------------------------------------
+
+  function renderDomainRadar(doc) {
+    const wrap = document.getElementById('nh-radar-wrap');
+    if (!wrap || !doc) return;
+    const s = getBiomarkerStats(doc);
+    const tag = document.getElementById('nh-radar-tag');
+    if (tag) tag.textContent = getDocCode(doc);
+
+    const clamp01 = (v) => Math.max(0.1, Math.min(1, v));
+    const axes = [
+      { label: 'MMSE', norm: clamp01(Number(s.mmse) / 30), raw: `${s.mmse}/30` },
+      { label: 'ADL', norm: clamp01(Number(s.adl) / 10), raw: `${s.adl}/10` },
+      { label: 'Vaskular', norm: clamp01(1 - Math.max(0, Number(s.sbp) - 110) / 110), raw: `${s.sbp} mmHg` },
+      { label: 'Lipid', norm: clamp01(1 - Math.max(0, Number(s.chol) - 150) / 300), raw: `${s.chol} mg/dL` },
+      { label: 'BMI', norm: clamp01(1 - Math.abs(Number(s.bmi) - 22) / 22), raw: `${s.bmi} kg/m²` }
+    ];
+
+    const cx = 110, cy = 100, R = 68;
+    const pt = (idx, ratio) => {
+      const ang = (-Math.PI / 2) + (idx * 2 * Math.PI / axes.length);
+      return [cx + Math.cos(ang) * R * ratio, cy + Math.sin(ang) * R * ratio];
+    };
+
+    const patientPts = axes.map((a, i) => pt(i, a.norm).map(n => n.toFixed(1)).join(',')).join(' ');
+    const targetPts = axes.map((_, i) => pt(i, 0.78).map(n => n.toFixed(1)).join(',')).join(' ');
+    const gridRings = [0.35, 0.65, 1].map(r => {
+      const p = axes.map((_, i) => pt(i, r).map(n => n.toFixed(1)).join(',')).join(' ');
+      return `<polygon points="${p}" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>`;
+    }).join('');
+    const spokes = axes.map((_, i) => {
+      const [x, y] = pt(i, 1);
+      return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>`;
+    }).join('');
+    const labels = axes.map((a, i) => {
+      const [lx, ly] = pt(i, 1.2);
+      const [dx, dy] = pt(i, a.norm);
+      return `
+        <text x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.65">${esc(a.label)}</text>
+        <circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="4" fill="#D97757" class="nh-radar-dot" data-tip="${esc(a.label)}: ${esc(a.raw)}" style="cursor:pointer"/>
+      `;
+    }).join('');
+
+    wrap.innerHTML = `
+      <svg class="nh-radar-svg" viewBox="0 0 220 205" style="color:var(--hub-text)">
+        ${gridRings}${spokes}
+        <polygon points="${targetPts}" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3" stroke-width="1.2"/>
+        <polygon points="${patientPts}" fill="#D97757" fill-opacity="0.18" stroke="#D97757" stroke-width="1.8"/>
+        ${labels}
+      </svg>
+      <div class="nh-radar-tip" id="nh-radar-tip">Arahkan kursor ke titik domain</div>
+    `;
+
+    const tip = document.getElementById('nh-radar-tip');
+    wrap.querySelectorAll('.nh-radar-dot').forEach(dot => {
+      dot.addEventListener('mouseenter', () => { if (tip) tip.textContent = dot.getAttribute('data-tip'); });
+      dot.addEventListener('mouseleave', () => { if (tip) tip.textContent = 'Arahkan kursor ke titik domain'; });
+    });
+  }
+
+  function syncSimulatorFromDoc(doc) {
+    if (!doc) return;
+    const s = getBiomarkerStats(doc);
+    const b = s.b32 || {};
+    const setRange = (id, valId, val) => {
+      const el = document.getElementById(id);
+      const vEl = document.getElementById(valId);
+      if (el && !isNaN(Number(val))) el.value = Number(val);
+      if (vEl && el) vEl.textContent = el.value;
+    };
+    setRange('nh-sim-mmse', 'nh-sim-mmse-val', s.mmse);
+    setRange('nh-sim-adl', 'nh-sim-adl-val', s.adl);
+    setRange('nh-sim-sbp', 'nh-sim-sbp-val', s.sbp);
+    const mem = document.getElementById('nh-sim-mem');
+    const dis = document.getElementById('nh-sim-dis');
+    if (mem) mem.checked = Number(b.MemoryComplaints || 0) === 1;
+    if (dis) dis.checked = Number(b.Disorientation || 0) === 1;
+    updateLocalSimEstimate();
+  }
+
+  function updateLocalSimEstimate() {
+    const mmse = Number(document.getElementById('nh-sim-mmse')?.value ?? 24);
+    const adl = Number(document.getElementById('nh-sim-adl')?.value ?? 7);
+    const sbp = Number(document.getElementById('nh-sim-sbp')?.value ?? 120);
+    const mem = document.getElementById('nh-sim-mem')?.checked ? 1 : 0;
+    const dis = document.getElementById('nh-sim-dis')?.checked ? 1 : 0;
+    let score = 12 + Math.max(0, 24 - mmse) * 2.6 + Math.max(0, 7 - adl) * 3.1 + Math.max(0, sbp - 130) * 0.22 + mem * 14 + dis * 16;
+    score = Math.max(3, Math.min(97, Math.round(score)));
+    const el = document.getElementById('nh-sim-score');
+    if (el) el.textContent = `${score}% (${score >= 60 ? 'Tinggi' : score >= 35 ? 'Sedang' : 'Rendah'})`;
+  }
+
+  function syncInlineTriage(doc) {
+    if (!doc) return;
+    const v = doc.validation || {};
+    const validated = isDocValidated(doc);
+    const st = document.getElementById('nh-triage-status');
+    const notes = document.getElementById('nh-triage-notes');
+    const sig = document.getElementById('nh-triage-sig');
+    if (st) st.textContent = validated ? 'TERVALIDASI' : 'BELUM VALIDASI';
+    if (notes) notes.value = v.clinical_notes || '';
+    if (sig) sig.textContent = v.signature_hash ? `SIG: ${v.signature_hash}` : `KODE: ${getDocCode(doc)}`;
+  }
+
+  function renderScatterMatrix() {
+    const wrap = document.getElementById('nh-scatter-wrap');
+    if (!wrap) return;
+    if (!state.consultations.length) {
+      wrap.innerHTML = '<div class="nh-preview-empty">Belum ada data pasien.</div>';
+      return;
+    }
+    const W = 760, H = 165, padL = 34, padR = 16, padT = 14, padB = 24;
+    const activeCode = state.activeDoc ? getDocCode(state.activeDoc) : '';
+    const dots = state.consultations.map(it => {
+      const s = getBiomarkerStats(it);
+      const age = Math.max(20, Math.min(95, Number(s.age) || 65));
+      const mmse = Math.max(0, Math.min(30, Number(s.mmse) || 24));
+      const x = padL + ((age - 20) / 75) * (W - padL - padR);
+      const y = padT + (1 - mmse / 30) * (H - padT - padB);
+      const code = getDocCode(it);
+      const high = isDocHighRisk(it);
+      const fill = high ? '#dc2626' : (mmse < 24 ? '#d97706' : '#16a34a');
+      const isSel = code === activeCode;
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isSel ? 6 : 4}" fill="${fill}" fill-opacity="${isSel ? 1 : 0.72}" stroke="${isSel ? '#ffffff' : 'none'}" stroke-width="1.5" class="nh-scatter-dot" data-sc-code="${esc(code)}" data-sc-tip="${esc(getPatientName(it))} (${esc(code)}) · Usia ${age} · MMSE ${mmse}/30"/>`;
+    }).join('');
+
+    wrap.innerHTML = `
+      <svg class="nh-scatter-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
+        <text x="${padL}" y="${H - 6}" font-size="10" fill="currentColor" opacity="0.5">20 thn</text>
+        <text x="${W - padR}" y="${H - 6}" text-anchor="end" font-size="10" fill="currentColor" opacity="0.5">95 thn</text>
+        <text x="4" y="${padT + 8}" font-size="10" fill="currentColor" opacity="0.5">30</text>
+        <text x="8" y="${H - padB}" font-size="10" fill="currentColor" opacity="0.5">0</text>
+        ${dots}
+      </svg>
+      <div class="nh-scatter-tip" id="nh-scatter-tip">Klik titik mana saja untuk memuat dossier pasien</div>
+    `;
+    const tip = document.getElementById('nh-scatter-tip');
+    wrap.querySelectorAll('.nh-scatter-dot').forEach(dot => {
+      dot.addEventListener('mouseenter', () => { if (tip) tip.textContent = dot.getAttribute('data-sc-tip'); });
+      dot.addEventListener('click', () => selectPatientByCode(dot.getAttribute('data-sc-code'), false));
+    });
+  }
+
+  function bindSimulatorAndTriage() {
+    [['nh-sim-mmse', 'nh-sim-mmse-val'], ['nh-sim-adl', 'nh-sim-adl-val'], ['nh-sim-sbp', 'nh-sim-sbp-val']].forEach(([inId, vId]) => {
+      document.getElementById(inId)?.addEventListener('input', (e) => {
+        const vEl = document.getElementById(vId);
+        if (vEl) vEl.textContent = e.target.value;
+        updateLocalSimEstimate();
+      });
+    });
+    ['nh-sim-mem', 'nh-sim-dis'].forEach(id => document.getElementById(id)?.addEventListener('change', updateLocalSimEstimate));
+    document.getElementById('nh-sim-reset')?.addEventListener('click', () => syncSimulatorFromDoc(state.activeDoc));
+    document.getElementById('nh-sim-run')?.addEventListener('click', async () => {
+      const btn = document.getElementById('nh-sim-run');
+      const scoreEl = document.getElementById('nh-sim-score');
+      if (!btn || !scoreEl) return;
+      const base = (state.activeDoc && (state.activeDoc.all_32_biomarkers || state.activeDoc.raw_features)) || {};
+      const payload = {
+        ...base,
+        MMSE: Number(document.getElementById('nh-sim-mmse').value),
+        ADL: Number(document.getElementById('nh-sim-adl').value),
+        SystolicBP: Number(document.getElementById('nh-sim-sbp').value),
+        MemoryComplaints: document.getElementById('nh-sim-mem').checked ? 1 : 0,
+        Disorientation: document.getElementById('nh-sim-dis').checked ? 1 : 0
+      };
+      btn.disabled = true;
+      btn.textContent = 'Menguji...';
+      try {
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const j = await res.json();
+        const prob = j.probability_positive ?? j.probability ?? j.risk_probability;
+        if (prob != null) {
+          const pct = Math.round(Number(prob) > 1 ? Number(prob) : Number(prob) * 100);
+          scoreEl.textContent = `${pct}% (${j.risk_level || (pct >= 50 ? 'High Risk' : 'Low Risk')})`;
+        }
+      } catch (_) {} finally {
+        btn.disabled = false;
+        btn.textContent = 'Uji /api/predict';
+      }
+    });
+
+    document.querySelectorAll('#nh-triage-chips .nh-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#nh-triage-chips .nh-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+
+    document.getElementById('nh-triage-submit')?.addEventListener('click', async () => {
+      if (!state.activeDoc) return;
+      const btn = document.getElementById('nh-triage-submit');
+      const activeChip = document.querySelector('#nh-triage-chips .nh-chip.active');
+      const statusVal = activeChip ? activeChip.getAttribute('data-triage') : 'TERKONFIRMASI_KLINIS';
+      const notes = document.getElementById('nh-triage-notes')?.value.trim() || '';
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      try {
+        const code = getDocCode(state.activeDoc);
+        const res = await fetch(`/api/consultation/${encodeURIComponent(code)}/validate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            validator_name: state.nakes?.name || 'Dokter Pemeriksa',
+            validator_email: state.nakes?.email || '',
+            validator_institution: state.nakes?.institution || 'Faskes Mitra Neura',
+            validation_status: statusVal,
+            clinical_notes: notes
+          })
+        });
+        const j = await res.json();
+        if (j.success) {
+          await fetchWorkspaceData();
+          await selectPatientByCode(code, false);
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sahkan Sekarang';
+      }
+    });
+  }
+
+  function openCmdPalette() {
+    const bd = document.getElementById('nh-cmd-backdrop');
+    const inp = document.getElementById('nh-cmd-input');
+    if (!bd) return;
+    bd.hidden = false;
+    renderCmdList('');
+    setTimeout(() => inp && inp.focus(), 20);
+  }
+
+  function closeCmdPalette() {
+    const bd = document.getElementById('nh-cmd-backdrop');
+    if (bd) bd.hidden = true;
+  }
+
+  function renderCmdList(query) {
+    const list = document.getElementById('nh-cmd-list');
+    if (!list) return;
+    const q = String(query || '').toLowerCase().trim();
+    const actions = [
+      { label: 'Buka Direktori Pasien', tag: 'Drawer', fn: () => openDrawer('patients') },
+      { label: 'Bandingkan 2 Pasien', tag: 'Compare', fn: () => openDrawer('compare') },
+      { label: 'Buka Dossier Medis Pasien Aktif', tag: 'Dossier', fn: () => openDrawer('documents') },
+      { label: 'Ganti Tema (Light / Dark)', tag: 'Theme', fn: () => document.getElementById('hub-theme-btn')?.click() }
+    ].filter(a => !q || a.label.toLowerCase().includes(q));
+
+    const pts = state.consultations
+      .filter(it => !q || getPatientName(it).toLowerCase().includes(q) || getDocCode(it).toLowerCase().includes(q))
+      .slice(0, 8)
+      .map(it => ({
+        label: `${getPatientName(it)} — ${getDocCode(it)}`,
+        tag: isDocHighRisk(it) ? 'Risiko' : 'Pasien',
+        fn: () => selectPatientByCode(getDocCode(it), false)
+      }));
+
+    const combined = [...actions, ...pts];
+    list.innerHTML = combined.map((c, idx) =>
+      `<button type="button" class="nh-cmd-item" data-cmd-idx="${idx}"><span>${esc(c.label)}</span><span class="nh-badge">${esc(c.tag)}</span></button>`
+    ).join('') || '<div class="nh-empty-hint">Tidak ada hasil.</div>';
+
+    list.querySelectorAll('[data-cmd-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = combined[Number(btn.getAttribute('data-cmd-idx'))];
+        closeCmdPalette();
+        if (item && item.fn) item.fn();
+      });
     });
   }
 
@@ -805,5 +1155,6 @@
     setupThemeAndChrome();
     bindEvents();
     fetchWorkspaceData();
+    setInterval(fetchWorkspaceData, 45000);
   });
 })();
