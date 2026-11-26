@@ -874,10 +874,9 @@
                 <div class="analytics-card-head">
                   <div>
                     <div class="bento-title-row">
-                      <h3 class="bento-title-sm">Model Accuracy &amp; Performance Lab</h3>
-                      <span class="compact-badge" id="card-acc-badge">95.35%</span>
+                      <h3 class="bento-title-sm">Model Accuracy</h3>
                     </div>
-                    <p class="bento-desc-sm">Kurva performa XGBoost &amp; Neural Network per epoch (interaktif).</p>
+                    <p class="bento-desc-sm">Kurva performa XGBoost &amp; Neural Net per epoch.</p>
                   </div>
                   <div class="segmented-switch" id="acc-mode-switch" role="tablist">
                     <button type="button" class="seg-btn active" data-curve-mode="accuracy">Accuracy</button>
@@ -885,18 +884,14 @@
                   </div>
                 </div>
 
-                <div class="analytics-mini-metrics">
-                  <div class="mini-metric-pill">
-                    <span class="mini-metric-lbl">F1-Score</span>
-                    <span class="mini-metric-val" id="metric-f1-val">0.948</span>
-                  </div>
-                  <div class="mini-metric-pill">
-                    <span class="mini-metric-lbl">Precision</span>
-                    <span class="mini-metric-val" id="metric-prec-val">0.952</span>
-                  </div>
-                  <div class="mini-metric-pill">
-                    <span class="mini-metric-lbl">ROC-AUC</span>
-                    <span class="mini-metric-val" id="metric-auc-val">0.974</span>
+                <div class="analytics-hero-stat">
+                  <span class="hero-stat-num" id="card-acc-badge">95.35%</span>
+                  <div class="analytics-mini-metrics">
+                    <span class="mini-metric-inline"><em>F1</em> <b id="metric-f1-val">0.948</b></span>
+                    <span class="mini-metric-sep"></span>
+                    <span class="mini-metric-inline"><em>Prec</em> <b id="metric-prec-val">0.952</b></span>
+                    <span class="mini-metric-sep"></span>
+                    <span class="mini-metric-inline"><em>AUC</em> <b id="metric-auc-val">0.974</b></span>
                   </div>
                 </div>
 
@@ -922,10 +917,9 @@
                 <div class="analytics-card-head">
                   <div>
                     <div class="bento-title-row">
-                      <h3 class="bento-title-sm">Platform Statistics &amp; Clinical Ratio</h3>
-                      <span class="compact-badge" id="stats-period-badge">Live</span>
+                      <h3 class="bento-title-sm">Platform Statistics</h3>
                     </div>
-                    <p class="bento-desc-sm">Distribusi pengguna, konsultasi NKS, &amp; rasio skrining klinis.</p>
+                    <p class="bento-desc-sm">Ringkasan pengguna, konsultasi, &amp; rasio skrining.</p>
                   </div>
                   <div class="segmented-switch" id="stats-period-switch" role="tablist">
                     <button type="button" class="seg-btn active" data-stat-period="live">Live</button>
@@ -974,11 +968,11 @@
                 <div class="analytics-card-head">
                   <div>
                     <div class="bento-title-row">
-                      <h3 class="bento-title-sm">Live Biomarker Inference Simulator</h3>
-                      <span class="compact-badge" id="sim-status-badge">Interactive</span>
+                      <h3 class="bento-title-sm">Inference Simulator</h3>
                     </div>
-                    <p class="bento-desc-sm">Simulasi cepat skor risiko Alzheimer berdasarkan 3 biomarker utama.</p>
+                    <p class="bento-desc-sm">Simulasi skor risiko Alzheimer dari 3 biomarker utama.</p>
                   </div>
+                  <span class="compact-badge" id="sim-status-badge">Ready</span>
                 </div>
 
                 <div class="sim-controls">
@@ -1025,12 +1019,11 @@
                 <div class="analytics-card-head">
                   <div>
                     <div class="bento-title-row">
-                      <h3 class="bento-title-sm">System Latency &amp; Activity Pulse</h3>
-                      <span class="compact-badge" id="latency-ms-badge">-- ms</span>
+                      <h3 class="bento-title-sm">System Latency &amp; Pulse</h3>
                     </div>
-                    <p class="bento-desc-sm">Responsivitas API backend, status MySQL, &amp; jejak aktivitas terbaru.</p>
+                    <p class="bento-desc-sm">Responsivitas API, status database, &amp; aktivitas sistem.</p>
                   </div>
-                  <button type="button" class="bento-pill-btn" id="btn-ping-check">Ping Check</button>
+                  <button type="button" class="bento-pill-btn" id="btn-ping-check">Ping</button>
                 </div>
 
                 <div class="latency-bars-row">

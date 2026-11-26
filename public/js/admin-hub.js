@@ -1327,10 +1327,20 @@
         `;
       }).join('');
 
+      const pathStr = pathOf(ds.train);
+      const areaPath = `${pathStr} L${toX(ds.train.length - 1).toFixed(1)},${(h - padY).toFixed(1)} L${toX(0).toFixed(1)},${(h - padY).toFixed(1)} Z`;
+
       accSvg.innerHTML = `
+        <defs>
+          <linearGradient id="accAreaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--hub-accent)" stop-opacity="0.18" />
+            <stop offset="100%" stop-color="var(--hub-accent)" stop-opacity="0.0" />
+          </linearGradient>
+        </defs>
         ${gridLines}
-        <path d="${pathOf(ds.train)}" fill="none" stroke="var(--hub-accent)" stroke-width="2.2" stroke-linecap="round" />
-        <path d="${pathOf(ds.val)}" fill="none" stroke="#60A5FA" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round" />
+        <path d="${areaPath}" fill="url(#accAreaGrad)" />
+        <path d="${pathStr}" fill="none" stroke="var(--hub-accent)" stroke-width="2.2" stroke-linecap="round" />
+        <path d="${pathOf(ds.val)}" fill="none" stroke="#60A5FA" stroke-width="1.8" stroke-dasharray="4 3" stroke-linecap="round" />
         ${hitCols}
       `;
 
