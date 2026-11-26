@@ -30,36 +30,61 @@ admin_nakes_bp = Blueprint("admin_nakes", __name__)
 NAKES_DB_FILE = Path(__file__).resolve().parent.parent.parent / "datasets" / "nakes_directory.json"
 
 
-def _load_nakes_db():
-    """Baca data nakes dari database MySQL relasional jika aktif, fallback ke JSON."""
-    if execute_query:
-        try:
-            rows = execute_query("SELECT * FROM nakes ORDER BY id DESC")
-            if rows:
-                return [{
-                    "id": r.get("nip") or f"NKS-{r['id']}",
-                    "name": r["full_name"],
-                    "profession": r["specialization"],
-                    "str_number": r["str"],
-                    "sip_number": r["sip"],
-                    "institution": r["facility_name"],
-                    "phone": r.get("phone_number", ""),
-                    "nakes_email": r.get("email", ""),
-                    "real_email": r.get("email", ""),
-                    "status": "Terverifikasi KKI" if r.get("status_validation") == "ACTIVE" else r.get("status_validation", "ACTIVE"),
-                    "created_at": str(r.get("created_at", ""))
-                } for r in rows]
-        except Exception as e:
-            logger.warning(f"MySQL query nakes fallback to JSON: {e}")
-
+def _read_nakes_json():
     if not NAKES_DB_FILE.exists():
         return []
     try:
         with open(NAKES_DB_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            return data if isinstance(data, list) else []
     except Exception as e:
         logger.error(f"Gagal membaca nakes_directory.json: {e}")
         return []
+
+
+def _load_nakes_db():
+    """Baca data nakes dari database MySQL relasional jika aktif, fallback & merge password dari JSON."""
+    json_items = _read_nakes_json()
+    json_by_id = {it.get("id"): it for it in json_items if it.get("id")}
+    json_by_email = {
+        (it.get("nakes_email") or it.get("email") or "").lower(): it
+        for it in json_items
+        if (it.get("nakes_email") or it.get("email"))
+    }
+
+    if execute_query:
+        try:
+            rows = execute_query("SELECT * FROM nakes ORDER BY id DESC")
+            if rows:
+                merged = []
+                for r in rows:
+                    nid = r.get("nip") or f"NKS-{r['id']}"
+                    n_email = (r.get("email") or "").lower()
+                    j_match = json_by_id.get(nid) or json_by_email.get(n_email) or {}
+                    pwd = j_match.get("password") or ""
+                    if not pwd and nid.startswith("NKS-"):
+                        parts = nid.split("-")
+                        if len(parts) >= 3:
+                            pwd = f"nks{''.join(parts[1:])}"
+                    merged.append({
+                        "id": nid,
+                        "name": r["full_name"],
+                        "profession": r["specialization"],
+                        "str_number": r["str"],
+                        "sip_number": r["sip"],
+                        "institution": r["facility_name"],
+                        "phone": r.get("phone_number", ""),
+                        "nakes_email": r.get("email", ""),
+                        "real_email": j_match.get("real_email") or r.get("email", ""),
+                        "password": pwd,
+                        "status": "Terverifikasi KKI" if r.get("status_validation") == "ACTIVE" else r.get("status_validation", "ACTIVE"),
+                        "created_at": str(r.get("created_at", ""))
+                    })
+                return merged
+        except Exception as e:
+            logger.warning(f"MySQL query nakes fallback to JSON: {e}")
+
+    return json_items
 
 
 def _save_nakes_db(data):

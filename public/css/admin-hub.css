@@ -3929,3 +3929,37 @@ button {
 .nakes-qr-feedback[hidden] {
   display: none !important;
 }
+
+.nakes-pwd-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nakes-pwd-code {
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+  color: var(--hub-text);
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  border-radius: 5px;
+  padding: 2px 6px;
+  user-select: all;
+}
+
+.nakes-pwd-toggle {
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 5px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-card);
+  color: var(--hub-text-secondary);
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: border-color 0.14s, color 0.14s;
+}
+
+.nakes-pwd-toggle:hover {
+  border-color: var(--hub-accent);
+  color: var(--hub-accent);
+}

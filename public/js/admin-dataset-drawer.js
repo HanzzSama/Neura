@@ -173,13 +173,23 @@
       }
 
       const list = Array.isArray(data) ? data : (data.nakes || data.data || []);
-      const rows = list.slice(0, 12).map(n => `
+      const rows = list.slice(0, 20).map((n, idx) => {
+        const pwd = String(n.password || '').trim();
+        const pwdHtml = pwd
+          ? `<div class="nakes-pwd-cell">
+               <code class="nakes-pwd-code" data-pwd-idx="${idx}" data-pwd-val="${escHtml(pwd)}" data-revealed="0">••••••••</code>
+               <button type="button" class="nakes-pwd-toggle" data-pwd-toggle="${idx}">Lihat</button>
+             </div>`
+          : '<span style="color:var(--hub-text-muted)">-</span>';
+        return `
         <tr>
           <td>${escHtml(n.name || n.nama || '-')}</td>
           <td>${escHtml(n.nakes_email || n.email || '-')}</td>
+          <td>${pwdHtml}</td>
           <td>${escHtml(n.profession || n.specialty || n.spesialis || 'Umum')}</td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
 
       bodyEl().innerHTML = `
         <div class="nakes-qr-admin-card" id="nakesQrAdminCard">
@@ -222,11 +232,29 @@
         </div>
         <div class="drawer-table-wrap">
           <table class="drawer-table">
-            <thead><tr><th>Nama</th><th>Email</th><th>Spesialisasi</th></tr></thead>
-            <tbody>${rows || '<tr><td colspan="3">Belum ada data nakes</td></tr>'}</tbody>
+            <thead><tr><th>Nama</th><th>Email</th><th>Password</th><th>Spesialisasi</th></tr></thead>
+            <tbody>${rows || '<tr><td colspan="4">Belum ada data nakes</td></tr>'}</tbody>
           </table>
         </div>
       `;
+
+      bodyEl().querySelectorAll('[data-pwd-toggle]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const idx = btn.getAttribute('data-pwd-toggle');
+          const codeEl = bodyEl().querySelector(`[data-pwd-idx="${idx}"]`);
+          if (!codeEl) return;
+          const revealed = codeEl.getAttribute('data-revealed') === '1';
+          if (revealed) {
+            codeEl.textContent = '••••••••';
+            codeEl.setAttribute('data-revealed', '0');
+            btn.textContent = 'Lihat';
+          } else {
+            codeEl.textContent = codeEl.getAttribute('data-pwd-val') || '-';
+            codeEl.setAttribute('data-revealed', '1');
+            btn.textContent = 'Tutup';
+          }
+        });
+      });
 
       const urlInput = document.getElementById('nakesQrUrlInput');
       const statusPill = document.getElementById('nakesQrStatusPill');
