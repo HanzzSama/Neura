@@ -305,7 +305,7 @@
   document.addEventListener('click', function (e) {
     if (!isRestrictedScreen()) return;
 
-    var target = e.target && e.target.closest ? e.target.closest('.admin-menu-item, [data-admin-only], #sidebar-files-link, #sidebar-research-admin-link, #sidebar-stats-link, #sidebar-nakes-admin-link, #sidebar-database-link') : null;
+    var target = e.target && e.target.closest ? e.target.closest('.admin-menu-item, [data-admin-only], #sidebar-files-link, #sidebar-research-admin-link, #sidebar-database-link') : null;
     if (target) {
       // Kecualikan tombol toggle accordion menu
       if (target.id === 'admin-menu-toggle-btn') return;

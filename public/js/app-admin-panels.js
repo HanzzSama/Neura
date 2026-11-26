@@ -49,8 +49,6 @@ if (document.readyState === 'loading') {
 // Room Switching — shows panels inside main-view
 // ============================================================
 const ADMIN_ROOMS = {
-  nakes:    'admin-room-nakes',
-  stats:    'admin-room-stats',
   explorer: 'admin-room-explorer',
   research: 'admin-room-research',
 };
@@ -72,7 +70,7 @@ function switchAdminRoom(roomKey) {
   if (roomKey === 'chat' || !ADMIN_ROOMS[roomKey]) {
     if (mainView) mainView.classList.remove('admin-room-active');
     // Highlight no sidebar item as active
-    document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link,#sidebar-research-admin-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#sidebar-database-link,#sidebar-files-link,#sidebar-research-admin-link').forEach(el => el.classList.remove('active'));
     return;
   }
   const roomEl = document.getElementById(ADMIN_ROOMS[roomKey]);
@@ -80,24 +78,17 @@ function switchAdminRoom(roomKey) {
   if (mainView) mainView.classList.add('admin-room-active');
   // Highlight active sidebar item
   const sidebarMap = {
-    nakes:    'sidebar-nakes-admin-link',
     database: 'sidebar-database-link',
-    stats:    'sidebar-stats-link',
     explorer: 'sidebar-files-link',
     research: 'sidebar-research-admin-link'
   };
-  document.querySelectorAll('#sidebar-nakes-admin-link,#sidebar-database-link,#sidebar-stats-link,#sidebar-files-link,#sidebar-research-admin-link').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#sidebar-database-link,#sidebar-files-link,#sidebar-research-admin-link').forEach(el => el.classList.remove('active'));
   const activeNav = document.getElementById(sidebarMap[roomKey]);
   if (activeNav) activeNav.classList.add('active');
 
   // Automatically load data when switching rooms
-  if (roomKey === 'nakes') {
-    if (typeof switchNakesAdminView === 'function') switchNakesAdminView('table');
-    if (typeof fetchAndRenderNakesTable === 'function') fetchAndRenderNakesTable();
-  } else if (roomKey === 'database') {
+  if (roomKey === 'database') {
     loadDatabaseCollections();
-  } else if (roomKey === 'stats') {
-    loadStatistics();
   } else if (roomKey === 'explorer') {
     _initExplorerView();
   } else if (roomKey === 'research') {
@@ -118,124 +109,6 @@ window.switchToDbCollection = function(name) {
   window.location.href = `/app/struktur?mode=database${name ? '&col=' + encodeURIComponent(name) : ''}`;
 };
 window.refreshDatabaseCollections = function() {};
-
-// ============================================================
-// STATISTICS ROOM
-// ============================================================
-function openStatisticsModal() {
-  switchAdminRoom('stats');
-  loadStatistics();
-}
-function closeStatisticsModal() { switchAdminRoom('chat'); }
-function closeStatisticsModalOnBackdrop(e) {}
-window.loadStatisticsRoom = loadStatistics;
-
-async function loadStatistics() {
-  try {
-    const db = firebase.firestore();
-    const usersSnap = await db.collection('users').get();
-    const totalUsers = usersSnap.size;
-    let totalNakes = 0, totalConsult = 0, totalPredict = 0;
-    try { totalNakes = (await db.collection('nakes').get()).size; } catch (_) {}
-    try { totalConsult = (await db.collection('consultations').get()).size; } catch (_) {}
-    try { totalPredict = (await db.collection('predictions').get()).size; } catch (_) {}
-
-    _animateCounter('stat-total-users', totalUsers);
-    _animateCounter('stat-val-users', totalUsers);
-    _animateCounter('stat-total-nakes', totalNakes);
-    _animateCounter('stat-val-nakes', totalNakes);
-    _animateCounter('stat-total-consult', totalConsult);
-    _animateCounter('stat-val-consults', totalConsult);
-    _animateCounter('stat-total-predict', totalPredict);
-    _animateCounter('stat-val-predictions', totalPredict);
-    _drawDonut(totalUsers, totalNakes);
-    _drawBarChart(usersSnap.docs);
-    _renderRecentRegistrations(usersSnap.docs);
-  } catch (err) {
-    console.error('Stats error:', err);
-  }
-}
-
-function _animateCounter(id, target) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let current = 0;
-  const step = Math.ceil(target / 40) || 1;
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = current.toLocaleString('id-ID');
-    if (current >= target) clearInterval(timer);
-  }, 25);
-}
-
-function _drawDonut(users, nakes) {
-  const total = users + nakes;
-  if (total === 0) return;
-  const circumference = 2 * Math.PI * 48;
-  const userLen = (users / total) * circumference;
-  const nakesLen = (nakes / total) * circumference;
-  const usersArc = document.getElementById('donut-users-arc');
-  const nakesArc = document.getElementById('donut-nakes-arc');
-  if (usersArc) {
-    usersArc.setAttribute('stroke-dasharray', `${userLen.toFixed(1)} ${(circumference - userLen).toFixed(1)}`);
-    usersArc.setAttribute('stroke-dashoffset', '75.4');
-  }
-  if (nakesArc) {
-    const offset = ((circumference - userLen) + 75.4) % circumference;
-    nakesArc.setAttribute('stroke-dasharray', `${nakesLen.toFixed(1)} ${(circumference - nakesLen).toFixed(1)}`);
-    nakesArc.setAttribute('stroke-dashoffset', offset.toFixed(1));
-  }
-  const legend = document.getElementById('stats-donut-legend');
-  if (legend) {
-    legend.innerHTML = `
-      <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#e07a5f"></span>Pasien (${users})</div>
-      <div class="stats-legend-item"><span class="stats-legend-dot" style="background:#2a9d8f"></span>Nakes (${nakes})</div>`;
-  }
-}
-
-function _drawBarChart(docs) {
-  const barEl = document.getElementById('stats-bar-chart');
-  if (!barEl) return;
-  const now = new Date();
-  const months = [];
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push({ label: d.toLocaleString('id-ID', { month: 'short' }), key: `${d.getFullYear()}-${d.getMonth()}`, count: 0 });
-  }
-  docs.forEach(doc => {
-    const ts = doc.data().createdAt;
-    if (!ts) return;
-    const date = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000);
-    const key = `${date.getFullYear()}-${date.getMonth()}`;
-    const m = months.find(m => m.key === key);
-    if (m) m.count++;
-  });
-  const maxCount = Math.max(...months.map(m => m.count), 1);
-  barEl.innerHTML = months.map(m => {
-    const pct = Math.max((m.count / maxCount) * 100, 4);
-    return `<div class="stats-bar-group">
-      <span class="stats-bar-val">${m.count}</span>
-      <div class="stats-bar" style="height:${pct}%"></div>
-      <span class="stats-bar-label">${m.label}</span>
-    </div>`;
-  }).join('');
-}
-
-function _renderRecentRegistrations(docs) {
-  const tableEl = document.getElementById('stats-recent-table');
-  if (!tableEl) return;
-  const sorted = [...docs].sort((a, b) => (b.data().createdAt?.seconds ?? 0) - (a.data().createdAt?.seconds ?? 0)).slice(0, 8);
-  tableEl.innerHTML = `<table class="stats-recent-list">
-    <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Terdaftar</th></tr></thead>
-    <tbody>${sorted.map(doc => {
-      const d = doc.data();
-      const role = d.role || 'user';
-      const cls = role === 'admin' ? 'db-badge--admin' : role === 'nakes' ? 'db-badge--nakes' : 'db-badge--user';
-      const ts = d.createdAt?.seconds ? new Date(d.createdAt.seconds * 1000).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '---';
-      return `<tr><td>${d.displayName || d.name || '---'}</td><td>${d.email || '---'}</td><td><span class="db-badge ${cls}">${role}</span></td><td>${ts}</td></tr>`;
-    }).join('')}</tbody>
-  </table>`;
-}
 
 // ============================================================
 // FILE EXPLORER MODAL

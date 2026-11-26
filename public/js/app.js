@@ -7504,9 +7504,7 @@ function syncAdminNavVisibility() {
   try {
     const isAdmin = typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin();
     const adminNavIds = [
-      'sidebar-nakes-admin-link',
       'sidebar-database-link',
-      'sidebar-stats-link',
       'sidebar-files-link'
     ];
     adminNavIds.forEach(id => {

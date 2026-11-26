@@ -502,13 +502,41 @@
     }
   }
 
+  function syncThemeUI(theme) {
+    const isDark = theme === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    const icon = document.getElementById('hub-theme-icon');
+    const btn = document.getElementById('hub-theme-btn');
+    if (icon) {
+      icon.innerHTML = isDark
+        ? '<circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />'
+        : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />';
+    }
+    if (btn) {
+      btn.title = isDark ? 'Ganti ke Light Mode' : 'Ganti ke Dark Mode';
+    }
+    const label = document.getElementById('profile-theme-label');
+    if (label) {
+      label.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    }
+  }
+
   function initThemeToggle() {
+    const saved = (() => {
+      try { return localStorage.getItem('neura_theme_v1'); } catch (e) { return null; }
+    })();
+    const initial = saved === 'dark' || saved === 'light'
+      ? saved
+      : (document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    syncThemeUI(initial);
+
     const btn = document.getElementById('hub-theme-btn');
     btn?.addEventListener('click', () => {
       const curr = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
       const next = curr === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
+      syncThemeUI(next);
       try { localStorage.setItem('neura_theme_v1', next); } catch (e) {}
+      showHubToast(next === 'dark' ? 'Tema diubah ke Dark Mode' : 'Tema diubah ke Light Mode');
     });
   }
 
@@ -590,11 +618,8 @@
       document.getElementById('hub-sidebar-1')?.classList.toggle('mobile-open');
     });
 
-    // Presence quick view
-    document.getElementById('hub-presence-btn')?.addEventListener('click', () => {
-      const item = findCardById('audit-presence');
-      if (item) window.AdminHubDrawer.open(item);
-    });
+    // Notification & Profile Popovers
+    initTopbarPopovers();
 
     // Bento dataset cards & Open button
     document.querySelectorAll('[data-bento-open]').forEach(btn => {
@@ -638,16 +663,262 @@
       const raw = localStorage.getItem('neura_auth_user');
       const user = raw ? JSON.parse(raw) : null;
       const name = (user && user.displayName) || localStorage.getItem('neura_admin_name') || 'Admin';
+      const email = (user && user.email) || localStorage.getItem('neura_admin_email') || 'admin@neura.dr.id';
+      const role = localStorage.getItem('neura_user_role') || 'Admin';
+      const initial = String(name).trim().charAt(0).toUpperCase() || 'A';
+
       const el = document.getElementById('hub-admin-avatar');
       if (el) {
-        el.textContent = String(name).trim().charAt(0).toUpperCase() || 'A';
-        el.title = name;
+        el.textContent = initial;
+        el.title = `${name} — Klik untuk Profile View`;
       }
       const heroNameEl = document.getElementById('hub-welcome-name');
       if (heroNameEl) {
         heroNameEl.textContent = name;
       }
+      const lgAvatar = document.getElementById('profile-avatar-lg');
+      if (lgAvatar) lgAvatar.textContent = initial;
+      const pName = document.getElementById('profile-view-name');
+      if (pName) pName.textContent = name;
+      const pEmail = document.getElementById('profile-view-email');
+      if (pEmail) pEmail.textContent = email;
+      const pRole = document.getElementById('profile-view-role');
+      if (pRole) pRole.textContent = role;
     } catch (e) {}
+  }
+
+  let _notifItems = [];
+  let _notifCat = 'all';
+
+  function escText(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function closeTopbarPopovers() {
+    const notifPop = document.getElementById('hub-notif-popover');
+    const profPop = document.getElementById('hub-profile-popover');
+    const notifBtn = document.getElementById('hub-presence-btn');
+    const profBtn = document.getElementById('hub-admin-avatar');
+    if (notifPop) notifPop.hidden = true;
+    if (profPop) profPop.hidden = true;
+    notifBtn?.setAttribute('aria-expanded', 'false');
+    profBtn?.setAttribute('aria-expanded', 'false');
+  }
+
+  function renderNotifications() {
+    const listEl = document.getElementById('notif-list');
+    const badgeEl = document.getElementById('notif-unread-count');
+    const dotEl = document.getElementById('hub-notif-dot');
+    if (!listEl) return;
+
+    const unreadTotal = _notifItems.filter(n => n.unread).length;
+    if (badgeEl) badgeEl.textContent = String(unreadTotal);
+    if (dotEl) dotEl.classList.toggle('is-hidden', unreadTotal === 0);
+
+    const filtered = _notifCat === 'all'
+      ? _notifItems
+      : _notifItems.filter(n => n.cat === _notifCat);
+
+    if (!filtered.length) {
+      listEl.innerHTML = '<div class="notif-empty">Tidak ada notifikasi pada kategori ini.</div>';
+      return;
+    }
+
+    const catLabel = { online: 'Admin Online', changes: 'Perubahan', other: 'Lainnya' };
+    listEl.innerHTML = filtered.map(n => `
+      <button type="button" class="notif-item ${n.unread ? 'is-unread' : ''}" data-notif-id="${escText(n.id)}" data-target-card="${escText(n.targetCard || '')}">
+        <span class="notif-cat-dot notif-cat-dot--${escText(n.cat)}"></span>
+        <div class="notif-body">
+          <div class="notif-top-line">
+            <span class="notif-item-title">${escText(n.title)}</span>
+            <span class="notif-item-time">${escText(n.time)}</span>
+          </div>
+          <div class="notif-item-desc">${escText(n.desc)}</div>
+          <span class="notif-item-cat-tag">${escText(catLabel[n.cat] || 'Sistem')}</span>
+        </div>
+      </button>
+    `).join('');
+
+    listEl.querySelectorAll('.notif-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.notifId;
+        const target = btn.dataset.targetCard;
+        const found = _notifItems.find(x => x.id === id);
+        if (found) found.unread = false;
+        renderNotifications();
+        closeTopbarPopovers();
+        if (target) {
+          const card = findCardById(target);
+          if (card) window.AdminHubDrawer.open(card);
+        }
+      });
+    });
+  }
+
+  async function refreshNotificationsData() {
+    let onlineItems = [];
+    try {
+      const res = await fetch('/api/admin/active-collaborators');
+      const data = await res.json();
+      const list = Array.isArray(data.collaborators) ? data.collaborators : (Array.isArray(data.admins) ? data.admins : []);
+      if (list.length) {
+        onlineItems = list.slice(0, 3).map((adm, idx) => ({
+          id: `online-${idx}`,
+          cat: 'online',
+          title: `${adm.name || adm.email || 'Admin'} sedang online`,
+          desc: adm.email ? `Sesi aktif terverifikasi (${adm.email})` : 'Sesi kolaborator admin aktif di workspace.',
+          time: adm.last_seen || 'Baru saja',
+          unread: true,
+          targetCard: 'audit-presence',
+        }));
+      }
+    } catch (e) {}
+
+    if (!onlineItems.length) {
+      const adminName = localStorage.getItem('neura_admin_name') || 'Administrator';
+      onlineItems = [{
+        id: 'online-self',
+        cat: 'online',
+        title: `${adminName} — Sesi Online Aktif`,
+        desc: 'Sesi Admin Hub aktif dan terautentikasi dengan token OTP.',
+        time: 'Live',
+        unread: true,
+        targetCard: 'audit-presence',
+      }];
+    }
+
+    const baseItems = [
+      ...onlineItems,
+      {
+        id: 'chg-dataset',
+        cat: 'changes',
+        title: 'Dataset & Split 80/20 Tersinkron',
+        desc: 'Dataset klinis alzheimers_disease_data.CSV (2,149 baris) siap untuk evaluasi & training.',
+        time: '5m lalu',
+        unread: true,
+        targetCard: 'dataset-original',
+      },
+      {
+        id: 'chg-model',
+        cat: 'changes',
+        title: 'XGBoost Inference Engine Siap',
+        desc: 'Pre-warming model selesai dengan 32 fitur biomarker klinis tervalidasi.',
+        time: '12m lalu',
+        unread: false,
+        targetCard: 'ml-model',
+      },
+      {
+        id: 'oth-security',
+        cat: 'other',
+        title: 'Proteksi OTP 2FA & MySQL Sync',
+        desc: 'Sinkronisasi akun admin dan audit sesi berjalan normal pada neura_db.',
+        time: '20m lalu',
+        unread: true,
+        targetCard: 'database-explorer',
+      },
+      {
+        id: 'oth-consult',
+        cat: 'other',
+        title: 'Rekam Medis & Direktori Nakes',
+        desc: 'Pemantauan dokumen konsultasi NKS & jadwal tenaga kesehatan aktif.',
+        time: '1j lalu',
+        unread: false,
+        targetCard: 'konsultasi-records',
+      },
+    ];
+
+    // Preserve read state if already loaded
+    const prevRead = new Set(_notifItems.filter(i => !i.unread).map(i => i.id));
+    _notifItems = baseItems.map(item => ({
+      ...item,
+      unread: prevRead.has(item.id) ? false : item.unread,
+    }));
+    renderNotifications();
+  }
+
+  function initTopbarPopovers() {
+    const notifBtn = document.getElementById('hub-presence-btn');
+    const notifPop = document.getElementById('hub-notif-popover');
+    const profBtn = document.getElementById('hub-admin-avatar');
+    const profPop = document.getElementById('hub-profile-popover');
+
+    refreshNotificationsData();
+
+    notifBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = notifPop?.hidden;
+      closeTopbarPopovers();
+      if (willOpen && notifPop) {
+        notifPop.hidden = false;
+        notifBtn.setAttribute('aria-expanded', 'true');
+        refreshNotificationsData();
+      }
+    });
+
+    profBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = profPop?.hidden;
+      closeTopbarPopovers();
+      if (willOpen && profPop) {
+        hydrateAdminAvatar();
+        profPop.hidden = false;
+        profBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    document.querySelectorAll('#notif-tabs .notif-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#notif-tabs .notif-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        _notifCat = tab.dataset.notifCat || 'all';
+        renderNotifications();
+      });
+    });
+
+    document.getElementById('notif-mark-read-btn')?.addEventListener('click', () => {
+      _notifItems.forEach(n => { n.unread = false; });
+      renderNotifications();
+      showHubToast('Semua notifikasi ditandai sudah dibaca');
+    });
+
+    document.getElementById('notif-open-presence-btn')?.addEventListener('click', () => {
+      closeTopbarPopovers();
+      const item = findCardById('audit-presence');
+      if (item) window.AdminHubDrawer.open(item);
+    });
+
+    document.getElementById('profile-open-settings')?.addEventListener('click', () => {
+      closeTopbarPopovers();
+      const item = findCardById('system-settings');
+      if (item) window.AdminHubDrawer.open(item);
+    });
+
+    document.getElementById('profile-open-presence')?.addEventListener('click', () => {
+      closeTopbarPopovers();
+      const item = findCardById('audit-presence');
+      if (item) window.AdminHubDrawer.open(item);
+    });
+
+    document.getElementById('profile-toggle-theme')?.addEventListener('click', () => {
+      document.getElementById('hub-theme-btn')?.click();
+    });
+
+    document.getElementById('profile-logout-btn')?.addEventListener('click', () => {
+      closeTopbarPopovers();
+      document.getElementById('hub-logout-btn')?.click();
+    });
+
+    [notifPop, profPop].forEach(pop => {
+      pop?.addEventListener('click', (e) => e.stopPropagation());
+    });
+
+    document.addEventListener('click', () => closeTopbarPopovers());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeTopbarPopovers();
+    });
   }
 
   let _trainPollTimer = null;
