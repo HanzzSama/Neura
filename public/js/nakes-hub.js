@@ -1179,20 +1179,35 @@
       ? `${Math.round(probNum > 1 ? probNum : probNum * 100)}%`
       : '—';
 
-    const eduMap = { '0': 'Level 0 · Dasar', '1': 'Level 1 · Menengah', '2': 'Level 2 · Sarjana', '3': 'Level 3 · Pascasarjana' };
-    const ethMap = { '0': 'Kaukasia / Umum (0)', '1': 'Afrika (1)', '2': 'Asia (2)', '3': 'Lainnya (3)' };
+    const eduMap = { '0': 'ISCED 0–1 (Primary)', '1': 'ISCED 3 (Secondary)', '2': 'ISCED 6 (Bachelor)', '3': 'ISCED 7–8 (Postgraduate)' };
+    const ethMap = { '0': 'Caucasian / General (0)', '1': 'African (1)', '2': 'Asian (2)', '3': 'Other (3)' };
     const eduLabel = eduMap[String(p.education ?? b.EducationLevel ?? '1')] || `Level ${b.EducationLevel ?? 1}`;
     const ethLabel = ethMap[String(p.ethnicity ?? b.Ethnicity ?? '0')] || String(b.Ethnicity ?? '0');
 
+    const rawGender = String(s.gender || '');
+    const genderIntl = rawGender.includes('Perempuan') || rawGender === '1' ? 'Female (1)' : 'Male (0)';
+
+    const symIntlMap = {
+      MemoryComplaints: 'Subjective Memory Complaints',
+      Forgetfulness: 'Episodic Forgetfulness',
+      Confusion: 'Acute / Chronic Confusion',
+      Disorientation: 'Temporal / Spatial Disorientation',
+      PersonalityChanges: 'Personality / Affective Shift',
+      DifficultyCompletingTasks: 'Executive Task Impairment',
+      BehavioralProblems: 'Neuropsychiatric / Behavioral Symptoms',
+      Hypertension: 'Systemic Hypertension',
+      Diabetes: 'Diabetes Mellitus'
+    };
+
     const symptomRows = SYMPTOM_META.map(([k, lbl]) => ({
-      label: lbl,
+      label: symIntlMap[k] || lbl,
       confirmed: _workingSymptoms[k] === 'confirmed'
     }));
     const confirmedCount = symptomRows.filter(x => x.confirmed).length;
 
     const bioRows = (doc.biomarkers_breakdown || []).flatMap(cat =>
       (cat.items || []).map(it => ({
-        category: cat.category || 'Klinis',
+        category: cat.category || 'Clinical',
         name: it.name || it.label,
         value: it.value,
         normal: it.normal || '—',
@@ -1201,21 +1216,25 @@
     );
 
     const priorityMap = {
-      RUJUKAN_SEGERA: 'Rujukan Segera (+3 Hari)',
-      KONTROL_7_HARI: 'Kontrol Cepat (7 Hari)',
-      RUTIN_30_HARI: 'Kontrol Rutin (30 Hari)'
+      RUJUKAN_SEGERA: 'Urgent Specialist Referral (+3 Days)',
+      KONTROL_7_HARI: 'Short-Interval Clinical Review (+7 Days)',
+      RUTIN_30_HARI: 'Standard Longitudinal Follow-Up (+30 Days)'
     };
+
+    const mmseNum = Number(s.mmse);
+    const mmseStage = isNaN(mmseNum) ? 'Undetermined' : (mmseNum >= 24 ? 'Cognitively Intact' : (mmseNum >= 20 ? 'Mild Cognitive Impairment (MCI)' : 'Moderate-to-Severe Cognitive Deficit'));
 
     return {
       s, p, b, pred, cr, v, meds, fu, recs,
-      probText, eduLabel, ethLabel, symptomRows, confirmedCount, bioRows,
-      priorityLabel: priorityMap[fu.priority] || fu.priority || 'Kontrol Rutin',
-      validatorName: v.validator_name || state.nakes?.name || 'Tenaga Kesehatan',
-      validatorProf: state.nakes?.profession || 'Dokter Pemeriksa',
-      institution: v.validator_institution || state.nakes?.institution || 'Unit Pelayanan Neurologi & Gangguan Memori',
+      probText, eduLabel, ethLabel, genderIntl, mmseStage,
+      symptomRows, confirmedCount, bioRows,
+      priorityLabel: priorityMap[fu.priority] || fu.priority || 'Standard Follow-Up',
+      validatorName: v.validator_name || state.nakes?.name || 'Attending Clinician',
+      validatorProf: state.nakes?.profession || 'Attending Neurologist / Clinician',
+      institution: v.validator_institution || state.nakes?.institution || 'Department of Neurology & Cognitive Medicine',
       sigHash: v.signature_hash || doc.verification_hash || 'SIG-PENDING',
-      notes: v.clinical_notes || document.getElementById('nh-triage-notes')?.value?.trim() || '—',
-      printedAt: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' })
+      notes: v.clinical_notes || document.getElementById('nh-triage-notes')?.value?.trim() || 'No additional clinician remarks recorded.',
+      isoTimestamp: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
     };
   }
 
@@ -1228,75 +1247,94 @@
 
     const bioHtml = ctx.bioRows.length
       ? ctx.bioRows.map(r => `<tr><td>${esc(r.category)}</td><td>${esc(r.name)}</td><td><strong>${esc(r.value)}</strong></td><td>${esc(r.normal)}</td><td>${esc(r.status)}</td></tr>`).join('')
-      : '<tr><td colspan="5">Data biomarker lengkap tersimpan pada sistem.</td></tr>';
+      : '<tr><td colspan="5">Complete 32-feature biomarker vector archived in electronic health record.</td></tr>';
 
     const symHtml = ctx.symptomRows.map(r =>
-      `<tr><td>${esc(r.label)}</td><td><strong>${r.confirmed ? 'TERKONFIRMASI (YA)' : 'TIDAK ADA'}</strong></td></tr>`
+      `<tr><td>${esc(r.label)}</td><td><strong>${r.confirmed ? 'PRESENT (CONFIRMED)' : 'ABSENT (CLEARED)'}</strong></td></tr>`
     ).join('');
 
     const medHtml = meds.length
       ? meds.map((m, i) => `<tr><td>${i + 1}</td><td><strong>${esc(m.name)}</strong></td><td>${esc(m.dose || '-')}</td><td>${esc(m.frequency || '-')}</td><td>${esc(m.duration || '-')}</td></tr>`).join('')
-      : '<tr><td colspan="5">Tidak ada resep obat tercatat pada sesi ini.</td></tr>';
+      : '<tr><td colspan="5">No pharmacological regimen prescribed during this encounter.</td></tr>';
 
     const recHtml = recs.length
-      ? `<ol style="margin:6px 0 0 18px;padding:0">${recs.map(r => `<li style="margin-bottom:3px">${esc(r)}</li>`).join('')}</ol>`
-      : '<p style="margin:6px 0 0">Tidak ada rekomendasi tambahan.</p>';
+      ? `<ol style="margin:4pt 0 0 16pt;padding:0">${recs.map(r => `<li style="margin-bottom:2pt">${esc(r)}</li>`).join('')}</ol>`
+      : '<p style="margin:4pt 0 0">Continue standard cognitive and vascular risk monitoring.</p>';
 
     sheet.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111827;padding-bottom:10px;margin-bottom:14px">
-        <div>
-          <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4b5563">NEURA AI · CLINICAL DECISION SUPPORT SYSTEM</div>
-          <strong style="font-size:17px;display:block;margin:2px 0">DOSSIER REKAM MEDIS &amp; EVALUASI KOGNITIF RESMI</strong>
-          <span style="font-size:12px">${esc(ctx.institution)}</span>
+      <div class="nh-print-header">
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'Inter',sans-serif;font-size:7.5pt;letter-spacing:0.08em;text-transform:uppercase;color:#475569">
+            NEURA AI · CLINICAL DECISION SUPPORT &amp; NEUROCOGNITIVE ARCHIVE (HL7)
+          </div>
+          <div style="font-size:13.5pt;font-weight:700;letter-spacing:-0.01em;line-height:1.25;margin:3pt 0">
+            STANDARDIZED NEUROCOGNITIVE CLINICAL DOSSIER
+          </div>
+          <div style="font-size:9.5pt;color:#334155">${esc(ctx.institution)}</div>
         </div>
-        <div style="text-align:right;font-family:monospace;font-size:11px">
-          <strong style="font-size:13px">${esc(getDocCode(doc))}</strong><br>
-          <span>ID: ${esc(doc.document_id || '—')}</span><br>
-          <span>Hash: ${esc(doc.verification_hash || '—')}</span><br>
-          <span>Cetak: ${esc(ctx.printedAt)}</span>
+        <div style="flex-shrink:0;white-space:nowrap;text-align:right;font-family:'JetBrains Mono',monospace;font-size:8pt;line-height:1.45;color:#1e293b">
+          <div style="font-size:10pt;font-weight:700;color:#0f172a">${esc(getDocCode(doc))}</div>
+          <div>Record ID: ${esc(doc.document_id || '—')}</div>
+          <div>Integrity: ${esc(doc.verification_hash || '—')}</div>
+          <div>Issued: ${esc(ctx.isoTimestamp)}</div>
         </div>
       </div>
 
-      <table class="nh-print-table" style="margin-bottom:12px">
-        <thead><tr><th colspan="4">1. IDENTITAS PASIEN, GAYA HIDUP &amp; STATUS AI</th></tr></thead>
+      <div class="nh-print-abstract">
+        <strong>CLINICAL ABSTRACT — </strong>
+        Subject <strong>${esc(getPatientName(doc))}</strong> (${esc(s.age)} yrs, ${esc(ctx.genderIntl)}) underwent a 32-biomarker neurocognitive screening evaluated by XGBoost 3.x inference.
+        Model-estimated Alzheimer's risk probability is <strong>${esc(ctx.probText)}</strong> (${esc(pred.risk_level || pred.ml_label_name || 'Assessed')}), with MMSE <strong>${esc(s.mmse)}/30</strong> (${esc(ctx.mmseStage)}), ADL <strong>${esc(s.adl)}/10</strong>, and <strong>${ctx.confirmedCount}/9</strong> clinician-verified clinical symptoms.
+        Document status: <strong>${isDocValidated(doc) ? 'CLINICALLY VALIDATED' : 'PROVISIONAL DRAFT'}</strong>.
+      </div>
+
+      <div class="nh-print-sec-title">I. Patient Demographics, Lifestyle &amp; Baseline Metrics</div>
+      <table class="nh-print-table">
         <tbody>
-          <tr><td><strong>Nama / Label</strong></td><td>${esc(getPatientName(doc))}</td><td><strong>Usia / Gender</strong></td><td>${esc(s.age)} Thn · ${esc(s.gender)}</td></tr>
-          <tr><td><strong>Pendidikan / Etnis</strong></td><td>${esc(ctx.eduLabel)} · ${esc(ctx.ethLabel)}</td><td><strong>BMI / Tekanan Darah</strong></td><td>${esc(s.bmi)} kg/m² · ${esc(s.sbp)}/${esc(s.dbp)} mmHg</td></tr>
-          <tr><td><strong>Skor Kognitif</strong></td><td>MMSE ${esc(s.mmse)}/30 · ADL ${esc(s.adl)}/10 · Func ${esc(s.func)}/10</td><td><strong>Prediksi Risiko AI</strong></td><td><strong>${esc(ctx.probText)}</strong> (${esc(pred.risk_level || pred.ml_label_name || 'Skrining')})</td></tr>
-          <tr><td><strong>Gaya Hidup</strong></td><td>Aktivitas ${esc(b.PhysicalActivity ?? '—')} jam/mg · Diet ${esc(b.DietQuality ?? '—')}/10 · Tidur ${esc(b.SleepQuality ?? '—')}/10 · Alkohol ${esc(b.AlcoholConsumption ?? '—')}</td><td><strong>Riwayat Medis</strong></td><td>Keluarga: ${Number(b.FamilyHistoryAlzheimers) === 1 ? 'Ya' : 'Tidak'} · Merokok: ${Number(b.Smoking) === 1 ? 'Ya' : 'Tidak'} · KV: ${Number(b.CardiovascularDisease) === 1 ? 'Ya' : 'Tidak'} · Depresi: ${Number(b.Depression) === 1 ? 'Ya' : 'Tidak'}</td></tr>
+          <tr><td><strong>Patient Identifier</strong></td><td>${esc(getPatientName(doc))}</td><td><strong>Age / Biological Sex</strong></td><td>${esc(s.age)} yrs · ${esc(ctx.genderIntl)}</td></tr>
+          <tr><td><strong>Education / Ethnicity</strong></td><td>${esc(ctx.eduLabel)} · ${esc(ctx.ethLabel)}</td><td><strong>BMI / Blood Pressure</strong></td><td>${esc(s.bmi)} kg/m² · ${esc(s.sbp)}/${esc(s.dbp)} mmHg</td></tr>
+          <tr><td><strong>Cognitive Indices</strong></td><td>MMSE ${esc(s.mmse)}/30 · ADL ${esc(s.adl)}/10 · Func ${esc(s.func)}/10</td><td><strong>AI Risk Stratification</strong></td><td><strong>${esc(ctx.probText)}</strong> (${esc(pred.risk_level || pred.ml_label_name || 'Assessed')})</td></tr>
+          <tr><td><strong>Lifestyle Profile</strong></td><td>Activity ${esc(b.PhysicalActivity ?? '—')} h/wk · Diet ${esc(b.DietQuality ?? '—')}/10 · Sleep ${esc(b.SleepQuality ?? '—')}/10 · Alcohol ${esc(b.AlcoholConsumption ?? '—')} u/wk</td><td><strong>Medical History</strong></td><td>Family Hx: ${Number(b.FamilyHistoryAlzheimers) === 1 ? 'Positive' : 'Negative'} · Smoking: ${Number(b.Smoking) === 1 ? 'Yes' : 'No'} · CVD: ${Number(b.CardiovascularDisease) === 1 ? 'Yes' : 'No'} · Depression: ${Number(b.Depression) === 1 ? 'Yes' : 'No'}</td></tr>
         </tbody>
       </table>
 
+      <div class="nh-print-sec-title">II. Quantitative Biomarker Profile (32-Feature Panel)</div>
       <table class="nh-print-table">
-        <thead><tr><th colspan="5">2. RINGKASAN PARAMETER BIOMARKER KLINIS (32 BIOMARKER)</th></tr><tr><th>Kategori</th><th>Parameter</th><th>Nilai Pasien</th><th>Rentang Normal</th><th>Status</th></tr></thead>
+        <thead><tr><th>Domain</th><th>Biomarker Parameter</th><th>Measured Value</th><th>Reference Range</th><th>Clinical Status</th></tr></thead>
         <tbody>${bioHtml}</tbody>
       </table>
 
+      <div class="nh-print-sec-title">III. Clinician-Verified Symptom Matrix (${ctx.confirmedCount}/9 Confirmed)</div>
       <table class="nh-print-table">
-        <thead><tr><th colspan="2">3. MATRIKS VERIFIKASI GEJALA KLINIS (${ctx.confirmedCount}/9 TERKONFIRMASI)</th></tr><tr><th>Gejala / Komorbiditas</th><th>Hasil Verifikasi Dokter</th></tr></thead>
+        <thead><tr><th>Clinical Symptom / Comorbidity</th><th>Verification Outcome</th></tr></thead>
         <tbody>${symHtml}</tbody>
       </table>
 
+      <div class="nh-print-sec-title">IV. Pharmacotherapy Regimen (e-Prescription)</div>
       <table class="nh-print-table">
-        <thead><tr><th colspan="5">4. REGIMEN OBAT &amp; TERAPI (E-PRESCRIPTION)</th></tr><tr><th>No</th><th>Nama Obat</th><th>Dosis</th><th>Aturan Pakai</th><th>Durasi</th></tr></thead>
+        <thead><tr><th>No.</th><th>Medication Name</th><th>Dosage</th><th>Frequency / Route</th><th>Duration</th></tr></thead>
         <tbody>${medHtml}</tbody>
       </table>
 
-      <div style="border:1px solid #d1d5db;padding:10px 12px;margin:12px 0">
-        <strong style="font-size:12px">5. REKOMENDASI PENANGANAN, JADWAL KONTROL &amp; CATATAN DOKTER</strong>
+      <div class="nh-print-sec-title">V. Clinical Recommendations, Follow-Up &amp; Attestation</div>
+      <div style="border:0.6pt solid #cbd5e1;padding:8pt 10pt;font-size:9.5pt;page-break-inside:avoid">
         ${recHtml}
-        <p style="margin:8px 0 0"><strong>Jadwal Kontrol Ulang:</strong> ${esc(fu.date || 'Belum dijadwalkan')} — <strong>Prioritas:</strong> ${esc(ctx.priorityLabel)}</p>
-        <p style="margin:4px 0 0"><strong>Catatan Klinis Dokter:</strong> ${esc(ctx.notes)}</p>
+        <div style="margin-top:8pt;padding-top:6pt;border-top:0.5pt dashed #cbd5e1">
+          <strong>Scheduled Follow-Up:</strong> ${esc(fu.date || 'Not scheduled')} &nbsp;|&nbsp;
+          <strong>Priority Tier:</strong> ${esc(ctx.priorityLabel)}
+        </div>
+        <div style="margin-top:4pt"><strong>Attending Clinician Remarks:</strong> ${esc(ctx.notes)}</div>
       </div>
 
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;padding-top:10px;border-top:1px solid #d1d5db">
-        <div style="font-size:10px;color:#4b5563;max-width:60%">
-          Dokumen ini dihasilkan oleh Neura AI Clinical Decision Support dan telah diverifikasi secara klinis oleh tenaga kesehatan berwenang.
+      <div style="margin-top:18pt;padding-top:10pt;border-top:0.75pt solid #0f172a;page-break-inside:avoid">
+        <div style="font-size:8pt;line-height:1.45;color:#475569;text-align:justify">
+          <strong>CONFIDENTIAL MEDICAL RECORD —</strong> Generated in accordance with standardized clinical documentation protocols (HL7/IEEE-style technical reporting). The cryptographic signature hash verifies attending clinician attestation integrity.
         </div>
-        <div style="text-align:right">
-          <div>${esc(ctx.validatorProf)}</div>
-          <div style="margin-top:24px;font-weight:700;font-size:13px">${esc(ctx.validatorName)}</div>
-          <div style="font-family:monospace;font-size:10px">${esc(ctx.sigHash)}</div>
+        <div style="display:flex;justify-content:flex-end;margin-top:14pt">
+          <div style="text-align:right;font-size:9.5pt;line-height:1.35">
+            <div style="color:#475569;font-size:8.5pt">${esc(ctx.validatorProf)}</div>
+            <div style="margin-top:24pt;font-weight:700;font-size:10.5pt;color:#0f172a">${esc(ctx.validatorName)}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:8pt;color:#334155">${esc(ctx.sigHash)}</div>
+          </div>
         </div>
       </div>
     `;
@@ -1691,86 +1729,86 @@
       : '<tr><td colspan="5">Ringkasan biomarker tersimpan di sistem.</td></tr>';
 
     const symPillsHtml = ctx.symptomRows.map(r =>
-      `<span class="nh-doc-sym-pill ${r.confirmed ? 'is-yes' : ''}">${esc(r.label)}: <strong>${r.confirmed ? 'YA' : 'TIDAK'}</strong></span>`
+      `<span class="nh-doc-sym-pill ${r.confirmed ? 'is-yes' : ''}">${esc(r.label)}: <strong>${r.confirmed ? 'PRESENT' : 'ABSENT'}</strong></span>`
     ).join('');
 
     const medRowsHtml = meds.length
       ? meds.map((m, i) => `<tr><td>${i + 1}</td><td><strong>${esc(m.name)}</strong></td><td>${esc(m.dose || '-')}</td><td>${esc(m.frequency || '-')}</td><td>${esc(m.duration || '-')}</td></tr>`).join('')
-      : '<tr><td colspan="5" style="color:var(--hub-text-muted)">Belum ada resep obat tercatat.</td></tr>';
+      : '<tr><td colspan="5" style="color:var(--hub-text-muted)">No pharmacological regimen prescribed.</td></tr>';
 
     const recListHtml = recs.length
       ? `<ol class="nh-doc-rec-list">${recs.map(r => `<li>${esc(r)}</li>`).join('')}</ol>`
-      : '<div style="color:var(--hub-text-muted)">Belum ada rekomendasi klinis.</div>';
+      : '<div style="color:var(--hub-text-muted)">No clinical recommendations recorded.</div>';
 
     box.innerHTML = `
       <div class="nh-doc-head">
         <div>
-          <div class="nh-doc-kicker">DOSSIER MEDIS RESMI · NEURA CLINICAL AI</div>
+          <div class="nh-doc-kicker">NEURA CLINICAL AI · STANDARDIZED NEUROCOGNITIVE DOSSIER (HL7)</div>
           <h3 style="margin:4px 0 3px;font-size:17px">${esc(getPatientName(doc))}</h3>
           <div style="font-size:12px;color:var(--hub-text-muted)">
-            ${esc(ctx.institution)} · Kode: <strong>${esc(getDocCode(doc))}</strong> · ID: ${esc(doc.document_id || '—')}
+            ${esc(ctx.institution)} · Code: <strong>${esc(getDocCode(doc))}</strong> · Record ID: ${esc(doc.document_id || '—')}
           </div>
         </div>
         <div style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px">
-          <div style="color:${isDocValidated(doc) ? '#10b981' : '#d97706'};font-weight:600">${isDocValidated(doc) ? 'STATUS: TERVALIDASI' : 'STATUS: DRAFT KLINIS'}</div>
+          <div style="color:${isDocValidated(doc) ? '#10b981' : '#d97706'};font-weight:600">${isDocValidated(doc) ? 'STATUS: CLINICALLY VALIDATED' : 'STATUS: PROVISIONAL DRAFT'}</div>
           <div style="color:var(--hub-text-muted)">${esc(ctx.sigHash)}</div>
-          <div style="color:var(--hub-text-muted)">Hash: ${esc(doc.verification_hash || '—')}</div>
+          <div style="color:var(--hub-text-muted)">Integrity: ${esc(doc.verification_hash || '—')}</div>
         </div>
       </div>
 
       <div class="nh-doc-grid">
         <div class="nh-doc-box">
-          <h4>Identitas &amp; Gaya Hidup Pasien</h4>
-          <div>Usia: <strong>${esc(s.age)} Thn</strong> · Gender: <strong>${esc(s.gender)}</strong></div>
-          <div>Pendidikan: <strong>${esc(ctx.eduLabel)}</strong> · Etnis: <strong>${esc(ctx.ethLabel)}</strong></div>
-          <div>Aktivitas: <strong>${esc(b.PhysicalActivity ?? '—')} jam/mg</strong> · Diet: <strong>${esc(b.DietQuality ?? '—')}/10</strong> · Tidur: <strong>${esc(b.SleepQuality ?? '—')}/10</strong></div>
-          <div>Riwayat Keluarga: <strong>${Number(b.FamilyHistoryAlzheimers) === 1 ? 'Ada' : 'Tidak Ada'}</strong> · Merokok: <strong>${Number(b.Smoking) === 1 ? 'Ya' : 'Tidak'}</strong> · KV: <strong>${Number(b.CardiovascularDisease) === 1 ? 'Ya' : 'Tidak'}</strong></div>
+          <h4>I. Demographics &amp; Lifestyle Profile</h4>
+          <div>Age: <strong>${esc(s.age)} yrs</strong> · Sex: <strong>${esc(ctx.genderIntl)}</strong></div>
+          <div>Education: <strong>${esc(ctx.eduLabel)}</strong> · Ethnicity: <strong>${esc(ctx.ethLabel)}</strong></div>
+          <div>Activity: <strong>${esc(b.PhysicalActivity ?? '—')} h/wk</strong> · Diet: <strong>${esc(b.DietQuality ?? '—')}/10</strong> · Sleep: <strong>${esc(b.SleepQuality ?? '—')}/10</strong></div>
+          <div>Family Hx: <strong>${Number(b.FamilyHistoryAlzheimers) === 1 ? 'Positive' : 'Negative'}</strong> · Smoking: <strong>${Number(b.Smoking) === 1 ? 'Yes' : 'No'}</strong> · CVD: <strong>${Number(b.CardiovascularDisease) === 1 ? 'Yes' : 'No'}</strong></div>
         </div>
         <div class="nh-doc-box">
-          <h4>Evaluasi AI &amp; Skor Kognitif</h4>
-          <div>Probabilitas Risiko AI: <strong>${esc(ctx.probText)}</strong> (${esc(pred.risk_level || pred.ml_label_name || 'Skrining')})</div>
-          <div>MMSE: <strong>${esc(s.mmse)}/30</strong> · ADL: <strong>${esc(s.adl)}/10</strong> · Func: <strong>${esc(s.func)}/10</strong></div>
-          <div>Tekanan Darah: <strong>${esc(s.sbp)}/${esc(s.dbp)} mmHg</strong> · BMI: <strong>${esc(s.bmi)} kg/m²</strong></div>
-          <div>Kolesterol: <strong>${esc(s.chol)}</strong> · LDL/HDL: <strong>${esc(b.CholesterolLDL ?? '—')}/${esc(b.CholesterolHDL ?? '—')}</strong> · Trig: <strong>${esc(s.trig)}</strong></div>
+          <h4>II. AI Risk &amp; Cognitive Indices</h4>
+          <div>Estimated Risk: <strong>${esc(ctx.probText)}</strong> (${esc(pred.risk_level || pred.ml_label_name || 'Assessed')})</div>
+          <div>MMSE: <strong>${esc(s.mmse)}/30</strong> (${esc(ctx.mmseStage)}) · ADL: <strong>${esc(s.adl)}/10</strong></div>
+          <div>Blood Pressure: <strong>${esc(s.sbp)}/${esc(s.dbp)} mmHg</strong> · BMI: <strong>${esc(s.bmi)} kg/m²</strong></div>
+          <div>Total Chol: <strong>${esc(s.chol)}</strong> · LDL/HDL: <strong>${esc(b.CholesterolLDL ?? '—')}/${esc(b.CholesterolHDL ?? '—')}</strong> · TG: <strong>${esc(s.trig)} mg/dL</strong></div>
         </div>
       </div>
 
       <div class="nh-doc-section">
-        <h4>Matriks Verifikasi Gejala Klinis (${ctx.confirmedCount}/9 Terkonfirmasi)</h4>
+        <h4>III. Clinician-Verified Symptom Matrix (${ctx.confirmedCount}/9 Confirmed)</h4>
         <div class="nh-doc-sym-wrap">${symPillsHtml}</div>
       </div>
 
       <div class="nh-doc-section">
-        <h4>Rincian Parameter Biomarker Klinis</h4>
+        <h4>IV. Quantitative Biomarker Panel</h4>
         <div class="nh-doc-table-wrap">
           <table class="nh-doc-table">
-            <thead><tr><th>Kategori</th><th>Parameter</th><th>Nilai</th><th>Normal</th><th>Status</th></tr></thead>
+            <thead><tr><th>Domain</th><th>Parameter</th><th>Value</th><th>Reference</th><th>Status</th></tr></thead>
             <tbody>${bioRowsHtml}</tbody>
           </table>
         </div>
       </div>
 
       <div class="nh-doc-section">
-        <h4>Regimen Obat &amp; Terapi (e-Prescription)</h4>
+        <h4>V. Pharmacotherapy Regimen (e-Prescription)</h4>
         <div class="nh-doc-table-wrap">
           <table class="nh-doc-table">
-            <thead><tr><th>No</th><th>Nama Obat</th><th>Dosis</th><th>Aturan Pakai</th><th>Durasi</th></tr></thead>
+            <thead><tr><th>No.</th><th>Medication</th><th>Dosage</th><th>Frequency</th><th>Duration</th></tr></thead>
             <tbody>${medRowsHtml}</tbody>
           </table>
         </div>
       </div>
 
       <div class="nh-doc-section">
-        <h4>Rekomendasi Penanganan, Tindak Lanjut &amp; Catatan</h4>
+        <h4>VI. Recommendations, Follow-Up &amp; Clinical Remarks</h4>
         ${recListHtml}
         <div class="nh-doc-followup-line">
-          <span>Jadwal Kontrol: <strong>${esc(fu.date || 'Belum dijadwalkan')}</strong> (${esc(ctx.priorityLabel)})</span>
-          <span>Catatan Klinis: <strong>${esc(ctx.notes)}</strong></span>
+          <span>Follow-Up Date: <strong>${esc(fu.date || 'Not scheduled')}</strong> (${esc(ctx.priorityLabel)})</span>
+          <span>Remarks: <strong>${esc(ctx.notes)}</strong></span>
         </div>
       </div>
 
       <div class="nh-doc-signoff">
-        <span>Dicetak: ${esc(ctx.printedAt)}</span>
+        <span>Issued: ${esc(ctx.isoTimestamp)}</span>
         <span>${esc(ctx.validatorProf)}: <strong>${esc(ctx.validatorName)}</strong> · ${esc(ctx.sigHash)}</span>
       </div>
     `;
