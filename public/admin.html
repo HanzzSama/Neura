@@ -540,6 +540,7 @@
 
           <div class="hub-divider"></div>
 
+
           <!-- SECTION: AI ENGINE & NEURA CHAT LAUNCHER (Interactive Bento) -->
           <section class="hub-section" id="hub-ai-bento-section" data-section="datasets">
             <div class="hub-section-head" style="margin-bottom: 12px;">
@@ -615,6 +616,7 @@
 
           <div class="hub-divider"></div>
 
+
           <!-- SECTION 1: Platform Ecosystem (3 Abstract Character Cards) -->
           <section class="hub-section" id="hub-platform-section" data-section="platform">
             <div class="hub-section-head">
@@ -632,6 +634,7 @@
           </section>
 
           <div class="hub-divider"></div>
+
 
           <!-- SECTION: NAKES TELEMETRY & LIVE SYSTEM RADAR -->
           <section class="hub-section" id="hub-telemetry-bento-section" data-section="operations">
@@ -700,6 +703,7 @@
           </section>
 
           <div class="hub-divider"></div>
+
 
           <!-- SECTION: ABSTRACT INTELLIGENCE LAB (5 New Abstract Cards: Bento 2 + 3) -->
           <section class="hub-section" id="hub-abstract-lab-section" data-section="datasets">
@@ -853,6 +857,216 @@
 
           <div class="hub-divider"></div>
 
+          <!-- SECTION: ANALYTICS, ACCURACY & LIVE SIMULATOR (4 Interactive Cards) -->
+          <section class="hub-section" id="hub-analytics-intelligence-section" data-section="datasets">
+            <div class="hub-section-head" style="margin-bottom: 12px;">
+              <h2 class="bento-section-label">Analytics, Accuracy &amp; Live Simulator</h2>
+              <span class="hub-link-btn" id="analytics-live-hint">Hover grafik untuk detail epoch</span>
+            </div>
+
+            <div class="analytics-bento-grid">
+              <!-- Card 1: Model Accuracy & Performance Lab -->
+              <div class="bento-card analytics-card">
+                <div class="analytics-card-head">
+                  <div>
+                    <div class="bento-title-row">
+                      <h3 class="bento-title-sm">Model Accuracy &amp; Performance Lab</h3>
+                      <span class="compact-badge" id="card-acc-badge">95.35%</span>
+                    </div>
+                    <p class="bento-desc-sm">Kurva performa XGBoost &amp; Neural Network per epoch (interaktif).</p>
+                  </div>
+                  <div class="segmented-switch" id="acc-mode-switch" role="tablist">
+                    <button type="button" class="seg-btn active" data-curve-mode="accuracy">Accuracy</button>
+                    <button type="button" class="seg-btn" data-curve-mode="loss">Loss</button>
+                  </div>
+                </div>
+
+                <div class="analytics-mini-metrics">
+                  <div class="mini-metric-pill">
+                    <span class="mini-metric-lbl">F1-Score</span>
+                    <span class="mini-metric-val" id="metric-f1-val">0.948</span>
+                  </div>
+                  <div class="mini-metric-pill">
+                    <span class="mini-metric-lbl">Precision</span>
+                    <span class="mini-metric-val" id="metric-prec-val">0.952</span>
+                  </div>
+                  <div class="mini-metric-pill">
+                    <span class="mini-metric-lbl">ROC-AUC</span>
+                    <span class="mini-metric-val" id="metric-auc-val">0.974</span>
+                  </div>
+                </div>
+
+                <div class="svg-chart-stage" id="acc-chart-stage">
+                  <svg id="acc-curve-svg" class="interactive-curve-svg" viewBox="0 0 380 128" preserveAspectRatio="none"></svg>
+                  <div class="chart-tooltip" id="acc-chart-tooltip" hidden></div>
+                </div>
+
+                <div class="analytics-card-foot">
+                  <div class="chart-legend-inline">
+                    <span class="legend-item"><i class="legend-dot legend-dot--train"></i>Train</span>
+                    <span class="legend-item"><i class="legend-dot legend-dot--val"></i>Validation</span>
+                  </div>
+                  <div class="bento-inline-actions" style="margin-top:0;">
+                    <button type="button" class="bento-pill-btn" id="btn-card-eval">Run /eval</button>
+                    <button type="button" class="bento-pill-btn" data-bento-open="ml-model">Inspect ML</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: Platform Statistics & Clinical Ratio -->
+              <div class="bento-card analytics-card">
+                <div class="analytics-card-head">
+                  <div>
+                    <div class="bento-title-row">
+                      <h3 class="bento-title-sm">Platform Statistics &amp; Clinical Ratio</h3>
+                      <span class="compact-badge" id="stats-period-badge">Live</span>
+                    </div>
+                    <p class="bento-desc-sm">Distribusi pengguna, konsultasi NKS, &amp; rasio skrining klinis.</p>
+                  </div>
+                  <div class="segmented-switch" id="stats-period-switch" role="tablist">
+                    <button type="button" class="seg-btn active" data-stat-period="live">Live</button>
+                    <button type="button" class="seg-btn" data-stat-period="7d">7H</button>
+                    <button type="button" class="seg-btn" data-stat-period="30d">30H</button>
+                  </div>
+                </div>
+
+                <div class="stats-kpi-grid-4">
+                  <button type="button" class="kpi-tile" data-bento-open="database-explorer">
+                    <span class="kpi-tile-lbl">Total Users</span>
+                    <span class="kpi-tile-val" id="stat-card-users">--</span>
+                  </button>
+                  <button type="button" class="kpi-tile" data-bento-open="data-nakes">
+                    <span class="kpi-tile-lbl">Verified Nakes</span>
+                    <span class="kpi-tile-val" id="stat-card-nakes">--</span>
+                  </button>
+                  <button type="button" class="kpi-tile" data-bento-open="konsultasi-records">
+                    <span class="kpi-tile-lbl">Konsultasi NKS</span>
+                    <span class="kpi-tile-val" id="stat-card-consults">--</span>
+                  </button>
+                  <button type="button" class="kpi-tile" data-bento-open="statistik-analytics">
+                    <span class="kpi-tile-lbl">Prediksi ML</span>
+                    <span class="kpi-tile-val" id="stat-card-predicts">--</span>
+                  </button>
+                </div>
+
+                <div class="clinical-ratio-box">
+                  <div class="ratio-head">
+                    <span class="ratio-title">Rasio Hasil Skrining Alzheimer</span>
+                    <span class="ratio-pct-text" id="ratio-pct-text">72% Normal · 28% Risiko</span>
+                  </div>
+                  <div class="ratio-bar-track">
+                    <div class="ratio-seg-normal" id="ratio-seg-normal" style="width: 72%;" title="Normal / Low Risk"></div>
+                    <div class="ratio-seg-risk" id="ratio-seg-risk" style="width: 28%;" title="High Risk / Indikasi"></div>
+                  </div>
+                  <div class="ratio-foot">
+                    <span><i class="legend-dot legend-dot--ok"></i>Normal / Low Risk</span>
+                    <span><i class="legend-dot legend-dot--train"></i>High Risk</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3: Live Biomarker Inference Simulator -->
+              <div class="bento-card analytics-card">
+                <div class="analytics-card-head">
+                  <div>
+                    <div class="bento-title-row">
+                      <h3 class="bento-title-sm">Live Biomarker Inference Simulator</h3>
+                      <span class="compact-badge" id="sim-status-badge">Interactive</span>
+                    </div>
+                    <p class="bento-desc-sm">Simulasi cepat skor risiko Alzheimer berdasarkan 3 biomarker utama.</p>
+                  </div>
+                </div>
+
+                <div class="sim-controls">
+                  <div class="sim-row">
+                    <div class="sim-label-row">
+                      <span>MMSE Score (0–30)</span>
+                      <code id="sim-mmse-val">24</code>
+                    </div>
+                    <input type="range" class="sim-slider" id="sim-mmse-range" min="0" max="30" step="1" value="24" />
+                  </div>
+
+                  <div class="sim-row">
+                    <div class="sim-label-row">
+                      <span>Functional Assessment (0–10)</span>
+                      <code id="sim-func-val">7.0</code>
+                    </div>
+                    <input type="range" class="sim-slider" id="sim-func-range" min="0" max="10" step="0.5" value="7" />
+                  </div>
+
+                  <label class="sim-toggle-row">
+                    <span>Memory Complaints (Keluhan Memori)</span>
+                    <input type="checkbox" id="sim-memory-toggle" class="hub-switch-input" />
+                    <span class="hub-switch-track"></span>
+                  </label>
+                </div>
+
+                <div class="sim-result-box">
+                  <div class="sim-result-top">
+                    <span class="sim-result-lbl">Estimasi Risiko Kognitif</span>
+                    <span class="sim-result-score" id="sim-risk-label">Low Risk · 18%</span>
+                  </div>
+                  <div class="sim-gauge-track">
+                    <div class="sim-gauge-fill" id="sim-risk-bar" style="width: 18%;"></div>
+                  </div>
+                </div>
+
+                <div class="bento-inline-actions" style="margin-top: 10px;">
+                  <button type="button" class="bento-pill-btn" id="btn-sim-api">Test via /api/predict</button>
+                </div>
+              </div>
+
+              <!-- Card 4: System Latency & Activity Pulse -->
+              <div class="bento-card analytics-card">
+                <div class="analytics-card-head">
+                  <div>
+                    <div class="bento-title-row">
+                      <h3 class="bento-title-sm">System Latency &amp; Activity Pulse</h3>
+                      <span class="compact-badge" id="latency-ms-badge">-- ms</span>
+                    </div>
+                    <p class="bento-desc-sm">Responsivitas API backend, status MySQL, &amp; jejak aktivitas terbaru.</p>
+                  </div>
+                  <button type="button" class="bento-pill-btn" id="btn-ping-check">Ping Check</button>
+                </div>
+
+                <div class="latency-bars-row">
+                  <div class="lat-stat">
+                    <span class="lat-lbl">API Ping</span>
+                    <span class="lat-val" id="lat-api-val">-- ms</span>
+                  </div>
+                  <div class="lat-stat">
+                    <span class="lat-lbl">MySQL DB</span>
+                    <span class="lat-val">8.4.3 OK</span>
+                  </div>
+                  <div class="lat-stat">
+                    <span class="lat-lbl">Active Sessions</span>
+                    <span class="lat-val" id="lat-sessions-val">1</span>
+                  </div>
+                </div>
+
+                <div class="activity-pulse-list" id="activity-pulse-list">
+                  <div class="pulse-item">
+                    <span class="pulse-dot pulse-dot--ok"></span>
+                    <span class="pulse-text">XGBoost Inference Engine pre-warmed (32 fitur)</span>
+                    <span class="pulse-time">Live</span>
+                  </div>
+                  <div class="pulse-item">
+                    <span class="pulse-dot pulse-dot--accent"></span>
+                    <span class="pulse-text">Dataset alzheimers_disease_data.CSV tersinkron (80/20)</span>
+                    <span class="pulse-time">Synced</span>
+                  </div>
+                  <div class="pulse-item">
+                    <span class="pulse-dot pulse-dot--info"></span>
+                    <span class="pulse-text">Proteksi OTP 2FA &amp; Auth Guard aktif</span>
+                    <span class="pulse-time">Verified</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="hub-divider"></div>
+
           <!-- SECTION 2: Explore Datasets & ML (2-Column Compact Cards) -->
           <section class="hub-section" data-section="datasets">
             <div class="hub-section-head">
@@ -868,6 +1082,7 @@
           </section>
 
           <div class="hub-divider"></div>
+
 
           <!-- SECTION 3: Explore Operations & System (2-Column Compact Cards) -->
           <section class="hub-section" data-section="operations">

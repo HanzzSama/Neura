@@ -3066,3 +3066,458 @@ button {
     padding: 20px 18px 48px;
   }
 }
+
+
+/* ============================================================================
+   ANALYTICS, ACCURACY & LIVE SIMULATOR CARDS (Theme-Aware & Zero-Glow)
+   ============================================================================ */
+.analytics-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.analytics-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+  gap: 12px;
+}
+
+.analytics-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.segmented-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  flex-shrink: 0;
+}
+
+.seg-btn {
+  padding: 4px 9px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--hub-text-muted);
+  transition: background 0.14s, color 0.14s;
+  white-space: nowrap;
+}
+
+.seg-btn:hover {
+  color: var(--hub-text);
+}
+
+.seg-btn.active {
+  background: var(--hub-bg-active);
+  color: var(--hub-text);
+  font-weight: 600;
+  border: 1px solid var(--hub-border-strong);
+}
+
+.analytics-mini-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mini-metric-pill {
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.mini-metric-lbl {
+  font-size: 11px;
+  color: var(--hub-text-muted);
+}
+
+.mini-metric-val {
+  font-family: var(--hub-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hub-text);
+}
+
+.svg-chart-stage {
+  position: relative;
+  width: 100%;
+  height: 136px;
+  border-radius: 9px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  padding: 8px;
+  overflow: hidden;
+}
+
+.interactive-curve-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chart-tooltip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--hub-bg);
+  border: 1px solid var(--hub-border-strong);
+  box-shadow: var(--hub-shadow-sm);
+  font-family: var(--hub-font-mono);
+  font-size: 10.5px;
+  color: var(--hub-text);
+  pointer-events: none;
+  z-index: 5;
+  white-space: nowrap;
+}
+
+.analytics-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chart-legend-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--hub-text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot--train {
+  background: var(--hub-accent);
+}
+
+.legend-dot--val {
+  background: #60A5FA;
+}
+
+.legend-dot--ok {
+  background: #22C55E;
+}
+
+/* Card 2: Platform Statistics & Clinical Ratio */
+.stats-kpi-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.kpi-tile {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.kpi-tile:hover {
+  background: var(--hub-bg-hover);
+  border-color: var(--hub-border-strong);
+}
+
+.kpi-tile-lbl {
+  font-size: 11px;
+  color: var(--hub-text-muted);
+}
+
+.kpi-tile-val {
+  font-family: var(--hub-font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--hub-text);
+}
+
+.clinical-ratio-box {
+  padding: 11px 12px;
+  border-radius: 8px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ratio-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11.5px;
+}
+
+.ratio-title {
+  font-weight: 600;
+  color: var(--hub-text);
+}
+
+.ratio-pct-text {
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+  color: var(--hub-text-muted);
+}
+
+.ratio-bar-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--hub-bg-preview);
+  overflow: hidden;
+  display: flex;
+}
+
+.ratio-seg-normal {
+  height: 100%;
+  background: #22C55E;
+  transition: width 0.35s ease;
+}
+
+.ratio-seg-risk {
+  height: 100%;
+  background: var(--hub-accent);
+  transition: width 0.35s ease;
+}
+
+.ratio-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 10.5px;
+  color: var(--hub-text-muted);
+}
+
+.ratio-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Card 3: Live Biomarker Inference Simulator */
+.sim-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sim-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sim-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--hub-text-secondary);
+}
+
+.sim-label-row code {
+  font-family: var(--hub-font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--hub-text);
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.sim-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--hub-border-strong);
+  outline: none;
+  cursor: pointer;
+}
+
+.sim-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--hub-accent);
+  border: 2px solid var(--hub-bg);
+  cursor: pointer;
+}
+
+.sim-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  font-size: 12px;
+  color: var(--hub-text-secondary);
+  cursor: pointer;
+}
+
+.sim-result-box {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sim-result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+}
+
+.sim-result-lbl {
+  color: var(--hub-text-muted);
+}
+
+.sim-result-score {
+  font-family: var(--hub-font-mono);
+  font-weight: 600;
+  color: var(--hub-text);
+}
+
+.sim-gauge-track {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--hub-bg-preview);
+  overflow: hidden;
+}
+
+.sim-gauge-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #22C55E;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+/* Card 4: System Latency & Activity Pulse */
+.latency-bars-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.lat-stat {
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lat-lbl {
+  font-size: 10.5px;
+  color: var(--hub-text-muted);
+}
+
+.lat-val {
+  font-family: var(--hub-font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--hub-text);
+}
+
+.activity-pulse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pulse-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  font-size: 12px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pulse-dot--ok {
+  background: #22C55E;
+}
+
+.pulse-dot--accent {
+  background: var(--hub-accent);
+}
+
+.pulse-dot--info {
+  background: #60A5FA;
+}
+
+.pulse-text {
+  flex: 1;
+  color: var(--hub-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pulse-time {
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  color: var(--hub-text-muted);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .analytics-bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
