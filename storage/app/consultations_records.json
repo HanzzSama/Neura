@@ -53110,13 +53110,18 @@
     "nakes_code": "NKS-26-5707-ALZ",
     "created_at": "26 November 2026, 09:10 WIB",
     "timestamp_iso": "2026-11-26T09:10:58.337701",
-    "status": "VALID_ACTIVE",
+    "status": "VALIDATED_BY_CLINICIAN",
     "patient": {
       "name": "Pasien #6639",
       "id": "6639",
       "age": 77,
       "gender": "Laki-laki (0)",
-      "source": "dataset_sample"
+      "source": "dataset_sample",
+      "education": 0,
+      "ethnicity": 3,
+      "bmi": 37.4,
+      "systolic_bp": 141,
+      "diastolic_bp": 109
     },
     "prediction": {
       "model_name": "XGBoost 3.x (25 Trees • 10-Fold CV RapidMiner)",
@@ -53380,10 +53385,10 @@
     "raw_features": {
       "PatientID": 6639,
       "Age": 77,
-      "Gender": 0,
+      "Gender": "Laki-laki (0)",
       "Ethnicity": 3,
       "EducationLevel": 0,
-      "BMI": 37.42473430021919,
+      "BMI": 37.4,
       "Smoking": 0,
       "AlcoholConsumption": 17.386256009547772,
       "PhysicalActivity": 4.358274980474625,
@@ -53401,11 +53406,11 @@
       "CholesterolLDL": 165.75785020080505,
       "CholesterolHDL": 48.36723948248961,
       "CholesterolTriglycerides": 94.81061031065582,
-      "MMSE": 19.683185564885544,
-      "FunctionalAssessment": 8.77387719935981,
+      "MMSE": 19.7,
+      "FunctionalAssessment": 8.8,
       "MemoryComplaints": 0,
       "BehavioralProblems": 0,
-      "ADL": 6.3339021149746,
+      "ADL": 6.3,
       "Confusion": 0,
       "Disorientation": 0,
       "PersonalityChanges": 0,
@@ -53413,6 +53418,69 @@
       "Forgetfulness": 0,
       "Diagnosis": 0,
       "DoctorInCharge": "XXXConfid"
+    },
+    "cognitive_scores": {
+      "mmse": 19.7,
+      "adl": 6.3,
+      "functional_assessment": 8.8
+    },
+    "patient_name": "Pasien #6639",
+    "clinical_record": {
+      "identity_verified": true,
+      "identity_verified_at": "26 November 2026, 16:00 WIB",
+      "verified_symptoms": {
+        "MemoryComplaints": "confirmed",
+        "Forgetfulness": "confirmed",
+        "Confusion": "cleared",
+        "Disorientation": "confirmed",
+        "PersonalityChanges": "confirmed",
+        "DifficultyCompletingTasks": "cleared",
+        "BehavioralProblems": "confirmed",
+        "Hypertension": "cleared",
+        "Diabetes": "confirmed"
+      },
+      "disease_analysis": {},
+      "medications": [
+        {
+          "name": "Rivastigmine Patch",
+          "dose": "4.6 mg",
+          "frequency": "1x1 tempel",
+          "duration": "30 hari"
+        },
+        {
+          "name": "Memantine",
+          "dose": "10 mg",
+          "frequency": "1x1 pagi",
+          "duration": "30 hari"
+        },
+        {
+          "name": "Vitamin B12 Neuro",
+          "dose": "500 mcg",
+          "frequency": "1x1 sesudah makan",
+          "duration": "30 hari"
+        }
+      ],
+      "recommendations": [],
+      "follow_up": {
+        "date": "2026-11-29",
+        "priority": "RUJUKAN_SEGERA",
+        "notes": "",
+        "manual_override": false
+      },
+      "updated_by": "dr hanz",
+      "updated_at": "26 November 2026, 16:01 WIB"
+    },
+    "validation": {
+      "is_validated": true,
+      "validator_name": "dr hanz",
+      "validator_sip": "",
+      "validator_institution": "RSU Columbia",
+      "validation_status": "PERLU_RUJUKAN_LANJUTAN",
+      "clinical_notes": "",
+      "suggested_action": "",
+      "validated_at": "26 November 2026, 16:01 WIB",
+      "validated_at_iso": "2026-11-26T16:01:04.569372",
+      "signature_hash": "SIG-NKS-26-5707-ALZ-2611261601"
     }
   },
   "DOC-NEURA-2026-5707": {
@@ -57561,13 +57629,18 @@
     "nakes_code": "NKS-26-1480-ALZ",
     "created_at": "26 November 2026, 10:32 WIB",
     "timestamp_iso": "2026-11-26T10:32:48.330436",
-    "status": "VALID_ACTIVE",
+    "status": "VALIDATED_BY_CLINICIAN",
     "patient": {
       "name": "Pasien #4917",
       "id": "4917",
       "age": 60,
       "gender": "Laki-laki (0)",
-      "source": "dataset_sample"
+      "source": "dataset_sample",
+      "education": 1,
+      "ethnicity": 1,
+      "bmi": 27.8,
+      "systolic_bp": 155,
+      "diastolic_bp": 119
     },
     "prediction": {
       "model_name": "XGBoost 3.x (25 Trees • 10-Fold CV RapidMiner)",
@@ -57786,7 +57859,7 @@
       "CholesterolLDL": 77.7,
       "CholesterolHDL": 69.4,
       "CholesterolTriglycerides": 337.0,
-      "MMSE": 13.0,
+      "MMSE": 13,
       "FunctionalAssessment": 3.5,
       "MemoryComplaints": 0,
       "BehavioralProblems": 0,
@@ -57851,10 +57924,10 @@
     "raw_features": {
       "PatientID": 4917,
       "Age": 60,
-      "Gender": 0,
+      "Gender": "Laki-laki (0)",
       "Ethnicity": 1,
       "EducationLevel": 1,
-      "BMI": 27.76561281358562,
+      "BMI": 27.8,
       "Smoking": 1,
       "AlcoholConsumption": 19.524423350319218,
       "PhysicalActivity": 4.437512567652144,
@@ -57872,11 +57945,11 @@
       "CholesterolLDL": 77.66167686090029,
       "CholesterolHDL": 69.37747407673359,
       "CholesterolTriglycerides": 336.9964704552613,
-      "MMSE": 12.95605506651217,
-      "FunctionalAssessment": 3.473196336650642,
+      "MMSE": 13,
+      "FunctionalAssessment": 3.5,
       "MemoryComplaints": 0,
       "BehavioralProblems": 0,
-      "ADL": 9.768333382895522,
+      "ADL": 9.8,
       "Confusion": 0,
       "Disorientation": 0,
       "PersonalityChanges": 0,
@@ -57884,6 +57957,75 @@
       "Forgetfulness": 0,
       "Diagnosis": 0,
       "DoctorInCharge": "XXXConfid"
+    },
+    "cognitive_scores": {
+      "mmse": 13,
+      "adl": 9.8,
+      "functional_assessment": 3.5
+    },
+    "patient_name": "Pasien #4917",
+    "clinical_record": {
+      "identity_verified": true,
+      "identity_verified_at": "26 November 2026, 16:04 WIB",
+      "verified_symptoms": {
+        "MemoryComplaints": "confirmed",
+        "Forgetfulness": "confirmed",
+        "Confusion": "confirmed",
+        "Disorientation": "confirmed",
+        "PersonalityChanges": "confirmed",
+        "DifficultyCompletingTasks": "confirmed",
+        "BehavioralProblems": "confirmed",
+        "Hypertension": "confirmed",
+        "Diabetes": "confirmed"
+      },
+      "disease_analysis": {},
+      "medications": [
+        {
+          "name": "Memantine",
+          "dose": "10 mg",
+          "frequency": "1x1 pagi",
+          "duration": "30 hari"
+        },
+        {
+          "name": "Donepezil",
+          "dose": "5 mg",
+          "frequency": "1x1 malam",
+          "duration": "30 hari"
+        },
+        {
+          "name": "Rivastigmine Patch",
+          "dose": "4.6 mg",
+          "frequency": "1x1 tempel",
+          "duration": "30 hari"
+        },
+        {
+          "name": "Vitamin B12 Neuro",
+          "dose": "500 mcg",
+          "frequency": "1x1 sesudah makan",
+          "duration": "30 hari"
+        }
+      ],
+      "recommendations": [],
+      "follow_up": {
+        "date": "2026-11-29",
+        "priority": "RUJUKAN_SEGERA",
+        "notes": "",
+        "manual_override": false
+      },
+      "updated_by": "dr hanz",
+      "updated_at": "26 November 2026, 16:05 WIB"
+    },
+    "validation": {
+      "is_validated": true,
+      "validator_name": "dr hanz",
+      "validator_sip": "",
+      "validator_institution": "RSU Columbia",
+      "validation_status": "PERLU_RUJUKAN_LANJUTAN",
+      "clinical_notes": "",
+      "suggested_action": "",
+      "validated_at": "26 November 2026, 16:05 WIB",
+      "validated_at_iso": "2026-11-26T16:05:04.211162",
+      "signature_hash": "SIG-NKS-26-1480-ALZ-2611261605"
     }
   },
   "DOC-NEURA-2026-1480": {
@@ -61986,6 +62128,8 @@
       "has_cognitive_alert": false
     },
     "recommendations": [
+      "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan",
+      "Terapi Diet MIND & Stimulasi Kognitif 30 Menit/Hari",
       "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan"
     ],
     "verification_hash": "SHA256-8FC7071C0AC2852A",
@@ -62030,42 +62174,58 @@
     "patient_name": "Pasien #5594",
     "clinical_record": {
       "identity_verified": true,
-      "identity_verified_at": "26 November 2026, 15:54 WIB",
+      "identity_verified_at": "26 November 2026, 16:07 WIB",
       "verified_symptoms": {
-        "MemoryComplaints": "cleared",
-        "Forgetfulness": "cleared",
+        "MemoryComplaints": "confirmed",
+        "Forgetfulness": "confirmed",
         "Confusion": "cleared",
         "Disorientation": "cleared",
-        "PersonalityChanges": "cleared",
-        "DifficultyCompletingTasks": "cleared",
-        "BehavioralProblems": "cleared",
+        "PersonalityChanges": "confirmed",
+        "DifficultyCompletingTasks": "confirmed",
+        "BehavioralProblems": "confirmed",
         "Hypertension": "cleared",
         "Diabetes": "confirmed"
       },
       "disease_analysis": {},
-      "medications": [],
+      "medications": [
+        {
+          "name": "Donepezil",
+          "dose": "5 mg",
+          "frequency": "1x1 malam",
+          "duration": "30 hari"
+        },
+        {
+          "name": "Vitamin B12 Neuro",
+          "dose": "500 mcg",
+          "frequency": "1x1 sesudah makan",
+          "duration": "30 hari"
+        }
+      ],
       "recommendations": [
+        "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan",
+        "Terapi Diet MIND & Stimulasi Kognitif 30 Menit/Hari",
         "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan"
       ],
       "follow_up": {
-        "date": "",
-        "priority": "RUTIN_30_HARI",
-        "notes": "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan"
+        "date": "2026-11-29",
+        "priority": "KONTROL_7_HARI",
+        "notes": "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan\nTerapi Diet MIND & Stimulasi Kognitif 30 Menit/Hari\nRujukan MRI Brain & Evaluasi Neurologi Lanjutan",
+        "manual_override": true
       },
       "updated_by": "dr hanz",
-      "updated_at": "26 November 2026, 15:54 WIB"
+      "updated_at": "26 November 2026, 16:07 WIB"
     },
     "validation": {
       "is_validated": true,
       "validator_name": "dr hanz",
       "validator_sip": "",
       "validator_institution": "RSU Columbia",
-      "validation_status": "PEMANTAUAN_BERKALA",
+      "validation_status": "PERLU_RUJUKAN_LANJUTAN",
       "clinical_notes": "",
       "suggested_action": "",
-      "validated_at": "26 November 2026, 15:01 WIB",
-      "validated_at_iso": "2026-11-26T15:01:17.595979",
-      "signature_hash": "SIG-NKS-26-3904-ALZ-2611261501"
+      "validated_at": "26 November 2026, 16:07 WIB",
+      "validated_at_iso": "2026-11-26T16:07:31.712811",
+      "signature_hash": "SIG-NKS-26-3904-ALZ-2611261607"
     }
   },
   "DOC-NEURA-2026-3904": {

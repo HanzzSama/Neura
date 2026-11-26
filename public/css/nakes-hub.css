@@ -1580,8 +1580,108 @@
 .nh-doc-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.nh-doc-kicker {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--hub-accent);
+}
+
+.nh-doc-section {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-subtle);
   margin-bottom: 12px;
+}
+
+.nh-doc-section h4 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.06em;
+  color: var(--hub-accent);
+  text-transform: uppercase;
+}
+
+.nh-doc-sym-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nh-doc-sym-pill {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg);
+  font-size: 11px;
+  color: var(--hub-text-muted);
+}
+
+.nh-doc-sym-pill.is-yes {
+  border-color: rgba(217, 119, 87, 0.5);
+  color: var(--hub-text);
+}
+
+.nh-doc-table-wrap {
+  overflow-x: auto;
+}
+
+.nh-doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.nh-doc-table th,
+.nh-doc-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--hub-border);
+  text-align: left;
+}
+
+.nh-doc-table th {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--hub-text-muted);
+}
+
+.nh-doc-rec-list {
+  margin: 0 0 8px 18px;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.nh-doc-rec-list li {
+  margin-bottom: 4px;
+}
+
+.nh-doc-followup-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--hub-text-muted);
+  padding-top: 6px;
+  border-top: 1px dashed var(--hub-border);
+}
+
+.nh-doc-signoff {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--hub-text-muted);
+  padding-top: 10px;
+  border-top: 1px solid var(--hub-border);
 }
 
 .nh-doc-box {
