@@ -456,6 +456,35 @@
                 <article class="bento-card nh-card nh-span-12">
                   <div class="bento-card-header">
                     <div>
+                      <div class="nh-card-kicker">STEP 02 · PATIENT IDENTITY &amp; DATA VERIFICATION</div>
+                      <h2 class="bento-title-sm">Data Diri &amp; Profil Klinis Pasien</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-pv-status-tag">PERLU CEK</span>
+                  </div>
+                  <form class="nh-pv-grid" id="nh-patient-verify-form">
+                    <label class="nh-pv-field"><span>Nama / Label Pasien</span><input type="text" id="nh-pv-name" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Usia (Thn)</span><input type="number" id="nh-pv-age" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Jenis Kelamin</span><input type="text" id="nh-pv-gender" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Pendidikan</span><input type="text" id="nh-pv-edu" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Etnis</span><input type="text" id="nh-pv-eth" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>BMI (kg/m²)</span><input type="number" step="0.1" id="nh-pv-bmi" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>TD Sistolik (mmHg)</span><input type="number" id="nh-pv-sbp" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>TD Diastolik (mmHg)</span><input type="number" id="nh-pv-dbp" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Skor MMSE (0–30)</span><input type="number" step="0.1" id="nh-pv-mmse" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Skor ADL (0–10)</span><input type="number" step="0.1" id="nh-pv-adl" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Functional Assess.</span><input type="number" step="0.1" id="nh-pv-func" class="nh-code-field nh-rx-in" /></label>
+                    <label class="nh-pv-field"><span>Riwayat Keluarga</span><input type="text" id="nh-pv-fam" class="nh-code-field nh-rx-in" readonly /></label>
+                  </form>
+                  <div class="nh-pv-extra" id="nh-pv-extra-biomarkers"></div>
+                  <div class="nh-triage-foot">
+                    <span class="nh-wl-code" id="nh-pv-msg">Periksa kesesuaian data diri pasien lalu klik Check &amp; Update untuk verifikasi</span>
+                    <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-verify-patient-btn">Check &amp; Update Data (Verifikasi)</button>
+                  </div>
+                </article>
+
+                <article class="bento-card nh-card nh-span-12">
+                  <div class="bento-card-header">
+                    <div>
                       <div class="nh-card-kicker">STEP 02 · DOCUMENT AUDIT &amp; SYMPTOM VERIFICATION</div>
                       <h2 class="bento-title-sm">Pemeriksaan Dokumen &amp; Verifikasi Gejala Penyakit</h2>
                     </div>

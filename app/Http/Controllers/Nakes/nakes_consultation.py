@@ -491,7 +491,41 @@ def api_consultation_clinical_record(code_or_id):
         now_str = datetime.now().strftime("%d %B %Y, %H:%M WIB")
         existing = doc.get("clinical_record") or {}
 
+        patient_updates = body.get("patient_updates")
+        if isinstance(patient_updates, dict) and patient_updates:
+            p = doc.setdefault("patient", {})
+            b = doc.setdefault("all_32_biomarkers", {})
+            rf = doc.setdefault("raw_features", {})
+            cog = doc.setdefault("cognitive_scores", {})
+            field_map = {
+                "name": ("name", None),
+                "age": ("age", "Age"),
+                "gender": ("gender", "Gender"),
+                "education": ("education", "EducationLevel"),
+                "ethnicity": ("ethnicity", "Ethnicity"),
+                "bmi": ("bmi", "BMI"),
+                "systolic_bp": ("systolic_bp", "SystolicBP"),
+                "diastolic_bp": ("diastolic_bp", "DiastolicBP"),
+            }
+            for src_key, (p_key, b_key) in field_map.items():
+                if src_key in patient_updates and patient_updates[src_key] not in (None, ""):
+                    val = patient_updates[src_key]
+                    p[p_key] = val
+                    if b_key:
+                        b[b_key] = val
+                        rf[b_key] = val
+            if "name" in patient_updates and patient_updates["name"]:
+                doc["patient_name"] = str(patient_updates["name"]).strip()
+            for cog_key, b_key in [("mmse", "MMSE"), ("adl", "ADL"), ("functional_assessment", "FunctionalAssessment")]:
+                if cog_key in patient_updates and patient_updates[cog_key] not in (None, ""):
+                    val = patient_updates[cog_key]
+                    cog[cog_key] = val
+                    b[b_key] = val
+                    rf[b_key] = val
+
         record = {
+            "identity_verified": bool(body.get("identity_verified", existing.get("identity_verified", False))),
+            "identity_verified_at": now_str if body.get("identity_verified") else existing.get("identity_verified_at", ""),
             "verified_symptoms": body.get("verified_symptoms", existing.get("verified_symptoms", {})),
             "disease_analysis": body.get("disease_analysis", existing.get("disease_analysis", {})),
             "medications": body.get("medications", existing.get("medications", [])),
