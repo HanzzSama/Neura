@@ -300,6 +300,147 @@
     }
   }
 
+  function renderSettingsPanel() {
+    const currTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const currRefresh = localStorage.getItem('neura_autorefresh_v1') || '0';
+    const isTestMode = localStorage.getItem('neura_test_mode_v1') === 'true';
+    const isReduced = localStorage.getItem('neura_reduced_motion_v1') === 'true';
+
+    bodyEl().innerHTML = `
+      <div class="settings-panel">
+        <div class="settings-group">
+          <div class="settings-group-title">Tampilan &amp; Antarmuka</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-title">Tema Aplikasi</div>
+              <div class="settings-row-sub">Pilih tampilan Light Mode atau Dark Mode.</div>
+            </div>
+            <div class="segmented-switch" id="settings-theme-switch">
+              <button type="button" class="seg-btn ${currTheme === 'light' ? 'active' : ''}" data-set-theme="light">Light</button>
+              <button type="button" class="seg-btn ${currTheme === 'dark' ? 'active' : ''}" data-set-theme="dark">Dark</button>
+            </div>
+          </div>
+
+          <label class="settings-row" style="cursor:pointer;">
+            <div>
+              <div class="settings-row-title">Kurangi Animasi (Reduced Motion)</div>
+              <div class="settings-row-sub">Nonaktifkan transisi slide untuk respons instan.</div>
+            </div>
+            <input type="checkbox" id="settings-reduced-motion" class="hub-switch-input" ${isReduced ? 'checked' : ''} />
+            <span class="hub-switch-track"></span>
+          </label>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Operasional &amp; Sandbox</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-title">Auto-Refresh Telemetry</div>
+              <div class="settings-row-sub">Perbarui metrik sistem &amp; radar secara berkala.</div>
+            </div>
+            <div class="segmented-switch" id="settings-refresh-switch">
+              <button type="button" class="seg-btn ${currRefresh === '0' ? 'active' : ''}" data-set-refresh="0">Off</button>
+              <button type="button" class="seg-btn ${currRefresh === '30' ? 'active' : ''}" data-set-refresh="30">30s</button>
+              <button type="button" class="seg-btn ${currRefresh === '60' ? 'active' : ''}" data-set-refresh="60">60s</button>
+            </div>
+          </div>
+
+          <label class="settings-row" style="cursor:pointer;">
+            <div>
+              <div class="settings-row-title">Test Mode (Sandbox)</div>
+              <div class="settings-row-sub">Jalankan evaluasi &amp; training sebagai simulasi aman.</div>
+            </div>
+            <input type="checkbox" id="settings-test-mode" class="hub-switch-input" ${isTestMode ? 'checked' : ''} />
+            <span class="hub-switch-track"></span>
+          </label>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Diagnostik &amp; Cache</div>
+          <div class="settings-action-row">
+            <button type="button" class="bento-pill-btn" id="settings-diag-btn">Test Koneksi API &amp; DB</button>
+            <button type="button" class="bento-pill-btn" id="settings-clear-cache-btn">Reset Preferensi UI</button>
+          </div>
+          <div id="settings-diag-out" class="settings-diag-out" style="display:none;"></div>
+        </div>
+      </div>
+    `;
+
+    // Wire Theme Switch
+    bodyEl().querySelectorAll('[data-set-theme]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTheme = btn.dataset.setTheme;
+        if (document.documentElement.getAttribute('data-theme') !== targetTheme) {
+          document.getElementById('hub-theme-btn')?.click();
+        }
+        bodyEl().querySelectorAll('[data-set-theme]').forEach(b => b.classList.toggle('active', b.dataset.setTheme === targetTheme));
+      });
+    });
+
+    // Wire Reduced Motion
+    document.getElementById('settings-reduced-motion')?.addEventListener('change', (e) => {
+      const on = e.target.checked;
+      try { localStorage.setItem('neura_reduced_motion_v1', on ? 'true' : 'false'); } catch (err) {}
+      document.documentElement.setAttribute('data-reduced-motion', on ? 'true' : 'false');
+      if (window.NeuraAdminHub?.toast) window.NeuraAdminHub.toast(on ? 'Animasi dikurangi' : 'Animasi halus aktif');
+    });
+
+    // Wire Auto-Refresh
+    bodyEl().querySelectorAll('[data-set-refresh]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sec = btn.dataset.setRefresh || '0';
+        bodyEl().querySelectorAll('[data-set-refresh]').forEach(b => b.classList.toggle('active', b === btn));
+        if (window.NeuraAdminHub?.setAutoRefresh) window.NeuraAdminHub.setAutoRefresh(Number(sec));
+      });
+    });
+
+    // Wire Test Mode synced with sidebar toggle
+    document.getElementById('settings-test-mode')?.addEventListener('change', (e) => {
+      const sbToggle = document.getElementById('hub-test-mode-toggle');
+      if (sbToggle) {
+        sbToggle.checked = e.target.checked;
+        sbToggle.dispatchEvent(new Event('change'));
+      }
+    });
+
+    // Wire Diagnostics
+    document.getElementById('settings-diag-btn')?.addEventListener('click', async () => {
+      const out = document.getElementById('settings-diag-out');
+      if (!out) return;
+      out.style.display = 'block';
+      out.textContent = 'Menguji koneksi /api/admin/stats...';
+      const t0 = performance.now();
+      try {
+        const res = await fetch('/api/admin/stats', { cache: 'no-store' });
+        const ms = Math.max(1, Math.round(performance.now() - t0));
+        const data = await res.json();
+        out.textContent = res.ok
+          ? `OK (${ms} ms) — Service: ${data.platform_kpis?.service_status || 'ONLINE'} · Total Users: ${data.platform_kpis?.total_users ?? '-'}`
+          : `Error HTTP ${res.status} (${ms} ms)`;
+      } catch (err) {
+        out.textContent = `Gagal terhubung: ${err.message}`;
+      }
+    });
+
+    // Wire Clear UI Preferences
+    document.getElementById('settings-clear-cache-btn')?.addEventListener('click', () => {
+      try {
+        localStorage.removeItem('neura_autorefresh_v1');
+        localStorage.removeItem('neura_reduced_motion_v1');
+        localStorage.removeItem('neura_test_mode_v1');
+      } catch (err) {}
+      document.documentElement.setAttribute('data-reduced-motion', 'false');
+      const sbToggle = document.getElementById('hub-test-mode-toggle');
+      if (sbToggle && sbToggle.checked) {
+        sbToggle.checked = false;
+        sbToggle.dispatchEvent(new Event('change'));
+      }
+      if (window.NeuraAdminHub?.setAutoRefresh) window.NeuraAdminHub.setAutoRefresh(0);
+      renderSettingsPanel();
+      if (window.NeuraAdminHub?.toast) window.NeuraAdminHub.toast('Preferensi UI berhasil direset');
+    });
+  }
+
   function open(moduleItem) {
     const bd = backdrop();
     if (!bd || !moduleItem) return;
@@ -324,6 +465,8 @@
       renderDatabasePreview();
     } else if (moduleItem.previewType === 'presence') {
       renderPresencePreview();
+    } else if (moduleItem.previewType === 'settings') {
+      renderSettingsPanel();
     } else {
       bodyEl().innerHTML = `
         <div class="drawer-kpi-card" style="margin-bottom:12px;">

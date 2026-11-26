@@ -81,6 +81,10 @@
       </div>
 
       <div class="hub-topbar-right">
+        <button type="button" class="hub-test-pill" id="hub-test-mode-pill" title="Test Mode Aktif — Klik untuk menonaktifkan" hidden>
+          <span class="test-pill-dot"></span>
+          <span>TEST MODE</span>
+        </button>
         <button class="hub-icon-btn" id="hub-theme-btn" title="Ganti Tema (Light / Dark)" aria-label="Toggle Theme">
           <svg id="hub-theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2">
@@ -1158,6 +1162,32 @@
 
   <!-- ═══ MINIMAL TOAST CONTAINER ═══ -->
   <div class="hub-toast-container" id="hub-toast-container" aria-live="polite"></div>
+
+  <!-- ═══ LOGOUT CONFIRMATION MODAL ═══ -->
+  <div class="hub-logout-backdrop" id="hub-logout-backdrop" aria-hidden="true">
+    <div class="hub-logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-modal-title">
+      <div class="logout-modal-head">
+        <div class="logout-modal-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="logout-modal-title" id="logout-modal-title">Akhiri Sesi Admin?</h3>
+          <p class="logout-modal-sub" id="logout-modal-user">Sesi terautentikasi akan ditutup</p>
+        </div>
+      </div>
+      <p class="logout-modal-desc">
+        Anda akan keluar dari Neura Admin Hub dan token sesi OTP 2FA lokal akan dihapus. Anda perlu masuk kembali untuk mengakses halaman admin.
+      </p>
+      <div class="logout-modal-actions">
+        <button type="button" class="drawer-btn-secondary" id="logout-cancel-btn">Batal</button>
+        <button type="button" class="logout-confirm-btn" id="logout-confirm-btn">Ya, Log Out</button>
+      </div>
+    </div>
+  </div>
 
   <script src="/js/auth-guard.js?v=1.1"></script>
   <script src="/js/admin-dataset-drawer.js?v=1.2"></script>

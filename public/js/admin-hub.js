@@ -189,12 +189,11 @@
     {
       id: 'system-settings',
       category: 'operations',
-      title: 'System & Maintenance',
+      title: 'Settings & Preferences',
       badge: 'Config',
-      desc: 'Kontrol halaman maintenance, status model, dan konfigurasi portal Neura.',
+      desc: 'Konfigurasi tampilan, auto-refresh telemetry, sandbox test mode, dan diagnostik.',
       icon: ICONS.settings,
-      previewType: 'info',
-      detail: 'Gunakan toggle Test Mode di pojok kiri bawah sidebar untuk simulasi atau uji coba administratif, dan kelola maintenance dari konfigurasi sistem.',
+      previewType: 'settings',
       actionLabel: 'Lihat Maintenance Page',
       href: '/maintenance.html',
     },
@@ -635,8 +634,8 @@
       if (item) window.AdminHubDrawer.open(item);
     });
 
-    // Logout admin
-    document.getElementById('hub-logout-btn')?.addEventListener('click', async () => {
+    // Logout admin (via confirmation modal)
+    async function performLogout() {
       const token = localStorage.getItem('neura_admin_token') || sessionStorage.getItem('neura_admin_token') || '';
       try {
         await fetch('/api/admin/logout', {
@@ -655,6 +654,40 @@
         sessionStorage.removeItem('neura_admin_token');
       } catch (e) {}
       window.location.replace('/welcome?logged_out=true');
+    }
+
+    const logoutBd = document.getElementById('hub-logout-backdrop');
+    function openLogoutModal() {
+      if (!logoutBd) {
+        performLogout();
+        return;
+      }
+      const userSub = document.getElementById('logout-modal-user');
+      if (userSub) {
+        const name = localStorage.getItem('neura_admin_name') || 'Administrator';
+        userSub.textContent = `Masuk sebagai ${name}`;
+      }
+      logoutBd.classList.add('open');
+      logoutBd.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeLogoutModal() {
+      if (!logoutBd) return;
+      logoutBd.classList.remove('open');
+      logoutBd.setAttribute('aria-hidden', 'true');
+    }
+
+    document.getElementById('hub-logout-btn')?.addEventListener('click', openLogoutModal);
+    document.getElementById('logout-cancel-btn')?.addEventListener('click', closeLogoutModal);
+    document.getElementById('logout-confirm-btn')?.addEventListener('click', () => {
+      closeLogoutModal();
+      performLogout();
+    });
+    logoutBd?.addEventListener('click', (e) => {
+      if (e.target === logoutBd) closeLogoutModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && logoutBd?.classList.contains('open')) closeLogoutModal();
     });
   }
 
@@ -936,6 +969,11 @@
   }
 
   async function runInlineEvaluate() {
+    if (localStorage.getItem('neura_test_mode_v1') === 'true') {
+      setInlineAiStatus(true, '[TEST MODE] Simulasi evaluasi dry-run: Akurasi 95.35%', 100);
+      showHubToast('[Test Mode] Evaluasi dijalankan sebagai simulasi aman');
+      return;
+    }
     setInlineAiStatus(true, 'Menjalankan evaluasi model...', 45);
     try {
       const res = await fetch('/api/evaluate');
@@ -1462,9 +1500,60 @@
     document.getElementById('insight-eval-chip')?.addEventListener('click', runInlineEvaluate);
     document.getElementById('btn-inline-train')?.addEventListener('click', runInlineTrain);
     document.getElementById('btn-radar-refresh')?.addEventListener('click', () => hydrateTelemetryAndRadar(true));
-    document.getElementById('hub-test-mode-toggle')?.addEventListener('change', (e) => {
-      showHubToast(e.target.checked ? 'Test mode diaktifkan' : 'Test mode dinonaktifkan');
-    });
+
+    // Persistent Test Mode + Sandbox Pill
+    const testToggle = document.getElementById('hub-test-mode-toggle');
+    const testPill = document.getElementById('hub-test-mode-pill');
+    function applyTestModeState(enabled, notify = false) {
+      try { localStorage.setItem('neura_test_mode_v1', enabled ? 'true' : 'false'); } catch (e) {}
+      document.documentElement.setAttribute('data-test-mode', enabled ? 'true' : 'false');
+      if (testToggle) testToggle.checked = enabled;
+      if (testPill) testPill.hidden = !enabled;
+      const settingsTest = document.getElementById('settings-test-mode');
+      if (settingsTest) settingsTest.checked = enabled;
+      if (notify) {
+        showHubToast(enabled ? 'Test mode diaktifkan (Sandbox Aman)' : 'Test mode dinonaktifkan (Mode Produksi)');
+      }
+    }
+
+    const savedTestMode = (() => {
+      try { return localStorage.getItem('neura_test_mode_v1') === 'true'; } catch (e) { return false; }
+    })();
+    applyTestModeState(savedTestMode, false);
+
+    testToggle?.addEventListener('change', (e) => applyTestModeState(e.target.checked, true));
+    testPill?.addEventListener('click', () => applyTestModeState(false, true));
+
+    // Reduced Motion preference restore
+    try {
+      if (localStorage.getItem('neura_reduced_motion_v1') === 'true') {
+        document.documentElement.setAttribute('data-reduced-motion', 'true');
+      }
+    } catch (e) {}
+
+    // Auto-Refresh Telemetry helper
+    let _autoRefreshTimer = null;
+    function setAutoRefresh(seconds) {
+      if (_autoRefreshTimer) {
+        clearInterval(_autoRefreshTimer);
+        _autoRefreshTimer = null;
+      }
+      try { localStorage.setItem('neura_autorefresh_v1', String(seconds || 0)); } catch (e) {}
+      if (seconds > 0) {
+        _autoRefreshTimer = setInterval(() => hydrateTelemetryAndRadar(false), seconds * 1000);
+        showHubToast(`Auto-refresh telemetry aktif (${seconds}s)`);
+      } else {
+        showHubToast('Auto-refresh telemetry dimatikan');
+      }
+    }
+    try {
+      const savedRef = Number(localStorage.getItem('neura_autorefresh_v1') || '0');
+      if (savedRef > 0) {
+        _autoRefreshTimer = setInterval(() => hydrateTelemetryAndRadar(false), savedRef * 1000);
+      }
+    } catch (e) {}
+
+    window.NeuraAdminHub = { toast: showHubToast, setAutoRefresh };
 
     document.querySelectorAll('.cmd-chip[data-cmd]').forEach(chip => {
       chip.addEventListener('click', () => {
