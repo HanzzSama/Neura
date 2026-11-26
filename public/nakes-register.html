@@ -145,6 +145,37 @@
     @media (max-width: 560px) {
       .nr-row-2 {
         grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .nr-input,
+      .nr-select {
+        font-size: 15px;
+        min-height: 44px;
+        padding: 10px 12px;
+      }
+      .nr-input.mono {
+        font-size: 14px;
+        letter-spacing: 0.05em;
+      }
+      .nr-code-row {
+        gap: 6px;
+      }
+      .nr-code-row .nr-input {
+        min-width: 0;
+        flex: 1;
+      }
+      .nr-verify-btn {
+        min-height: 44px;
+        padding: 0 12px;
+      }
+      .nr-submit-btn {
+        min-height: 46px;
+        font-size: 14px;
+      }
+      .nr-cred-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
       }
     }
   </style>

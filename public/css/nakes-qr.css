@@ -585,11 +585,55 @@ body {
 
 @media (max-width: 560px) {
   .nqr-shell {
-    padding: 16px;
+    padding: 14px;
+  }
+
+  .nqr-topbar {
+    gap: 8px;
+  }
+
+  .nqr-brand {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .nqr-brand-text {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .nqr-brand-sub {
+    display: none;
+  }
+
+  .nqr-topbar-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .nqr-telemetry-pill {
+    padding: 5px 8px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .nqr-theme-btn {
+    padding: 5px 9px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .nqr-main {
+    padding: 16px 0;
   }
 
   .nqr-card {
-    padding: 20px;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .nqr-title {
+    font-size: 18px;
   }
 
   .nqr-code-display {
