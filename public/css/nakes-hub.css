@@ -1329,8 +1329,21 @@
 }
 
 .nh-step-tab.is-locked {
-  opacity: 0.42;
+  opacity: 0.48;
   cursor: not-allowed;
+}
+
+.nh-step-lock {
+  display: none;
+  width: 12px;
+  height: 12px;
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--hub-text-muted);
+}
+
+.nh-step-tab.is-locked .nh-step-lock {
+  display: inline-block;
 }
 
 .nh-step-tab.is-locked:hover {
