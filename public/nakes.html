@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+
+<head>
+  <script>
+    try {
+      var t = localStorage.getItem('neura_theme_v1');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { }
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neura / Nakes Hub</title>
+  <meta name="description"
+    content="Neura Nakes Hub — Ruang kerja klinis tenaga kesehatan untuk data pasien, dossier rekam medis, analisa 32 biomarker, dan validasi dokter." />
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/admin-hub.css?v=2.2" />
+  <link rel="stylesheet" href="/css/nakes-hub.css?v=1.1" />
+  <style id="auth-shield-style">
+    body:not(.auth-cleared) {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+  </style>
+</head>
+
+<body class="admin-hub-body nakes-hub-body">
+  <div class="hub-shell" id="hub-shell">
+
+    <!-- ═══ TOP BAR ═══ -->
+    <header class="hub-topbar">
+      <div class="hub-topbar-left">
+        <button class="hub-mobile-menu-btn" id="hub-mobile-menu-btn" title="Menu" aria-label="Toggle Menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <a href="/nakes" class="hub-brand">
+          <span class="hub-brand-mark" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="7" cy="7" r="2.5" />
+              <circle cx="17" cy="7" r="2.5" />
+              <circle cx="7" cy="17" r="2.5" />
+              <circle cx="17" cy="17" r="2.5" />
+              <path d="M9.5 7h5M7 9.5v5M17 9.5v5M9.5 17h5M9 9l6 6" />
+            </svg>
+          </span>
+          <span class="hub-brand-name">Neura</span>
+        </a>
+        <span class="hub-brand-sep">/</span>
+        <div class="hub-workspace-pill">
+          <span class="hub-workspace-badge">NH</span>
+          <span>Nakes Hub</span>
+        </div>
+      </div>
+
+      <div class="hub-topbar-center">
+        <form class="hub-search-box nh-code-search-form" id="nh-topbar-code-form">
+          <svg class="hub-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" id="nh-topbar-code-input" class="hub-search-input nh-mono-input"
+            placeholder="Input kode dokumen pasien (NKS-XX-XXXX-ALZ)..." autocomplete="off" />
+          <button type="submit" class="nh-topbar-check-btn">Cek</button>
+        </form>
+      </div>
+
+      <div class="hub-topbar-right">
+        <a href="/app" class="bento-pill-btn" title="Buka Neura Clinical Chat">Neura Chat ↗</a>
+        <button class="hub-icon-btn" id="hub-theme-btn" title="Ganti Tema (Light / Dark)" aria-label="Toggle Theme">
+          <svg id="hub-theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        </button>
+
+        <button type="button" class="hub-avatar-pill" id="nh-avatar-btn" title="Profil Tenaga Kesehatan" aria-haspopup="true" aria-expanded="false">N</button>
+
+        <!-- Profile Popover -->
+        <div class="hub-popover hub-profile-popover" id="nh-profile-popover" role="dialog" aria-label="Profil Nakes" hidden>
+          <div class="profile-hero">
+            <div class="profile-avatar-lg" id="nh-pop-avatar">N</div>
+            <div class="profile-identity">
+              <div class="profile-name-row">
+                <span class="profile-name" id="nh-pop-name">Tenaga Kesehatan</span>
+                <span class="profile-verified-tag">KKI</span>
+              </div>
+              <div class="profile-email" id="nh-pop-email">nakes@neura.ns.id</div>
+              <div class="profile-role-line">
+                <span class="profile-role-pill" id="nh-pop-spec">Nakes</span>
+                <span class="profile-session-status">
+                  <span class="profile-online-dot"></span>Active Session
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="popover-menu">
+            <button type="button" class="popover-menu-item" id="nh-open-profile-btn">
+              <span>Pengaturan Profil &amp; Sandi</span>
+            </button>
+          </div>
+          <div class="popover-footer">
+            <button type="button" class="profile-logout-btn" id="nh-logout-btn">
+              <span>Keluar Sesi Nakes</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══ 3-ZONE WORKSPACE ═══ -->
+    <div class="hub-workspace">
+
+      <!-- SIDEBAR 1: Primary Menu -->
+      <aside class="hub-sidebar-1" id="hub-sidebar-1" aria-label="Menu Utama Nakes">
+        <div class="sb1-scroll">
+          <div class="sb1-section-label">Clinical</div>
+          <div class="sb1-group">
+            <button type="button" class="sb1-item active" data-nh-nav="overview">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span>Overview</span>
+            </button>
+            <button type="button" class="sb1-item" data-nh-nav="patients">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              </svg>
+              <span>Data Pasien</span>
+            </button>
+            <button type="button" class="sb1-item" data-nh-nav="documents">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              <span>Dokumen Medis</span>
+            </button>
+            <button type="button" class="sb1-item" data-nh-nav="analytics">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+              <span>Analisa Pasien</span>
+            </button>
+            <button type="button" class="sb1-item" data-nh-nav="history">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span>History</span>
+            </button>
+          </div>
+
+          <div class="sb1-section-label">Workspace</div>
+          <div class="sb1-group">
+            <a href="/app" class="sb1-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>Neura Chat</span>
+            </a>
+            <button type="button" class="sb1-item" data-nh-nav="profile">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M20 21a8 8 0 0 0-16 0" />
+              </svg>
+              <span>Profil Nakes</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="sb1-footer">
+          <button type="button" class="sb1-item sb1-logout" id="nh-sb-logout-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>Log out</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- SIDEBAR 2: Patient Worklist -->
+      <aside class="hub-sidebar-2 is-open" id="hub-sidebar-2" aria-label="Antrean Pasien">
+        <div class="sb2-inner">
+          <div class="sb2-header">
+            <span class="sb2-title">Antrean Pasien</span>
+            <span class="nh-count-pill" id="nh-sb-count">0</span>
+          </div>
+          <div class="nh-sb-filters">
+            <button type="button" class="nh-chip active" data-nh-filter="all">Semua</button>
+            <button type="button" class="nh-chip" data-nh-filter="pending">Pending</button>
+            <button type="button" class="nh-chip" data-nh-filter="high">Risiko</button>
+          </div>
+          <div class="sb2-list nh-worklist" id="nh-sidebar-worklist">
+            <div class="nh-empty-hint">Memuat antrean pasien...</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN HUB CONTENT -->
+      <main class="hub-main" id="hub-main">
+        <div class="hub-content-wrap">
+
+          <!-- HERO WELCOME BANNER -->
+          <section class="hub-welcome-hero">
+            <div class="welcome-abstract-art" aria-hidden="true">
+              <svg class="welcome-draft-svg" viewBox="0 0 380 160" fill="none">
+                <ellipse cx="290" cy="80" rx="120" ry="60" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.32" />
+                <ellipse cx="290" cy="80" rx="84" ry="42" stroke="currentColor" stroke-width="1" opacity="0.45" />
+                <ellipse cx="290" cy="80" rx="52" ry="26" stroke="currentColor" stroke-width="1.2" opacity="0.65" />
+                <circle cx="290" cy="80" r="3" fill="#D97757" />
+                <line x1="120" y1="80" x2="370" y2="80" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity="0.25" />
+                <line x1="290" y1="10" x2="290" y2="150" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity="0.25" />
+                <polygon points="290,32 296,42 284,42" stroke="#D97757" stroke-width="1" fill="none" opacity="0.75" />
+              </svg>
+            </div>
+
+            <div class="welcome-hero-content">
+              <div class="welcome-hero-top">
+                <div class="welcome-kicker-group">
+                  <span class="welcome-sparkle-dot"></span>
+                  <span class="welcome-kicker">Clinical Workspace</span>
+                </div>
+                <span class="welcome-meta-sep">&bull;</span>
+                <span class="welcome-role-tag">Neura &bull; Nakes</span>
+                <span class="welcome-access-badge">
+                  <span class="access-dot-pulse"></span>
+                  <span>Active Session</span>
+                </span>
+              </div>
+
+              <div class="welcome-name-row">
+                <h1 class="welcome-hero-name" id="nh-greeting">Tenaga Kesehatan</h1>
+                <span class="welcome-verified-pill">KKI Verified</span>
+              </div>
+
+              <p class="welcome-hero-sub">
+                Masukkan kode dokumen pasien untuk analisa 32 biomarker klinis, riwayat skrining, dan pengesahan dossier medis.
+              </p>
+
+              <div class="nh-hero-actions" style="margin-top: 12px;">
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-btn-open-patients">Direktori Pasien</button>
+                <button type="button" class="bento-pill-btn" id="nh-btn-refresh">Muat Ulang Data</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ROW 1: Input Code Dokumen + Clinical Telemetry Ring -->
+          <section class="nh-bento-2col">
+            <article class="bento-card nh-card">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">PATIENT DOCUMENT GATEWAY</div>
+                  <h2 class="bento-title-sm">Input Kode Dokumen Pasien</h2>
+                </div>
+                <span class="bento-tag" id="nh-active-code-tag">BELUM DIPILIH</span>
+              </div>
+
+              <form class="nh-code-box" id="nh-main-code-form">
+                <input type="text" id="nh-main-code-input" class="nh-code-field"
+                  placeholder="Contoh: NKS-26-7745-ALZ" autocomplete="off" list="nh-code-datalist" />
+                <datalist id="nh-code-datalist"></datalist>
+                <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Periksa Kode →</button>
+              </form>
+
+              <div class="nh-active-patient-preview" id="nh-active-preview">
+                <div class="nh-preview-empty">
+                  Pilih pasien dari antrean di sebelah kiri atau masukkan kode dokumen pasien untuk menampilkan ringkasan klinis &amp; analisa 32 biomarker.
+                </div>
+              </div>
+            </article>
+
+            <article class="bento-card nh-card">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">CLINICAL TELEMETRY</div>
+                  <h2 class="bento-title-sm">Ringkasan Validasi &amp; Risiko</h2>
+                </div>
+                <span class="bento-tag">LIVE SYNC</span>
+              </div>
+
+              <div class="nh-ring-row">
+                <svg class="nh-donut-svg" viewBox="0 0 100 100" aria-hidden="true">
+                  <circle cx="50" cy="50" r="38" class="nh-donut-track" />
+                  <circle cx="50" cy="50" r="38" class="nh-donut-seg-val" id="nh-donut-val"
+                    stroke-dasharray="0 239" transform="rotate(-90 50 50)" />
+                </svg>
+                <div class="nh-kpi-grid">
+                  <div class="nh-kpi-box">
+                    <span class="nh-kpi-lbl">Total Pasien</span>
+                    <strong class="nh-kpi-val" id="nh-kpi-total">0</strong>
+                  </div>
+                  <div class="nh-kpi-box">
+                    <span class="nh-kpi-lbl">Tervalidasi</span>
+                    <strong class="nh-kpi-val is-ok" id="nh-kpi-validated">0</strong>
+                  </div>
+                  <div class="nh-kpi-box">
+                    <span class="nh-kpi-lbl">Perlu Validasi</span>
+                    <strong class="nh-kpi-val is-warn" id="nh-kpi-pending">0</strong>
+                  </div>
+                  <div class="nh-kpi-box">
+                    <span class="nh-kpi-lbl">Risiko Tinggi</span>
+                    <strong class="nh-kpi-val is-risk" id="nh-kpi-high">0</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="nh-telemetry-foot">
+                <span>Model: XGBoost 3.x (32 Biomarker)</span>
+                <span id="nh-last-sync">Sinkronisasi aktif</span>
+              </div>
+            </article>
+          </section>
+
+          <!-- ROW 2: Analisa 32 Biomarker + History Timeline -->
+          <section class="nh-bento-2col">
+            <article class="bento-card nh-card">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">BIOMARKER ANALYTICS</div>
+                  <h2 class="bento-title-sm">Analisa Profil Klinis Pasien</h2>
+                </div>
+                <button type="button" class="bento-pill-btn" id="nh-btn-open-analysis">Detail Analisa</button>
+              </div>
+              <div id="nh-biomarker-viz" class="nh-viz-wrap">
+                <div class="nh-preview-empty">Muat kode pasien untuk memvisualisasikan deviasi biomarker kognitif &amp; vaskular.</div>
+              </div>
+            </article>
+
+            <article class="bento-card nh-card">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">AUDIT &amp; TIMELINE</div>
+                  <h2 class="bento-title-sm">History Pasien &amp; Dokumen</h2>
+                </div>
+                <div class="nh-mini-tabs">
+                  <button type="button" class="nh-mini-tab active" data-nh-hist="patients">Pasien</button>
+                  <button type="button" class="nh-mini-tab" data-nh-hist="docs">Dokumen</button>
+                </div>
+              </div>
+              <div class="nh-history-list" id="nh-history-list">
+                <div class="nh-preview-empty">Memuat riwayat klinis...</div>
+              </div>
+            </article>
+          </section>
+
+          <!-- ROW 3: Clinical Ecosystem (3 Abstract Wireframe Bento Cards) -->
+          <section class="hub-section">
+            <div class="hub-section-head">
+              <div>
+                <h2 class="hub-section-title">Clinical Ecosystem</h2>
+                <p class="hub-section-sub">Akses modul data pasien, dokumen rekam medis, dan analisa mendalam dalam satu ruang kerja.</p>
+              </div>
+            </div>
+
+            <div class="ecosystem-grid">
+              <article class="bento-card ecosystem-card nh-card" data-nh-drawer="patients">
+                <div class="eco-preview-box">
+                  <span class="eco-pill-tag" id="nh-eco-patient-tag">0 pasien</span>
+                  <svg class="nh-eco-svg" viewBox="0 0 180 90" fill="none" aria-hidden="true">
+                    <rect x="20" y="16" width="140" height="58" rx="8" stroke="currentColor" stroke-opacity="0.25" />
+                    <circle cx="44" cy="36" r="8" stroke="#D97757" stroke-width="1.6" />
+                    <line x1="62" y1="32" x2="136" y2="32" stroke="currentColor" stroke-opacity="0.35" stroke-width="2" />
+                    <line x1="62" y1="42" x2="112" y2="42" stroke="currentColor" stroke-opacity="0.2" stroke-width="2" />
+                    <line x1="34" y1="58" x2="144" y2="58" stroke="currentColor" stroke-opacity="0.15" stroke-width="2" />
+                  </svg>
+                </div>
+                <h3 class="bento-title-sm">Data Pasien</h3>
+                <p class="bento-desc">Direktori pasien skrining Alzheimer lengkap dengan filter tingkat risiko dan status validasi.</p>
+              </article>
+
+              <article class="bento-card ecosystem-card nh-card" data-nh-drawer="documents">
+                <div class="eco-preview-box">
+                  <span class="eco-pill-tag">Dossier / HL7</span>
+                  <svg class="nh-eco-svg" viewBox="0 0 180 90" fill="none" aria-hidden="true">
+                    <rect x="38" y="14" width="104" height="64" rx="6" stroke="currentColor" stroke-opacity="0.25" />
+                    <line x1="54" y1="30" x2="112" y2="30" stroke="#D97757" stroke-width="2.2" />
+                    <line x1="54" y1="42" x2="126" y2="42" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" />
+                    <line x1="54" y1="52" x2="118" y2="52" stroke="currentColor" stroke-opacity="0.2" stroke-width="2" />
+                    <rect x="54" y="61" width="44" height="7" rx="3" fill="#D97757" fill-opacity="0.35" />
+                  </svg>
+                </div>
+                <h3 class="bento-title-sm">Data Dokumen Medis</h3>
+                <p class="bento-desc">Buka dossier resmi 32 biomarker, cetak PDF rekam medis, atau unduh format JSON HL7-Ready.</p>
+              </article>
+
+              <article class="bento-card ecosystem-card nh-card" data-nh-drawer="analytics">
+                <div class="eco-preview-box">
+                  <span class="eco-pill-tag">32 Biomarker</span>
+                  <svg class="nh-eco-svg" viewBox="0 0 180 90" fill="none" aria-hidden="true">
+                    <polyline points="24,62 54,48 82,54 114,28 156,36" stroke="#D97757" stroke-width="2" fill="none" />
+                    <circle cx="54" cy="48" r="3" fill="#D97757" />
+                    <circle cx="114" cy="28" r="3" fill="#D97757" />
+                    <line x1="24" y1="70" x2="156" y2="70" stroke="currentColor" stroke-opacity="0.2" />
+                  </svg>
+                </div>
+                <h3 class="bento-title-sm">Analisa &amp; Validasi Klinis</h3>
+                <p class="bento-desc">Evaluasi parameter klinis pasien, bandingkan ambang normal, dan sahkan tanda tangan dokter.</p>
+              </article>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE-OVER CLINICAL DRAWER ═══ -->
+  <div class="nh-drawer-backdrop" id="nh-drawer-backdrop" hidden>
+    <aside class="nh-drawer" id="nh-drawer" role="dialog" aria-modal="true" aria-labelledby="nh-drawer-title">
+      <div class="drawer-header">
+        <div>
+          <span class="drawer-kicker" id="nh-drawer-kicker">CLINICAL DRAWER</span>
+          <h2 class="drawer-title" id="nh-drawer-title">Detail Klinis</h2>
+        </div>
+        <button type="button" class="hub-icon-btn" id="nh-drawer-close" aria-label="Tutup Panel">✕</button>
+      </div>
+      <div class="drawer-body" id="nh-drawer-body"></div>
+    </aside>
+  </div>
+
+  <script src="/js/auth-guard.js?v=2.0"></script>
+  <script src="/js/nakes-hub.js?v=1.1"></script>
+</body>
+
+</html>

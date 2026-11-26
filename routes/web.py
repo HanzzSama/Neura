@@ -88,6 +88,11 @@ def register_web_routes(app: Flask):
     def nakes_code_res_page():
         return send_from_directory(PUBLIC_DIR, "nakes-code-res.html")
 
+    @app.route("/nakes", strict_slashes=False)
+    @app.route("/nakes.html", strict_slashes=False)
+    def nakes_hub_page():
+        return send_from_directory(PUBLIC_DIR, "nakes.html")
+
     @app.route("/api/project-structure", methods=["GET"])
     def get_project_structure():
         ignored_dirs = {".git", ".ipynb_checkpoints", ".flask_sessions", "venv", "__pycache__", ".gemini", "node_modules"}

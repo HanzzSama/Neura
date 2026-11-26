@@ -132,9 +132,24 @@
     window.location.replace(targetUrl);
   }
 
+  function isNakesSessionActive() {
+    try {
+      var nakesRole = localStorage.getItem('neura_user_role');
+      var nakesSession = localStorage.getItem('neura_nakes_session');
+      if (nakesRole === 'Nakes' && nakesSession) {
+        var ns = JSON.parse(nakesSession);
+        if (ns && ns.email && ns.email.endsWith('@neura.ns.id')) {
+          return true;
+        }
+      }
+    } catch (e) {}
+    return false;
+  }
+
   function runGuard(fb) {
     var path = (window.location && window.location.pathname) ? window.location.pathname.replace(/\/+$/, '') : '';
     var isAdminPage = (path === '/admin' || path === '/app/admin' || path === '/admin.html');
+    var isNakesPage = (path === '/nakes' || path === '/nakes.html');
 
     // Jika Admin membuka /app (default entry), arahkan ke /admin (Neura Admin Hub).
     // /chat tetap dapat diakses langsung sebagai menu Neura Chat Admin.
@@ -145,6 +160,12 @@
 
     // Lindungi /admin agar hanya Admin terautentikasi yang dapat masuk
     if (isAdminPage && !isAdminSessionActive()) {
+      redirectToWelcome('not_logged_in');
+      return;
+    }
+
+    // Lindungi /nakes agar hanya Nakes (atau Admin) terautentikasi yang dapat masuk
+    if (isNakesPage && !isNakesSessionActive() && !isAdminSessionActive()) {
       redirectToWelcome('not_logged_in');
       return;
     }
