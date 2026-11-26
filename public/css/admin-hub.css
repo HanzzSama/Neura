@@ -334,14 +334,24 @@ button {
 
 /* ── Sidebar 1 (Primary Menu) ── */
 .hub-sidebar-1 {
-  width: 214px;
+  width: 232px;
   flex-shrink: 0;
   border-right: 1px solid var(--hub-border);
   background: var(--hub-bg-subtle);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 14px 10px;
+  padding: 16px 10px;
+  position: relative;
+  user-select: none;
+}
+
+.hub-sidebar-1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 10% 0%, rgba(217, 119, 87, 0.035) 0%, transparent 65%);
 }
 
 .sb1-scroll {
@@ -349,33 +359,50 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
+  z-index: 1;
 }
 
 .sb1-section-label {
-  font-size: 11px;
-  font-weight: 500;
+  font-family: var(--hub-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--hub-text-muted);
-  padding: 12px 10px 4px;
+  padding: 14px 10px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sb1-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), transparent);
 }
 
 .sb1-group {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .sb1-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 7px 10px;
-  border-radius: 7px;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   color: var(--hub-text-secondary);
   text-align: left;
-  transition: background 0.12s, color 0.12s;
+  position: relative;
+  border: 1px solid transparent;
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sb1-item span {
@@ -383,39 +410,77 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.sb1-item svg:first-child {
+  color: var(--hub-text-muted);
+  flex-shrink: 0;
+  transition: color 0.16s ease, transform 0.16s ease;
 }
 
 .sb1-item:hover {
-  background: var(--hub-bg-hover);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--hub-text);
+  border-color: rgba(255, 255, 255, 0.05);
+  transform: translateX(2px);
+}
+
+.sb1-item:hover svg:first-child {
   color: var(--hub-text);
 }
 
 .sb1-item.active {
-  background: var(--hub-bg-active);
-  color: var(--hub-text);
+  background: rgba(217, 119, 87, 0.09);
+  border-color: rgba(217, 119, 87, 0.22);
+  color: #FFFFFF;
   font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16), inset 0 0 14px rgba(217, 119, 87, 0.06);
 }
 
 .sb1-item.active svg:first-child {
   color: var(--hub-accent);
+  filter: drop-shadow(0 0 6px rgba(217, 119, 87, 0.4));
+}
+
+.sb1-item.active::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--hub-accent);
+  box-shadow: 0 0 8px var(--hub-accent);
 }
 
 .sb1-chevron {
   color: var(--hub-text-muted);
-  transition: transform 0.16s ease;
+  opacity: 0.6;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.16s, color 0.16s;
+}
+
+.sb1-item:hover .sb1-chevron {
+  opacity: 1;
 }
 
 .sb1-item.expanded .sb1-chevron {
   transform: rotate(90deg);
+  opacity: 1;
   color: var(--hub-accent);
 }
 
 .sb1-footer {
-  border-top: 1px solid var(--hub-border);
-  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 12px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  position: relative;
+  z-index: 1;
 }
 
 .sb1-toggle-row {
@@ -2477,7 +2542,8 @@ button {
 
   .hub-sidebar-1 {
     position: fixed;
-    left: -240px;
+    left: -260px;
+    width: 232px;
     top: 52px;
     bottom: 0;
     z-index: 50;
