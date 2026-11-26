@@ -344,6 +344,7 @@ button {
   padding: 16px 10px;
   position: relative;
   user-select: none;
+  overflow-x: hidden;
 }
 
 .hub-sidebar-1::before {
@@ -356,11 +357,20 @@ button {
 
 .sb1-scroll {
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 4px;
   position: relative;
   z-index: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sb1-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .sb1-section-label {
@@ -391,6 +401,7 @@ button {
 
 .sb1-item {
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -423,7 +434,6 @@ button {
   background: rgba(255, 255, 255, 0.035);
   color: var(--hub-text);
   border-color: rgba(255, 255, 255, 0.05);
-  transform: translateX(2px);
 }
 
 .sb1-item:hover svg:first-child {
@@ -446,7 +456,7 @@ button {
 .sb1-item.active::before {
   content: '';
   position: absolute;
-  left: -10px;
+  left: 0;
   top: 6px;
   bottom: 6px;
   width: 3px;
