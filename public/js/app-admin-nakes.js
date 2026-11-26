@@ -15,6 +15,8 @@ function syncAdminNavVisibility() {
   try {
     const isAdmin = typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin();
     const adminNavIds = [
+      'sidebar-dashboard-link',
+      'sidebar-admin-hub-link',
       'sidebar-nakes-admin-link',
       'sidebar-database-link',
       'sidebar-stats-link',
