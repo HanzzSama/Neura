@@ -489,8 +489,12 @@
       elQrMount.innerHTML = QR.toSvg(state.registerUrl);
       elTargetPath.textContent = `/nakes/register?code=${state.code}`;
       if (elManualUrlLink) {
-        const manualUrl = `${window.location.origin}/nakes/code-res`;
-        elManualUrlLink.href = "/nakes/code-res";
+        let publicOrigin = window.location.origin;
+        try {
+          publicOrigin = new URL(state.registerUrl).origin;
+        } catch (_) {}
+        const manualUrl = `${publicOrigin}/nakes/code-res`;
+        elManualUrlLink.href = manualUrl;
         elManualUrlLink.textContent = manualUrl;
       }
     }

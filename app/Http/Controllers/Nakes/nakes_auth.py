@@ -266,10 +266,10 @@ def api_nakes_update_password():
 @nakes_auth_bp.route("/qr-session", methods=["GET"])
 def api_nakes_qr_session():
     """Mengambil sesi QR & kode unik 3-menit berdasarkan parameter ?live=."""
-    from app.Services.NakesInviteService import get_qr_session
+    from app.Services.NakesInviteService import get_qr_session, resolve_public_base_url
     live_id = (request.args.get("live") or "").strip()
     session_data = get_qr_session(live_id)
-    base = (request.host_url or "").rstrip("/")
+    base = resolve_public_base_url(request.host_url)
     register_url = (
         f"{base}/nakes/register?code={session_data['code']}"
         if session_data.get("active") and session_data.get("code")

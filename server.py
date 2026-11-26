@@ -30,11 +30,14 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             sys.exit(0)
 
+    from app.Services.NakesInviteService import get_lan_ip
     app = get_app()
+    lan_ip = get_lan_ip()
     print("\n" + "=" * 65)
     print("🧠 NEURA AI — CLINICAL ALZHEIMER'S INTELLIGENCE PLATFORM")
     print("   Architecture: Neura Clean Modern Architecture")
-    print("   Server URL:   http://localhost:5000")
+    print("   Local URL:    http://localhost:5000")
+    print(f"   LAN URL:      http://{lan_ip}:5000")
     print("=" * 65 + "\n")
     try:
         app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)

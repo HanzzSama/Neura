@@ -227,7 +227,8 @@ def api_delete_nakes(nakes_id):
 # -----------------------------------------------------------------------
 
 def _build_qr_url(live_id: str) -> str:
-    base = (request.host_url or "").rstrip("/")
+    from app.Services.NakesInviteService import resolve_public_base_url
+    base = resolve_public_base_url(request.host_url)
     return f"{base}/welcome/nakes/qr-code?live={live_id}"
 
 

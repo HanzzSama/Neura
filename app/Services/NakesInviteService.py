@@ -7,14 +7,52 @@ auto-rotating 3-minute (180s) unique registration codes for Nakes.
 
 import json
 import secrets
+import socket
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
+from urllib.parse import urlparse, urlunparse
 
 TOKEN_STORE_FILE = Path(__file__).resolve().parent.parent.parent / "storage" / "app" / "nakes_invite_tokens.json"
 INVITE_TTL_SECONDS = 180  # 3 minutes
 _STORE_LOCK = Lock()
+
+
+def get_lan_ip() -> str:
+    """Detect the active local LAN IPv4 address (e.g. 192.168.x.x) for mobile access."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            if ip and not ip.startswith("127."):
+                return ip
+    except Exception:
+        pass
+    try:
+        ip = socket.gethostbyname(socket.gethostname())
+        if ip and not ip.startswith("127."):
+            return ip
+    except Exception:
+        pass
+    return "127.0.0.1"
+
+
+def resolve_public_base_url(host_url: str) -> str:
+    """
+    Replace loopback hosts (127.0.0.1 / localhost / 0.0.0.0) with the machine's
+    LAN IP so QR codes and copied invite links are reachable from mobile devices.
+    """
+    raw = (host_url or "").strip().rstrip("/")
+    if not raw:
+        return f"http://{get_lan_ip()}:5000"
+    parsed = urlparse(raw)
+    hostname = (parsed.hostname or "").lower()
+    if hostname in ("127.0.0.1", "localhost", "0.0.0.0"):
+        lan_ip = get_lan_ip()
+        netloc = f"{lan_ip}:{parsed.port}" if parsed.port else lan_ip
+        return urlunparse((parsed.scheme or "http", netloc, "", "", "", "")).rstrip("/")
+    return raw
 
 
 def _now_iso() -> str:
