@@ -1,7 +1,15 @@
 /* ==========================================================================
    NEURA NAKES HUB — Clinical Extension Styles (Zero Glow, High Clarity)
-   Inherits base tokens & layout from admin-hub.css
+   Inherits 3-zone hub-workspace & theme tokens from admin-hub.css
    ========================================================================== */
+
+[hidden] {
+  display: none !important;
+}
+
+.nh-card {
+  padding: 20px 22px;
+}
 
 .nh-code-search-form {
   display: flex;
@@ -47,7 +55,7 @@
 .nh-sb-filters {
   display: flex;
   gap: 5px;
-  padding: 0 12px 10px;
+  padding: 10px 12px;
 }
 
 .nh-chip {
@@ -415,8 +423,38 @@
   color: var(--hub-text-muted);
 }
 
+/* Slide-Over Clinical Drawer */
+.nh-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: flex-end;
+}
+
 .nh-drawer {
   width: min(680px, 95vw);
+  height: 100%;
+  background: var(--hub-bg-card);
+  border-left: 1px solid var(--hub-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nh-drawer .drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--hub-border);
+}
+
+.nh-drawer .drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
 }
 
 .nh-form-stack {
@@ -463,7 +501,8 @@
 
 @media print {
   .hub-topbar,
-  .hub-sidebar,
+  .hub-sidebar-1,
+  .hub-sidebar-2,
   .nh-no-print {
     display: none !important;
   }
