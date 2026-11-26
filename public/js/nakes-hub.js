@@ -390,9 +390,17 @@
     });
   }
 
+  let _drawerCloseTimer = null;
+
   function closeDrawer() {
     const bd = document.getElementById('nh-drawer-backdrop');
-    if (bd) bd.hidden = true;
+    if (bd && !bd.hidden) {
+      bd.classList.remove('is-open');
+      clearTimeout(_drawerCloseTimer);
+      _drawerCloseTimer = setTimeout(() => {
+        bd.hidden = true;
+      }, 280);
+    }
     setActiveNav('overview');
   }
 
@@ -435,7 +443,11 @@
     const body = document.getElementById('nh-drawer-body');
     if (!bd || !body) return;
 
+    clearTimeout(_drawerCloseTimer);
     bd.hidden = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => bd.classList.add('is-open'));
+    });
     setActiveNav(type === 'validate' ? 'documents' : type);
 
     if (type === 'patients') {
@@ -782,6 +794,9 @@
     document.getElementById('nh-drawer-close')?.addEventListener('click', closeDrawer);
     document.getElementById('nh-drawer-backdrop')?.addEventListener('click', (e) => {
       if (e.target.id === 'nh-drawer-backdrop') closeDrawer();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
     });
   }
 
