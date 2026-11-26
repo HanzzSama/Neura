@@ -453,7 +453,13 @@
 
   function closeSidebar2() {
     document.getElementById('hub-sidebar-2')?.classList.remove('is-open');
-    document.querySelectorAll('.sb1-item[data-expand]').forEach(el => el.classList.remove('expanded'));
+    document.querySelectorAll('.sb1-item[data-expand]').forEach(el => {
+      el.classList.remove('expanded');
+      el.classList.remove('active');
+    });
+    // Kembalikan active menu ke overview saat tidak expand
+    document.querySelectorAll('.sb1-item[data-nav]').forEach(el => el.classList.remove('active'));
+    document.querySelector('.sb1-item[data-nav="overview"]')?.classList.add('active');
   }
 
   function resetFilters() {
@@ -539,6 +545,18 @@
 
     document.getElementById('sb2-close-btn')?.addEventListener('click', () => {
       closeSidebar2();
+      activeCategory = 'all';
+      renderAll();
+    });
+
+    // Klik di area konten utama otomatis menutup expand sub-menu dan merestore overview
+    document.getElementById('hub-main')?.addEventListener('click', () => {
+      const sb2 = document.getElementById('hub-sidebar-2');
+      if (sb2 && sb2.classList.contains('is-open')) {
+        closeSidebar2();
+        activeCategory = 'all';
+        renderAll();
+      }
     });
 
     document.getElementById('sb2-reset-filter')?.addEventListener('click', resetFilters);
