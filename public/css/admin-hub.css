@@ -1888,8 +1888,8 @@ button {
 }
 
 .eco-card:hover .eco-art-box {
-  border-color: var(--hub-border-strong);
-  box-shadow: var(--hub-shadow-sm);
+  border-color: var(--hub-accent-border);
+  box-shadow: var(--hub-shadow-md);
 }
 
 .eco-tag {
