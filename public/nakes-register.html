@@ -6,173 +6,469 @@
   <title>Neura AI — Registrasi Tenaga Kesehatan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/nakes-qr.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
   <style>
-    .nr-card {
-      max-width: 540px;
+    :root {
+      --bg: #141413;
+      --surface: #1c1c1a;
+      --input-bg: #242421;
+      --border: rgba(255, 255, 255, 0.09);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #f4f3ee;
+      --text-secondary: #a8a69e;
+      --text-muted: #76746d;
+      --accent: #d97757;
+      --accent-hover: #c96646;
+      --ok: #34d399;
+      --ok-bg: rgba(52, 211, 153, 0.1);
+      --err: #f87171;
+      --err-bg: rgba(248, 113, 113, 0.1);
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: "Newsreader", Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
     }
-    .nr-form {
+
+    html[data-theme="light"] {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --input-bg: #f5f4ef;
+      --border: rgba(20, 20, 19, 0.1);
+      --border-strong: rgba(20, 20, 19, 0.18);
+      --text: #141413;
+      --text-secondary: #5c5b55;
+      --text-muted: #8a8880;
+      --accent: #c96442;
+      --accent-hover: #b75636;
+      --ok: #15803d;
+      --ok-bg: rgba(21, 128, 61, 0.08);
+      --err: #dc2626;
+      --err-bg: rgba(220, 38, 38, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .cl-shell {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      justify-content: space-between;
+      padding: 20px 24px;
     }
-    .nr-row-2 {
+
+    /* Minimal Topbar */
+    .cl-topbar {
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .cl-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .cl-brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .cl-brand-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .cl-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cl-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .cl-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .cl-dot.active {
+      background: var(--ok);
+    }
+
+    .cl-dot.locked {
+      background: var(--err);
+    }
+
+    .cl-theme-btn {
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.16s ease, color 0.16s ease;
+    }
+
+    .cl-theme-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    /* Main Centered Card */
+    .cl-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 0;
+    }
+
+    .cl-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .cl-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cl-kicker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .cl-ttl {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .cl-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .cl-subtitle {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .cl-subtitle code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--text);
+      background: var(--input-bg);
+      padding: 1px 6px;
+      border-radius: 5px;
+    }
+
+    /* Form */
+    .cl-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cl-row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-    .nr-field {
+
+    .cl-field {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
-    .nr-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--nqr-muted);
+
+    .cl-label {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
     }
-    .nr-input,
-    .nr-select {
+
+    .cl-hint {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .cl-input,
+    .cl-select {
       width: 100%;
-      padding: 10px 12px;
-      background: var(--nqr-surface-2);
-      border: 1px solid var(--nqr-border);
-      color: var(--nqr-text);
+      min-height: 42px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
       font-family: var(--font-sans);
-      font-size: 13px;
+      font-size: 14px;
       outline: none;
-      transition: border-color 0.16s ease;
+      transition: border-color 0.16s ease, background 0.16s ease;
     }
-    .nr-input:focus,
-    .nr-select:focus {
-      border-color: var(--nqr-accent);
+
+    .cl-input::placeholder {
+      color: var(--text-muted);
     }
-    .nr-input.mono {
+
+    .cl-input:focus,
+    .cl-select:focus {
+      border-color: var(--accent);
+    }
+
+    .cl-input.mono {
       font-family: var(--font-mono);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 13.5px;
+      letter-spacing: 0.04em;
     }
-    .nr-code-row {
+
+    .cl-code-row {
       display: flex;
       gap: 8px;
+      align-items: stretch;
     }
-    .nr-verify-btn {
+
+    .cl-code-row .cl-input {
+      flex: 1;
+      min-width: 0;
+      text-transform: uppercase;
+    }
+
+    .cl-verify-btn {
+      min-height: 42px;
       padding: 0 14px;
-      border: 1px solid var(--nqr-border-strong);
-      background: var(--nqr-surface-2);
-      color: var(--nqr-text);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: border-color 0.16s ease;
-    }
-    .nr-verify-btn:hover {
-      border-color: var(--nqr-accent);
-    }
-    .nr-alert {
-      padding: 10px 12px;
-      border: 1px solid var(--nqr-border);
-      background: var(--nqr-surface-2);
-      font-size: 12px;
-      line-height: 1.5;
-      color: var(--nqr-muted);
-    }
-    .nr-alert.err {
-      border-color: var(--nqr-err);
-      color: var(--nqr-err);
-    }
-    .nr-alert.ok {
-      border-color: var(--nqr-ok);
-      color: var(--nqr-ok);
-    }
-    .nr-submit-btn {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid transparent;
-      background: var(--nqr-accent);
-      color: #ffffff;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
       font-family: var(--font-sans);
       font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .cl-verify-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .cl-alert {
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .cl-alert.err {
+      border-color: rgba(248, 113, 113, 0.35);
+      background: var(--err-bg);
+      color: var(--err);
+    }
+
+    .cl-alert.ok {
+      border-color: rgba(52, 211, 153, 0.35);
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .cl-submit-btn {
+      width: 100%;
+      min-height: 46px;
+      margin-top: 4px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.16s ease;
+      transition: background 0.16s ease, opacity 0.16s ease;
     }
-    .nr-submit-btn:disabled {
+
+    .cl-submit-btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .cl-submit-btn:disabled {
       opacity: 0.55;
       cursor: not-allowed;
     }
-    .nr-cred-box {
-      border: 1px solid var(--nqr-border);
-      background: var(--nqr-surface-2);
-      padding: 14px 16px;
+
+    /* Success Credentials */
+    .cl-cred-box {
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      border-radius: 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
-    .nr-cred-row {
+
+    .cl-cred-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      font-size: 12px;
-      border-bottom: 1px dashed var(--nqr-border);
-      padding-bottom: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
     }
-    .nr-cred-row:last-child {
+
+    .cl-cred-row:last-child {
       border-bottom: none;
       padding-bottom: 0;
     }
-    .nr-cred-row span {
-      color: var(--nqr-muted);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.06em;
+
+    .cl-cred-row span {
+      font-size: 12px;
+      color: var(--text-muted);
     }
-    .nr-cred-row strong {
+
+    .cl-cred-row strong {
       font-family: var(--font-mono);
       font-size: 13px;
-      color: var(--nqr-text);
+      font-weight: 600;
+      color: var(--text);
       user-select: all;
+      word-break: break-all;
     }
+
+    .cl-primary-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 46px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.16s ease;
+    }
+
+    .cl-primary-link:hover {
+      background: var(--accent-hover);
+    }
+
+    .cl-footer {
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
     @media (max-width: 560px) {
-      .nr-row-2 {
+      .cl-shell {
+        padding: 14px;
+      }
+      .cl-main {
+        padding: 16px 0;
+      }
+      .cl-card {
+        border-radius: 16px;
+        padding: 22px 18px;
+        gap: 18px;
+      }
+      .cl-title {
+        font-size: 24px;
+      }
+      .cl-row-2 {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 14px;
       }
-      .nr-input,
-      .nr-select {
+      .cl-input,
+      .cl-select {
+        font-size: 16px;
+        min-height: 44px;
+      }
+      .cl-input.mono {
         font-size: 15px;
+      }
+      .cl-verify-btn {
         min-height: 44px;
-        padding: 10px 12px;
       }
-      .nr-input.mono {
-        font-size: 14px;
-        letter-spacing: 0.05em;
-      }
-      .nr-code-row {
-        gap: 6px;
-      }
-      .nr-code-row .nr-input {
-        min-width: 0;
-        flex: 1;
-      }
-      .nr-verify-btn {
-        min-height: 44px;
-        padding: 0 12px;
-      }
-      .nr-submit-btn {
-        min-height: 46px;
-        font-size: 14px;
-      }
-      .nr-cred-row {
+      .cl-cred-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
@@ -181,73 +477,60 @@
   </style>
 </head>
 <body>
-  <div class="nqr-grid-bg" aria-hidden="true"></div>
-  <svg class="nqr-geo-overlay" viewBox="0 0 1440 900" fill="none" aria-hidden="true">
-    <line x1="120" y1="0" x2="120" y2="900" class="geo-hairline" />
-    <line x1="1320" y1="0" x2="1320" y2="900" class="geo-hairline" />
-    <line x1="0" y1="120" x2="1440" y2="120" class="geo-hairline" />
-    <line x1="0" y1="780" x2="1440" y2="780" class="geo-hairline" />
-  </svg>
-
-  <div class="nqr-shell">
-    <header class="nqr-topbar">
-      <a href="/welcome" class="nqr-brand">
-        <span class="nqr-brand-mark">N</span>
-        <span class="nqr-brand-text">NEURA<span class="nqr-brand-sub"> // NAKES REGISTER</span></span>
+  <div class="cl-shell">
+    <header class="cl-topbar">
+      <a href="/welcome" class="cl-brand">
+        <span class="cl-brand-mark">N</span>
+        <span class="cl-brand-name">Neura AI</span>
       </a>
-      <div class="nqr-topbar-right">
-        <span class="nqr-telemetry-pill">
-          <span class="nqr-status-dot" id="nrInviteDot"></span>
-          <span id="nrInviteStatus">CEK KODE</span>
+      <div class="cl-topbar-right">
+        <span class="cl-status-pill">
+          <span class="cl-dot" id="nrInviteDot"></span>
+          <span id="nrInviteStatus">Cek Kode</span>
         </span>
-        <button type="button" class="nqr-theme-btn" id="nrThemeBtn">
-          <span id="nrThemeLabel">LIGHT</span>
+        <button type="button" class="cl-theme-btn" id="nrThemeBtn">
+          <span id="nrThemeLabel">Terang</span>
         </button>
       </div>
     </header>
 
-    <main class="nqr-main">
+    <main class="cl-main">
       <!-- Registration Form Card -->
-      <section class="nqr-card nr-card" id="nrFormCard">
-        <span class="nqr-corner tl" aria-hidden="true"></span>
-        <span class="nqr-corner tr" aria-hidden="true"></span>
-        <span class="nqr-corner bl" aria-hidden="true"></span>
-        <span class="nqr-corner br" aria-hidden="true"></span>
-
-        <div>
-          <div class="nqr-meta-row">
-            <span class="nqr-mono-tag">ONBOARDING TENAGA KESEHATAN</span>
-            <span class="nqr-mono-tag muted" id="nrCodeTtlTag">TTL: 180s</span>
+      <section class="cl-card" id="nrFormCard">
+        <div class="cl-header">
+          <div class="cl-kicker">
+            <span>Registrasi Tenaga Kesehatan</span>
+            <span class="cl-ttl" id="nrCodeTtlTag">TTL 180s</span>
           </div>
-          <h1 class="nqr-title">Registrasi Akun Profesional Nakes</h1>
-          <p class="nqr-subtitle">
-            Lengkapi identitas klinis Anda dengan kode undangan aktif untuk mendapatkan email <code>@neura.ns.id</code>.
+          <h1 class="cl-title">Buat akun profesional Anda</h1>
+          <p class="cl-subtitle">
+            Lengkapi identitas klinis dengan kode undangan aktif untuk mendapatkan akses <code>@neura.ns.id</code>.
           </p>
         </div>
 
-        <div class="nr-alert" id="nrFeedbackBox" hidden></div>
+        <div class="cl-alert" id="nrFeedbackBox" hidden></div>
 
-        <form class="nr-form" id="nrRegisterForm" novalidate>
-          <div class="nr-field">
-            <label class="nr-label" for="nrInviteCode">
-              <span>Kode Undangan (3 Menit)</span>
-              <span id="nrInviteValidHint">—</span>
+        <form class="cl-form" id="nrRegisterForm" novalidate>
+          <div class="cl-field">
+            <label class="cl-label" for="nrInviteCode">
+              <span>Kode Undangan</span>
+              <span class="cl-hint" id="nrInviteValidHint">Berlaku 3 menit</span>
             </label>
-            <div class="nr-code-row">
-              <input class="nr-input mono" id="nrInviteCode" name="invite_code" placeholder="NKS-XXXX-XXXX" required />
-              <button type="button" class="nr-verify-btn" id="nrVerifyBtn">Verifikasi</button>
+            <div class="cl-code-row">
+              <input class="cl-input mono" id="nrInviteCode" name="invite_code" placeholder="NKS-XXXX-XXXX" required />
+              <button type="button" class="cl-verify-btn" id="nrVerifyBtn">Verifikasi</button>
             </div>
           </div>
 
-          <div class="nr-field">
-            <label class="nr-label" for="nrName">Nama Lengkap &amp; Gelar *</label>
-            <input class="nr-input" id="nrName" name="name" placeholder="dr. Budi Santoso, Sp.N" required />
+          <div class="cl-field">
+            <label class="cl-label" for="nrName">Nama Lengkap &amp; Gelar *</label>
+            <input class="cl-input" id="nrName" name="name" placeholder="dr. Budi Santoso, Sp.N" required />
           </div>
 
-          <div class="nr-row-2">
-            <div class="nr-field">
-              <label class="nr-label" for="nrProfession">Profesi / Spesialisasi *</label>
-              <select class="nr-select" id="nrProfession" name="profession">
+          <div class="cl-row-2">
+            <div class="cl-field">
+              <label class="cl-label" for="nrProfession">Profesi / Spesialisasi *</label>
+              <select class="cl-select" id="nrProfession" name="profession">
                 <option value="Dokter Spesialis Neurologi (Sp.N)">Dokter Spesialis Neurologi (Sp.N)</option>
                 <option value="Dokter Spesialis Geriatri (Sp.PD-KGer)">Dokter Spesialis Geriatri (Sp.PD-KGer)</option>
                 <option value="Dokter Umum">Dokter Umum</option>
@@ -255,86 +538,82 @@
                 <option value="Perawat Neurologi / Geriatri">Perawat Neurologi / Geriatri</option>
               </select>
             </div>
-            <div class="nr-field">
-              <label class="nr-label" for="nrInstitution">Instansi / Faskes *</label>
-              <input class="nr-input" id="nrInstitution" name="institution" placeholder="RSUPN Dr. Cipto Mangunkusumo" required />
+            <div class="cl-field">
+              <label class="cl-label" for="nrInstitution">Instansi / Faskes *</label>
+              <input class="cl-input" id="nrInstitution" name="institution" placeholder="RSUPN Dr. Cipto Mangunkusumo" required />
             </div>
           </div>
 
-          <div class="nr-row-2">
-            <div class="nr-field">
-              <label class="nr-label" for="nrStr">Nomor STR *</label>
-              <input class="nr-input mono" id="nrStr" name="str_number" placeholder="31.1.1.100.1.24.123456" required />
+          <div class="cl-row-2">
+            <div class="cl-field">
+              <label class="cl-label" for="nrStr">Nomor STR *</label>
+              <input class="cl-input mono" id="nrStr" name="str_number" placeholder="31.1.1.100.1.24.123456" required />
             </div>
-            <div class="nr-field">
-              <label class="nr-label" for="nrSip">Nomor SIP (Opsional)</label>
-              <input class="nr-input mono" id="nrSip" name="sip_number" placeholder="503/SIP/123/Dinkes/2026" />
-            </div>
-          </div>
-
-          <div class="nr-row-2">
-            <div class="nr-field">
-              <label class="nr-label" for="nrEmail">Email Pribadi *</label>
-              <input class="nr-input" id="nrEmail" name="real_email" type="email" placeholder="nama@klinik.id" required />
-            </div>
-            <div class="nr-field">
-              <label class="nr-label" for="nrPhone">No. Telepon / WA</label>
-              <input class="nr-input" id="nrPhone" name="phone" type="tel" placeholder="0812xxxxxxxx" />
+            <div class="cl-field">
+              <label class="cl-label" for="nrSip">Nomor SIP (Opsional)</label>
+              <input class="cl-input mono" id="nrSip" name="sip_number" placeholder="503/SIP/123/Dinkes/2026" />
             </div>
           </div>
 
-          <div class="nr-field">
-            <label class="nr-label" for="nrPassword">Kata Sandi Akun (Opsional, min. 6 karakter)</label>
-            <input class="nr-input" id="nrPassword" name="password" type="password" placeholder="Kosongkan untuk kata sandi otomatis" />
+          <div class="cl-row-2">
+            <div class="cl-field">
+              <label class="cl-label" for="nrEmail">Email Pribadi *</label>
+              <input class="cl-input" id="nrEmail" name="real_email" type="email" placeholder="nama@klinik.id" required />
+            </div>
+            <div class="cl-field">
+              <label class="cl-label" for="nrPhone">No. Telepon / WA</label>
+              <input class="cl-input" id="nrPhone" name="phone" type="tel" placeholder="0812xxxxxxxx" />
+            </div>
           </div>
 
-          <button type="submit" class="nr-submit-btn" id="nrSubmitBtn">
+          <div class="cl-field">
+            <label class="cl-label" for="nrPassword">Kata Sandi (Opsional, min. 6 karakter)</label>
+            <input class="cl-input" id="nrPassword" name="password" type="password" placeholder="Kosongkan untuk sandi otomatis" />
+          </div>
+
+          <button type="submit" class="cl-submit-btn" id="nrSubmitBtn">
             Daftarkan Akun Nakes
           </button>
         </form>
       </section>
 
       <!-- Success Credential Card -->
-      <section class="nqr-card nr-card" id="nrSuccessCard" hidden>
-        <span class="nqr-corner tl" aria-hidden="true"></span>
-        <span class="nqr-corner tr" aria-hidden="true"></span>
-        <span class="nqr-corner bl" aria-hidden="true"></span>
-        <span class="nqr-corner br" aria-hidden="true"></span>
-
-        <div>
-          <span class="nqr-mono-tag">REGISTRATION COMPLETE // VERIFIED</span>
-          <h2 class="nqr-title">Akun Nakes Berhasil Dibuat</h2>
-          <p class="nqr-subtitle">
+      <section class="cl-card" id="nrSuccessCard" hidden>
+        <div class="cl-header">
+          <div class="cl-kicker">
+            <span>Registrasi Terverifikasi</span>
+          </div>
+          <h2 class="cl-title">Akun Nakes berhasil dibuat</h2>
+          <p class="cl-subtitle">
             Simpan kredensial akses berikut untuk masuk melalui gerbang Nakes Neura AI.
           </p>
         </div>
 
-        <div class="nr-cred-box">
-          <div class="nr-cred-row">
-            <span>ID NAKES</span>
+        <div class="cl-cred-box">
+          <div class="cl-cred-row">
+            <span>ID Nakes</span>
             <strong id="nrOutId">—</strong>
           </div>
-          <div class="nr-cred-row">
-            <span>NAMA</span>
+          <div class="cl-cred-row">
+            <span>Nama</span>
             <strong id="nrOutName">—</strong>
           </div>
-          <div class="nr-cred-row">
-            <span>EMAIL NEURA</span>
+          <div class="cl-cred-row">
+            <span>Email Neura</span>
             <strong id="nrOutEmail">—</strong>
           </div>
-          <div class="nr-cred-row">
-            <span>KATA SANDI</span>
+          <div class="cl-cred-row">
+            <span>Kata Sandi</span>
             <strong id="nrOutPwd">—</strong>
           </div>
         </div>
 
-        <a href="/welcome" class="nqr-primary-link">Lanjut ke Halaman Login Neura →</a>
+        <a href="/welcome" class="cl-primary-link">Lanjut ke Halaman Masuk →</a>
       </section>
     </main>
 
-    <footer class="nqr-footer">
-      <span>NEURA CLINICAL IDENTITY TELEMETRY</span>
-      <span>NAKES DIRECTORY ONBOARDING</span>
+    <footer class="cl-footer">
+      Neura AI Clinical Identity · Direktori Tenaga Kesehatan
     </footer>
   </div>
 
@@ -362,7 +641,7 @@
       function applyTheme(theme) {
         document.documentElement.setAttribute("data-theme", theme);
         localStorage.setItem("neura_nqr_theme", theme);
-        if (elThemeLabel) elThemeLabel.textContent = theme === "dark" ? "LIGHT" : "DARK";
+        if (elThemeLabel) elThemeLabel.textContent = theme === "dark" ? "Terang" : "Gelap";
       }
       applyTheme(localStorage.getItem("neura_nqr_theme") || "dark");
       elThemeBtn.addEventListener("click", () => {
@@ -373,14 +652,14 @@
       function showFeedback(msg, kind) {
         elFeedback.hidden = false;
         elFeedback.textContent = msg;
-        elFeedback.className = "nr-alert" + (kind ? " " + kind : "");
+        elFeedback.className = "cl-alert" + (kind ? " " + kind : "");
       }
 
       async function verifyCode(code) {
         const cleaned = (code || "").trim().toUpperCase();
         if (!cleaned) {
-          elInviteDot.className = "nqr-status-dot";
-          elInviteStatus.textContent = "KODE KOSONG";
+          elInviteDot.className = "cl-dot";
+          elInviteStatus.textContent = "Kode Kosong";
           elInviteHint.textContent = "Masukkan kode";
           return false;
         }
@@ -389,19 +668,19 @@
           const json = await res.json();
           const data = json && json.data;
           if (data && data.valid) {
-            elInviteDot.className = "nqr-status-dot active";
-            elInviteStatus.textContent = "KODE VALID";
+            elInviteDot.className = "cl-dot active";
+            elInviteStatus.textContent = "Kode Valid";
             elInviteHint.textContent = `Aktif (${data.remaining_seconds}s)`;
-            elTtlTag.textContent = `SISA: ${data.remaining_seconds}s`;
+            elTtlTag.textContent = `Sisa ${data.remaining_seconds}s`;
             return true;
           }
-          elInviteDot.className = "nqr-status-dot locked";
-          elInviteStatus.textContent = "KODE INVALID";
+          elInviteDot.className = "cl-dot locked";
+          elInviteStatus.textContent = "Kode Invalid";
           elInviteHint.textContent = (data && data.reason) || "Kedaluwarsa";
-          elTtlTag.textContent = "EXPIRED";
+          elTtlTag.textContent = "Kedaluwarsa";
           return false;
         } catch (_) {
-          elInviteStatus.textContent = "ERROR";
+          elInviteStatus.textContent = "Error";
           return false;
         }
       }
