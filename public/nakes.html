@@ -407,12 +407,111 @@
               </div>
             </article>
 
-            <!-- Card 5 (12 cols): Inline Clinical Triage & Quick Validation -->
+            <!-- Card 5 (6 cols): Pemeriksaan Dokumen & Verifikasi Gejala Penyakit -->
+            <article class="bento-card nh-card nh-span-6">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">DOCUMENT AUDIT &amp; SYMPTOM VERIFICATION</div>
+                  <h2 class="bento-title-sm">Pemeriksaan Dokumen &amp; Verifikasi Gejala</h2>
+                </div>
+                <span class="bento-tag" id="nh-doc-audit-tag">AUDIT</span>
+              </div>
+              <div class="nh-audit-strip" id="nh-doc-audit-strip">
+                <span>Hash: <strong id="nh-audit-hash">—</strong></span>
+                <span>Biomarker: <strong>32 / 32</strong></span>
+              </div>
+              <div class="nh-symptom-verify-grid" id="nh-symptom-verify-grid">
+                <div class="nh-preview-empty">Pilih pasien untuk memverifikasi gejala klinis.</div>
+              </div>
+              <div class="nh-triage-foot">
+                <span class="nh-wl-code" id="nh-sym-save-msg">Klik gejala untuk konfirmasi / koreksi klinis</span>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-sym-save-btn">Simpan Verifikasi</button>
+              </div>
+            </article>
+
+            <!-- Card 6 (6 cols): Statistik Penyakit & Prevalensi Kohort -->
+            <article class="bento-card nh-card nh-span-6">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">DISEASE STATISTICS</div>
+                  <h2 class="bento-title-sm">Statistik Penyakit &amp; Prevalensi Kohort</h2>
+                </div>
+                <div class="nh-mini-tabs" id="nh-dstat-tabs">
+                  <button type="button" class="nh-mini-tab active" data-nh-dstat="prevalence">Gejala</button>
+                  <button type="button" class="nh-mini-tab" data-nh-dstat="staging">Staging</button>
+                </div>
+              </div>
+              <div id="nh-disease-stats-wrap" class="nh-viz-wrap">
+                <div class="nh-preview-empty">Memuat statistik penyakit kohort...</div>
+              </div>
+            </article>
+
+            <!-- Card 7 (7 cols): Input Obat / Resep Klinis -->
+            <article class="bento-card nh-card nh-span-7">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">E-PRESCRIPTION BUILDER</div>
+                  <h2 class="bento-title-sm">Input Obat &amp; Regimen Terapi</h2>
+                </div>
+                <span class="bento-tag" id="nh-rx-count-tag">0 OBAT</span>
+              </div>
+              <div class="nh-rx-presets" id="nh-rx-presets">
+                <button type="button" class="nh-chip" data-rx="Donepezil|5 mg|1x1 malam|30 hari">+ Donepezil 5mg</button>
+                <button type="button" class="nh-chip" data-rx="Memantine|10 mg|1x1 pagi|30 hari">+ Memantine 10mg</button>
+                <button type="button" class="nh-chip" data-rx="Rivastigmine Patch|4.6 mg|1x1 tempel|30 hari">+ Rivastigmine</button>
+                <button type="button" class="nh-chip" data-rx="Vitamin B12 Neuro|500 mcg|1x1 sesudah makan|30 hari">+ Vit B12</button>
+              </div>
+              <form class="nh-rx-form" id="nh-rx-form">
+                <input type="text" id="nh-rx-name" class="nh-code-field nh-rx-in" placeholder="Nama Obat" required />
+                <input type="text" id="nh-rx-dose" class="nh-code-field nh-rx-in" placeholder="Dosis (5 mg)" />
+                <input type="text" id="nh-rx-freq" class="nh-code-field nh-rx-in" placeholder="Aturan (1x1)" />
+                <input type="text" id="nh-rx-dur" class="nh-code-field nh-rx-in" placeholder="Durasi (30 hr)" />
+                <button type="submit" class="bento-pill-btn">Tambah</button>
+              </form>
+              <div class="nh-rx-list" id="nh-rx-list">
+                <div class="nh-preview-empty">Belum ada obat ditambahkan untuk pasien ini.</div>
+              </div>
+              <div class="nh-triage-foot">
+                <span class="nh-wl-code" id="nh-rx-save-msg">Tersimpan di rekam medis pasien</span>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-rx-save-btn">Simpan Resep</button>
+              </div>
+            </article>
+
+            <!-- Card 8 (5 cols): Rekomendasi Penanganan & Tindak Lanjut -->
+            <article class="bento-card nh-card nh-span-5">
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">CARE PLAN &amp; FOLLOW-UP</div>
+                  <h2 class="bento-title-sm">Rekomendasi &amp; Tindak Lanjut</h2>
+                </div>
+                <span class="bento-tag" id="nh-fu-tag">RENCANA</span>
+              </div>
+              <div class="nh-rx-presets" id="nh-care-presets">
+                <button type="button" class="nh-chip" data-care="Rujukan MRI Brain &amp; Evaluasi Neurologi Lanjutan">+ Rujukan MRI</button>
+                <button type="button" class="nh-chip" data-care="Pemeriksaan Kognitif Lanjutan (MoCA-Ina)">+ Tes MoCA</button>
+                <button type="button" class="nh-chip" data-care="Terapi Diet MIND &amp; Stimulasi Kognitif 30 Menit/Hari">+ Diet MIND</button>
+              </div>
+              <div class="nh-fu-grid">
+                <input type="date" id="nh-fu-date" class="nh-code-field nh-rx-in" title="Tanggal Kontrol Ulang" />
+                <select id="nh-fu-priority" class="nh-code-field nh-rx-in">
+                  <option value="RUTIN_30_HARI">Kontrol Rutin (30 Hari)</option>
+                  <option value="KONTROL_7_HARI">Kontrol Cepat (7 Hari)</option>
+                  <option value="RUJUKAN_SEGERA">Rujukan Segera</option>
+                </select>
+              </div>
+              <textarea id="nh-care-notes" class="nh-triage-notes" rows="2" placeholder="Rekomendasi penanganan penyakit &amp; instruksi tindak lanjut..."></textarea>
+              <div class="nh-triage-foot">
+                <span class="nh-wl-code" id="nh-fu-save-msg">Siap disimpan</span>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-fu-save-btn">Simpan Tindak Lanjut</button>
+              </div>
+            </article>
+
+            <!-- Card 9 (12 cols): Inline Clinical Triage & Official Export -->
             <article class="bento-card nh-card nh-span-12">
               <div class="bento-card-header">
                 <div>
-                  <div class="nh-card-kicker">INLINE TRIAGE</div>
-                  <h2 class="bento-title-sm">Pengesahan Cepat Dokter</h2>
+                  <div class="nh-card-kicker">INLINE TRIAGE &amp; OFFICIAL EXPORT</div>
+                  <h2 class="bento-title-sm">Pengesahan Dokter &amp; Eksport Dokumen Resmi</h2>
                 </div>
                 <span class="bento-tag" id="nh-triage-status">READY</span>
               </div>
@@ -425,8 +524,12 @@
                 placeholder="Catatan klinis / terapi singkat..."></textarea>
               <div class="nh-triage-foot">
                 <span class="nh-wl-code" id="nh-triage-sig">SIG: —</span>
-                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-triage-submit">Sahkan
-                  Sekarang</button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button type="button" class="bento-pill-btn" id="nh-exp-pdf">Cetak PDF Resmi</button>
+                  <button type="button" class="bento-pill-btn" id="nh-exp-json">Unduh JSON HL7</button>
+                  <button type="button" class="bento-pill-btn" id="nh-exp-csv">Unduh CSV</button>
+                  <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-triage-submit">Sahkan Sekarang</button>
+                </div>
               </div>
             </article>
           </section>
@@ -538,6 +641,9 @@
       <div class="nh-cmd-list" id="nh-cmd-list"></div>
     </div>
   </div>
+
+  <!-- ═══ OFFICIAL PRINT DOSSIER SHEET (Print-Only) ═══ -->
+  <section class="nh-print-sheet" id="nh-print-sheet" aria-hidden="true"></section>
 
   <script src="/js/auth-guard.js?v=2.0"></script>
   <script src="/js/nakes-hub.js?v=1.1"></script>

@@ -381,3 +381,136 @@ def api_consultation_dossier(code_or_id):
     except Exception as e:
         logger.error(f"Error getting dossier: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@nakes_consult_bp.route("/disease-stats", methods=["GET"])
+def api_consultation_disease_stats():
+    """Agregasi statistik penyakit, staging MMSE, dan prevalensi gejala seluruh kohort."""
+    try:
+        docs = _get_unique_consultations()
+        total = len(docs)
+        symptom_keys = [
+            ("MemoryComplaints", "Keluhan Memori"),
+            ("Forgetfulness", "Pelupa"),
+            ("Confusion", "Kebingungan"),
+            ("Disorientation", "Disorientasi"),
+            ("PersonalityChanges", "Perubahan Kepribadian"),
+            ("DifficultyCompletingTasks", "Kesulitan Tugas"),
+            ("BehavioralProblems", "Gangguan Perilaku"),
+            ("Hypertension", "Hipertensi"),
+            ("Diabetes", "Diabetes"),
+        ]
+        counts = {k: 0 for k, _ in symptom_keys}
+        mmse_vals, adl_vals = [], []
+        staging = {"normal": 0, "mci": 0, "deficit": 0}
+        risk_dist = {"high": 0, "moderate": 0, "low": 0}
+
+        for doc in docs:
+            b = doc.get("all_32_biomarkers") or doc.get("raw_features") or {}
+            cog = doc.get("cognitive_scores") or {}
+            for k, _ in symptom_keys:
+                try:
+                    if int(b.get(k, 0) or 0) == 1:
+                        counts[k] += 1
+                except Exception:
+                    pass
+
+            try:
+                mmse = float(cog.get("mmse", b.get("MMSE", 24.0)))
+                mmse_vals.append(mmse)
+                if mmse >= 24.0:
+                    staging["normal"] += 1
+                elif mmse >= 20.0:
+                    staging["mci"] += 1
+                else:
+                    staging["deficit"] += 1
+            except Exception:
+                pass
+
+            try:
+                adl_vals.append(float(cog.get("adl", b.get("ADL", 7.0))))
+            except Exception:
+                pass
+
+            pred = doc.get("prediction", {})
+            prob = float(pred.get("probability", 0.0))
+            rl = (pred.get("risk_level") or "").lower()
+            if prob >= 70.0 or "high" in rl or "tinggi" in rl:
+                risk_dist["high"] += 1
+            elif prob >= 40.0 or "mod" in rl or "sedang" in rl:
+                risk_dist["moderate"] += 1
+            else:
+                risk_dist["low"] += 1
+
+        prevalence = []
+        for k, label in symptom_keys:
+            cnt = counts[k]
+            pct = round((cnt / total) * 100, 1) if total > 0 else 0.0
+            prevalence.append({"key": k, "label": label, "count": cnt, "pct": pct})
+        prevalence.sort(key=lambda x: x["count"], reverse=True)
+
+        return jsonify({
+            "success": True,
+            "data": {
+                "total_cases": total,
+                "avg_mmse": round(sum(mmse_vals) / len(mmse_vals), 1) if mmse_vals else 0.0,
+                "avg_adl": round(sum(adl_vals) / len(adl_vals), 1) if adl_vals else 0.0,
+                "mmse_staging": staging,
+                "risk_distribution": risk_dist,
+                "symptom_prevalence": prevalence,
+            },
+        })
+    except Exception as e:
+        logger.error(f"Error in api_consultation_disease_stats: {traceback.format_exc()}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@nakes_consult_bp.route("/<code_or_id>/clinical-record", methods=["POST"])
+def api_consultation_clinical_record(code_or_id):
+    """
+    Menyimpan hasil verifikasi gejala, analisa penyakit, daftar obat (resep),
+    rekomendasi penanganan, dan jadwal tindak lanjut dokter ke dokumen pasien.
+    """
+    try:
+        clean_code = str(code_or_id).strip().upper()
+        doc = _find_doc(clean_code)
+        if not doc:
+            return jsonify({"success": False, "error": f"Dokumen dengan kode '{clean_code}' tidak ditemukan."}), 404
+
+        body = request.get_json(silent=True) or {}
+        now_str = datetime.now().strftime("%d %B %Y, %H:%M WIB")
+        existing = doc.get("clinical_record") or {}
+
+        record = {
+            "verified_symptoms": body.get("verified_symptoms", existing.get("verified_symptoms", {})),
+            "disease_analysis": body.get("disease_analysis", existing.get("disease_analysis", {})),
+            "medications": body.get("medications", existing.get("medications", [])),
+            "recommendations": body.get("recommendations", existing.get("recommendations", [])),
+            "follow_up": body.get("follow_up", existing.get("follow_up", {})),
+            "updated_by": str(body.get("clinician_name") or existing.get("updated_by") or "Tenaga Kesehatan").strip(),
+            "updated_at": now_str,
+        }
+        doc["clinical_record"] = record
+        if isinstance(record.get("recommendations"), list) and record["recommendations"]:
+            doc["recommendations"] = record["recommendations"]
+
+        store = _get_store()
+        if doc.get("nakes_code"):
+            store[doc["nakes_code"]] = doc
+        if doc.get("doc_id"):
+            store[doc["doc_id"]] = doc
+
+        try:
+            from app.Http.Controllers.User.user_consultation import save_consultations_store
+            save_consultations_store()
+        except Exception:
+            pass
+
+        return jsonify({
+            "success": True,
+            "message": f"Rekam klinis {clean_code} berhasil disimpan.",
+            "data": doc,
+        })
+    except Exception as e:
+        logger.error(f"Error saving clinical record: {traceback.format_exc()}")
+        return jsonify({"success": False, "error": str(e)}), 500

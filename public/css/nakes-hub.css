@@ -41,6 +41,10 @@
   grid-column: span 5;
 }
 
+.nh-span-6 {
+  grid-column: span 6;
+}
+
 .nh-span-4 {
   grid-column: span 4;
 }
@@ -698,10 +702,176 @@
     grid-template-columns: 1fr;
   }
   .nh-span-7,
+  .nh-span-6,
   .nh-span-5,
   .nh-span-4,
   .nh-span-12 {
     grid-column: span 1;
+  }
+}
+
+/* Clinical Audit, Symptom Verification, e-Rx & Follow-Up */
+.nh-audit-strip {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+  color: var(--hub-text-muted);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed var(--hub-border);
+}
+
+.nh-symptom-verify-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nh-sym-chip {
+  text-align: left;
+  padding: 7px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-subtle);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.nh-sym-chip:hover {
+  border-color: var(--hub-accent);
+}
+
+.nh-sym-chip.is-confirmed {
+  border-color: rgba(220, 38, 38, 0.45);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.nh-sym-chip.is-cleared {
+  border-color: rgba(22, 163, 74, 0.4);
+  background: rgba(22, 163, 74, 0.07);
+}
+
+.nh-sym-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--hub-text);
+}
+
+.nh-sym-state {
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  color: var(--hub-text-muted);
+}
+
+.nh-rx-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.nh-rx-presets .nh-chip {
+  flex: 0 0 auto;
+  padding: 0 10px;
+}
+
+.nh-rx-form {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.9fr 0.8fr auto;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.nh-rx-in {
+  text-transform: none;
+  font-family: var(--hub-font-sans);
+  font-size: 12px;
+  height: 32px;
+}
+
+.nh-rx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 165px;
+  overflow-y: auto;
+}
+
+.nh-rx-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-subtle);
+  font-size: 12px;
+}
+
+.nh-rx-del {
+  color: var(--hub-text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.nh-rx-del:hover {
+  color: #dc2626;
+}
+
+.nh-fu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.nh-print-sheet {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .nh-symptom-verify-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .nh-rx-form,
+  .nh-fu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .hub-shell,
+  .nh-drawer-backdrop,
+  .nh-cmd-backdrop {
+    display: none !important;
+  }
+  .nh-print-sheet {
+    display: block !important;
+    padding: 24px;
+    color: #111827;
+    background: #ffffff;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .nh-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+  }
+  .nh-print-table th,
+  .nh-print-table td {
+    border: 1px solid #d1d5db;
+    padding: 6px 8px;
+    text-align: left;
+    font-size: 11px;
   }
 }
 

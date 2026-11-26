@@ -140,6 +140,7 @@
       renderSidebarWorklist();
       renderHistoryList();
       populateCodeDatalist();
+      fetchDiseaseStats();
 
       if (!state.activeDoc && state.consultations.length > 0) {
         const firstCode = getDocCode(state.consultations[0]);
@@ -244,6 +245,7 @@
       renderActivePatientPreview(doc);
       renderBiomarkerViz(doc);
       syncInlineTriage(doc);
+      syncClinicalWorkflow(doc);
       renderSidebarWorklist();
       if (openDossierAfter) openDrawer('documents');
     } catch (err) {
@@ -866,6 +868,320 @@
     });
 
     bindInlineTriage();
+    bindClinicalWorkflows();
+  }
+
+  // ------------------------------------------------------------------------
+  // Clinical Workflows: Audit, Symptom Verify, Disease Stats, e-Rx, Export
+  // ------------------------------------------------------------------------
+
+  const SYMPTOM_META = [
+    ['MemoryComplaints', 'Keluhan Memori'],
+    ['Forgetfulness', 'Pelupa'],
+    ['Confusion', 'Kebingungan'],
+    ['Disorientation', 'Disorientasi'],
+    ['PersonalityChanges', 'Perubahan Sikap'],
+    ['DifficultyCompletingTasks', 'Sulit Tugas'],
+    ['BehavioralProblems', 'Gangguan Perilaku'],
+    ['Hypertension', 'Hipertensi'],
+    ['Diabetes', 'Diabetes']
+  ];
+
+  let _diseaseStatsCache = null;
+  let _diseaseStatsTab = 'prevalence';
+  let _workingSymptoms = {};
+  let _workingMeds = [];
+
+  async function fetchDiseaseStats() {
+    try {
+      const res = await fetch('/api/consultation/disease-stats', { cache: 'no-store' });
+      const j = await res.json();
+      if (j && j.success && j.data) {
+        _diseaseStatsCache = j.data;
+        renderDiseaseStats();
+      }
+    } catch (_) {}
+  }
+
+  function renderDiseaseStats() {
+    const wrap = document.getElementById('nh-disease-stats-wrap');
+    if (!wrap || !_diseaseStatsCache) return;
+    const d = _diseaseStatsCache;
+    if (_diseaseStatsTab === 'prevalence') {
+      const top = (d.symptom_prevalence || []).slice(0, 6);
+      wrap.innerHTML = top.map(item => `
+        <div class="nh-bar-row">
+          <span class="nh-bar-name">${esc(item.label)}</span>
+          <div class="nh-bar-track"><div class="nh-bar-fill" style="width:${Math.max(4, Math.min(100, item.pct))}%"></div></div>
+          <span class="nh-bar-val">${item.pct}% (${item.count})</span>
+        </div>
+      `).join('');
+    } else {
+      const tot = Math.max(1, d.total_cases || 1);
+      const st = d.mmse_staging || {};
+      const rows = [
+        ['Normal (MMSE ≥ 24)', Math.round(((st.normal || 0) / tot) * 100), `${st.normal || 0} pasien`, 'is-ok'],
+        ['MCI / Ringan (20–23)', Math.round(((st.mci || 0) / tot) * 100), `${st.mci || 0} pasien`, 'is-warn'],
+        ['Defisit (MMSE < 20)', Math.round(((st.deficit || 0) / tot) * 100), `${st.deficit || 0} pasien`, 'is-risk'],
+        ['Rata-rata MMSE / ADL', Math.round(((d.avg_mmse || 0) / 30) * 100), `${d.avg_mmse} · ${d.avg_adl}`, '']
+      ];
+      wrap.innerHTML = rows.map(([lbl, pct, val, cls]) => `
+        <div class="nh-bar-row">
+          <span class="nh-bar-name">${esc(lbl)}</span>
+          <div class="nh-bar-track"><div class="nh-bar-fill ${cls}" style="width:${Math.max(4, Math.min(100, pct))}%"></div></div>
+          <span class="nh-bar-val">${esc(val)}</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  function syncClinicalWorkflow(doc) {
+    if (!doc) return;
+    const cr = doc.clinical_record || {};
+    const b = doc.all_32_biomarkers || doc.raw_features || {};
+
+    const hashEl = document.getElementById('nh-audit-hash');
+    const tagEl = document.getElementById('nh-doc-audit-tag');
+    if (hashEl) hashEl.textContent = doc.verification_hash || doc.doc_id || getDocCode(doc);
+    if (tagEl) tagEl.textContent = isDocValidated(doc) ? 'TERVALIDASI' : 'LENGKAP 32/32';
+
+    const savedSyms = cr.verified_symptoms || {};
+    _workingSymptoms = {};
+    SYMPTOM_META.forEach(([k]) => {
+      if (savedSyms[k]) {
+        _workingSymptoms[k] = savedSyms[k];
+      } else {
+        _workingSymptoms[k] = Number(b[k] || 0) === 1 ? 'confirmed' : 'cleared';
+      }
+    });
+    renderSymptomVerifyGrid();
+
+    _workingMeds = Array.isArray(cr.medications) ? cr.medications.map(m => ({ ...m })) : [];
+    renderRxList();
+
+    const fu = cr.follow_up || {};
+    const fuDate = document.getElementById('nh-fu-date');
+    const fuPrio = document.getElementById('nh-fu-priority');
+    const careNotes = document.getElementById('nh-care-notes');
+    if (fuDate) fuDate.value = fu.date || '';
+    if (fuPrio && fu.priority) fuPrio.value = fu.priority;
+    if (careNotes) {
+      const recs = Array.isArray(cr.recommendations) && cr.recommendations.length
+        ? cr.recommendations.join('\n')
+        : (fu.notes || '');
+      careNotes.value = recs;
+    }
+  }
+
+  function renderSymptomVerifyGrid() {
+    const grid = document.getElementById('nh-symptom-verify-grid');
+    if (!grid) return;
+    grid.innerHTML = SYMPTOM_META.map(([k, lbl]) => {
+      const st = _workingSymptoms[k] || 'cleared';
+      const cls = st === 'confirmed' ? 'is-confirmed' : 'is-cleared';
+      const txt = st === 'confirmed' ? 'YA · KONFIRMASI' : 'TIDAK ADA';
+      return `
+        <button type="button" class="nh-sym-chip ${cls}" data-sym-key="${esc(k)}">
+          <span class="nh-sym-name">${esc(lbl)}</span>
+          <span class="nh-sym-state">${txt}</span>
+        </button>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('[data-sym-key]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const k = btn.getAttribute('data-sym-key');
+        _workingSymptoms[k] = _workingSymptoms[k] === 'confirmed' ? 'cleared' : 'confirmed';
+        renderSymptomVerifyGrid();
+      });
+    });
+  }
+
+  function renderRxList() {
+    const list = document.getElementById('nh-rx-list');
+    const tag = document.getElementById('nh-rx-count-tag');
+    if (tag) tag.textContent = `${_workingMeds.length} OBAT`;
+    if (!list) return;
+    if (!_workingMeds.length) {
+      list.innerHTML = '<div class="nh-preview-empty">Belum ada obat ditambahkan untuk pasien ini.</div>';
+      return;
+    }
+    list.innerHTML = _workingMeds.map((m, idx) => `
+      <div class="nh-rx-item">
+        <div>
+          <strong>${esc(m.name)}</strong>
+          <span style="color:var(--hub-text-muted);margin-left:6px">${esc(m.dose || '')} · ${esc(m.frequency || '')} · ${esc(m.duration || '')}</span>
+        </div>
+        <button type="button" class="nh-rx-del" data-rx-del="${idx}" title="Hapus">✕</button>
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-rx-del]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        _workingMeds.splice(Number(btn.getAttribute('data-rx-del')), 1);
+        renderRxList();
+      });
+    });
+  }
+
+  async function saveClinicalRecord(patch, msgElId) {
+    if (!state.activeDoc) return;
+    const code = getDocCode(state.activeDoc);
+    const msgEl = document.getElementById(msgElId);
+    if (msgEl) msgEl.textContent = 'Menyimpan ke rekam medis...';
+    try {
+      const res = await fetch(`/api/consultation/${encodeURIComponent(code)}/clinical-record`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...patch, clinician_name: state.nakes?.name || 'Dokter' })
+      });
+      const j = await res.json();
+      if (j.success && j.data) {
+        state.activeDoc = j.data;
+        if (msgEl) msgEl.textContent = `Tersimpan (${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })})`;
+      } else if (msgEl) {
+        msgEl.textContent = j.error || 'Gagal menyimpan';
+      }
+    } catch (err) {
+      if (msgEl) msgEl.textContent = err.message;
+    }
+  }
+
+  function buildAndPrintOfficialDossier() {
+    const doc = state.activeDoc;
+    const sheet = document.getElementById('nh-print-sheet');
+    if (!doc || !sheet) return;
+    const s = getBiomarkerStats(doc);
+    const cr = doc.clinical_record || {};
+    const v = doc.validation || {};
+    const meds = Array.isArray(cr.medications) ? cr.medications : _workingMeds;
+    const fu = cr.follow_up || {};
+    const recs = Array.isArray(cr.recommendations) ? cr.recommendations : (doc.recommendations || []);
+    const syms = SYMPTOM_META.map(([k, lbl]) => {
+      const val = (_workingSymptoms[k] === 'confirmed') ? 'Terkonfirmasi' : 'Tidak Ada';
+      return `${lbl}: ${val}`;
+    }).join(' | ');
+
+    const bioRows = (doc.biomarkers_breakdown || []).flatMap(cat =>
+      (cat.items || []).map(it => `<tr><td>${esc(it.name || it.label)}</td><td>${esc(it.value)}</td><td>${esc(it.normal || '—')}</td></tr>`)
+    ).join('');
+
+    const medRows = meds.length
+      ? meds.map(m => `<tr><td>${esc(m.name)}</td><td>${esc(m.dose)}</td><td>${esc(m.frequency)}</td><td>${esc(m.duration)}</td></tr>`).join('')
+      : '<tr><td colspan="4">Tidak ada resep obat tercatat.</td></tr>';
+
+    sheet.innerHTML = `
+      <div style="display:flex;justify-content:space-between;border-bottom:2px solid #111827;padding-bottom:10px;margin-bottom:14px">
+        <div>
+          <strong style="font-size:16px">NEURA AI — DOSSIER REKAM MEDIS RESMI</strong><br>
+          <span>${esc(state.nakes?.institution || 'Unit Pelayanan Neurologi & Gangguan Memori')}</span>
+        </div>
+        <div style="text-align:right;font-family:monospace">
+          <strong>${esc(getDocCode(doc))}</strong><br>
+          <span>${esc(doc.verification_hash || '')}</span>
+        </div>
+      </div>
+      <p><strong>Pasien:</strong> ${esc(getPatientName(doc))} (${esc(s.age)} Thn, ${esc(s.gender)}) | <strong>MMSE:</strong> ${esc(s.mmse)}/30 | <strong>ADL:</strong> ${esc(s.adl)}/10 | <strong>TD:</strong> ${esc(s.sbp)}/${esc(s.dbp)} mmHg</p>
+      <p><strong>Verifikasi Gejala Dokter:</strong> ${esc(syms)}</p>
+      <table class="nh-print-table"><thead><tr><th>Biomarker</th><th>Nilai Pasien</th><th>Rentang Normal</th></tr></thead><tbody>${bioRows}</tbody></table>
+      <p><strong>Daftar Obat / Terapi (e-Prescription):</strong></p>
+      <table class="nh-print-table"><thead><tr><th>Nama Obat</th><th>Dosis</th><th>Aturan Pakai</th><th>Durasi</th></tr></thead><tbody>${medRows}</tbody></table>
+      <p><strong>Rekomendasi &amp; Tindak Lanjut:</strong> ${esc(recs.join('; ') || '—')} | <strong>Jadwal Kontrol:</strong> ${esc(fu.date || '—')} (${esc(fu.priority || 'Rutin')})</p>
+      <div style="margin-top:24px;text-align:right">
+        <div>Dokter Pemeriksa / Validator</div>
+        <div style="margin-top:28px;font-weight:700">${esc(v.validator_name || state.nakes?.name || 'Tenaga Kesehatan')}</div>
+        <div style="font-family:monospace;font-size:10px">${esc(v.signature_hash || 'DRAFT-CLINICAL-RECORD')}</div>
+      </div>
+    `;
+    window.print();
+  }
+
+  function bindClinicalWorkflows() {
+    document.querySelectorAll('#nh-dstat-tabs [data-nh-dstat]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#nh-dstat-tabs .nh-mini-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        _diseaseStatsTab = tab.getAttribute('data-nh-dstat');
+        renderDiseaseStats();
+      });
+    });
+
+    document.getElementById('nh-sym-save-btn')?.addEventListener('click', () => {
+      saveClinicalRecord({ verified_symptoms: _workingSymptoms }, 'nh-sym-save-msg');
+    });
+
+    document.querySelectorAll('#nh-rx-presets [data-rx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const [name, dose, frequency, duration] = btn.getAttribute('data-rx').split('|');
+        _workingMeds.push({ name, dose, frequency, duration });
+        renderRxList();
+      });
+    });
+
+    document.getElementById('nh-rx-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('nh-rx-name')?.value.trim();
+      if (!name) return;
+      _workingMeds.push({
+        name,
+        dose: document.getElementById('nh-rx-dose')?.value.trim() || '-',
+        frequency: document.getElementById('nh-rx-freq')?.value.trim() || '1x1',
+        duration: document.getElementById('nh-rx-dur')?.value.trim() || '30 hari'
+      });
+      document.getElementById('nh-rx-name').value = '';
+      document.getElementById('nh-rx-dose').value = '';
+      document.getElementById('nh-rx-freq').value = '';
+      document.getElementById('nh-rx-dur').value = '';
+      renderRxList();
+    });
+
+    document.getElementById('nh-rx-save-btn')?.addEventListener('click', () => {
+      saveClinicalRecord({ medications: _workingMeds }, 'nh-rx-save-msg');
+    });
+
+    document.querySelectorAll('#nh-care-presets [data-care]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ta = document.getElementById('nh-care-notes');
+        const txt = btn.getAttribute('data-care');
+        if (ta) ta.value = ta.value.trim() ? `${ta.value.trim()}\n${txt}` : txt;
+      });
+    });
+
+    document.getElementById('nh-fu-save-btn')?.addEventListener('click', () => {
+      const notesRaw = document.getElementById('nh-care-notes')?.value.trim() || '';
+      const recs = notesRaw ? notesRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+      saveClinicalRecord({
+        recommendations: recs,
+        follow_up: {
+          date: document.getElementById('nh-fu-date')?.value || '',
+          priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
+          notes: notesRaw
+        }
+      }, 'nh-fu-save-msg');
+    });
+
+    document.getElementById('nh-exp-pdf')?.addEventListener('click', buildAndPrintOfficialDossier);
+    document.getElementById('nh-exp-json')?.addEventListener('click', () => {
+      if (!state.activeDoc) return;
+      const blob = new Blob([JSON.stringify(state.activeDoc, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${getDocCode(state.activeDoc) || 'dossier'}.hl7.json`;
+      a.click();
+    });
+    document.getElementById('nh-exp-csv')?.addEventListener('click', () => {
+      if (!state.activeDoc) return;
+      const doc = state.activeDoc;
+      const s = getBiomarkerStats(doc);
+      const csv = [
+        'Kode,Pasien,Usia,Gender,MMSE,ADL,TD,BMI,Status',
+        `"${getDocCode(doc)}","${getPatientName(doc)}",${s.age},"${s.gender}",${s.mmse},${s.adl},"${s.sbp}/${s.dbp}",${s.bmi},"${doc.status || 'ACTIVE'}"`
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${getDocCode(doc) || 'ringkasan'}.csv`;
+      a.click();
+    });
   }
 
   // ------------------------------------------------------------------------
