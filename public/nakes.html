@@ -283,9 +283,14 @@
             </div>
           </section>
 
-          <!-- ROW 1: Input Code Dokumen + Clinical Telemetry Ring -->
-          <section class="nh-bento-2col">
-            <article class="bento-card nh-card">
+          <!-- ASYMMETRIC ABSTRACT BENTO GRID (12-COL: 7/5 & 5/7) -->
+          <section class="nh-bento-asymmetric">
+            <!-- Card 1 (7 cols): Input Kode Dokumen Pasien -->
+            <article class="bento-card nh-card nh-span-7">
+              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                <circle cx="100" cy="20" r="46" stroke="currentColor" stroke-dasharray="3 4" />
+                <circle cx="100" cy="20" r="24" stroke="#D97757" stroke-opacity="0.5" />
+              </svg>
               <div class="bento-card-header">
                 <div>
                   <div class="nh-card-kicker">PATIENT DOCUMENT GATEWAY</div>
@@ -303,12 +308,17 @@
 
               <div class="nh-active-patient-preview" id="nh-active-preview">
                 <div class="nh-preview-empty">
-                  Pilih pasien dari antrean di sebelah kiri atau masukkan kode dokumen pasien untuk menampilkan ringkasan klinis &amp; analisa 32 biomarker.
+                  Pilih pasien dari antrean atau masukkan kode dokumen pasien untuk menampilkan ringkasan klinis &amp; analisa 32 biomarker.
                 </div>
               </div>
             </article>
 
-            <article class="bento-card nh-card">
+            <!-- Card 2 (5 cols): Clinical Telemetry Ring -->
+            <article class="bento-card nh-card nh-span-5">
+              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                <line x1="20" y1="0" x2="120" y2="100" stroke="currentColor" stroke-dasharray="2 4" />
+                <circle cx="95" cy="25" r="3" fill="#D97757" fill-opacity="0.5" />
+              </svg>
               <div class="bento-card-header">
                 <div>
                   <div class="nh-card-kicker">CLINICAL TELEMETRY</div>
@@ -344,28 +354,13 @@
               </div>
 
               <div class="nh-telemetry-foot">
-                <span>Model: XGBoost 3.x (32 Biomarker)</span>
+                <span>XGBoost 3.x · 32 Biomarker</span>
                 <span id="nh-last-sync">Sinkronisasi aktif</span>
               </div>
             </article>
-          </section>
 
-          <!-- ROW 2: Analisa 32 Biomarker + History Timeline -->
-          <section class="nh-bento-2col">
-            <article class="bento-card nh-card">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">BIOMARKER ANALYTICS</div>
-                  <h2 class="bento-title-sm">Analisa Profil Klinis Pasien</h2>
-                </div>
-                <button type="button" class="bento-pill-btn" id="nh-btn-open-analysis">Detail Analisa</button>
-              </div>
-              <div id="nh-biomarker-viz" class="nh-viz-wrap">
-                <div class="nh-preview-empty">Muat kode pasien untuk memvisualisasikan deviasi biomarker kognitif &amp; vaskular.</div>
-              </div>
-            </article>
-
-            <article class="bento-card nh-card">
+            <!-- Card 3 (5 cols): History Pasien & History Dokumen -->
+            <article class="bento-card nh-card nh-span-5">
               <div class="bento-card-header">
                 <div>
                   <div class="nh-card-kicker">AUDIT &amp; TIMELINE</div>
@@ -378,6 +373,24 @@
               </div>
               <div class="nh-history-list" id="nh-history-list">
                 <div class="nh-preview-empty">Memuat riwayat klinis...</div>
+              </div>
+            </article>
+
+            <!-- Card 4 (7 cols): Analisa 32 Biomarker -->
+            <article class="bento-card nh-card nh-span-7">
+              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                <path d="M20 90 Q60 20 115 35" stroke="currentColor" stroke-dasharray="3 3" />
+                <circle cx="115" cy="35" r="2.5" fill="#D97757" fill-opacity="0.6" />
+              </svg>
+              <div class="bento-card-header">
+                <div>
+                  <div class="nh-card-kicker">BIOMARKER ANALYTICS</div>
+                  <h2 class="bento-title-sm">Analisa Profil Klinis Pasien</h2>
+                </div>
+                <button type="button" class="bento-pill-btn" id="nh-btn-open-analysis">Detail Analisa</button>
+              </div>
+              <div id="nh-biomarker-viz" class="nh-viz-wrap">
+                <div class="nh-preview-empty">Muat kode pasien untuk memvisualisasikan deviasi biomarker kognitif &amp; vaskular.</div>
               </div>
             </article>
           </section>
