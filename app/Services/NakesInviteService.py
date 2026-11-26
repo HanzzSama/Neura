@@ -6,6 +6,7 @@ auto-rotating 3-minute (180s) unique registration codes for Nakes.
 """
 
 import json
+import os
 import secrets
 import socket
 import time
@@ -40,9 +41,13 @@ def get_lan_ip() -> str:
 
 def resolve_public_base_url(host_url: str) -> str:
     """
-    Replace loopback hosts (127.0.0.1 / localhost / 0.0.0.0) with the machine's
+    Use PUBLIC_BASE_URL / NEURA_PUBLIC_URL env var if configured, otherwise
+    replace loopback hosts (127.0.0.1 / localhost / 0.0.0.0) with the machine's
     LAN IP so QR codes and copied invite links are reachable from mobile devices.
     """
+    env_base = (os.environ.get("PUBLIC_BASE_URL") or os.environ.get("NEURA_PUBLIC_URL") or "").strip().rstrip("/")
+    if env_base:
+        return env_base
     raw = (host_url or "").strip().rstrip("/")
     if not raw:
         return f"http://{get_lan_ip()}:5000"
