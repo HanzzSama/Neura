@@ -1864,8 +1864,8 @@
                 localStorage.setItem('neura_nakes_session', JSON.stringify(nu));
                 syncUserProfileToStorage(nakesUser, nakesUser.displayName);
                 showLoggedState(nakesUser);
-                showAlert('Selamat datang, ' + nakesUser.displayName + '! Mengalihkan ke Workspace...', false);
-                setTimeout(function () { window.location.href = '/app'; }, 1200);
+                showAlert('Selamat datang, ' + nakesUser.displayName + '! Mengalihkan ke Neura Nakes Hub...', false);
+                setTimeout(function () { window.location.href = '/nakes'; }, 1200);
               } else {
                 setButtonLoading(loginSubmitBtn, false);
                 showAlert(nakesResult.error || 'Email atau kata sandi Nakes tidak cocok.', true);
@@ -2390,6 +2390,10 @@
               window.location.replace('/admin');
               return;
             }
+          }
+          if (localStorage.getItem('neura_user_role') === 'Nakes' && localStorage.getItem('neura_nakes_session')) {
+            window.location.replace('/nakes');
+            return;
           }
         } catch (e) {}
 

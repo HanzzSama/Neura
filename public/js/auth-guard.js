@@ -152,9 +152,14 @@
     var isNakesPage = (path === '/nakes' || path === '/nakes.html');
 
     // Jika Admin membuka /app (default entry), arahkan ke /admin (Neura Admin Hub).
-    // /chat tetap dapat diakses langsung sebagai menu Neura Chat Admin.
+    // Jika Nakes membuka /app (default entry), arahkan ke /nakes (Neura Nakes Hub).
+    // /chat tetap dapat diakses langsung sebagai menu Neura Chat.
     if (path === '/app' && isAdminSessionActive()) {
       window.location.replace('/admin');
+      return;
+    }
+    if (path === '/app' && isNakesSessionActive() && !isAdminSessionActive()) {
+      window.location.replace('/nakes');
       return;
     }
 

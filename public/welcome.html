@@ -467,7 +467,7 @@
             <!-- Profile Action Pills -->
             <div class="profile-actions-stack">
               <button type="button" class="profile-action-pill" id="btn-logged-workspace"
-                onclick="window.location.href = (localStorage.getItem('neura_user_role') === 'Admin' || localStorage.getItem('neura_admin_authenticated') === 'true') ? '/admin' : '/app';">
+                onclick="var r=localStorage.getItem('neura_user_role'); window.location.href = (r==='Admin'||localStorage.getItem('neura_admin_authenticated')==='true') ? '/admin' : (r==='Nakes' ? '/nakes' : '/app');">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
                   stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>

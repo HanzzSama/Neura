@@ -64,16 +64,10 @@
     }
 
     const mobBtn = document.getElementById('hub-mobile-menu-btn');
-    const sidebar = document.getElementById('hub-sidebar');
-    const sbBackdrop = document.getElementById('hub-sidebar-backdrop');
-    if (mobBtn && sidebar && sbBackdrop) {
+    const sidebar1 = document.getElementById('hub-sidebar-1');
+    if (mobBtn && sidebar1) {
       mobBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        sbBackdrop.hidden = !sidebar.classList.contains('open');
-      });
-      sbBackdrop.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        sbBackdrop.hidden = true;
+        sidebar1.classList.toggle('is-open');
       });
     }
 
@@ -99,17 +93,16 @@
       });
     }
 
-    const logoutBtn = document.getElementById('nh-logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        try {
-          localStorage.removeItem('neura_nakes_session');
-          localStorage.removeItem('neura_auth_user');
-          localStorage.removeItem('neura_user_role');
-        } catch (_) {}
-        window.location.replace('/welcome');
-      });
-    }
+    const doLogout = () => {
+      try {
+        localStorage.removeItem('neura_nakes_session');
+        localStorage.removeItem('neura_auth_user');
+        localStorage.removeItem('neura_user_role');
+      } catch (_) {}
+      window.location.replace('/welcome');
+    };
+    document.getElementById('nh-logout-btn')?.addEventListener('click', doLogout);
+    document.getElementById('nh-sb-logout-btn')?.addEventListener('click', doLogout);
   }
 
   function isDocValidated(item) {
@@ -133,8 +126,8 @@
   async function fetchWorkspaceData() {
     try {
       const [resSum, resList] = await Promise.all([
-        fetch('/api/nakes/consultation/summary', { cache: 'no-store' }),
-        fetch('/api/nakes/consultation/list', { cache: 'no-store' })
+        fetch('/api/consultation/summary', { cache: 'no-store' }),
+        fetch('/api/consultation/list', { cache: 'no-store' })
       ]);
       const sumJson = await resSum.json().catch(() => ({}));
       const listJson = await resList.json().catch(() => ({}));
@@ -234,9 +227,9 @@
     if (tag) tag.textContent = 'MEMUAT...';
 
     try {
-      const res = await fetch(`/api/nakes/consultation/${encodeURIComponent(cleaned)}`, { cache: 'no-store' });
+      const res = await fetch(`/api/consultation/${encodeURIComponent(cleaned)}`, { cache: 'no-store' });
       const json = await res.json();
-      if (!res.ok || !json.success) {
+      if (!res.ok || (!json.success && !json.found && !json.data)) {
         if (tag) tag.textContent = 'TIDAK DITEMUKAN';
         if (preview) preview.innerHTML = `<div class="nh-preview-empty" style="color:#dc2626">${esc(json.error || 'Kode dokumen pasien tidak ditemukan.')}</div>`;
         return;
@@ -287,7 +280,11 @@
     const pred = doc.prediction || {};
     const stats = getBiomarkerStats(doc);
     const validated = isDocValidated(doc);
-    const prob = pred.probability_positive != null ? `${Math.round(Number(pred.probability_positive) * 100)}%` : '—';
+    const rawProb = pred.probability_positive ?? pred.probability;
+    const probNum = rawProb != null ? Number(rawProb) : null;
+    const prob = probNum != null && !isNaN(probNum)
+      ? `${Math.round(probNum > 1 ? probNum : probNum * 100)}%`
+      : '—';
 
     if (tag) tag.textContent = code;
     preview.innerHTML = `
@@ -387,9 +384,16 @@
     });
   }
 
+  function setActiveNav(key) {
+    document.querySelectorAll('[data-nh-nav]').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-nh-nav') === key);
+    });
+  }
+
   function closeDrawer() {
     const bd = document.getElementById('nh-drawer-backdrop');
     if (bd) bd.hidden = true;
+    setActiveNav('overview');
   }
 
   function evaluateItemStatus(name, value, explicitStatus) {
@@ -432,6 +436,7 @@
     if (!bd || !body) return;
 
     bd.hidden = false;
+    setActiveNav(type === 'validate' ? 'documents' : type);
 
     if (type === 'patients') {
       kicker.textContent = 'PATIENT DIRECTORY';
@@ -537,53 +542,57 @@
 
     if (type === 'analytics') {
       const doc = state.activeDoc;
-      kicker.textContent = 'CLINICAL EVALUATION & SIMULATION';
+      kicker.textContent = 'CLINICAL EVALUATION & ANALYTICS';
       title.textContent = doc ? `Analisa ${getPatientName(doc)}` : 'Analisa Data Pasien';
       if (!doc) {
-        body.innerHTML = '<div class="nh-preview-empty">Pilih pasien terlebih dahulu untuk menjalankan analisa &amp; simulasi klinis.</div>';
+        body.innerHTML = '<div class="nh-preview-empty">Pilih pasien terlebih dahulu untuk melihat analisa klinis mendalam.</div>';
         return;
       }
-      const s = getBiomarkerStats(doc);
-      body.innerHTML = `
-        <form class="nh-form-stack" id="nh-eval-form">
-          <div class="nh-form-field">
-            <label>Koreksi / Observasi Skor MMSE (0 - 30)</label>
-            <input type="number" step="0.5" min="0" max="30" id="nh-eval-mmse" value="${esc(s.mmse === '—' ? 24 : s.mmse)}" />
-          </div>
-          <div class="nh-form-field">
-            <label>Koreksi / Observasi Kemandirian ADL (0 - 10)</label>
-            <input type="number" step="0.5" min="0" max="10" id="nh-eval-adl" value="${esc(s.adl === '—' ? 7 : s.adl)}" />
-          </div>
-          <div class="nh-form-field">
-            <label>Catatan Analisa Klinisi</label>
-            <textarea rows="3" id="nh-eval-notes" placeholder="Catatan hasil pemeriksaan saraf / neuropsikologis..."></textarea>
-          </div>
-          <div id="nh-eval-msg" style="font-size:12px;color:var(--hub-text-muted)"></div>
-          <button type="submit" class="bento-pill-btn bento-pill-btn--accent" style="height:36px">Simpan &amp; Evaluasi Ulang</button>
-        </form>
-      `;
-      document.getElementById('nh-eval-form')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const msg = document.getElementById('nh-eval-msg');
-        msg.textContent = 'Menyimpan evaluasi...';
-        try {
-          const res = await fetch(`/api/nakes/consultation/${encodeURIComponent(getDocCode(doc))}/patient-eval`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              mmse: Number(document.getElementById('nh-eval-mmse').value),
-              adl: Number(document.getElementById('nh-eval-adl').value),
-              clinical_notes: document.getElementById('nh-eval-notes').value.trim(),
-              evaluator_name: state.nakes?.name || 'Dokter'
-            })
-          });
-          const j = await res.json();
-          msg.textContent = j.success ? 'Evaluasi berhasil disimpan.' : (j.error || 'Gagal menyimpan.');
-          if (j.success) await selectPatientByCode(getDocCode(doc), false);
-        } catch (err) {
-          msg.textContent = err.message;
-        }
-      });
+      body.innerHTML = '<div class="nh-preview-empty">Memuat evaluasi klinis XGBoost &amp; clinical flags...</div>';
+      fetch(`/api/consultation/${encodeURIComponent(getDocCode(doc))}/patient-eval`, { cache: 'no-store' })
+        .then(r => r.json())
+        .then(j => {
+          const ev = j.data || j.evaluation || j || {};
+          const flags = Array.isArray(ev.clinical_flags) ? ev.clinical_flags : [];
+          const tests = Array.isArray(ev.recommended_tests) ? ev.recommended_tests : [];
+          const flagsHtml = flags.map(f => {
+            const cls = f.severity === 'danger' ? 'is-risk' : (f.severity === 'warning' ? 'is-warn' : 'is-ok');
+            return `<div class="nh-history-item" style="cursor:default">
+              <div>
+                <div class="nh-wl-name">${esc(f.param)}</div>
+                <div class="nh-wl-code">${esc(f.status)}</div>
+              </div>
+              <span class="nh-badge ${cls}">${esc(f.val)}</span>
+            </div>`;
+          }).join('') || '<div class="nh-preview-empty">Tidak ada clinical flags tambahan.</div>';
+
+          const testsHtml = tests.length
+            ? `<ul style="margin:8px 0 0 18px;font-size:12.5px;color:var(--hub-text-secondary);line-height:1.6">${tests.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`
+            : '<div class="nh-preview-empty">Pemantauan berkala standar.</div>';
+
+          body.innerHTML = `
+            <div class="drawer-kpi-row">
+              <div class="drawer-kpi-card"><div class="drawer-kpi-label">Kohort Pasien</div><div class="drawer-kpi-val" style="font-size:12px">${esc(ev.patient_cohort || '—')}</div></div>
+              <div class="drawer-kpi-card"><div class="drawer-kpi-label">Kepastian Model</div><div class="drawer-kpi-val" style="font-size:12px">${esc(ev.confidence_category || '—')}</div></div>
+              <div class="drawer-kpi-card"><div class="drawer-kpi-label">Margin Ambang</div><div class="drawer-kpi-val" style="font-size:13px">${esc(ev.margin_from_threshold ?? '—')}%</div></div>
+            </div>
+            <div style="margin:14px 0 8px;font-size:12px;font-weight:600;color:var(--hub-text)">Clinical Flags</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">${flagsHtml}</div>
+            <div style="padding:12px;border-radius:8px;border:1px solid var(--hub-border);background:var(--hub-bg-subtle);margin-bottom:14px">
+              <div style="font-size:12px;font-weight:600;color:var(--hub-text)">Rekomendasi Pemeriksaan Lanjutan</div>
+              ${testsHtml}
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-anl-open-dossier">Buka Dossier 32 Biomarker</button>
+              <button type="button" class="bento-pill-btn" id="nh-anl-open-val">Sahkan Validasi Dokter</button>
+            </div>
+          `;
+          document.getElementById('nh-anl-open-dossier')?.addEventListener('click', () => openDrawer('documents'));
+          document.getElementById('nh-anl-open-val')?.addEventListener('click', () => openDrawer('validate'));
+        })
+        .catch(err => {
+          body.innerHTML = `<div class="nh-preview-empty" style="color:#dc2626">${esc(err.message)}</div>`;
+        });
       return;
     }
 
@@ -619,7 +628,7 @@
         const msg = document.getElementById('nh-val-msg');
         msg.textContent = 'Mengesahkan dokumen...';
         try {
-          const res = await fetch(`/api/nakes/consultation/${encodeURIComponent(getDocCode(doc))}/validate`, {
+          const res = await fetch(`/api/consultation/${encodeURIComponent(getDocCode(doc))}/validate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -709,13 +718,30 @@
   }
 
   function bindEvents() {
+    const sidebar1 = document.getElementById('hub-sidebar-1');
+    const sidebar2 = document.getElementById('hub-sidebar-2');
+
     document.querySelectorAll('[data-nh-nav]').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-nh-nav]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
         const target = btn.getAttribute('data-nh-nav');
-        if (target !== 'overview') openDrawer(target);
+        if (sidebar1 && window.innerWidth <= 900) {
+          sidebar1.classList.remove('is-open');
+        }
+        if (target === 'overview') {
+          closeDrawer();
+          if (sidebar2) sidebar2.classList.toggle('is-open');
+        } else {
+          openDrawer(target);
+        }
       });
+    });
+
+    document.getElementById('nh-sb2-close-btn')?.addEventListener('click', () => {
+      sidebar2?.classList.remove('is-open');
+    });
+
+    document.getElementById('nh-btn-toggle-queue')?.addEventListener('click', () => {
+      sidebar2?.classList.toggle('is-open');
     });
 
     document.querySelectorAll('[data-nh-filter]').forEach(chip => {
