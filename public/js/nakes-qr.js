@@ -401,7 +401,7 @@
   const elQrMount = document.getElementById("nqrQrMount");
   const elCodeText = document.getElementById("nqrCodeText");
   const elTargetPath = document.getElementById("nqrTargetPath");
-  const elDirectLink = document.getElementById("nqrDirectLink");
+  const elManualUrlLink = document.getElementById("nqrManualUrlLink");
   const elTimerText = document.getElementById("nqrTimerText");
   const elProgressFill = document.getElementById("nqrProgressFill");
   const elCopyCodeBtn = document.getElementById("nqrCopyCodeBtn");
@@ -485,7 +485,11 @@
       elCodeText.textContent = state.code;
       elQrMount.innerHTML = QR.toSvg(state.registerUrl);
       elTargetPath.textContent = `/nakes/register?code=${state.code}`;
-      elDirectLink.href = `/nakes/register?code=${encodeURIComponent(state.code)}`;
+      if (elManualUrlLink) {
+        const manualUrl = `${window.location.origin}/nakes/code-res`;
+        elManualUrlLink.href = "/nakes/code-res";
+        elManualUrlLink.textContent = manualUrl;
+      }
     }
 
     renderCountdown();

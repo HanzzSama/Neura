@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neura AI — Verifikasi Kode Undangan Nakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/nakes-qr.css" />
+  <style>
+    .ncr-card {
+      max-width: 460px;
+    }
+    .ncr-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ncr-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--nqr-surface-2);
+      border: 1px solid var(--nqr-border);
+      color: var(--nqr-text);
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-align: center;
+      text-transform: uppercase;
+      outline: none;
+      transition: border-color 0.16s ease;
+    }
+    .ncr-input:focus {
+      border-color: var(--nqr-accent);
+    }
+    .ncr-input::placeholder {
+      color: var(--nqr-dim);
+      font-weight: 500;
+      letter-spacing: 0.1em;
+    }
+    .ncr-alert {
+      padding: 10px 12px;
+      border: 1px solid var(--nqr-err);
+      background: var(--nqr-surface-2);
+      color: var(--nqr-err);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .ncr-submit {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid transparent;
+      background: var(--nqr-accent);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.16s ease;
+    }
+    .ncr-submit:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .ncr-back-link {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--nqr-dim);
+    }
+    .ncr-back-link a {
+      color: var(--nqr-muted);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--nqr-border-strong);
+    }
+    .ncr-back-link a:hover {
+      color: var(--nqr-accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="nqr-grid-bg" aria-hidden="true"></div>
+  <svg class="nqr-geo-overlay" viewBox="0 0 1440 900" fill="none" aria-hidden="true">
+    <line x1="120" y1="0" x2="120" y2="900" class="geo-hairline" />
+    <line x1="1320" y1="0" x2="1320" y2="900" class="geo-hairline" />
+    <line x1="0" y1="120" x2="1440" y2="120" class="geo-hairline" />
+    <line x1="0" y1="780" x2="1440" y2="780" class="geo-hairline" />
+    <circle cx="720" cy="450" r="310" class="geo-ring" stroke-dasharray="4 6" />
+  </svg>
+
+  <div class="nqr-shell">
+    <header class="nqr-topbar">
+      <a href="/welcome" class="nqr-brand">
+        <span class="nqr-brand-mark">N</span>
+        <span class="nqr-brand-text">NEURA<span class="nqr-brand-sub"> // NAKES CODE GATE</span></span>
+      </a>
+      <div class="nqr-topbar-right">
+        <span class="nqr-telemetry-pill">
+          <span class="nqr-status-dot" id="ncrDot"></span>
+          <span id="ncrStatus">SIAP VERIFIKASI</span>
+        </span>
+        <button type="button" class="nqr-theme-btn" id="ncrThemeBtn">
+          <span id="ncrThemeLabel">LIGHT</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="nqr-main">
+      <section class="nqr-card ncr-card">
+        <span class="nqr-corner tl" aria-hidden="true"></span>
+        <span class="nqr-corner tr" aria-hidden="true"></span>
+        <span class="nqr-corner bl" aria-hidden="true"></span>
+        <span class="nqr-corner br" aria-hidden="true"></span>
+
+        <div>
+          <div class="nqr-meta-row">
+            <span class="nqr-mono-tag">ACCESS CODE VERIFICATION</span>
+            <span class="nqr-mono-tag muted">TTL: 180s</span>
+          </div>
+          <h1 class="nqr-title">Masukkan Kode Undangan Nakes</h1>
+          <p class="nqr-subtitle">
+            Ketik kode unik 3-menit yang tampil pada layar QR undangan untuk melanjutkan ke formulir registrasi.
+          </p>
+        </div>
+
+        <div class="ncr-alert" id="ncrErrorBox" hidden></div>
+
+        <form class="ncr-form" id="ncrForm" novalidate>
+          <input
+            type="text"
+            class="ncr-input"
+            id="ncrCodeInput"
+            placeholder="NKS-XXXX-XXXX"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          />
+          <button type="submit" class="ncr-submit" id="ncrSubmitBtn">
+            Verifikasi &amp; Lanjut Registrasi →
+          </button>
+        </form>
+
+        <div class="ncr-back-link">
+          <a href="/welcome">Kembali ke Beranda Neura</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="nqr-footer">
+      <span>NEURA CLINICAL IDENTITY TELEMETRY</span>
+      <span>CODE-RES GATEWAY // ZERO-GLOW</span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const elForm = document.getElementById("ncrForm");
+      const elInput = document.getElementById("ncrCodeInput");
+      const elBtn = document.getElementById("ncrSubmitBtn");
+      const elErr = document.getElementById("ncrErrorBox");
+      const elDot = document.getElementById("ncrDot");
+      const elStatus = document.getElementById("ncrStatus");
+      const elThemeBtn = document.getElementById("ncrThemeBtn");
+      const elThemeLabel = document.getElementById("ncrThemeLabel");
+
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("neura_nqr_theme", theme);
+        if (elThemeLabel) elThemeLabel.textContent = theme === "dark" ? "LIGHT" : "DARK";
+      }
+      applyTheme(localStorage.getItem("neura_nqr_theme") || "dark");
+      elThemeBtn.addEventListener("click", () => {
+        const cur = document.documentElement.getAttribute("data-theme") || "dark";
+        applyTheme(cur === "dark" ? "light" : "dark");
+      });
+
+      elInput.addEventListener("input", () => {
+        elInput.value = elInput.value.toUpperCase();
+        elErr.hidden = true;
+      });
+
+      elForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const code = elInput.value.trim().toUpperCase();
+        if (!code) {
+          elErr.hidden = false;
+          elErr.textContent = "Silakan masukkan kode undangan terlebih dahulu.";
+          return;
+        }
+
+        elErr.hidden = true;
+        elBtn.disabled = true;
+        elBtn.textContent = "Memverifikasi Kode...";
+
+        try {
+          const res = await fetch(`/api/nakes/invite/verify?code=${encodeURIComponent(code)}`, { cache: "no-store" });
+          const json = await res.json();
+          const data = json && json.data;
+          if (data && data.valid) {
+            elDot.className = "nqr-status-dot active";
+            elStatus.textContent = "KODE VALID";
+            window.location.href = `/nakes/register?code=${encodeURIComponent(code)}`;
+            return;
+          }
+          elDot.className = "nqr-status-dot locked";
+          elStatus.textContent = "KODE INVALID";
+          elErr.hidden = false;
+          elErr.textContent = (data && data.reason) || "Kode undangan tidak valid atau telah kedaluwarsa.";
+        } catch (_) {
+          elErr.hidden = false;
+          elErr.textContent = "Gagal menghubungi server verifikasi.";
+        } finally {
+          elBtn.disabled = false;
+          elBtn.textContent = "Verifikasi & Lanjut Registrasi →";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

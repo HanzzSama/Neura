@@ -461,9 +461,37 @@ body {
   user-select: all;
 }
 
-.nqr-code-actions {
+.nqr-code-url-row {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.nqr-code-url-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--nqr-dim);
+  white-space: nowrap;
+}
+
+.nqr-code-url-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--nqr-accent);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--nqr-accent);
+  padding-bottom: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity 0.16s ease;
+}
+
+.nqr-code-url-link:hover {
+  opacity: 0.8;
 }
 
 .nqr-primary-link {
