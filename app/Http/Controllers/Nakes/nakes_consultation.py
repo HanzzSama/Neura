@@ -254,6 +254,16 @@ def api_consultation_validate(code_or_id):
         except Exception:
             pass
 
+        try:
+            from app.Services.Database.DatabaseManager import execute_update
+            if execute_update:
+                execute_update(
+                    "UPDATE consultations SET status = %s WHERE nakes_code = %s OR doc_id = %s",
+                    ("VALIDATED_BY_CLINICIAN", nakes_code or clean_code, doc_id or clean_code),
+                )
+        except Exception as db_err:
+            logger.warning(f"MySQL update consultation validation status warning: {db_err}")
+
         return jsonify({
             "success": True,
             "data":    doc,

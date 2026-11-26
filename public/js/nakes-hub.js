@@ -11,6 +11,7 @@
     activeDoc: null,
     filter: 'all',
     histTab: 'patients',
+    currentStep: 1,
     nakes: null
   };
 
@@ -140,6 +141,7 @@
       renderSidebarWorklist();
       renderHistoryList();
       populateCodeDatalist();
+      renderPatientSwitcher();
       fetchDiseaseStats();
 
       if (!state.activeDoc && state.consultations.length > 0) {
@@ -246,6 +248,8 @@
       renderBiomarkerViz(doc);
       syncInlineTriage(doc);
       syncClinicalWorkflow(doc);
+      renderPatientSwitcher();
+      renderOfficialDossierPreview(doc);
       renderSidebarWorklist();
       if (openDossierAfter) openDrawer('documents');
     } catch (err) {
@@ -301,7 +305,7 @@
       <div class="nh-patient-mini-grid">
         <div class="nh-mini-stat"><span>Prob. Risiko</span><strong>${esc(prob)}</strong></div>
         <div class="nh-mini-stat"><span>Skor MMSE</span><strong>${esc(stats.mmse)} / 30</strong></div>
-        <div class="nh-mini-stat"><span>TD / BMI</span><strong>${esc(stats.sbp)}/${esc(stats.dbp)}</strong></div>
+        <div class="nh-mini-stat"><span>TD / BMI</span><strong>${esc(stats.sbp)}/${esc(stats.dbp)} · ${esc(stats.bmi)}</strong></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-prev-dossier-btn">Buka Dossier Medis</button>
@@ -1289,10 +1293,223 @@
     });
   }
 
+  // ------------------------------------------------------------------------
+  // 6-Step Clinical Pipeline, Patient Switcher & Official Dossier Preview
+  // ------------------------------------------------------------------------
+
+  function goToNakesStep(step) {
+    const next = Math.max(1, Math.min(6, Number(step) || 1));
+    const prev = state.currentStep || 1;
+    state.currentStep = next;
+
+    document.querySelectorAll('.nh-step-tab').forEach(tab => {
+      const s = Number(tab.getAttribute('data-nh-step'));
+      tab.classList.toggle('is-active', s === next);
+      tab.classList.toggle('is-done', s < next);
+    });
+
+    const fill = document.getElementById('nh-step-progress-fill');
+    if (fill) fill.style.width = `${(next / 6) * 100}%`;
+
+    document.querySelectorAll('.nh-step-pane').forEach(pane => {
+      const p = Number(pane.getAttribute('data-nh-pane'));
+      pane.classList.remove('is-active', 'anim-prev');
+      if (p === next) {
+        pane.classList.add('is-active');
+        if (next < prev) pane.classList.add('anim-prev');
+      }
+    });
+
+    if (next === 6 && state.activeDoc) {
+      renderOfficialDossierPreview(state.activeDoc);
+    }
+  }
+
+  function renderPatientSwitcher() {
+    const sel = document.getElementById('nh-switcher-select');
+    const meta = document.getElementById('nh-switcher-meta');
+    const activeCode = state.activeDoc ? getDocCode(state.activeDoc) : '';
+
+    if (sel) {
+      if (!state.consultations.length) {
+        sel.innerHTML = '<option value="">Belum ada pasien</option>';
+      } else {
+        sel.innerHTML = state.consultations.map(it => {
+          const code = getDocCode(it);
+          const name = getPatientName(it);
+          return `<option value="${esc(code)}" ${code === activeCode ? 'selected' : ''}>${esc(code)} — ${esc(name)}</option>`;
+        }).join('');
+      }
+    }
+
+    if (meta && state.activeDoc) {
+      const s = getBiomarkerStats(state.activeDoc);
+      const val = isDocValidated(state.activeDoc);
+      const prob = state.activeDoc.risk_probability != null
+        ? `${Math.round(Number(state.activeDoc.risk_probability) * 100)}%`
+        : (state.activeDoc.prediction?.probability != null ? `${Math.round(Number(state.activeDoc.prediction.probability) * 100)}%` : '—');
+      meta.innerHTML = `
+        <span class="nh-meta-pill">MMSE: ${esc(s.mmse)}/30</span>
+        <span class="nh-meta-pill">ADL: ${esc(s.adl)}</span>
+        <span class="nh-meta-pill">Risiko: ${esc(prob)}</span>
+        <span class="nh-meta-pill ${val ? 'is-ok' : 'is-warn'}" id="nh-switcher-status-pill">${val ? 'TERVALIDASI' : 'BELUM VALIDASI'}</span>
+      `;
+    }
+  }
+
+  function renderOfficialDossierPreview(doc) {
+    const box = document.getElementById('nh-official-preview');
+    if (!box || !doc) return;
+    const s = getBiomarkerStats(doc);
+    const cr = doc.clinical_record || {};
+    const v = doc.validation || {};
+    const meds = Array.isArray(cr.medications) ? cr.medications : _workingMeds;
+    const fu = cr.follow_up || {};
+    const recs = Array.isArray(cr.recommendations) && cr.recommendations.length
+      ? cr.recommendations
+      : (Array.isArray(doc.recommendations) ? doc.recommendations : []);
+
+    const confirmedSyms = SYMPTOM_META
+      .filter(([k]) => _workingSymptoms[k] === 'confirmed')
+      .map(([, lbl]) => lbl);
+
+    const medSummary = meds.length
+      ? meds.map(m => `${esc(m.name)} (${esc(m.dose || '-')} · ${esc(m.frequency || '-')} · ${esc(m.duration || '-')})`).join('<br>')
+      : '<span style="color:var(--hub-text-muted)">Belum ada resep obat tercatat.</span>';
+
+    const recSummary = recs.length
+      ? recs.map(r => `• ${esc(r)}`).join('<br>')
+      : '<span style="color:var(--hub-text-muted)">Belum ada rekomendasi klinis.</span>';
+
+    box.innerHTML = `
+      <div class="nh-doc-head">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--hub-accent)">DOSSIER MEDIS RESMI · NEURA CLINICAL AI</div>
+          <h3 style="margin:4px 0 2px;font-size:16px">${esc(getPatientName(doc))}</h3>
+          <div style="font-size:12px;color:var(--hub-text-muted)">Kode: <strong>${esc(getDocCode(doc))}</strong> · Usia ${esc(s.age)} thn · ${esc(s.gender)}</div>
+        </div>
+        <div style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px">
+          <div>${isDocValidated(doc) ? 'STATUS: TERVALIDASI' : 'STATUS: DRAFT KLINIS'}</div>
+          <div style="color:var(--hub-text-muted)">${esc(v.signature_hash || doc.verification_hash || 'SIG-PENDING')}</div>
+        </div>
+      </div>
+      <div class="nh-doc-grid">
+        <div class="nh-doc-box">
+          <h4>Ringkasan 32 Biomarker</h4>
+          <div>MMSE: <strong>${esc(s.mmse)}/30</strong> · ADL: <strong>${esc(s.adl)}</strong></div>
+          <div>TD: <strong>${esc(s.sbp)}/${esc(s.dbp)} mmHg</strong> · BMI: <strong>${esc(s.bmi)}</strong></div>
+          <div>Kolesterol: <strong>${esc(s.chol)}</strong> · Trigliserida: <strong>${esc(s.trig)}</strong></div>
+        </div>
+        <div class="nh-doc-box">
+          <h4>Gejala Terverifikasi (${confirmedSyms.length}/9)</h4>
+          <div>${confirmedSyms.length ? esc(confirmedSyms.join(', ')) : 'Tidak ada gejala aktif terkonfirmasi.'}</div>
+        </div>
+        <div class="nh-doc-box">
+          <h4>Regimen Obat (e-Rx)</h4>
+          <div>${medSummary}</div>
+        </div>
+        <div class="nh-doc-box">
+          <h4>Rekomendasi &amp; Tindak Lanjut</h4>
+          <div>${recSummary}</div>
+          <div style="margin-top:6px;font-size:12px;color:var(--hub-text-muted)">
+            Kontrol: <strong>${esc(fu.date || 'Belum dijadwalkan')}</strong> (${esc(fu.priority || 'RUTIN')})
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--hub-text-muted);padding-top:8px;border-top:1px solid var(--hub-border)">
+        <span>Dokter Pemeriksa: <strong>${esc(v.validator_name || state.nakes?.name || 'Tenaga Kesehatan')}</strong></span>
+        <span>Catatan: ${esc(v.clinical_notes || document.getElementById('nh-triage-notes')?.value || '—')}</span>
+      </div>
+    `;
+  }
+
+  function bindPipelineEvents() {
+    document.querySelectorAll('[data-nh-step]').forEach(tab => {
+      tab.addEventListener('click', () => goToNakesStep(tab.getAttribute('data-nh-step')));
+    });
+
+    document.querySelectorAll('[data-nh-goto]').forEach(btn => {
+      btn.addEventListener('click', () => goToNakesStep(btn.getAttribute('data-nh-goto')));
+    });
+
+    const switcher = document.getElementById('nh-switcher-select');
+    if (switcher) {
+      switcher.addEventListener('change', () => {
+        if (switcher.value) selectPatientByCode(switcher.value, false);
+      });
+    }
+
+    const cyclePatient = delta => {
+      if (!state.consultations.length) return;
+      const activeCode = state.activeDoc ? getDocCode(state.activeDoc) : '';
+      const idx = Math.max(0, state.consultations.findIndex(it => getDocCode(it) === activeCode));
+      const nextIdx = (idx + delta + state.consultations.length) % state.consultations.length;
+      const targetCode = getDocCode(state.consultations[nextIdx]);
+      if (targetCode) selectPatientByCode(targetCode, false);
+    };
+
+    document.getElementById('nh-prev-patient-btn')?.addEventListener('click', () => cyclePatient(-1));
+    document.getElementById('nh-next-patient-btn')?.addEventListener('click', () => cyclePatient(1));
+
+    document.getElementById('nh-step2-next-btn')?.addEventListener('click', async () => {
+      await saveClinicalRecord({ verified_symptoms: _workingSymptoms }, 'nh-sym-save-msg');
+      goToNakesStep(3);
+    });
+
+    document.getElementById('nh-step4-next-btn')?.addEventListener('click', async () => {
+      await saveClinicalRecord({
+        medications: _workingMeds,
+        follow_up: {
+          date: document.getElementById('nh-fu-date')?.value || '',
+          priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
+          notes: document.getElementById('nh-care-notes')?.value.trim() || ''
+        }
+      }, 'nh-rx-save-msg');
+      goToNakesStep(5);
+    });
+
+    document.getElementById('nh-step5-next-btn')?.addEventListener('click', async () => {
+      const notesRaw = document.getElementById('nh-care-notes')?.value.trim() || '';
+      const recs = notesRaw ? notesRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+      await saveClinicalRecord({
+        recommendations: recs,
+        follow_up: {
+          date: document.getElementById('nh-fu-date')?.value || '',
+          priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
+          notes: notesRaw
+        }
+      }, 'nh-fu-save-msg');
+      document.getElementById('nh-triage-submit')?.click();
+      goToNakesStep(6);
+    });
+
+    document.getElementById('nh-step6-save-btn')?.addEventListener('click', async () => {
+      const notesRaw = document.getElementById('nh-care-notes')?.value.trim() || '';
+      const recs = notesRaw ? notesRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+      await saveClinicalRecord({
+        verified_symptoms: _workingSymptoms,
+        medications: _workingMeds,
+        recommendations: recs,
+        follow_up: {
+          date: document.getElementById('nh-fu-date')?.value || '',
+          priority: document.getElementById('nh-fu-priority')?.value || 'RUTIN_30_HARI',
+          notes: notesRaw
+        }
+      }, 'nh-step6-save-msg');
+      if (state.activeDoc) renderOfficialDossierPreview(state.activeDoc);
+    });
+
+    document.getElementById('nh-step6-switch-btn')?.addEventListener('click', () => {
+      goToNakesStep(1);
+      document.getElementById('nh-switcher-select')?.focus();
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     loadNakesProfile();
     setupThemeAndChrome();
     bindEvents();
+    bindPipelineEvents();
     fetchWorkspaceData();
     setInterval(fetchWorkspaceData, 45000);
   });

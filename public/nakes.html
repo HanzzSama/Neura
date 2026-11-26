@@ -294,245 +294,375 @@
             </div>
           </section>
 
-          <!-- ASYMMETRIC ABSTRACT BENTO GRID (12-COL: 7/5 & 5/7) -->
-          <section class="nh-bento-asymmetric">
-            <!-- Card 1 (7 cols): Input Kode Dokumen Pasien -->
-            <article class="bento-card nh-card nh-span-7">
-              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-                <circle cx="100" cy="20" r="46" stroke="currentColor" stroke-dasharray="3 4" />
-                <circle cx="100" cy="20" r="24" stroke="#D97757" stroke-opacity="0.5" />
-              </svg>
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">PATIENT DOCUMENT GATEWAY</div>
-                  <h2 class="bento-title-sm">Input Kode Dokumen Pasien</h2>
-                </div>
-                <span class="bento-tag" id="nh-active-code-tag">BELUM DIPILIH</span>
+          <!-- PERSISTENT PATIENT & DOCUMENT SWITCHER BAR -->
+          <div class="nh-switcher-bar" id="nh-patient-switcher-bar">
+            <div class="nh-switcher-left">
+              <span class="nh-switcher-kicker">DOKUMEN AKTIF</span>
+              <select id="nh-switcher-select" class="nh-switcher-select" aria-label="Pilih Pasien atau Dokumen">
+                <option value="">Memuat daftar pasien...</option>
+              </select>
+              <div class="nh-switcher-nav">
+                <button type="button" class="bento-pill-btn" id="nh-prev-patient-btn" title="Pasien Sebelumnya">← Prev</button>
+                <button type="button" class="bento-pill-btn" id="nh-next-patient-btn" title="Pasien Berikutnya">Next →</button>
               </div>
+            </div>
+            <div class="nh-switcher-meta" id="nh-switcher-meta">
+              <span class="nh-meta-pill">MMSE: —</span>
+              <span class="nh-meta-pill">ADL: —</span>
+              <span class="nh-meta-pill">Risiko: —</span>
+              <span class="nh-meta-pill" id="nh-switcher-status-pill">BELUM VALIDASI</span>
+            </div>
+          </div>
 
-              <form class="nh-code-box" id="nh-main-code-form">
-                <input type="text" id="nh-main-code-input" class="nh-code-field" placeholder="Contoh: NKS-26-7745-ALZ"
-                  autocomplete="off" list="nh-code-datalist" />
-                <datalist id="nh-code-datalist"></datalist>
-                <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Periksa Kode →</button>
-              </form>
+          <!-- 6-STEP CLINICAL TELEMETRY STEPPER -->
+          <nav class="nh-stepper" id="nh-stepper-rail" aria-label="Tahapan Pemeriksaan Klinis">
+            <div class="nh-stepper-track">
+              <div class="nh-stepper-fill" id="nh-step-progress-fill" style="width:16.66%"></div>
+            </div>
+            <div class="nh-stepper-tabs">
+              <button type="button" class="nh-step-tab is-active" data-nh-step="1">
+                <span class="nh-step-num">01</span>
+                <span class="nh-step-lbl">Kode Dokumen</span>
+              </button>
+              <button type="button" class="nh-step-tab" data-nh-step="2">
+                <span class="nh-step-num">02</span>
+                <span class="nh-step-lbl">Verifikasi &amp; Validasi</span>
+              </button>
+              <button type="button" class="nh-step-tab" data-nh-step="3">
+                <span class="nh-step-num">03</span>
+                <span class="nh-step-lbl">Analisa</span>
+              </button>
+              <button type="button" class="nh-step-tab" data-nh-step="4">
+                <span class="nh-step-num">04</span>
+                <span class="nh-step-lbl">Tindak Lanjut &amp; Obat</span>
+              </button>
+              <button type="button" class="nh-step-tab" data-nh-step="5">
+                <span class="nh-step-num">05</span>
+                <span class="nh-step-lbl">Rekomendasi</span>
+              </button>
+              <button type="button" class="nh-step-tab" data-nh-step="6">
+                <span class="nh-step-num">06</span>
+                <span class="nh-step-lbl">Dokumen Resmi</span>
+              </button>
+            </div>
+          </nav>
 
-              <div class="nh-active-patient-preview" id="nh-active-preview">
-                <div class="nh-preview-empty">
-                  Pilih pasien dari antrean atau masukkan kode dokumen pasien untuk menampilkan ringkasan klinis &amp;
-                  analisa 32 biomarker.
-                </div>
-              </div>
-            </article>
-
-            <!-- Card 2 (5 cols): Clinical Telemetry Ring -->
-            <article class="bento-card nh-card nh-span-5">
-              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-                <line x1="20" y1="0" x2="120" y2="100" stroke="currentColor" stroke-dasharray="2 4" />
-                <circle cx="95" cy="25" r="3" fill="#D97757" fill-opacity="0.5" />
-              </svg>
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">CLINICAL TELEMETRY</div>
-                  <h2 class="bento-title-sm">Ringkasan Validasi &amp; Risiko</h2>
-                </div>
-                <span class="bento-tag">LIVE SYNC</span>
-              </div>
-
-              <div class="nh-ring-row">
-                <svg class="nh-donut-svg" viewBox="0 0 100 100" aria-hidden="true">
-                  <circle cx="50" cy="50" r="38" class="nh-donut-track" />
-                  <circle cx="50" cy="50" r="38" class="nh-donut-seg-val" id="nh-donut-val" stroke-dasharray="0 239"
-                    transform="rotate(-90 50 50)" />
-                </svg>
-                <div class="nh-kpi-grid">
-                  <div class="nh-kpi-box">
-                    <span class="nh-kpi-lbl">Total Pasien</span>
-                    <strong class="nh-kpi-val" id="nh-kpi-total">0</strong>
+          <!-- STEP PANES CONTAINER -->
+          <div class="nh-pipeline-stage" id="nh-pipeline-stage">
+            <!-- STEP 01: KODE DOKUMEN & TELEMETRI -->
+            <section class="nh-step-pane is-active" data-nh-pane="1">
+              <div class="nh-bento-asymmetric">
+                <!-- Card 1 (7 cols): Input Kode Dokumen Pasien -->
+                <article class="bento-card nh-card nh-span-7">
+                  <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                    <circle cx="100" cy="20" r="46" stroke="currentColor" stroke-dasharray="3 4" />
+                    <circle cx="100" cy="20" r="24" stroke="#D97757" stroke-opacity="0.5" />
+                  </svg>
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">STEP 01 · PATIENT DOCUMENT GATEWAY</div>
+                      <h2 class="bento-title-sm">Input Kode Dokumen Pasien</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-active-code-tag">BELUM DIPILIH</span>
                   </div>
-                  <div class="nh-kpi-box">
-                    <span class="nh-kpi-lbl">Tervalidasi</span>
-                    <strong class="nh-kpi-val is-ok" id="nh-kpi-validated">0</strong>
+
+                  <form class="nh-code-box" id="nh-main-code-form">
+                    <input type="text" id="nh-main-code-input" class="nh-code-field" placeholder="Contoh: NKS-26-7745-ALZ"
+                      autocomplete="off" list="nh-code-datalist" />
+                    <datalist id="nh-code-datalist"></datalist>
+                    <button type="submit" class="bento-pill-btn bento-pill-btn--accent">Periksa Kode →</button>
+                  </form>
+
+                  <div class="nh-active-patient-preview" id="nh-active-preview">
+                    <div class="nh-preview-empty">
+                      Pilih pasien dari antrean atau masukkan kode dokumen pasien untuk menampilkan ringkasan klinis &amp;
+                      analisa 32 biomarker.
+                    </div>
                   </div>
-                  <div class="nh-kpi-box">
-                    <span class="nh-kpi-lbl">Perlu Validasi</span>
-                    <strong class="nh-kpi-val is-warn" id="nh-kpi-pending">0</strong>
+                </article>
+
+                <!-- Card 2 (5 cols): Clinical Telemetry Ring -->
+                <article class="bento-card nh-card nh-span-5">
+                  <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                    <line x1="20" y1="0" x2="120" y2="100" stroke="currentColor" stroke-dasharray="2 4" />
+                    <circle cx="95" cy="25" r="3" fill="#D97757" fill-opacity="0.5" />
+                  </svg>
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">CLINICAL TELEMETRY</div>
+                      <h2 class="bento-title-sm">Ringkasan Validasi &amp; Risiko</h2>
+                    </div>
+                    <span class="bento-tag">LIVE SYNC</span>
                   </div>
-                  <div class="nh-kpi-box">
-                    <span class="nh-kpi-lbl">Risiko Tinggi</span>
-                    <strong class="nh-kpi-val is-risk" id="nh-kpi-high">0</strong>
+
+                  <div class="nh-ring-row">
+                    <svg class="nh-donut-svg" viewBox="0 0 100 100" aria-hidden="true">
+                      <circle cx="50" cy="50" r="38" class="nh-donut-track" />
+                      <circle cx="50" cy="50" r="38" class="nh-donut-seg-val" id="nh-donut-val" stroke-dasharray="0 239"
+                        transform="rotate(-90 50 50)" />
+                    </svg>
+                    <div class="nh-kpi-grid">
+                      <div class="nh-kpi-box">
+                        <span class="nh-kpi-lbl">Total Pasien</span>
+                        <strong class="nh-kpi-val" id="nh-kpi-total">0</strong>
+                      </div>
+                      <div class="nh-kpi-box">
+                        <span class="nh-kpi-lbl">Tervalidasi</span>
+                        <strong class="nh-kpi-val is-ok" id="nh-kpi-validated">0</strong>
+                      </div>
+                      <div class="nh-kpi-box">
+                        <span class="nh-kpi-lbl">Perlu Validasi</span>
+                        <strong class="nh-kpi-val is-warn" id="nh-kpi-pending">0</strong>
+                      </div>
+                      <div class="nh-kpi-box">
+                        <span class="nh-kpi-lbl">Risiko Tinggi</span>
+                        <strong class="nh-kpi-val is-risk" id="nh-kpi-high">0</strong>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <div class="nh-telemetry-foot">
-                <span>XGBoost 3.x · 32 Biomarker</span>
-                <span id="nh-last-sync">Sinkronisasi aktif</span>
-              </div>
-            </article>
+                  <div class="nh-telemetry-foot">
+                    <span>XGBoost 3.x · 32 Biomarker</span>
+                    <span id="nh-last-sync">Sinkronisasi aktif</span>
+                  </div>
+                </article>
 
-            <!-- Card 3 (5 cols): History Pasien & History Dokumen -->
-            <article class="bento-card nh-card nh-span-5">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">AUDIT &amp; TIMELINE</div>
-                  <h2 class="bento-title-sm">History Pasien &amp; Dokumen</h2>
-                </div>
-                <div class="nh-mini-tabs">
-                  <button type="button" class="nh-mini-tab active" data-nh-hist="patients">Pasien</button>
-                  <button type="button" class="nh-mini-tab" data-nh-hist="docs">Dokumen</button>
-                </div>
+                <!-- Card 3 (12 cols): History Pasien & History Dokumen -->
+                <article class="bento-card nh-card nh-span-12">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">AUDIT &amp; TIMELINE</div>
+                      <h2 class="bento-title-sm">History Pasien &amp; Dokumen</h2>
+                    </div>
+                    <div class="nh-mini-tabs">
+                      <button type="button" class="nh-mini-tab active" data-nh-hist="patients">Pasien</button>
+                      <button type="button" class="nh-mini-tab" data-nh-hist="docs">Dokumen</button>
+                    </div>
+                  </div>
+                  <div class="nh-history-list" id="nh-history-list">
+                    <div class="nh-preview-empty">Memuat riwayat klinis...</div>
+                  </div>
+                </article>
               </div>
-              <div class="nh-history-list" id="nh-history-list">
-                <div class="nh-preview-empty">Memuat riwayat klinis...</div>
+              <div class="nh-step-footer">
+                <span class="nh-step-hint">Langkah 1 dari 6 · Pilih atau masukkan kode dokumen pasien</span>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" data-nh-goto="2">Lanjut: Verifikasi &amp; Validasi →</button>
               </div>
-            </article>
+            </section>
 
-            <!-- Card 4 (7 cols): Analisa 32 Biomarker -->
-            <article class="bento-card nh-card nh-span-7">
-              <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-                <path d="M20 90 Q60 20 115 35" stroke="currentColor" stroke-dasharray="3 3" />
-                <circle cx="115" cy="35" r="2.5" fill="#D97757" fill-opacity="0.6" />
-              </svg>
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">BIOMARKER ANALYTICS</div>
-                  <h2 class="bento-title-sm">Analisa Profil Klinis Pasien</h2>
+            <!-- STEP 02: VERIFIKASI & VALIDASI -->
+            <section class="nh-step-pane" data-nh-pane="2">
+              <div class="nh-bento-asymmetric">
+                <article class="bento-card nh-card nh-span-12">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">STEP 02 · DOCUMENT AUDIT &amp; SYMPTOM VERIFICATION</div>
+                      <h2 class="bento-title-sm">Pemeriksaan Dokumen &amp; Verifikasi Gejala Penyakit</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-doc-audit-tag">AUDIT</span>
+                  </div>
+                  <div class="nh-audit-strip" id="nh-doc-audit-strip">
+                    <span>Hash Integritas: <strong id="nh-audit-hash">—</strong></span>
+                    <span>Kelengkapan Biomarker: <strong>32 / 32</strong></span>
+                  </div>
+                  <div class="nh-symptom-verify-grid" id="nh-symptom-verify-grid">
+                    <div class="nh-preview-empty">Pilih pasien untuk memverifikasi gejala klinis.</div>
+                  </div>
+                  <div class="nh-triage-foot">
+                    <span class="nh-wl-code" id="nh-sym-save-msg">Klik gejala untuk konfirmasi / koreksi klinis</span>
+                    <button type="button" class="bento-pill-btn" id="nh-sym-save-btn">Simpan Verifikasi</button>
+                  </div>
+                </article>
+              </div>
+              <div class="nh-step-footer">
+                <button type="button" class="bento-pill-btn" data-nh-goto="1">← Kembali: Kode Dokumen</button>
+                <div class="nh-step-footer-actions">
+                  <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-step2-next-btn">Simpan Verifikasi &amp; Lanjut Analisa →</button>
                 </div>
-                <button type="button" class="bento-pill-btn" id="nh-btn-open-analysis">Detail Analisa</button>
               </div>
-              <div id="nh-biomarker-viz" class="nh-viz-wrap">
-                <div class="nh-preview-empty">Muat kode pasien untuk memvisualisasikan deviasi biomarker kognitif &amp;
-                  vaskular.</div>
-              </div>
-            </article>
+            </section>
 
-            <!-- Card 5 (6 cols): Pemeriksaan Dokumen & Verifikasi Gejala Penyakit -->
-            <article class="bento-card nh-card nh-span-6">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">DOCUMENT AUDIT &amp; SYMPTOM VERIFICATION</div>
-                  <h2 class="bento-title-sm">Pemeriksaan Dokumen &amp; Verifikasi Gejala</h2>
-                </div>
-                <span class="bento-tag" id="nh-doc-audit-tag">AUDIT</span>
-              </div>
-              <div class="nh-audit-strip" id="nh-doc-audit-strip">
-                <span>Hash: <strong id="nh-audit-hash">—</strong></span>
-                <span>Biomarker: <strong>32 / 32</strong></span>
-              </div>
-              <div class="nh-symptom-verify-grid" id="nh-symptom-verify-grid">
-                <div class="nh-preview-empty">Pilih pasien untuk memverifikasi gejala klinis.</div>
-              </div>
-              <div class="nh-triage-foot">
-                <span class="nh-wl-code" id="nh-sym-save-msg">Klik gejala untuk konfirmasi / koreksi klinis</span>
-                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-sym-save-btn">Simpan Verifikasi</button>
-              </div>
-            </article>
+            <!-- STEP 03: ANALISA & STATISTIK -->
+            <section class="nh-step-pane" data-nh-pane="3">
+              <div class="nh-bento-asymmetric">
+                <article class="bento-card nh-card nh-span-7">
+                  <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                    <path d="M20 90 Q60 20 115 35" stroke="currentColor" stroke-dasharray="3 3" />
+                    <circle cx="115" cy="35" r="2.5" fill="#D97757" fill-opacity="0.6" />
+                  </svg>
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">STEP 03 · BIOMARKER ANALYTICS</div>
+                      <h2 class="bento-title-sm">Analisa Profil Klinis Pasien</h2>
+                    </div>
+                    <button type="button" class="bento-pill-btn" id="nh-btn-open-analysis">Detail Analisa</button>
+                  </div>
+                  <div id="nh-biomarker-viz" class="nh-viz-wrap">
+                    <div class="nh-preview-empty">Muat kode pasien untuk memvisualisasikan deviasi biomarker kognitif &amp; vaskular.</div>
+                  </div>
+                </article>
 
-            <!-- Card 6 (6 cols): Statistik Penyakit & Prevalensi Kohort -->
-            <article class="bento-card nh-card nh-span-6">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">DISEASE STATISTICS</div>
-                  <h2 class="bento-title-sm">Statistik Penyakit &amp; Prevalensi Kohort</h2>
-                </div>
-                <div class="nh-mini-tabs" id="nh-dstat-tabs">
-                  <button type="button" class="nh-mini-tab active" data-nh-dstat="prevalence">Gejala</button>
-                  <button type="button" class="nh-mini-tab" data-nh-dstat="staging">Staging</button>
-                </div>
+                <article class="bento-card nh-card nh-span-5">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">DISEASE STATISTICS</div>
+                      <h2 class="bento-title-sm">Statistik Penyakit &amp; Kohort</h2>
+                    </div>
+                    <div class="nh-mini-tabs" id="nh-dstat-tabs">
+                      <button type="button" class="nh-mini-tab active" data-nh-dstat="prevalence">Gejala</button>
+                      <button type="button" class="nh-mini-tab" data-nh-dstat="staging">Staging</button>
+                    </div>
+                  </div>
+                  <div id="nh-disease-stats-wrap" class="nh-viz-wrap">
+                    <div class="nh-preview-empty">Memuat statistik penyakit kohort...</div>
+                  </div>
+                </article>
               </div>
-              <div id="nh-disease-stats-wrap" class="nh-viz-wrap">
-                <div class="nh-preview-empty">Memuat statistik penyakit kohort...</div>
+              <div class="nh-step-footer">
+                <button type="button" class="bento-pill-btn" data-nh-goto="2">← Kembali: Verifikasi</button>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" data-nh-goto="4">Lanjut: Tindak Lanjut &amp; Obat →</button>
               </div>
-            </article>
+            </section>
 
-            <!-- Card 7 (7 cols): Input Obat / Resep Klinis -->
-            <article class="bento-card nh-card nh-span-7">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">E-PRESCRIPTION BUILDER</div>
-                  <h2 class="bento-title-sm">Input Obat &amp; Regimen Terapi</h2>
-                </div>
-                <span class="bento-tag" id="nh-rx-count-tag">0 OBAT</span>
-              </div>
-              <div class="nh-rx-presets" id="nh-rx-presets">
-                <button type="button" class="nh-chip" data-rx="Donepezil|5 mg|1x1 malam|30 hari">+ Donepezil 5mg</button>
-                <button type="button" class="nh-chip" data-rx="Memantine|10 mg|1x1 pagi|30 hari">+ Memantine 10mg</button>
-                <button type="button" class="nh-chip" data-rx="Rivastigmine Patch|4.6 mg|1x1 tempel|30 hari">+ Rivastigmine</button>
-                <button type="button" class="nh-chip" data-rx="Vitamin B12 Neuro|500 mcg|1x1 sesudah makan|30 hari">+ Vit B12</button>
-              </div>
-              <form class="nh-rx-form" id="nh-rx-form">
-                <input type="text" id="nh-rx-name" class="nh-code-field nh-rx-in" placeholder="Nama Obat" required />
-                <input type="text" id="nh-rx-dose" class="nh-code-field nh-rx-in" placeholder="Dosis (5 mg)" />
-                <input type="text" id="nh-rx-freq" class="nh-code-field nh-rx-in" placeholder="Aturan (1x1)" />
-                <input type="text" id="nh-rx-dur" class="nh-code-field nh-rx-in" placeholder="Durasi (30 hr)" />
-                <button type="submit" class="bento-pill-btn">Tambah</button>
-              </form>
-              <div class="nh-rx-list" id="nh-rx-list">
-                <div class="nh-preview-empty">Belum ada obat ditambahkan untuk pasien ini.</div>
-              </div>
-              <div class="nh-triage-foot">
-                <span class="nh-wl-code" id="nh-rx-save-msg">Tersimpan di rekam medis pasien</span>
-                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-rx-save-btn">Simpan Resep</button>
-              </div>
-            </article>
+            <!-- STEP 04: TINDAK LANJUT & INPUT OBAT -->
+            <section class="nh-step-pane" data-nh-pane="4">
+              <div class="nh-bento-asymmetric">
+                <article class="bento-card nh-card nh-span-7">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">STEP 04 · E-PRESCRIPTION BUILDER</div>
+                      <h2 class="bento-title-sm">Input Obat &amp; Regimen Terapi</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-rx-count-tag">0 OBAT</span>
+                  </div>
+                  <div class="nh-rx-presets" id="nh-rx-presets">
+                    <button type="button" class="nh-chip" data-rx="Donepezil|5 mg|1x1 malam|30 hari">+ Donepezil 5mg</button>
+                    <button type="button" class="nh-chip" data-rx="Memantine|10 mg|1x1 pagi|30 hari">+ Memantine 10mg</button>
+                    <button type="button" class="nh-chip" data-rx="Rivastigmine Patch|4.6 mg|1x1 tempel|30 hari">+ Rivastigmine</button>
+                    <button type="button" class="nh-chip" data-rx="Vitamin B12 Neuro|500 mcg|1x1 sesudah makan|30 hari">+ Vit B12</button>
+                  </div>
+                  <form class="nh-rx-form" id="nh-rx-form">
+                    <input type="text" id="nh-rx-name" class="nh-code-field nh-rx-in" placeholder="Nama Obat" required />
+                    <input type="text" id="nh-rx-dose" class="nh-code-field nh-rx-in" placeholder="Dosis (5 mg)" />
+                    <input type="text" id="nh-rx-freq" class="nh-code-field nh-rx-in" placeholder="Aturan (1x1)" />
+                    <input type="text" id="nh-rx-dur" class="nh-code-field nh-rx-in" placeholder="Durasi (30 hr)" />
+                    <button type="submit" class="bento-pill-btn">Tambah</button>
+                  </form>
+                  <div class="nh-rx-list" id="nh-rx-list">
+                    <div class="nh-preview-empty">Belum ada obat ditambahkan untuk pasien ini.</div>
+                  </div>
+                  <div class="nh-triage-foot">
+                    <span class="nh-wl-code" id="nh-rx-save-msg">Tersimpan di rekam medis pasien</span>
+                    <button type="button" class="bento-pill-btn" id="nh-rx-save-btn">Simpan Resep</button>
+                  </div>
+                </article>
 
-            <!-- Card 8 (5 cols): Rekomendasi Penanganan & Tindak Lanjut -->
-            <article class="bento-card nh-card nh-span-5">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">CARE PLAN &amp; FOLLOW-UP</div>
-                  <h2 class="bento-title-sm">Rekomendasi &amp; Tindak Lanjut</h2>
-                </div>
-                <span class="bento-tag" id="nh-fu-tag">RENCANA</span>
+                <article class="bento-card nh-card nh-span-5">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">FOLLOW-UP SCHEDULE</div>
+                      <h2 class="bento-title-sm">Jadwal Tindak Lanjut Klinis</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-fu-tag">JADWAL</span>
+                  </div>
+                  <div class="nh-fu-grid">
+                    <input type="date" id="nh-fu-date" class="nh-code-field nh-rx-in" title="Tanggal Kontrol Ulang" />
+                    <select id="nh-fu-priority" class="nh-code-field nh-rx-in">
+                      <option value="RUTIN_30_HARI">Kontrol Rutin (30 Hari)</option>
+                      <option value="KONTROL_7_HARI">Kontrol Cepat (7 Hari)</option>
+                      <option value="RUJUKAN_SEGERA">Rujukan Segera</option>
+                    </select>
+                  </div>
+                  <p class="nh-fu-helper">Atur tanggal kontrol ulang pasien dan tingkat prioritas tindak lanjut sebelum menyusun rekomendasi akhir.</p>
+                </article>
               </div>
-              <div class="nh-rx-presets" id="nh-care-presets">
-                <button type="button" class="nh-chip" data-care="Rujukan MRI Brain &amp; Evaluasi Neurologi Lanjutan">+ Rujukan MRI</button>
-                <button type="button" class="nh-chip" data-care="Pemeriksaan Kognitif Lanjutan (MoCA-Ina)">+ Tes MoCA</button>
-                <button type="button" class="nh-chip" data-care="Terapi Diet MIND &amp; Stimulasi Kognitif 30 Menit/Hari">+ Diet MIND</button>
+              <div class="nh-step-footer">
+                <button type="button" class="bento-pill-btn" data-nh-goto="3">← Kembali: Analisa</button>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-step4-next-btn">Simpan Obat &amp; Lanjut Rekomendasi →</button>
               </div>
-              <div class="nh-fu-grid">
-                <input type="date" id="nh-fu-date" class="nh-code-field nh-rx-in" title="Tanggal Kontrol Ulang" />
-                <select id="nh-fu-priority" class="nh-code-field nh-rx-in">
-                  <option value="RUTIN_30_HARI">Kontrol Rutin (30 Hari)</option>
-                  <option value="KONTROL_7_HARI">Kontrol Cepat (7 Hari)</option>
-                  <option value="RUJUKAN_SEGERA">Rujukan Segera</option>
-                </select>
-              </div>
-              <textarea id="nh-care-notes" class="nh-triage-notes" rows="2" placeholder="Rekomendasi penanganan penyakit &amp; instruksi tindak lanjut..."></textarea>
-              <div class="nh-triage-foot">
-                <span class="nh-wl-code" id="nh-fu-save-msg">Siap disimpan</span>
-                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-fu-save-btn">Simpan Tindak Lanjut</button>
-              </div>
-            </article>
+            </section>
 
-            <!-- Card 9 (12 cols): Inline Clinical Triage & Official Export -->
-            <article class="bento-card nh-card nh-span-12">
-              <div class="bento-card-header">
-                <div>
-                  <div class="nh-card-kicker">INLINE TRIAGE &amp; OFFICIAL EXPORT</div>
-                  <h2 class="bento-title-sm">Pengesahan Dokter &amp; Eksport Dokumen Resmi</h2>
-                </div>
-                <span class="bento-tag" id="nh-triage-status">READY</span>
+            <!-- STEP 05: REKOMENDASI & PENGESAHAN -->
+            <section class="nh-step-pane" data-nh-pane="5">
+              <div class="nh-bento-asymmetric">
+                <article class="bento-card nh-card nh-span-6">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">STEP 05 · CARE PLAN RECOMMENDATIONS</div>
+                      <h2 class="bento-title-sm">Rekomendasi Penanganan Penyakit</h2>
+                    </div>
+                    <span class="bento-tag">CARE PLAN</span>
+                  </div>
+                  <div class="nh-rx-presets" id="nh-care-presets">
+                    <button type="button" class="nh-chip" data-care="Rujukan MRI Brain &amp; Evaluasi Neurologi Lanjutan">+ Rujukan MRI</button>
+                    <button type="button" class="nh-chip" data-care="Pemeriksaan Kognitif Lanjutan (MoCA-Ina)">+ Tes MoCA</button>
+                    <button type="button" class="nh-chip" data-care="Terapi Diet MIND &amp; Stimulasi Kognitif 30 Menit/Hari">+ Diet MIND</button>
+                  </div>
+                  <textarea id="nh-care-notes" class="nh-triage-notes" rows="4" placeholder="Rekomendasi penanganan penyakit &amp; instruksi tindak lanjut untuk pasien/keluarga..."></textarea>
+                  <div class="nh-triage-foot">
+                    <span class="nh-wl-code" id="nh-fu-save-msg">Siap disimpan</span>
+                    <button type="button" class="bento-pill-btn" id="nh-fu-save-btn">Simpan Rekomendasi</button>
+                  </div>
+                </article>
+
+                <article class="bento-card nh-card nh-span-6">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">CLINICAL SIGN-OFF</div>
+                      <h2 class="bento-title-sm">Pengesahan Dokter Pemeriksa</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-triage-status">READY</span>
+                  </div>
+                  <div class="nh-triage-chips" id="nh-triage-chips">
+                    <button type="button" class="nh-chip active" data-triage="TERKONFIRMASI_KLINIS">Terkonfirmasi</button>
+                    <button type="button" class="nh-chip" data-triage="PERLU_RUJUKAN_LANJUTAN">Rujukan MRI</button>
+                    <button type="button" class="nh-chip" data-triage="PEMANTAUAN_BERKALA">Pantau</button>
+                  </div>
+                  <textarea id="nh-triage-notes" class="nh-triage-notes" rows="3"
+                    placeholder="Catatan klinis / kesimpulan dokter..."></textarea>
+                  <div class="nh-triage-foot">
+                    <span class="nh-wl-code" id="nh-triage-sig">SIG: —</span>
+                    <button type="button" class="bento-pill-btn" id="nh-triage-submit">Sahkan Validasi</button>
+                  </div>
+                </article>
               </div>
-              <div class="nh-triage-chips" id="nh-triage-chips">
-                <button type="button" class="nh-chip active" data-triage="TERKONFIRMASI_KLINIS">Terkonfirmasi</button>
-                <button type="button" class="nh-chip" data-triage="PERLU_RUJUKAN_LANJUTAN">Rujukan MRI</button>
-                <button type="button" class="nh-chip" data-triage="PEMANTAUAN_BERKALA">Pantau</button>
+              <div class="nh-step-footer">
+                <button type="button" class="bento-pill-btn" data-nh-goto="4">← Kembali: Tindak Lanjut</button>
+                <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-step5-next-btn">Sahkan &amp; Lihat Dokumen Resmi →</button>
               </div>
-              <textarea id="nh-triage-notes" class="nh-triage-notes" rows="2"
-                placeholder="Catatan klinis / terapi singkat..."></textarea>
-              <div class="nh-triage-foot">
-                <span class="nh-wl-code" id="nh-triage-sig">SIG: —</span>
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <button type="button" class="bento-pill-btn" id="nh-exp-pdf">Cetak PDF Resmi</button>
-                  <button type="button" class="bento-pill-btn" id="nh-exp-json">Unduh JSON HL7</button>
-                  <button type="button" class="bento-pill-btn" id="nh-exp-csv">Unduh CSV</button>
-                  <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-triage-submit">Sahkan Sekarang</button>
-                </div>
+            </section>
+
+            <!-- STEP 06: OUTPUT DOKUMEN RESMI, SIMPAN & CETAK -->
+            <section class="nh-step-pane" data-nh-pane="6">
+              <div class="nh-bento-asymmetric">
+                <article class="bento-card nh-card nh-span-12">
+                  <div class="bento-card-header">
+                    <div>
+                      <div class="nh-card-kicker">STEP 06 · OFFICIAL CLINICAL DOSSIER</div>
+                      <h2 class="bento-title-sm">Pratinjau Dokumen Resmi &amp; Eksport</h2>
+                    </div>
+                    <span class="bento-tag" id="nh-step6-save-msg">SIAP EKSPORT</span>
+                  </div>
+
+                  <div class="nh-official-preview" id="nh-official-preview">
+                    <div class="nh-preview-empty">Memuat pratinjau dokumen resmi pasien...</div>
+                  </div>
+
+                  <div class="nh-official-actions">
+                    <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-step6-save-btn">Simpan Dokumen Pasien</button>
+                    <button type="button" class="bento-pill-btn" id="nh-exp-pdf">Cetak Dokumen (PDF)</button>
+                    <button type="button" class="bento-pill-btn" id="nh-exp-json">Unduh JSON HL7</button>
+                    <button type="button" class="bento-pill-btn" id="nh-exp-csv">Unduh CSV</button>
+                    <button type="button" class="bento-pill-btn" id="nh-step6-switch-btn">Switch Dokumen/Pasien</button>
+                  </div>
+                </article>
               </div>
-            </article>
-          </section>
+              <div class="nh-step-footer">
+                <button type="button" class="bento-pill-btn" data-nh-goto="5">← Kembali: Rekomendasi</button>
+                <button type="button" class="bento-pill-btn" data-nh-goto="1">Kembali ke Awal (Step 01)</button>
+              </div>
+            </section>
+          </div>
 
           <!-- ROW 3: Clinical Ecosystem (3 Abstract Wireframe Bento Cards) -->
           <section class="hub-section">
