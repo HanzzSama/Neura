@@ -140,7 +140,6 @@
       renderSidebarWorklist();
       renderHistoryList();
       populateCodeDatalist();
-      renderScatterMatrix();
 
       if (!state.activeDoc && state.consultations.length > 0) {
         const firstCode = getDocCode(state.consultations[0]);
@@ -244,10 +243,7 @@
 
       renderActivePatientPreview(doc);
       renderBiomarkerViz(doc);
-      renderDomainRadar(doc);
-      syncSimulatorFromDoc(doc);
       syncInlineTriage(doc);
-      renderScatterMatrix();
       renderSidebarWorklist();
       if (openDossierAfter) openDrawer('documents');
     } catch (err) {
@@ -869,102 +865,12 @@
       }
     });
 
-    bindSimulatorAndTriage();
+    bindInlineTriage();
   }
 
   // ------------------------------------------------------------------------
-  // Interactive Domain Radar (5-Axis SVG), Simulator, Triage, Scatter, Compare
+  // Inline Clinical Triage & Command Palette
   // ------------------------------------------------------------------------
-
-  function renderDomainRadar(doc) {
-    const wrap = document.getElementById('nh-radar-wrap');
-    if (!wrap || !doc) return;
-    const s = getBiomarkerStats(doc);
-    const tag = document.getElementById('nh-radar-tag');
-    if (tag) tag.textContent = getDocCode(doc);
-
-    const clamp01 = (v) => Math.max(0.1, Math.min(1, v));
-    const axes = [
-      { label: 'MMSE', norm: clamp01(Number(s.mmse) / 30), raw: `${s.mmse}/30` },
-      { label: 'ADL', norm: clamp01(Number(s.adl) / 10), raw: `${s.adl}/10` },
-      { label: 'Vaskular', norm: clamp01(1 - Math.max(0, Number(s.sbp) - 110) / 110), raw: `${s.sbp} mmHg` },
-      { label: 'Lipid', norm: clamp01(1 - Math.max(0, Number(s.chol) - 150) / 300), raw: `${s.chol} mg/dL` },
-      { label: 'BMI', norm: clamp01(1 - Math.abs(Number(s.bmi) - 22) / 22), raw: `${s.bmi} kg/m²` }
-    ];
-
-    const cx = 110, cy = 100, R = 68;
-    const pt = (idx, ratio) => {
-      const ang = (-Math.PI / 2) + (idx * 2 * Math.PI / axes.length);
-      return [cx + Math.cos(ang) * R * ratio, cy + Math.sin(ang) * R * ratio];
-    };
-
-    const patientPts = axes.map((a, i) => pt(i, a.norm).map(n => n.toFixed(1)).join(',')).join(' ');
-    const targetPts = axes.map((_, i) => pt(i, 0.78).map(n => n.toFixed(1)).join(',')).join(' ');
-    const gridRings = [0.35, 0.65, 1].map(r => {
-      const p = axes.map((_, i) => pt(i, r).map(n => n.toFixed(1)).join(',')).join(' ');
-      return `<polygon points="${p}" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>`;
-    }).join('');
-    const spokes = axes.map((_, i) => {
-      const [x, y] = pt(i, 1);
-      return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>`;
-    }).join('');
-    const labels = axes.map((a, i) => {
-      const [lx, ly] = pt(i, 1.2);
-      const [dx, dy] = pt(i, a.norm);
-      return `
-        <text x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.65">${esc(a.label)}</text>
-        <circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="4" fill="#D97757" class="nh-radar-dot" data-tip="${esc(a.label)}: ${esc(a.raw)}" style="cursor:pointer"/>
-      `;
-    }).join('');
-
-    wrap.innerHTML = `
-      <svg class="nh-radar-svg" viewBox="0 0 220 205" style="color:var(--hub-text)">
-        ${gridRings}${spokes}
-        <polygon points="${targetPts}" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3" stroke-width="1.2"/>
-        <polygon points="${patientPts}" fill="#D97757" fill-opacity="0.18" stroke="#D97757" stroke-width="1.8"/>
-        ${labels}
-      </svg>
-      <div class="nh-radar-tip" id="nh-radar-tip">Arahkan kursor ke titik domain</div>
-    `;
-
-    const tip = document.getElementById('nh-radar-tip');
-    wrap.querySelectorAll('.nh-radar-dot').forEach(dot => {
-      dot.addEventListener('mouseenter', () => { if (tip) tip.textContent = dot.getAttribute('data-tip'); });
-      dot.addEventListener('mouseleave', () => { if (tip) tip.textContent = 'Arahkan kursor ke titik domain'; });
-    });
-  }
-
-  function syncSimulatorFromDoc(doc) {
-    if (!doc) return;
-    const s = getBiomarkerStats(doc);
-    const b = s.b32 || {};
-    const setRange = (id, valId, val) => {
-      const el = document.getElementById(id);
-      const vEl = document.getElementById(valId);
-      if (el && !isNaN(Number(val))) el.value = Number(val);
-      if (vEl && el) vEl.textContent = el.value;
-    };
-    setRange('nh-sim-mmse', 'nh-sim-mmse-val', s.mmse);
-    setRange('nh-sim-adl', 'nh-sim-adl-val', s.adl);
-    setRange('nh-sim-sbp', 'nh-sim-sbp-val', s.sbp);
-    const mem = document.getElementById('nh-sim-mem');
-    const dis = document.getElementById('nh-sim-dis');
-    if (mem) mem.checked = Number(b.MemoryComplaints || 0) === 1;
-    if (dis) dis.checked = Number(b.Disorientation || 0) === 1;
-    updateLocalSimEstimate();
-  }
-
-  function updateLocalSimEstimate() {
-    const mmse = Number(document.getElementById('nh-sim-mmse')?.value ?? 24);
-    const adl = Number(document.getElementById('nh-sim-adl')?.value ?? 7);
-    const sbp = Number(document.getElementById('nh-sim-sbp')?.value ?? 120);
-    const mem = document.getElementById('nh-sim-mem')?.checked ? 1 : 0;
-    const dis = document.getElementById('nh-sim-dis')?.checked ? 1 : 0;
-    let score = 12 + Math.max(0, 24 - mmse) * 2.6 + Math.max(0, 7 - adl) * 3.1 + Math.max(0, sbp - 130) * 0.22 + mem * 14 + dis * 16;
-    score = Math.max(3, Math.min(97, Math.round(score)));
-    const el = document.getElementById('nh-sim-score');
-    if (el) el.textContent = `${score}% (${score >= 60 ? 'Tinggi' : score >= 35 ? 'Sedang' : 'Rendah'})`;
-  }
 
   function syncInlineTriage(doc) {
     if (!doc) return;
@@ -978,93 +884,7 @@
     if (sig) sig.textContent = v.signature_hash ? `SIG: ${v.signature_hash}` : `KODE: ${getDocCode(doc)}`;
   }
 
-  function renderScatterMatrix() {
-    const wrap = document.getElementById('nh-scatter-wrap');
-    if (!wrap) return;
-    if (!state.consultations.length) {
-      wrap.innerHTML = '<div class="nh-preview-empty">Belum ada data pasien.</div>';
-      return;
-    }
-    const W = 760, H = 175, padL = 36, padR = 18, padT = 14, padB = 24;
-    const activeCode = state.activeDoc ? getDocCode(state.activeDoc) : '';
-    const dots = state.consultations.map(it => {
-      const s = getBiomarkerStats(it);
-      const age = Math.max(18, Math.min(95, Number(s.age) || 65));
-      const mmse = Math.max(0, Math.min(30, Number(s.mmse) || 24));
-      const x = padL + 8 + ((age - 18) / 77) * (W - padL - padR - 14);
-      const y = padT + (1 - mmse / 30) * (H - padT - padB);
-      const code = getDocCode(it);
-      const high = isDocHighRisk(it);
-      const fill = high ? '#dc2626' : (mmse < 24 ? '#d97706' : '#16a34a');
-      const isSel = code === activeCode;
-      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isSel ? 5.5 : 3.8}" fill="${fill}" fill-opacity="${isSel ? 1 : 0.78}" stroke="${isSel ? '#ffffff' : 'none'}" stroke-width="1.5" class="nh-scatter-dot" data-sc-code="${esc(code)}" data-sc-tip="${esc(getPatientName(it))} (${esc(code)}) · Usia ${age} · MMSE ${mmse}/30"/>`;
-    }).join('');
-    const y24 = (padT + (1 - 24 / 30) * (H - padT - padB)).toFixed(1);
-
-    wrap.innerHTML = `
-      <svg class="nh-scatter-svg" viewBox="0 0 ${W} ${H}">
-        <line x1="${padL}" y1="${y24}" x2="${W - padR}" y2="${y24}" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
-        <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.18"/>
-        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.18"/>
-        <text x="${padL + 4}" y="${H - 6}" font-size="10" fill="currentColor" opacity="0.5">18 thn</text>
-        <text x="${W - padR}" y="${H - 6}" text-anchor="end" font-size="10" fill="currentColor" opacity="0.5">95 thn</text>
-        <text x="6" y="${padT + 8}" font-size="10" fill="currentColor" opacity="0.5">30</text>
-        <text x="6" y="${Number(y24) + 3}" font-size="9" fill="currentColor" opacity="0.45">24</text>
-        <text x="10" y="${H - padB}" font-size="10" fill="currentColor" opacity="0.5">0</text>
-        ${dots}
-      </svg>
-      <div class="nh-scatter-tip" id="nh-scatter-tip">Klik titik mana saja untuk memuat dossier pasien</div>
-    `;
-    const tip = document.getElementById('nh-scatter-tip');
-    wrap.querySelectorAll('.nh-scatter-dot').forEach(dot => {
-      dot.addEventListener('mouseenter', () => { if (tip) tip.textContent = dot.getAttribute('data-sc-tip'); });
-      dot.addEventListener('click', () => selectPatientByCode(dot.getAttribute('data-sc-code'), false));
-    });
-  }
-
-  function bindSimulatorAndTriage() {
-    [['nh-sim-mmse', 'nh-sim-mmse-val'], ['nh-sim-adl', 'nh-sim-adl-val'], ['nh-sim-sbp', 'nh-sim-sbp-val']].forEach(([inId, vId]) => {
-      document.getElementById(inId)?.addEventListener('input', (e) => {
-        const vEl = document.getElementById(vId);
-        if (vEl) vEl.textContent = e.target.value;
-        updateLocalSimEstimate();
-      });
-    });
-    ['nh-sim-mem', 'nh-sim-dis'].forEach(id => document.getElementById(id)?.addEventListener('change', updateLocalSimEstimate));
-    document.getElementById('nh-sim-reset')?.addEventListener('click', () => syncSimulatorFromDoc(state.activeDoc));
-    document.getElementById('nh-sim-run')?.addEventListener('click', async () => {
-      const btn = document.getElementById('nh-sim-run');
-      const scoreEl = document.getElementById('nh-sim-score');
-      if (!btn || !scoreEl) return;
-      const base = (state.activeDoc && (state.activeDoc.all_32_biomarkers || state.activeDoc.raw_features)) || {};
-      const payload = {
-        ...base,
-        MMSE: Number(document.getElementById('nh-sim-mmse').value),
-        ADL: Number(document.getElementById('nh-sim-adl').value),
-        SystolicBP: Number(document.getElementById('nh-sim-sbp').value),
-        MemoryComplaints: document.getElementById('nh-sim-mem').checked ? 1 : 0,
-        Disorientation: document.getElementById('nh-sim-dis').checked ? 1 : 0
-      };
-      btn.disabled = true;
-      btn.textContent = 'Menguji...';
-      try {
-        const res = await fetch('/api/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const j = await res.json();
-        const prob = j.probability_positive ?? j.probability ?? j.risk_probability;
-        if (prob != null) {
-          const pct = Math.round(Number(prob) > 1 ? Number(prob) : Number(prob) * 100);
-          scoreEl.textContent = `${pct}% (${j.risk_level || (pct >= 50 ? 'High Risk' : 'Low Risk')})`;
-        }
-      } catch (_) {} finally {
-        btn.disabled = false;
-        btn.textContent = 'Uji /api/predict';
-      }
-    });
-
+  function bindInlineTriage() {
     document.querySelectorAll('#nh-triage-chips .nh-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('#nh-triage-chips .nh-chip').forEach(c => c.classList.remove('active'));
