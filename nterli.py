@@ -35,7 +35,14 @@ def cmd_serve(args):
     print("   CLI Engine:   Nterli CLI (Neura Clean Architecture)")
     print(f"   Environment:  http://{args.host}:{args.port}")
     print("=" * 65)
-    app.run(host=args.host, port=args.port, debug=args.debug, threaded=True)
+    try:
+        app.run(host=args.host, port=args.port, debug=args.debug, threaded=True)
+    except KeyboardInterrupt:
+        pass
+    print("\n" + "=" * 65)
+    print("🛑 Server Neura AI telah dihentikan secara aman.")
+    print("   Terima kasih telah menggunakan Neura AI Platform.")
+    print("=" * 65 + "\n")
 
 
 def cmd_migrate(args):
@@ -154,5 +161,11 @@ def main():
 if __name__ == "__main__":
     # Auto-activate / re-spawn into local virtualenv if invoked from global python
     if VENV_PY.exists() and Path(sys.executable).resolve() != VENV_PY.resolve():
-        sys.exit(subprocess.call([str(VENV_PY), str(PROJECT_ROOT / "nterli.py")] + sys.argv[1:]))
-    main()
+        try:
+            sys.exit(subprocess.call([str(VENV_PY), str(PROJECT_ROOT / "nterli.py")] + sys.argv[1:]))
+        except KeyboardInterrupt:
+            sys.exit(0)
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(0)

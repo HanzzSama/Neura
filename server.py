@@ -25,7 +25,10 @@ def get_app():
 if __name__ == "__main__":
     # Auto-activate / re-spawn into local virtualenv if invoked from global python
     if VENV_PY.exists() and Path(sys.executable).resolve() != VENV_PY.resolve():
-        sys.exit(subprocess.call([str(VENV_PY), str(PROJECT_ROOT / "server.py")] + sys.argv[1:]))
+        try:
+            sys.exit(subprocess.call([str(VENV_PY), str(PROJECT_ROOT / "server.py")] + sys.argv[1:]))
+        except KeyboardInterrupt:
+            sys.exit(0)
 
     app = get_app()
     print("\n" + "=" * 65)
@@ -33,6 +36,13 @@ if __name__ == "__main__":
     print("   Architecture: Neura Clean Modern Architecture")
     print("   Server URL:   http://localhost:5000")
     print("=" * 65 + "\n")
-    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
+    try:
+        app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
+    except KeyboardInterrupt:
+        pass
+    print("\n" + "=" * 65)
+    print("🛑 Server Neura AI telah dihentikan secara aman.")
+    print("   Terima kasih telah menggunakan Neura AI Platform.")
+    print("=" * 65 + "\n")
 else:
     app = get_app()
