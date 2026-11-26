@@ -3963,3 +3963,236 @@ button {
   border-color: var(--hub-accent);
   color: var(--hub-accent);
 }
+
+/* ── Admin Hub Nakes-Style Interactive Telemetry & Data/Stats Bento ── */
+.ah-bento-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ah-span-4 { grid-column: span 4; }
+.ah-span-6 { grid-column: span 6; }
+.ah-span-12 { grid-column: span 12; }
+
+.ah-card {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ah-card .bento-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ah-kicker {
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--hub-accent);
+  margin-bottom: 3px;
+}
+
+.ah-seg-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 7px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-subtle);
+  flex-shrink: 0;
+}
+
+.ah-seg-btn {
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--hub-text-muted);
+  cursor: pointer;
+}
+
+.ah-seg-btn.active {
+  background: var(--hub-bg);
+  color: var(--hub-text);
+  font-weight: 600;
+}
+
+.ah-radar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ah-radar-svg {
+  width: 100%;
+  max-width: 225px;
+  height: auto;
+}
+
+.ah-radar-tip,
+.ah-scatter-tip {
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+  color: var(--hub-text-muted);
+  min-height: 16px;
+}
+
+.ah-status-pill {
+  font-family: var(--hub-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--hub-border);
+}
+
+.ah-status-pill.is-active {
+  color: #16a34a;
+  border-color: rgba(22, 163, 74, 0.35);
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.ah-status-pill.is-inactive {
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.ah-qr-url-box {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ah-mono-field {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-bg-subtle);
+  color: var(--hub-text);
+  font-family: var(--hub-font-mono);
+  font-size: 11.5px;
+  outline: none;
+}
+
+.ah-mono-field:focus {
+  border-color: var(--hub-accent);
+}
+
+.ah-qr-actions,
+.ah-quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ah-lookup-preview {
+  border-top: 1px solid var(--hub-border);
+  padding-top: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--hub-text-muted);
+}
+
+.ah-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ah-legend-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--hub-text-muted);
+}
+
+.ah-legend-dot i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ah-scatter-svg {
+  width: 100%;
+  height: 165px;
+  display: block;
+}
+
+.ah-scatter-dot {
+  cursor: pointer;
+}
+
+.ah-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ah-bar-row {
+  display: grid;
+  grid-template-columns: 145px 1fr 78px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.ah-bar-lbl {
+  color: var(--hub-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ah-bar-track {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--hub-bg-subtle);
+  border: 1px solid var(--hub-border);
+  overflow: hidden;
+}
+
+.ah-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--hub-accent);
+}
+
+.ah-bar-val {
+  font-family: var(--hub-font-mono);
+  font-size: 11px;
+  text-align: right;
+  color: var(--hub-text);
+}
+
+.ah-fi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+}
+
+@media (max-width: 980px) {
+  .ah-bento-12,
+  .ah-fi-grid {
+    grid-template-columns: 1fr;
+  }
+  .ah-span-4,
+  .ah-span-6,
+  .ah-span-12 {
+    grid-column: span 1;
+  }
+}

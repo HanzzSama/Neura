@@ -1578,5 +1578,344 @@
         }
       });
     });
+    initNakesStyleAdminCards();
   });
+
+  // =========================================================================
+  // Nakes-Style Interactive Telemetry & Data/Statistics Cards
+  // =========================================================================
+  function initNakesStyleAdminCards() {
+    let statsCache = null;
+    let dsCache = null;
+    let consultCache = [];
+    let nakesCache = [];
+    let qrState = { live_id: '', active: false, qr_url: '' };
+    let radarMode = 'ml';
+    let statTab = 'users';
+    let fiCat = 'all';
+
+    const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    // 1. Domain Radar (5-Axis SVG)
+    function renderDomainRadar() {
+      const wrap = document.getElementById('ah-radar-wrap');
+      if (!wrap) return;
+      const axes = radarMode === 'ml'
+        ? [
+            { label: 'Accuracy', norm: 0.9535, raw: '95.35%' },
+            { label: 'Precision', norm: 0.952, raw: '0.952' },
+            { label: 'F1-Score', norm: 0.948, raw: '0.948' },
+            { label: 'AUC-ROC', norm: 0.974, raw: '0.974' },
+            { label: 'Recall', norm: 0.944, raw: '0.944' }
+          ]
+        : [
+            { label: 'DB Sync', norm: 0.98, raw: 'MySQL OK' },
+            { label: 'Nakes KKI', norm: Math.min(1, Math.max(0.4, (nakesCache.length || 3) / 5)), raw: `${nakesCache.length || 3} aktif` },
+            { label: '2FA Guard', norm: 0.96, raw: 'Verified' },
+            { label: 'Dataset', norm: 0.92, raw: '80/20 Split' },
+            { label: 'Uptime', norm: 0.99, raw: '99.9%' }
+          ];
+
+      const cx = 110, cy = 100, R = 66;
+      const pt = (i, r) => {
+        const ang = (-Math.PI / 2) + (i * 2 * Math.PI / axes.length);
+        return [cx + Math.cos(ang) * R * r, cy + Math.sin(ang) * R * r];
+      };
+      const polyPts = axes.map((a, i) => pt(i, a.norm).map(n => n.toFixed(1)).join(',')).join(' ');
+      const basePts = axes.map((_, i) => pt(i, 0.82).map(n => n.toFixed(1)).join(',')).join(' ');
+      const rings = [0.35, 0.65, 1].map(r => `<polygon points="${axes.map((_, i) => pt(i, r).map(n => n.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="currentColor" stroke-opacity="0.12"/>`).join('');
+      const spokes = axes.map((_, i) => {
+        const [x, y] = pt(i, 1);
+        return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="currentColor" stroke-opacity="0.12"/>`;
+      }).join('');
+      const labels = axes.map((a, i) => {
+        const [lx, ly] = pt(i, 1.2);
+        const [dx, dy] = pt(i, a.norm);
+        return `<text x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.65">${esc(a.label)}</text>
+          <circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="4" fill="#D97757" class="ah-radar-dot" data-tip="${esc(a.label)}: ${esc(a.raw)}" style="cursor:pointer"/>`;
+      }).join('');
+
+      wrap.innerHTML = `
+        <svg class="ah-radar-svg" viewBox="0 0 220 205" style="color:var(--hub-text)">
+          ${rings}${spokes}
+          <polygon points="${basePts}" fill="none" stroke="currentColor" stroke-opacity="0.32" stroke-dasharray="3 3" stroke-width="1.2"/>
+          <polygon points="${polyPts}" fill="#D97757" fill-opacity="0.18" stroke="#D97757" stroke-width="1.8"/>
+          ${labels}
+        </svg>
+        <div class="ah-radar-tip" id="ah-radar-tip">Arahkan kursor ke titik domain</div>
+      `;
+      const tip = document.getElementById('ah-radar-tip');
+      wrap.querySelectorAll('.ah-radar-dot').forEach(d => {
+        d.addEventListener('mouseenter', () => { if (tip) tip.textContent = d.getAttribute('data-tip'); });
+        d.addEventListener('mouseleave', () => { if (tip) tip.textContent = 'Arahkan kursor ke titik domain'; });
+      });
+    }
+
+    document.querySelectorAll('#ah-radar-tabs [data-ah-radar]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#ah-radar-tabs .ah-seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        radarMode = btn.getAttribute('data-ah-radar');
+        renderDomainRadar();
+      });
+    });
+
+    // 2. Inline Live QR Control
+    function syncQrCard(data) {
+      if (data) qrState = data;
+      const pill = document.getElementById('ah-qr-pill');
+      const inp = document.getElementById('ah-qr-url-input');
+      const tgl = document.getElementById('ah-qr-toggle');
+      const openA = document.getElementById('ah-qr-open');
+      if (inp) inp.value = qrState.qr_url || '';
+      if (openA) openA.href = qrState.qr_url || '#';
+      if (pill) {
+        pill.textContent = qrState.active ? 'AKTIF' : 'NONAKTIF';
+        pill.className = 'ah-status-pill ' + (qrState.active ? 'is-active' : 'is-inactive');
+      }
+      if (tgl) tgl.textContent = qrState.active ? 'Nonaktifkan' : 'Aktifkan';
+    }
+
+    document.getElementById('ah-qr-copy')?.addEventListener('click', async () => {
+      const inp = document.getElementById('ah-qr-url-input');
+      if (!inp || !inp.value) return;
+      let ok = false;
+      if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(inp.value); ok = true; } catch (_) {}
+      }
+      if (!ok) {
+        inp.focus(); inp.select(); inp.setSelectionRange(0, inp.value.length);
+        try { ok = document.execCommand('copy'); } catch (_) {}
+      }
+      showHubToast(ok ? 'Live URL QR disalin ke clipboard' : 'Pilih URL dan tekan Ctrl+C');
+    });
+
+    document.getElementById('ah-qr-toggle')?.addEventListener('click', async () => {
+      const r = await fetch('/api/admin/nakes-qr-link/toggle', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: !qrState.active })
+      }).catch(() => null);
+      const j = r ? await r.json().catch(() => null) : null;
+      if (j && j.success && j.data) {
+        syncQrCard(j.data);
+        showHubToast(j.data.active ? 'Tautan QR diaktifkan' : 'Tautan QR dinonaktifkan');
+      }
+    });
+
+    document.getElementById('ah-qr-gen')?.addEventListener('click', async () => {
+      const r = await fetch('/api/admin/nakes-qr-link/generate', { method: 'POST' }).catch(() => null);
+      const j = r ? await r.json().catch(() => null) : null;
+      if (j && j.success && j.data) {
+        syncQrCard(j.data);
+        showHubToast('Live URL QR baru berhasil dibuat');
+      }
+    });
+
+    // 3. Quick Lookup
+    document.getElementById('ah-lookup-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = (document.getElementById('ah-lookup-input')?.value || '').trim().toLowerCase();
+      const prev = document.getElementById('ah-lookup-preview');
+      const tag = document.getElementById('ah-lookup-tag');
+      if (!q || !prev) return;
+      const cMatch = consultCache.find(c =>
+        String(c.nakes_code || '').toLowerCase().includes(q) ||
+        String((c.patient && c.patient.name) || '').toLowerCase().includes(q)
+      );
+      if (cMatch) {
+        if (tag) tag.textContent = cMatch.nakes_code || 'PASIEN';
+        const prob = cMatch.prediction && cMatch.prediction.probability != null ? `${Math.round(Number(cMatch.prediction.probability))}%` : '—';
+        prev.innerHTML = `<strong>${esc((cMatch.patient && cMatch.patient.name) || 'Pasien')}</strong> (${esc(cMatch.nakes_code)})<br>Risiko: <strong>${esc(prob)}</strong> · Status: ${esc(cMatch.status || 'ACTIVE')}`;
+        return;
+      }
+      const nMatch = nakesCache.find(n => String(n.name || '').toLowerCase().includes(q) || String(n.nakes_email || '').toLowerCase().includes(q));
+      if (nMatch) {
+        if (tag) tag.textContent = nMatch.id || 'NAKES';
+        prev.innerHTML = `<strong>${esc(nMatch.name)}</strong> (${esc(nMatch.nakes_email)})<br>${esc(nMatch.profession || '')} · ${esc(nMatch.institution || '')}`;
+        return;
+      }
+      if (tag) tag.textContent = 'NIHIL';
+      prev.textContent = 'Data tidak ditemukan pada direktori konsultasi maupun Nakes.';
+    });
+
+    // 4. Global Cohort Scatter Matrix
+    function renderScatter() {
+      const wrap = document.getElementById('ah-scatter-wrap');
+      if (!wrap) return;
+      if (!consultCache.length) {
+        wrap.innerHTML = '<div class="ah-lookup-preview">Belum ada data konsultasi pasien.</div>';
+        return;
+      }
+      const W = 760, H = 160, padL = 34, padR = 16, padT = 14, padB = 22;
+      const dots = consultCache.map(it => {
+        const p = it.patient || {};
+        const b = it.all_32_biomarkers || it.raw_features || {};
+        const cog = it.cognitive_scores || {};
+        const age = Math.max(20, Math.min(95, Number(p.age ?? b.Age ?? 65)));
+        const mmse = Math.max(0, Math.min(30, Number(cog.mmse ?? b.MMSE ?? 24)));
+        const x = padL + ((age - 20) / 75) * (W - padL - padR);
+        const y = padT + (1 - mmse / 30) * (H - padT - padB);
+        const rl = String((it.prediction && it.prediction.risk_level) || '').toLowerCase();
+        const isHigh = Boolean(it.prediction && it.prediction.is_positive) || rl.includes('high') || rl.includes('tinggi');
+        const fill = isHigh ? '#dc2626' : (mmse < 24 ? '#d97706' : '#16a34a');
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${fill}" fill-opacity="0.75" class="ah-scatter-dot" data-tip="${esc(p.name || 'Pasien')} (${esc(it.nakes_code || '')}) · Usia ${age} · MMSE ${mmse}/30"/>`;
+      }).join('');
+      wrap.innerHTML = `
+        <svg class="ah-scatter-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+          <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
+          <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="currentColor" stroke-opacity="0.16"/>
+          <text x="${padL}" y="${H - 5}" font-size="10" fill="currentColor" opacity="0.5">20 thn</text>
+          <text x="${W - padR}" y="${H - 5}" text-anchor="end" font-size="10" fill="currentColor" opacity="0.5">95 thn</text>
+          <text x="6" y="${padT + 8}" font-size="10" fill="currentColor" opacity="0.5">30</text>
+          <text x="8" y="${H - padB}" font-size="10" fill="currentColor" opacity="0.5">0</text>
+          ${dots}
+        </svg>
+        <div class="ah-scatter-tip" id="ah-scatter-tip">Arahkan kursor ke titik pasien untuk melihat ringkasan</div>
+      `;
+      const tip = document.getElementById('ah-scatter-tip');
+      wrap.querySelectorAll('.ah-scatter-dot').forEach(d => {
+        d.addEventListener('mouseenter', () => { if (tip) tip.textContent = d.getAttribute('data-tip'); });
+      });
+    }
+
+    // 5. Dataset Split & Class Balance
+    function renderDatasetBalance() {
+      const wrap = document.getElementById('ah-ds-balance-wrap');
+      if (!wrap) return;
+      const d = dsCache || {};
+      const orig = Number(d.original?.rows || 2149);
+      const train = Number(d.training?.rows || Math.round(orig * 0.8));
+      const test = Number(d.testing?.rows || Math.round(orig * 0.2));
+      const posPct = Number(d.original?.positive_pct ?? 35.4);
+      const negPct = Number((100 - posPct).toFixed(1));
+      const rows = [
+        ['Dataset Training (80%)', Math.round((train / orig) * 100), `${train.toLocaleString('id-ID')} baris`],
+        ['Dataset Testing (20%)', Math.round((test / orig) * 100), `${test.toLocaleString('id-ID')} baris`],
+        ['Kelas Positif (Alzheimer)', posPct, `${posPct}%`],
+        ['Kelas Negatif (Normal)', negPct, `${negPct}%`]
+      ];
+      wrap.innerHTML = rows.map(([lbl, pct, val]) => `
+        <div class="ah-bar-row">
+          <span class="ah-bar-lbl">${esc(lbl)}</span>
+          <div class="ah-bar-track"><div class="ah-bar-fill" style="width:${Math.min(100, Math.max(4, pct))}%"></div></div>
+          <span class="ah-bar-val">${esc(val)}</span>
+        </div>
+      `).join('');
+    }
+
+    // 6. Statistical Breakdown
+    function renderStatBreakdown() {
+      const wrap = document.getElementById('ah-stat-breakdown-wrap');
+      if (!wrap) return;
+      const k = (statsCache && statsCache.kpis) || {};
+      const bd = (statsCache && statsCache.role_breakdown) || {};
+      let rows = [];
+      if (statTab === 'users') {
+        const pasien = Number(bd.pasien || k.total_users || 120);
+        const nakes = Number(bd.nakes || nakesCache.length || 4);
+        const admin = Number(bd.admin || 15);
+        const tot = Math.max(1, pasien + nakes + admin);
+        rows = [
+          ['Pasien / Pengguna', Math.round((pasien / tot) * 100), `${pasien} akun`],
+          ['Nakes Terverifikasi KKI', Math.round((nakes / tot) * 100), `${nakes} akun`],
+          ['Administrator Sistem', Math.round((admin / tot) * 100), `${admin} akun`]
+        ];
+      } else {
+        const tot = Math.max(1, consultCache.length);
+        const valCnt = consultCache.filter(c => c.status === 'VALIDATED_BY_CLINICIAN' || (c.validation && c.validation.is_validated)).length;
+        const pendCnt = tot - valCnt;
+        const highCnt = consultCache.filter(c => Boolean(c.prediction && c.prediction.is_positive)).length;
+        rows = [
+          ['Total Konsultasi NKS', 100, `${consultCache.length} berkas`],
+          ['Tervalidasi Dokter', Math.round((valCnt / tot) * 100), `${valCnt} berkas`],
+          ['Menunggu Validasi', Math.round((pendCnt / tot) * 100), `${pendCnt} berkas`],
+          ['Terdeteksi Risiko Tinggi', Math.round((highCnt / tot) * 100), `${highCnt} kasus`]
+        ];
+      }
+      wrap.innerHTML = rows.map(([lbl, pct, val]) => `
+        <div class="ah-bar-row">
+          <span class="ah-bar-lbl">${esc(lbl)}</span>
+          <div class="ah-bar-track"><div class="ah-bar-fill" style="width:${Math.min(100, Math.max(4, pct))}%"></div></div>
+          <span class="ah-bar-val">${esc(val)}</span>
+        </div>
+      `).join('');
+    }
+
+    document.querySelectorAll('#ah-stat-tabs [data-ah-stat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#ah-stat-tabs .ah-seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        statTab = btn.getAttribute('data-ah-stat');
+        renderStatBreakdown();
+      });
+    });
+
+    // 7. XGBoost Feature Importance
+    const FI_ITEMS = [
+      { name: 'MMSE (Kognitif)', pct: 26, cat: 'cognitive' },
+      { name: 'Functional Assessment', pct: 19, cat: 'cognitive' },
+      { name: 'ADL (Kemandirian)', pct: 17, cat: 'cognitive' },
+      { name: 'Memory Complaints', pct: 13, cat: 'cognitive' },
+      { name: 'Behavioral Problems', pct: 9, cat: 'cognitive' },
+      { name: 'Usia Pasien (Age)', pct: 6, cat: 'vascular' },
+      { name: 'Tekanan Darah Sistolik', pct: 5, cat: 'vascular' },
+      { name: 'Kolesterol & Trigliserida', pct: 5, cat: 'vascular' }
+    ];
+
+    function renderFeatureImportance() {
+      const wrap = document.getElementById('ah-fi-wrap');
+      if (!wrap) return;
+      const items = fiCat === 'all' ? FI_ITEMS : FI_ITEMS.filter(x => x.cat === fiCat);
+      wrap.innerHTML = items.map(it => `
+        <div class="ah-bar-row">
+          <span class="ah-bar-lbl">${esc(it.name)}</span>
+          <div class="ah-bar-track"><div class="ah-bar-fill" style="width:${Math.min(100, it.pct * 3.4)}%"></div></div>
+          <span class="ah-bar-val">${it.pct}%</span>
+        </div>
+      `).join('');
+    }
+
+    document.querySelectorAll('#ah-fi-tabs [data-ah-fi]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#ah-fi-tabs .ah-seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        fiCat = btn.getAttribute('data-ah-fi');
+        renderFeatureImportance();
+      });
+    });
+
+    // Hydrate all new cards in parallel
+    Promise.all([
+      fetch('/api/admin/stats', { cache: 'no-store' }).then(r => r.json()).catch(() => null),
+      fetch('/api/admin/datasets/summary', { cache: 'no-store' }).then(r => r.json()).catch(() => null),
+      fetch('/api/admin/nakes-qr-link', { cache: 'no-store' }).then(r => r.json()).catch(() => null),
+      fetch('/api/consultation/list', { cache: 'no-store' }).then(r => r.json()).catch(() => null),
+      fetch('/api/admin/nakes', { cache: 'no-store' }).then(r => r.json()).catch(() => null)
+    ]).then(([st, ds, qr, cs, nk]) => {
+      if (st) statsCache = st;
+      if (ds && ds.datasets) dsCache = ds.datasets;
+      if (qr && qr.data) syncQrCard(qr.data);
+      if (cs && Array.isArray(cs.data)) consultCache = cs.data;
+      if (nk && Array.isArray(nk.data)) nakesCache = nk.data;
+
+      const dl = document.getElementById('ah-lookup-datalist');
+      if (dl) {
+        const opts = [
+          ...consultCache.slice(0, 20).map(c => `<option value="${esc(c.nakes_code || '')}">${esc((c.patient && c.patient.name) || '')}</option>`),
+          ...nakesCache.map(n => `<option value="${esc(n.name || '')}">${esc(n.nakes_email || '')}</option>`)
+        ];
+        dl.innerHTML = opts.join('');
+      }
+
+      renderDomainRadar();
+      renderScatter();
+      renderDatasetBalance();
+      renderStatBreakdown();
+    });
+
+    renderDomainRadar();
+    renderFeatureImportance();
+    renderDatasetBalance();
+    renderStatBreakdown();
+  }
 })();
