@@ -147,32 +147,43 @@ def _build_consultation_document(patient_input=None, mode="", override_suffix=No
         "Forgetfulness": int(patient_data.get("Forgetfulness", 0)),
     }
 
-    # Format kelompok biomarker
+    # Format kelompok biomarker lengkap dengan nama, rentang normal, dan status klinis
+    sbp = all_32_biomarkers["SystolicBP"]
+    dbp = all_32_biomarkers["DiastolicBP"]
+    chol_tot = all_32_biomarkers["CholesterolTotal"]
+    chol_ldl = all_32_biomarkers["CholesterolLDL"]
+    chol_hdl = all_32_biomarkers["CholesterolHDL"]
+    chol_trig = all_32_biomarkers["CholesterolTriglycerides"]
+    bmi_val = all_32_biomarkers["BMI"]
+    mmse_val = all_32_biomarkers["MMSE"]
+    adl_val = all_32_biomarkers["ADL"]
+    func_val = all_32_biomarkers["FunctionalAssessment"]
+
     breakdown = [
         {
             "category": "Demografi & Fisik",
             "items": [
-                {"label": "Usia", "value": f"{all_32_biomarkers['Age']} tahun"},
-                {"label": "Jenis Kelamin", "value": all_32_biomarkers["Gender"]},
-                {"label": "Indeks Massa Tubuh (BMI)", "value": f"{all_32_biomarkers['BMI']} kg/m²"},
-                {"label": "Tingkat Pendidikan", "value": f"Level {all_32_biomarkers['EducationLevel']}"},
+                {"name": "Usia", "label": "Usia", "value": f"{all_32_biomarkers['Age']} tahun", "normal": "18 - 100 thn", "status": "Normal"},
+                {"name": "Jenis Kelamin", "label": "Jenis Kelamin", "value": all_32_biomarkers["Gender"], "normal": "—", "status": "Normal"},
+                {"name": "Indeks Massa Tubuh (BMI)", "label": "Indeks Massa Tubuh (BMI)", "value": f"{bmi_val} kg/m²", "normal": "18.5 - 24.9 kg/m²", "status": "Tinggi" if bmi_val >= 30 else ("Waspada" if bmi_val >= 25 or bmi_val < 18.5 else "Normal")},
+                {"name": "Tingkat Pendidikan", "label": "Tingkat Pendidikan", "value": f"Level {all_32_biomarkers['EducationLevel']}", "normal": "Level 0 - 3", "status": "Normal"},
             ]
         },
         {
             "category": "Kognitif & Fungsional",
             "items": [
-                {"label": "Mini-Mental State Exam (MMSE)", "value": f"{all_32_biomarkers['MMSE']} / 30"},
-                {"label": "Activities of Daily Living (ADL)", "value": f"{all_32_biomarkers['ADL']} / 10"},
-                {"label": "Functional Assessment", "value": f"{all_32_biomarkers['FunctionalAssessment']} / 10"},
+                {"name": "Mini-Mental State Exam (MMSE)", "label": "Mini-Mental State Exam (MMSE)", "value": f"{mmse_val} / 30", "normal": "24 - 30", "status": "Defisit" if mmse_val < 20 else ("Waspada" if mmse_val < 24 else "Normal")},
+                {"name": "Activities of Daily Living (ADL)", "label": "Activities of Daily Living (ADL)", "value": f"{adl_val} / 10", "normal": "6 - 10", "status": "Waspada" if adl_val < 6 else "Normal"},
+                {"name": "Functional Assessment", "label": "Functional Assessment", "value": f"{func_val} / 10", "normal": "6 - 10", "status": "Waspada" if func_val < 6 else "Normal"},
             ]
         },
         {
             "category": "Vaskular & Lipid",
             "items": [
-                {"label": "Tekanan Darah", "value": f"{all_32_biomarkers['SystolicBP']}/{all_32_biomarkers['DiastolicBP']} mmHg"},
-                {"label": "Kolesterol Total", "value": f"{all_32_biomarkers['CholesterolTotal']} mg/dL"},
-                {"label": "LDL / HDL", "value": f"{all_32_biomarkers['CholesterolLDL']} / {all_32_biomarkers['CholesterolHDL']} mg/dL"},
-                {"label": "Trigliserida", "value": f"{all_32_biomarkers['CholesterolTriglycerides']} mg/dL"},
+                {"name": "Tekanan Darah", "label": "Tekanan Darah", "value": f"{sbp}/{dbp} mmHg", "normal": "90/60 - 120/80 mmHg", "status": "Tinggi" if sbp >= 140 or dbp >= 90 else ("Waspada" if sbp >= 130 or dbp >= 85 else "Normal")},
+                {"name": "Kolesterol Total", "label": "Kolesterol Total", "value": f"{chol_tot} mg/dL", "normal": "< 200 mg/dL", "status": "Tinggi" if chol_tot >= 240 else ("Waspada" if chol_tot >= 200 else "Normal")},
+                {"name": "LDL / HDL", "label": "LDL / HDL", "value": f"{chol_ldl} / {chol_hdl} mg/dL", "normal": "LDL < 100 · HDL ≥ 40", "status": "Tinggi" if chol_ldl >= 160 else ("Waspada" if chol_ldl >= 130 or chol_hdl < 40 else "Normal")},
+                {"name": "Trigliserida", "label": "Trigliserida", "value": f"{chol_trig} mg/dL", "normal": "< 150 mg/dL", "status": "Tinggi" if chol_trig >= 200 else ("Waspada" if chol_trig >= 150 else "Normal")},
             ]
         }
     ]
@@ -198,7 +209,15 @@ def _build_consultation_document(patient_input=None, mode="", override_suffix=No
             "id": str(pid),
             "age": all_32_biomarkers["Age"],
             "gender": all_32_biomarkers["Gender"],
+            "bmi": all_32_biomarkers["BMI"],
+            "systolic_bp": all_32_biomarkers["SystolicBP"],
+            "diastolic_bp": all_32_biomarkers["DiastolicBP"],
             "source": source
+        },
+        "cognitive_scores": {
+            "mmse": all_32_biomarkers["MMSE"],
+            "adl": all_32_biomarkers["ADL"],
+            "functional_assessment": all_32_biomarkers["FunctionalAssessment"],
         },
         "prediction": {
             "model_name": "XGBoost 3.x (25 Trees • 10-Fold CV RapidMiner)",

@@ -6294,12 +6294,36 @@ window.renderNakesPatientPrediction = renderNakesPatientPrediction;
 
 function renderNakesDetailedDossier(doc) {
   const p = doc.patient || {};
+  const b32 = doc.all_32_biomarkers || doc.raw_features || {};
   const pred = doc.prediction || {};
   const cog = doc.cognitive_scores || {};
   const v = doc.validation || {};
   const isValidated = doc.status === 'VALIDATED_BY_CLINICIAN' || v.is_validated;
   const nakesCode = doc.nakes_code || doc.doc_id;
   const cardId = 'dossier_' + Date.now();
+
+  const dispAge = p.age ?? b32.Age ?? '—';
+  const dispGender = p.gender ?? b32.Gender ?? '—';
+  const dispBmi = p.bmi ?? b32.BMI ?? '—';
+  const dispSbp = p.systolic_bp ?? b32.SystolicBP ?? '—';
+  const dispDbp = p.diastolic_bp ?? b32.DiastolicBP ?? '—';
+  const dispMmse = cog.mmse ?? b32.MMSE ?? '—';
+  const dispAdl = cog.adl ?? b32.ADL ?? '—';
+
+  const NORMAL_RANGE_MAP = {
+    'Usia': '18 - 100 thn',
+    'Jenis Kelamin': '—',
+    'Indeks Massa Tubuh (BMI)': '18.5 - 24.9 kg/m²',
+    'Tingkat Pendidikan': 'Level 0 - 3',
+    'Mini-Mental State Exam (MMSE)': '24 - 30',
+    'Skor MMSE': '24 - 30',
+    'Activities of Daily Living (ADL)': '6 - 10',
+    'Functional Assessment': '6 - 10',
+    'Tekanan Darah': '90/60 - 120/80 mmHg',
+    'Kolesterol Total': '< 200 mg/dL',
+    'LDL / HDL': 'LDL < 100 · HDL ≥ 40',
+    'Trigliserida': '< 150 mg/dL'
+  };
 
   let biomarkerRows = '';
   if (doc.biomarkers_breakdown && Array.isArray(doc.biomarkers_breakdown)) {
@@ -6311,23 +6335,51 @@ function renderNakesDetailedDossier(doc) {
       `;
       if (cat.items && Array.isArray(cat.items)) {
         cat.items.forEach(it => {
+          const itemName = it.name || it.label || 'Biomarker';
+          const normalRange = it.normal || NORMAL_RANGE_MAP[itemName] || '—';
           let devClass = 'normal';
-          let devText = 'Normal';
+          let devText = it.status || 'Normal';
           const valStr = String(it.value || '').toLowerCase();
-          if (valStr.includes('ada') || valStr.includes('perokok') || (it.name === 'Skor MMSE' && parseInt(it.value) < 24)) {
-            devClass = 'warning';
-            devText = 'Waspada';
-          }
-          if (it.name === 'Skor MMSE' && parseInt(it.value) < 20) {
-            devClass = 'critical';
-            devText = 'Defisit';
+          const numVal = parseFloat(String(it.value || ''));
+
+          if (it.status) {
+            if (it.status === 'Defisit' || it.status === 'Tinggi') devClass = 'critical';
+            else if (it.status === 'Waspada') devClass = 'warning';
+          } else {
+            if (valStr.includes('ada') || valStr.includes('perokok')) {
+              devClass = 'warning'; devText = 'Waspada';
+            } else if (itemName.includes('MMSE') && !isNaN(numVal)) {
+              if (numVal < 20) { devClass = 'critical'; devText = 'Defisit'; }
+              else if (numVal < 24) { devClass = 'warning'; devText = 'Waspada'; }
+            } else if ((itemName.includes('ADL') || itemName.includes('Functional')) && !isNaN(numVal) && numVal < 6) {
+              devClass = 'warning'; devText = 'Waspada';
+            } else if (itemName.includes('BMI') && !isNaN(numVal)) {
+              if (numVal >= 30) { devClass = 'critical'; devText = 'Tinggi'; }
+              else if (numVal >= 25 || numVal < 18.5) { devClass = 'warning'; devText = 'Waspada'; }
+            } else if (itemName === 'Tekanan Darah') {
+              const bpParts = String(it.value || '').split('/');
+              const sbpV = parseFloat(bpParts[0]), dbpV = parseFloat(bpParts[1]);
+              if (sbpV >= 140 || dbpV >= 90) { devClass = 'critical'; devText = 'Tinggi'; }
+              else if (sbpV >= 130 || dbpV >= 85) { devClass = 'warning'; devText = 'Waspada'; }
+            } else if (itemName === 'Kolesterol Total' && !isNaN(numVal)) {
+              if (numVal >= 240) { devClass = 'critical'; devText = 'Tinggi'; }
+              else if (numVal >= 200) { devClass = 'warning'; devText = 'Waspada'; }
+            } else if (itemName === 'LDL / HDL') {
+              const lp = String(it.value || '').split('/');
+              const ldlV = parseFloat(lp[0]), hdlV = parseFloat(lp[1]);
+              if (ldlV >= 160) { devClass = 'critical'; devText = 'Tinggi'; }
+              else if (ldlV >= 130 || hdlV < 40) { devClass = 'warning'; devText = 'Waspada'; }
+            } else if (itemName === 'Trigliserida' && !isNaN(numVal)) {
+              if (numVal >= 200) { devClass = 'critical'; devText = 'Tinggi'; }
+              else if (numVal >= 150) { devClass = 'warning'; devText = 'Waspada'; }
+            }
           }
           biomarkerRows += `
             <tr>
-              <td><strong>${escapeHtml(it.name)}</strong></td>
+              <td><strong>${escapeHtml(itemName)}</strong></td>
               <td style="font-family:'JetBrains Mono',monospace">${escapeHtml(it.value)}</td>
-              <td style="color:var(--text-muted);font-size:11.5px">${escapeHtml(it.normal || '—')}</td>
-              <td><span class="biomarker-dev-tag ${devClass}">${devText}</span></td>
+              <td style="color:var(--text-muted);font-size:11.5px">${escapeHtml(normalRange)}</td>
+              <td><span class="biomarker-dev-tag ${devClass}">${escapeHtml(devText)}</span></td>
             </tr>
           `;
         });
@@ -6394,11 +6446,11 @@ function renderNakesDetailedDossier(doc) {
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;font-size:12px;margin-bottom:14px">
         <div><span style="color:var(--text-muted)">Pasien:</span> <strong>${escapeHtml(p.name || '—')}</strong></div>
-        <div><span style="color:var(--text-muted)">Usia/JK:</span> <strong>${p.age || '—'} Thn / ${escapeHtml(p.gender || '—')}</strong></div>
-        <div><span style="color:var(--text-muted)">BMI:</span> <strong>${p.bmi || '—'} kg/m²</strong></div>
-        <div><span style="color:var(--text-muted)">TD:</span> <strong>${p.systolic_bp || 120}/${p.diastolic_bp || 80} mmHg</strong></div>
-        <div><span style="color:var(--text-muted)">Skor MMSE:</span> <strong>${cog.mmse ?? 24} / 30</strong></div>
-        <div><span style="color:var(--text-muted)">Kemandirian ADL:</span> <strong>${cog.adl ?? 7} / 10</strong></div>
+        <div><span style="color:var(--text-muted)">Usia/JK:</span> <strong>${dispAge} Thn / ${escapeHtml(dispGender)}</strong></div>
+        <div><span style="color:var(--text-muted)">BMI:</span> <strong>${dispBmi} kg/m²</strong></div>
+        <div><span style="color:var(--text-muted)">TD:</span> <strong>${dispSbp}/${dispDbp} mmHg</strong></div>
+        <div><span style="color:var(--text-muted)">Skor MMSE:</span> <strong>${dispMmse} / 30</strong></div>
+        <div><span style="color:var(--text-muted)">Kemandirian ADL:</span> <strong>${dispAdl} / 10</strong></div>
       </div>
 
       <div style="margin:12px 0">
