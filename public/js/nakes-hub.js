@@ -1052,6 +1052,9 @@
       const j = await res.json();
       if (j.success && j.data) {
         state.activeDoc = j.data;
+        const codeUpdated = getDocCode(j.data);
+        const idx = state.consultations.findIndex(it => getDocCode(it) === codeUpdated);
+        if (idx >= 0) state.consultations[idx] = j.data;
         if (msgEl) msgEl.textContent = `Tersimpan (${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })})`;
       } else if (msgEl) {
         msgEl.textContent = j.error || 'Gagal menyimpan';
@@ -1361,36 +1364,32 @@
 
     setVal('nh-pv-name', getPatientName(doc));
     setVal('nh-pv-age', p.age ?? b.Age ?? '');
-    setVal('nh-pv-gender', p.gender ?? b.Gender ?? '');
-    setVal('nh-pv-edu', p.education ?? b.EducationLevel ?? '');
-    setVal('nh-pv-eth', p.ethnicity ?? b.Ethnicity ?? '');
+    const rawGender = String(p.gender ?? b.Gender ?? 'Laki-laki (0)');
+    setVal('nh-pv-gender', rawGender.includes('Perempuan') || rawGender === '1' ? 'Perempuan (1)' : 'Laki-laki (0)');
+    setVal('nh-pv-edu', String(p.education ?? b.EducationLevel ?? '1'));
+    setVal('nh-pv-eth', String(p.ethnicity ?? b.Ethnicity ?? '0'));
     setVal('nh-pv-bmi', p.bmi ?? b.BMI ?? '');
     setVal('nh-pv-sbp', p.systolic_bp ?? b.SystolicBP ?? '');
     setVal('nh-pv-dbp', p.diastolic_bp ?? b.DiastolicBP ?? '');
     setVal('nh-pv-mmse', cog.mmse ?? b.MMSE ?? '');
     setVal('nh-pv-adl', cog.adl ?? b.ADL ?? '');
     setVal('nh-pv-func', cog.functional_assessment ?? b.FunctionalAssessment ?? '');
-    setVal('nh-pv-fam', Number(b.FamilyHistoryAlzheimers || 0) === 1 ? 'Ada Riwayat' : 'Tidak Ada');
+    setVal('nh-pv-chol', b.CholesterolTotal ?? '');
+    setVal('nh-pv-ldl', b.CholesterolLDL ?? '');
+    setVal('nh-pv-hdl', b.CholesterolHDL ?? '');
+    setVal('nh-pv-trig', b.CholesterolTriglycerides ?? '');
+    setVal('nh-pv-alc', b.AlcoholConsumption ?? '');
+    setVal('nh-pv-phys', b.PhysicalActivity ?? '');
+    setVal('nh-pv-diet', b.DietQuality ?? '');
+    setVal('nh-pv-sleep', b.SleepQuality ?? '');
+    setVal('nh-pv-fam', String(Number(b.FamilyHistoryAlzheimers || 0) === 1 ? 1 : 0));
+    setVal('nh-pv-smoke', String(Number(b.Smoking || 0) === 1 ? 1 : 0));
+    setVal('nh-pv-cvd', String(Number(b.CardiovascularDisease || 0) === 1 ? 1 : 0));
+    setVal('nh-pv-dep', String(Number(b.Depression || 0) === 1 ? 1 : 0));
+    setVal('nh-pv-head', String(Number(b.HeadInjury || 0) === 1 ? 1 : 0));
 
     const statusTag = document.getElementById('nh-pv-status-tag');
     if (statusTag) statusTag.textContent = cr.identity_verified ? 'TERVERIFIKASI' : 'PERLU CEK';
-
-    const extra = document.getElementById('nh-pv-extra-biomarkers');
-    if (extra) {
-      const items = [
-        ['Kolesterol', `${b.CholesterolTotal ?? '—'} mg/dL`],
-        ['LDL / HDL', `${b.CholesterolLDL ?? '—'} / ${b.CholesterolHDL ?? '—'}`],
-        ['Trigliserida', `${b.CholesterolTriglycerides ?? '—'} mg/dL`],
-        ['Merokok', Number(b.Smoking) === 1 ? 'Ya' : 'Tidak'],
-        ['Aktivitas Fisik', `${b.PhysicalActivity ?? '—'} jam/mg`],
-        ['Kualitas Diet', `${b.DietQuality ?? '—'}/10`],
-        ['Kualitas Tidur', `${b.SleepQuality ?? '—'}/10`],
-        ['Kardiovaskular', Number(b.CardiovascularDisease) === 1 ? 'Ya' : 'Tidak'],
-        ['Depresi', Number(b.Depression) === 1 ? 'Ya' : 'Tidak'],
-        ['Cedera Kepala', Number(b.HeadInjury) === 1 ? 'Ya' : 'Tidak']
-      ];
-      extra.innerHTML = items.map(([k, v]) => `<span class="nh-pv-pill">${esc(k)}: <strong>${esc(v)}</strong></span>`).join('');
-    }
   }
 
   function renderPatientSwitcher() {
@@ -1541,14 +1540,27 @@
         name: getV('nh-pv-name'),
         age: numOr(getV('nh-pv-age')),
         gender: getV('nh-pv-gender'),
-        education: getV('nh-pv-edu'),
-        ethnicity: getV('nh-pv-eth'),
+        education: numOr(getV('nh-pv-edu')),
+        ethnicity: numOr(getV('nh-pv-eth')),
         bmi: numOr(getV('nh-pv-bmi')),
         systolic_bp: numOr(getV('nh-pv-sbp')),
         diastolic_bp: numOr(getV('nh-pv-dbp')),
         mmse: numOr(getV('nh-pv-mmse')),
         adl: numOr(getV('nh-pv-adl')),
-        functional_assessment: numOr(getV('nh-pv-func'))
+        functional_assessment: numOr(getV('nh-pv-func')),
+        cholesterol_total: numOr(getV('nh-pv-chol')),
+        cholesterol_ldl: numOr(getV('nh-pv-ldl')),
+        cholesterol_hdl: numOr(getV('nh-pv-hdl')),
+        cholesterol_triglycerides: numOr(getV('nh-pv-trig')),
+        alcohol_consumption: numOr(getV('nh-pv-alc')),
+        physical_activity: numOr(getV('nh-pv-phys')),
+        diet_quality: numOr(getV('nh-pv-diet')),
+        sleep_quality: numOr(getV('nh-pv-sleep')),
+        family_history: numOr(getV('nh-pv-fam')),
+        smoking: numOr(getV('nh-pv-smoke')),
+        cardiovascular_disease: numOr(getV('nh-pv-cvd')),
+        depression: numOr(getV('nh-pv-dep')),
+        head_injury: numOr(getV('nh-pv-head'))
       };
       await saveClinicalRecord({
         patient_updates,
@@ -1561,6 +1573,8 @@
         renderActivePatientPreview(state.activeDoc);
         renderBiomarkerViz(state.activeDoc);
         renderPatientSwitcher();
+        renderSidebarWorklist();
+        renderHistoryList();
         state.maxUnlockedStep = Math.max(state.maxUnlockedStep || 1, 3);
         refreshStepperLockState();
       }

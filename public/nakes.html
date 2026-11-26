@@ -460,6 +460,10 @@
             <section class="nh-step-pane" data-nh-pane="2">
               <div class="nh-bento-asymmetric">
                 <article class="bento-card nh-card nh-span-12">
+                  <svg class="nh-card-geo" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                    <circle cx="96" cy="24" r="34" stroke="currentColor" stroke-dasharray="2 4" />
+                    <path d="M72 24 H116 M96 4 V48" stroke="#D97757" stroke-opacity="0.35" stroke-dasharray="2 3" />
+                  </svg>
                   <div class="bento-card-header">
                     <div>
                       <div class="nh-card-kicker">STEP 02 · PATIENT IDENTITY &amp; DATA VERIFICATION</div>
@@ -467,23 +471,101 @@
                     </div>
                     <span class="bento-tag" id="nh-pv-status-tag">PERLU CEK</span>
                   </div>
-                  <form class="nh-pv-grid" id="nh-patient-verify-form">
-                    <label class="nh-pv-field"><span>Nama / Label Pasien</span><input type="text" id="nh-pv-name" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Usia (Thn)</span><input type="number" id="nh-pv-age" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Jenis Kelamin</span><input type="text" id="nh-pv-gender" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Pendidikan</span><input type="text" id="nh-pv-edu" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Etnis</span><input type="text" id="nh-pv-eth" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>BMI (kg/m²)</span><input type="number" step="0.1" id="nh-pv-bmi" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>TD Sistolik (mmHg)</span><input type="number" id="nh-pv-sbp" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>TD Diastolik (mmHg)</span><input type="number" id="nh-pv-dbp" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Skor MMSE (0–30)</span><input type="number" step="0.1" id="nh-pv-mmse" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Skor ADL (0–10)</span><input type="number" step="0.1" id="nh-pv-adl" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Functional Assess.</span><input type="number" step="0.1" id="nh-pv-func" class="nh-code-field nh-rx-in" /></label>
-                    <label class="nh-pv-field"><span>Riwayat Keluarga</span><input type="text" id="nh-pv-fam" class="nh-code-field nh-rx-in" readonly /></label>
+                  <form class="nh-pv-sections" id="nh-patient-verify-form">
+                    <div class="nh-pv-group">
+                      <div class="nh-pv-group-title">Demografi &amp; Fisik</div>
+                      <div class="nh-pv-grid">
+                        <label class="nh-pv-field"><span>Nama / Label Pasien</span><input type="text" id="nh-pv-name" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Usia (Tahun)</span><input type="number" id="nh-pv-age" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Jenis Kelamin</span>
+                          <select id="nh-pv-gender" class="nh-pv-input">
+                            <option value="Laki-laki (0)">Laki-laki (0)</option>
+                            <option value="Perempuan (1)">Perempuan (1)</option>
+                          </select>
+                        </label>
+                        <label class="nh-pv-field"><span>Tingkat Pendidikan</span>
+                          <select id="nh-pv-edu" class="nh-pv-input">
+                            <option value="0">Level 0 · Dasar</option>
+                            <option value="1">Level 1 · Menengah</option>
+                            <option value="2">Level 2 · Sarjana</option>
+                            <option value="3">Level 3 · Pascasarjana</option>
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="nh-pv-group">
+                      <div class="nh-pv-group-title">Kognitif &amp; Antropometri</div>
+                      <div class="nh-pv-grid">
+                        <label class="nh-pv-field"><span>Indeks Massa Tubuh (BMI)</span><input type="number" step="0.1" id="nh-pv-bmi" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Mini-Mental State (MMSE)</span><input type="number" step="0.1" id="nh-pv-mmse" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Activities of Daily Living (ADL)</span><input type="number" step="0.1" id="nh-pv-adl" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Functional Assessment</span><input type="number" step="0.1" id="nh-pv-func" class="nh-pv-input" /></label>
+                      </div>
+                    </div>
+
+                    <div class="nh-pv-group">
+                      <div class="nh-pv-group-title">Vaskular &amp; Profil Lipid</div>
+                      <div class="nh-pv-grid">
+                        <label class="nh-pv-field"><span>TD Sistolik (mmHg)</span><input type="number" id="nh-pv-sbp" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>TD Diastolik (mmHg)</span><input type="number" id="nh-pv-dbp" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Kolesterol Total (mg/dL)</span><input type="number" step="0.1" id="nh-pv-chol" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Kolesterol LDL (mg/dL)</span><input type="number" step="0.1" id="nh-pv-ldl" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Kolesterol HDL (mg/dL)</span><input type="number" step="0.1" id="nh-pv-hdl" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Trigliserida (mg/dL)</span><input type="number" step="0.1" id="nh-pv-trig" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Etnis</span>
+                          <select id="nh-pv-eth" class="nh-pv-input">
+                            <option value="0">Kaukasia / Umum (0)</option>
+                            <option value="1">Afrika / Kulit Hitam (1)</option>
+                            <option value="2">Asia (2)</option>
+                            <option value="3">Lainnya (3)</option>
+                          </select>
+                        </label>
+                        <label class="nh-pv-field"><span>Konsumsi Alkohol (unit/mg)</span><input type="number" step="0.1" id="nh-pv-alc" class="nh-pv-input" /></label>
+                      </div>
+                    </div>
+
+                    <div class="nh-pv-group">
+                      <div class="nh-pv-group-title">Gaya Hidup &amp; Riwayat Medis</div>
+                      <div class="nh-pv-grid">
+                        <label class="nh-pv-field"><span>Aktivitas Fisik (jam/mg)</span><input type="number" step="0.1" id="nh-pv-phys" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Kualitas Diet (0–10)</span><input type="number" step="0.1" id="nh-pv-diet" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Kualitas Tidur (0–10)</span><input type="number" step="0.1" id="nh-pv-sleep" class="nh-pv-input" /></label>
+                        <label class="nh-pv-field"><span>Riwayat Keluarga Alzheimer</span>
+                          <select id="nh-pv-fam" class="nh-pv-input">
+                            <option value="0">Tidak Ada (0)</option>
+                            <option value="1">Ada Riwayat (1)</option>
+                          </select>
+                        </label>
+                        <label class="nh-pv-field"><span>Merokok</span>
+                          <select id="nh-pv-smoke" class="nh-pv-input">
+                            <option value="0">Tidak (0)</option>
+                            <option value="1">Ya (1)</option>
+                          </select>
+                        </label>
+                        <label class="nh-pv-field"><span>Penyakit Kardiovaskular</span>
+                          <select id="nh-pv-cvd" class="nh-pv-input">
+                            <option value="0">Tidak (0)</option>
+                            <option value="1">Ya (1)</option>
+                          </select>
+                        </label>
+                        <label class="nh-pv-field"><span>Depresi</span>
+                          <select id="nh-pv-dep" class="nh-pv-input">
+                            <option value="0">Tidak (0)</option>
+                            <option value="1">Ya (1)</option>
+                          </select>
+                        </label>
+                        <label class="nh-pv-field"><span>Riwayat Cedera Kepala</span>
+                          <select id="nh-pv-head" class="nh-pv-input">
+                            <option value="0">Tidak (0)</option>
+                            <option value="1">Ya (1)</option>
+                          </select>
+                        </label>
+                      </div>
+                    </div>
                   </form>
-                  <div class="nh-pv-extra" id="nh-pv-extra-biomarkers"></div>
                   <div class="nh-triage-foot">
-                    <span class="nh-wl-code" id="nh-pv-msg">Periksa kesesuaian data diri pasien lalu klik Check &amp; Update untuk verifikasi</span>
+                    <span class="nh-wl-code" id="nh-pv-msg">Periksa atau ubah data diri pasien lalu klik Check &amp; Update untuk verifikasi</span>
                     <button type="button" class="bento-pill-btn bento-pill-btn--accent" id="nh-verify-patient-btn">Check &amp; Update Data (Verifikasi)</button>
                   </div>
                 </article>

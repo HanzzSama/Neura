@@ -497,7 +497,8 @@ def api_consultation_clinical_record(code_or_id):
             b = doc.setdefault("all_32_biomarkers", {})
             rf = doc.setdefault("raw_features", {})
             cog = doc.setdefault("cognitive_scores", {})
-            field_map = {
+
+            p_map = {
                 "name": ("name", None),
                 "age": ("age", "Age"),
                 "gender": ("gender", "Gender"),
@@ -507,21 +508,95 @@ def api_consultation_clinical_record(code_or_id):
                 "systolic_bp": ("systolic_bp", "SystolicBP"),
                 "diastolic_bp": ("diastolic_bp", "DiastolicBP"),
             }
-            for src_key, (p_key, b_key) in field_map.items():
+            for src_key, (p_key, b_key) in p_map.items():
                 if src_key in patient_updates and patient_updates[src_key] not in (None, ""):
                     val = patient_updates[src_key]
                     p[p_key] = val
                     if b_key:
                         b[b_key] = val
                         rf[b_key] = val
+
             if "name" in patient_updates and patient_updates["name"]:
                 doc["patient_name"] = str(patient_updates["name"]).strip()
+
             for cog_key, b_key in [("mmse", "MMSE"), ("adl", "ADL"), ("functional_assessment", "FunctionalAssessment")]:
                 if cog_key in patient_updates and patient_updates[cog_key] not in (None, ""):
                     val = patient_updates[cog_key]
                     cog[cog_key] = val
                     b[b_key] = val
                     rf[b_key] = val
+
+            extra_bio_map = {
+                "cholesterol_total": "CholesterolTotal",
+                "cholesterol_ldl": "CholesterolLDL",
+                "cholesterol_hdl": "CholesterolHDL",
+                "cholesterol_triglycerides": "CholesterolTriglycerides",
+                "alcohol_consumption": "AlcoholConsumption",
+                "physical_activity": "PhysicalActivity",
+                "diet_quality": "DietQuality",
+                "sleep_quality": "SleepQuality",
+                "smoking": "Smoking",
+                "family_history": "FamilyHistoryAlzheimers",
+                "cardiovascular_disease": "CardiovascularDisease",
+                "depression": "Depression",
+                "head_injury": "HeadInjury",
+            }
+            for src_key, b_key in extra_bio_map.items():
+                if src_key in patient_updates and patient_updates[src_key] not in (None, ""):
+                    val = patient_updates[src_key]
+                    b[b_key] = val
+                    rf[b_key] = val
+
+            # Sinkronkan juga gejala terverifikasi jika dikirim
+            vs = body.get("verified_symptoms")
+            if isinstance(vs, dict):
+                for sym_key, sym_state in vs.items():
+                    num_val = 1 if sym_state == "confirmed" else 0
+                    b[sym_key] = num_val
+                    rf[sym_key] = num_val
+
+            # Bangun ulang ringkasan biomarkers_breakdown agar Analisa & Dossier ikut terbarui
+            try:
+                sbp = float(b.get("SystolicBP", 120))
+                dbp = float(b.get("DiastolicBP", 80))
+                chol_tot = float(b.get("CholesterolTotal", 200))
+                chol_ldl = float(b.get("CholesterolLDL", 100))
+                chol_hdl = float(b.get("CholesterolHDL", 50))
+                chol_trig = float(b.get("CholesterolTriglycerides", 150))
+                bmi_val = float(b.get("BMI", 22.5))
+                mmse_val = float(b.get("MMSE", 24))
+                adl_val = float(b.get("ADL", 7))
+                func_val = float(b.get("FunctionalAssessment", 7))
+                doc["biomarkers_breakdown"] = [
+                    {
+                        "category": "Demografi & Fisik",
+                        "items": [
+                            {"name": "Usia", "label": "Usia", "value": f"{b.get('Age', '—')} tahun", "normal": "18 - 100 thn", "status": "Normal"},
+                            {"name": "Jenis Kelamin", "label": "Jenis Kelamin", "value": b.get("Gender", "—"), "normal": "—", "status": "Normal"},
+                            {"name": "Indeks Massa Tubuh (BMI)", "label": "Indeks Massa Tubuh (BMI)", "value": f"{bmi_val} kg/m²", "normal": "18.5 - 24.9 kg/m²", "status": "Tinggi" if bmi_val >= 30 else ("Waspada" if bmi_val >= 25 or bmi_val < 18.5 else "Normal")},
+                            {"name": "Tingkat Pendidikan", "label": "Tingkat Pendidikan", "value": f"Level {b.get('EducationLevel', 1)}", "normal": "Level 0 - 3", "status": "Normal"},
+                        ]
+                    },
+                    {
+                        "category": "Kognitif & Fungsional",
+                        "items": [
+                            {"name": "Mini-Mental State Exam (MMSE)", "label": "Mini-Mental State Exam (MMSE)", "value": f"{mmse_val} / 30", "normal": "24 - 30", "status": "Defisit" if mmse_val < 20 else ("Waspada" if mmse_val < 24 else "Normal")},
+                            {"name": "Activities of Daily Living (ADL)", "label": "Activities of Daily Living (ADL)", "value": f"{adl_val} / 10", "normal": "6 - 10", "status": "Waspada" if adl_val < 6 else "Normal"},
+                            {"name": "Functional Assessment", "label": "Functional Assessment", "value": f"{func_val} / 10", "normal": "6 - 10", "status": "Waspada" if func_val < 6 else "Normal"},
+                        ]
+                    },
+                    {
+                        "category": "Vaskular & Lipid",
+                        "items": [
+                            {"name": "Tekanan Darah", "label": "Tekanan Darah", "value": f"{int(sbp)}/{int(dbp)} mmHg", "normal": "90/60 - 120/80 mmHg", "status": "Tinggi" if sbp >= 140 or dbp >= 90 else ("Waspada" if sbp >= 130 or dbp >= 85 else "Normal")},
+                            {"name": "Kolesterol Total", "label": "Kolesterol Total", "value": f"{chol_tot} mg/dL", "normal": "< 200 mg/dL", "status": "Tinggi" if chol_tot >= 240 else ("Waspada" if chol_tot >= 200 else "Normal")},
+                            {"name": "LDL / HDL", "label": "LDL / HDL", "value": f"{chol_ldl} / {chol_hdl} mg/dL", "normal": "LDL < 100 · HDL ≥ 40", "status": "Tinggi" if chol_ldl >= 160 else ("Waspada" if chol_ldl >= 130 or chol_hdl < 40 else "Normal")},
+                            {"name": "Trigliserida", "label": "Trigliserida", "value": f"{chol_trig} mg/dL", "normal": "< 150 mg/dL", "status": "Tinggi" if chol_trig >= 200 else ("Waspada" if chol_trig >= 150 else "Normal")},
+                        ]
+                    }
+                ]
+            except Exception:
+                pass
 
         record = {
             "identity_verified": bool(body.get("identity_verified", existing.get("identity_verified", False))),

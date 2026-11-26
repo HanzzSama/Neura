@@ -61620,16 +61620,18 @@
     "nakes_code": "NKS-26-3904-ALZ",
     "created_at": "26 November 2026, 14:49 WIB",
     "timestamp_iso": "2026-11-26T14:49:20.201052",
-    "status": "VALID_ACTIVE",
+    "status": "VALIDATED_BY_CLINICIAN",
     "patient": {
       "name": "Pasien #5594",
       "id": "5594",
       "age": 88,
       "gender": "Perempuan (1)",
-      "bmi": 37.0,
+      "bmi": 37,
       "systolic_bp": 131,
       "diastolic_bp": 75,
-      "source": "dataset_sample"
+      "source": "dataset_sample",
+      "education": "0",
+      "ethnicity": "0"
     },
     "cognitive_scores": {
       "mmse": 4.8,
@@ -61846,9 +61848,9 @@
     "all_32_biomarkers": {
       "Age": 88,
       "Gender": "Perempuan (1)",
-      "Ethnicity": 0,
-      "EducationLevel": 0,
-      "BMI": 37.0,
+      "Ethnicity": "0",
+      "EducationLevel": "0",
+      "BMI": 37,
       "Smoking": 0,
       "AlcoholConsumption": 11.8,
       "PhysicalActivity": 1.7,
@@ -61921,20 +61923,17 @@
       "has_cognitive_alert": false
     },
     "recommendations": [
-      "Lakukan pemantauan fungsi kognitif berkala minimal 1 kali setiap 6 bulan.",
-      "Terapkan diet neuroprotektif (Mediterranean-DASH Diet Intervention for Neurodegenerative Delay / MIND Diet).",
-      "Rutin melakukan stimulasi otak (membaca kritis, teka-teki, interaksi sosial aktif) minimal 30 menit sehari.",
-      "Bawa dan serahkan Kode Konsultasi Nakes ini ke Dokter Spesialis Saraf / Neurologi di Faskes rujukan untuk pemeriksaan lanjutan (MoCA, MRI Brain, atau PET Scan jika diindikasikan)."
+      "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan"
     ],
     "verification_hash": "SHA256-8FC7071C0AC2852A",
     "source": "dataset_sample",
     "raw_features": {
       "PatientID": 5594,
       "Age": 88,
-      "Gender": 1,
-      "Ethnicity": 0,
-      "EducationLevel": 0,
-      "BMI": 36.99569263759394,
+      "Gender": "Perempuan (1)",
+      "Ethnicity": "0",
+      "EducationLevel": "0",
+      "BMI": 37,
       "Smoking": 0,
       "AlcoholConsumption": 11.76531980650866,
       "PhysicalActivity": 1.6837140128552053,
@@ -61952,11 +61951,11 @@
       "CholesterolLDL": 113.79414629050598,
       "CholesterolHDL": 45.76072447069439,
       "CholesterolTriglycerides": 276.804450919648,
-      "MMSE": 4.813041600740236,
-      "FunctionalAssessment": 8.623333349090498,
+      "MMSE": 4.8,
+      "FunctionalAssessment": 8.6,
       "MemoryComplaints": 0,
       "BehavioralProblems": 0,
-      "ADL": 7.795510716719647,
+      "ADL": 7.8,
       "Confusion": 0,
       "Disorientation": 0,
       "PersonalityChanges": 0,
@@ -61964,6 +61963,46 @@
       "Forgetfulness": 0,
       "Diagnosis": 0,
       "DoctorInCharge": "XXXConfid"
+    },
+    "patient_name": "Pasien #5594",
+    "clinical_record": {
+      "identity_verified": true,
+      "identity_verified_at": "26 November 2026, 15:00 WIB",
+      "verified_symptoms": {
+        "MemoryComplaints": "cleared",
+        "Forgetfulness": "cleared",
+        "Confusion": "cleared",
+        "Disorientation": "cleared",
+        "PersonalityChanges": "cleared",
+        "DifficultyCompletingTasks": "cleared",
+        "BehavioralProblems": "cleared",
+        "Hypertension": "cleared",
+        "Diabetes": "confirmed"
+      },
+      "disease_analysis": {},
+      "medications": [],
+      "recommendations": [
+        "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan"
+      ],
+      "follow_up": {
+        "date": "",
+        "priority": "RUTIN_30_HARI",
+        "notes": "Rujukan MRI Brain & Evaluasi Neurologi Lanjutan"
+      },
+      "updated_by": "dr hanz",
+      "updated_at": "26 November 2026, 15:01 WIB"
+    },
+    "validation": {
+      "is_validated": true,
+      "validator_name": "dr hanz",
+      "validator_sip": "",
+      "validator_institution": "RSU Columbia",
+      "validation_status": "PEMANTAUAN_BERKALA",
+      "clinical_notes": "",
+      "suggested_action": "",
+      "validated_at": "26 November 2026, 15:01 WIB",
+      "validated_at_iso": "2026-11-26T15:01:17.595979",
+      "signature_hash": "SIG-NKS-26-3904-ALZ-2611261501"
     }
   },
   "DOC-NEURA-2026-3904": {
