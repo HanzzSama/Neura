@@ -46,6 +46,10 @@ html[data-theme="light"] {
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -224,6 +228,22 @@ body {
   gap: 20px;
 }
 
+.nqr-card--split {
+  max-width: 840px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.nqr-info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+}
+
 /* Crisp Geometric Corner Brackets */
 .nqr-corner {
   position: absolute;
@@ -301,14 +321,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 20px;
+  justify-content: center;
+  gap: 12px;
+  padding: 22px;
   border: 1px solid var(--nqr-border);
   background: var(--nqr-surface-2);
 }
 
 .nqr-qr-frame {
-  padding: 14px;
+  padding: 16px;
   background: var(--nqr-qr-bg);
   border: 1px solid var(--nqr-border-strong);
   display: grid;
@@ -316,8 +337,8 @@ body {
 }
 
 .nqr-qr-mount {
-  width: 204px;
-  height: 204px;
+  width: 276px;
+  height: 276px;
   display: grid;
   place-items: center;
 }
@@ -521,17 +542,33 @@ body {
   color: var(--nqr-dim);
 }
 
+@media (max-width: 780px) {
+  .nqr-card--split {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    gap: 20px;
+  }
+
+  .nqr-qr-mount {
+    width: 220px;
+    height: 220px;
+  }
+}
+
 @media (max-width: 560px) {
   .nqr-shell {
     padding: 16px;
   }
+
   .nqr-card {
     padding: 20px;
   }
+
   .nqr-code-display {
     font-size: 20px;
     letter-spacing: 0.1em;
   }
+
   .nqr-footer {
     flex-direction: column;
     text-align: center;

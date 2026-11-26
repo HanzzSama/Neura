@@ -160,11 +160,17 @@
     try {
       const [resNakes, resQr] = await Promise.all([
         fetch('/api/admin/nakes'),
-        fetch('/api/admin/nakes-qr-link')
+        fetch('/api/admin/nakes-qr-link', { cache: 'no-store' })
       ]);
       const data = await resNakes.json();
-      const qrJson = await resQr.json().catch(() => ({}));
+      const qrJson = resQr.ok ? await resQr.json().catch(() => null) : null;
+      let qrErrorMsg = !resQr.ok
+        ? `Endpoint /api/admin/nakes-qr-link merespons HTTP ${resQr.status}. Restart server Flask agar rute baru aktif.`
+        : '';
       let qrState = (qrJson && qrJson.data) || { live_id: '', active: false, qr_url: '' };
+      if (!qrState.qr_url && qrState.live_id) {
+        qrState.qr_url = `${window.location.origin}/welcome/nakes/qr-code?live=${encodeURIComponent(qrState.live_id)}`;
+      }
 
       const list = Array.isArray(data) ? data : (data.nakes || data.data || []);
       const rows = list.slice(0, 12).map(n => `
@@ -187,7 +193,7 @@
             </span>
           </div>
           <div class="nakes-qr-url-row">
-            <input type="text" class="nakes-qr-url-input" id="nakesQrUrlInput" readonly value="${escHtml(qrState.qr_url || '')}" />
+            <input type="text" class="nakes-qr-url-input" id="nakesQrUrlInput" readonly placeholder="Klik Generate URL Baru atau restart server..." value="${escHtml(qrState.qr_url || '')}" />
             <button type="button" class="nakes-qr-btn" id="nakesQrCopyBtn">Salin URL</button>
           </div>
           <div class="nakes-qr-actions-row">
@@ -197,6 +203,7 @@
             <button type="button" class="nakes-qr-btn" id="nakesQrGenerateBtn">Generate URL Baru</button>
             <a class="nakes-qr-btn" id="nakesQrOpenLink" href="${escHtml(qrState.qr_url || '#')}" target="_blank" rel="noopener">Buka Halaman QR ↗</a>
           </div>
+          <div class="nakes-qr-feedback" id="nakesQrFeedback" ${qrErrorMsg ? '' : 'hidden'}>${escHtml(qrErrorMsg)}</div>
         </div>
 
         <div class="drawer-kpi-row">
@@ -227,9 +234,24 @@
       const copyBtn = document.getElementById('nakesQrCopyBtn');
       const genBtn = document.getElementById('nakesQrGenerateBtn');
       const openLink = document.getElementById('nakesQrOpenLink');
+      const feedbackEl = document.getElementById('nakesQrFeedback');
+
+      function setQrFeedback(msg) {
+        if (!feedbackEl) return;
+        if (!msg) {
+          feedbackEl.hidden = true;
+          feedbackEl.textContent = '';
+        } else {
+          feedbackEl.hidden = false;
+          feedbackEl.textContent = msg;
+        }
+      }
 
       function syncQrUi(next) {
         qrState = next || qrState;
+        if (!qrState.qr_url && qrState.live_id) {
+          qrState.qr_url = `${window.location.origin}/welcome/nakes/qr-code?live=${encodeURIComponent(qrState.live_id)}`;
+        }
         if (urlInput) urlInput.value = qrState.qr_url || '';
         if (openLink) openLink.href = qrState.qr_url || '#';
         if (statusPill) {
@@ -239,10 +261,15 @@
         if (toggleBtn) {
           toggleBtn.textContent = qrState.active ? 'Nonaktifkan URL' : 'Aktifkan URL';
         }
+        setQrFeedback('');
       }
 
       if (copyBtn && urlInput) {
         copyBtn.addEventListener('click', async () => {
+          if (!urlInput.value) {
+            setQrFeedback('URL belum tersedia. Pastikan server Flask sudah di-restart lalu klik Generate URL Baru.');
+            return;
+          }
           try {
             await navigator.clipboard.writeText(urlInput.value);
             copyBtn.textContent = 'Tersalin';
@@ -262,8 +289,14 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ active: !qrState.active })
             });
-            const j = await r.json();
-            if (j && j.success && j.data) syncQrUi(j.data);
+            const j = await r.json().catch(() => null);
+            if (!r.ok || !j || !j.success || !j.data) {
+              setQrFeedback(`Gagal mengubah status URL (HTTP ${r.status}). Restart server Flask terlebih dahulu.`);
+              return;
+            }
+            syncQrUi(j.data);
+          } catch (e) {
+            setQrFeedback('Gagal menghubungi server: ' + e.message);
           } finally {
             toggleBtn.disabled = false;
           }
@@ -275,8 +308,14 @@
           genBtn.disabled = true;
           try {
             const r = await fetch('/api/admin/nakes-qr-link/generate', { method: 'POST' });
-            const j = await r.json();
-            if (j && j.success && j.data) syncQrUi(j.data);
+            const j = await r.json().catch(() => null);
+            if (!r.ok || !j || !j.success || !j.data) {
+              setQrFeedback(`Gagal membuat URL baru (HTTP ${r.status}). Restart server Flask terlebih dahulu.`);
+              return;
+            }
+            syncQrUi(j.data);
+          } catch (e) {
+            setQrFeedback('Gagal menghubungi server: ' + e.message);
           } finally {
             genBtn.disabled = false;
           }

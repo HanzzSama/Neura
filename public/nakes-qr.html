@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neura AI — Gerbang QR Registrasi Nakes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="/css/nakes-qr.css" />
 </head>
+
 <body>
   <!-- Abstract Geometric Telemetry Backdrop (Zero Glow) -->
   <div class="nqr-grid-bg" aria-hidden="true"></div>
@@ -46,84 +50,89 @@
     <!-- Main Centered Card -->
     <main class="nqr-main">
       <!-- Active QR Session Panel -->
-      <section class="nqr-card" id="nqrActivePanel">
-        <!-- Corner Geometric Brackets -->
-        <span class="nqr-corner tl" aria-hidden="true"></span>
-        <span class="nqr-corner tr" aria-hidden="true"></span>
-        <span class="nqr-corner bl" aria-hidden="true"></span>
-        <span class="nqr-corner br" aria-hidden="true"></span>
+        <section class="nqr-card nqr-card--split" id="nqrActivePanel">
+          <!-- Corner Geometric Brackets -->
+          <span class="nqr-corner tl" aria-hidden="true"></span>
+          <span class="nqr-corner tr" aria-hidden="true"></span>
+          <span class="nqr-corner bl" aria-hidden="true"></span>
+          <span class="nqr-corner br" aria-hidden="true"></span>
 
-        <div class="nqr-card-header">
-          <div class="nqr-meta-row">
-            <span class="nqr-mono-tag">REGISTRASI TENAGA KESEHATAN</span>
-            <span class="nqr-mono-tag muted" id="nqrLiveIdTag">LIVE: —</span>
+          <!-- Left: Large QR Matrix Stage -->
+          <div class="nqr-qr-stage">
+            <div class="nqr-qr-frame">
+              <div id="nqrQrMount" class="nqr-qr-mount" aria-label="QR Code Registrasi Nakes"></div>
+            </div>
+            <div class="nqr-scan-caption">
+              <span>TARGET</span>
+              <code id="nqrTargetPath">/nakes/register</code>
+            </div>
           </div>
-          <h1 class="nqr-title">Pindai QR atau Gunakan Kode Undangan</h1>
-          <p class="nqr-subtitle">
-            Arahkan kamera perangkat mobile Anda ke kode QR untuk membuka formulir registrasi Nakes secara langsung.
+
+              <!-- Right: Title, Telemetry Timer & Random-Unique Code -->
+              <div class="nqr-info-col">
+                <div class="nqr-card-header">
+                  <div class="nqr-meta-row">
+                    <span class="nqr-mono-tag">REGISTRASI TENAGA KESEHATAN</span>
+                    <span class="nqr-mono-tag muted" id="nqrLiveIdTag">LIVE: —</span>
+                  </div>
+                  <h1 class="nqr-title">Pindai QR atau Gunakan Kode Undangan</h1>
+                  <p class="nqr-subtitle">
+                    Arahkan kamera perangkat mobile Anda ke kode QR untuk membuka formulir registrasi Nakes secara
+                    langsung.
+                  </p>
+                </div>
+
+                  <!-- Telemetry Progress & 3-Minute Timer -->
+                  <div class="nqr-telemetry-block">
+                    <div class="nqr-telemetry-head">
+                      <span class="nqr-telemetry-label">ROTASI OTOMATIS (3 MENIT)</span>
+                      <span class="nqr-timer-value" id="nqrTimerText">03:00</span>
+                    </div>
+                    <div class="nqr-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="180"
+                      aria-valuenow="180">
+                      <div class="nqr-progress-fill" id="nqrProgressFill"></div>
+                    </div>
+                  </div>
+
+                    <!-- Random-Unique Code Box -->
+                    <div class="nqr-code-panel">
+                      <div class="nqr-code-meta">
+                        <span>KODE UNIK AKTIF</span>
+                        <button type="button" class="nqr-copy-btn" id="nqrCopyCodeBtn">Salin Kode</button>
+                      </div>
+                      <div class="nqr-code-display" id="nqrCodeText">NKS-····-····</div>
+                      <div class="nqr-code-actions">
+                        <a href="/nakes/register" class="nqr-primary-link" id="nqrDirectLink">
+                          Buka Halaman Registrasi Nakes →
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+        </section>
+
+        <!-- Locked / Inactive State Panel -->
+        <section class="nqr-card nqr-locked-card" id="nqrLockedPanel" hidden>
+          <span class="nqr-corner tl" aria-hidden="true"></span>
+          <span class="nqr-corner tr" aria-hidden="true"></span>
+          <span class="nqr-corner bl" aria-hidden="true"></span>
+          <span class="nqr-corner br" aria-hidden="true"></span>
+
+          <div class="nqr-locked-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="4" y="11" width="16" height="9" rx="1.5" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+          </div>
+          <span class="nqr-mono-tag">ACCESS LOCKED // 403</span>
+          <h2 class="nqr-title">Tautan Undangan Tidak Aktif</h2>
+          <p class="nqr-subtitle" id="nqrLockedReason">
+            Tautan QR registrasi Nakes ini telah dinonaktifkan oleh Administrator atau parameter tautan tidak valid.
           </p>
-        </div>
-
-        <!-- QR Matrix Frame -->
-        <div class="nqr-qr-stage">
-          <div class="nqr-qr-frame">
-            <div id="nqrQrMount" class="nqr-qr-mount" aria-label="QR Code Registrasi Nakes"></div>
+          <div class="nqr-locked-actions">
+            <a href="/nakes/register" class="nqr-secondary-link">Masuk dengan Kode Manual</a>
+            <a href="/welcome" class="nqr-secondary-link">Kembali ke Beranda</a>
           </div>
-          <div class="nqr-scan-caption">
-            <span>TARGET</span>
-            <code id="nqrTargetPath">/nakes/register</code>
-          </div>
-        </div>
-
-        <!-- Telemetry Progress & 3-Minute Timer -->
-        <div class="nqr-telemetry-block">
-          <div class="nqr-telemetry-head">
-            <span class="nqr-telemetry-label">ROTASI OTOMATIS (3 MENIT)</span>
-            <span class="nqr-timer-value" id="nqrTimerText">03:00</span>
-          </div>
-          <div class="nqr-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="180" aria-valuenow="180">
-            <div class="nqr-progress-fill" id="nqrProgressFill"></div>
-          </div>
-        </div>
-
-        <!-- Random-Unique Code Box -->
-        <div class="nqr-code-panel">
-          <div class="nqr-code-meta">
-            <span>KODE UNIK AKTIF</span>
-            <button type="button" class="nqr-copy-btn" id="nqrCopyCodeBtn">Salin Kode</button>
-          </div>
-          <div class="nqr-code-display" id="nqrCodeText">NKS-····-····</div>
-          <div class="nqr-code-actions">
-            <a href="/nakes/register" class="nqr-primary-link" id="nqrDirectLink">
-              Buka Halaman Registrasi Nakes →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Locked / Inactive State Panel -->
-      <section class="nqr-card nqr-locked-card" id="nqrLockedPanel" hidden>
-        <span class="nqr-corner tl" aria-hidden="true"></span>
-        <span class="nqr-corner tr" aria-hidden="true"></span>
-        <span class="nqr-corner bl" aria-hidden="true"></span>
-        <span class="nqr-corner br" aria-hidden="true"></span>
-
-        <div class="nqr-locked-icon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <rect x="4" y="11" width="16" height="9" rx="1.5" />
-            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-          </svg>
-        </div>
-        <span class="nqr-mono-tag">ACCESS LOCKED // 403</span>
-        <h2 class="nqr-title">Tautan Undangan Tidak Aktif</h2>
-        <p class="nqr-subtitle" id="nqrLockedReason">
-          Tautan QR registrasi Nakes ini telah dinonaktifkan oleh Administrator atau parameter tautan tidak valid.
-        </p>
-        <div class="nqr-locked-actions">
-          <a href="/nakes/register" class="nqr-secondary-link">Masuk dengan Kode Manual</a>
-          <a href="/welcome" class="nqr-secondary-link">Kembali ke Beranda</a>
-        </div>
-      </section>
+        </section>
     </main>
 
     <!-- Bottom Telemetry Footer -->
@@ -135,4 +144,5 @@
 
   <script src="/js/nakes-qr.js"></script>
 </body>
+
 </html>
