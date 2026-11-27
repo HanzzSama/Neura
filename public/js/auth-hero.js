@@ -2090,7 +2090,7 @@
 
     // 11. Logout (Ganti Akun / Keluar)
     if (logoutBtn) {
-      logoutBtn.addEventListener('click', function () {
+      var performWelcomeLogout = function () {
         try {
           var fb = window.NeuraFirebase;
           var auth = fb && typeof fb.getAuth === 'function' ? fb.getAuth() : null;
@@ -2132,6 +2132,21 @@
         showUnloggedState();
         switchTab('login');
         showAlert('Anda telah berhasil keluar dari sesi akun.', false, true);
+      };
+
+      logoutBtn.addEventListener('click', function () {
+        var userLabel = (loggedName && loggedName.textContent) || (loggedEmail && loggedEmail.textContent) || 'Pengguna Neura';
+        if (window.NeuraLogoutModal && typeof window.NeuraLogoutModal.open === 'function') {
+          window.NeuraLogoutModal.open({
+            title: 'Akhiri Sesi Akun?',
+            subtitle: 'Masuk sebagai ' + userLabel,
+            description: 'Anda akan keluar dari akun Neura AI dan sesi lokal akan dihapus. Anda perlu masuk kembali untuk mengakses layanan.',
+            confirmLabel: 'Ya, Log Out',
+            onConfirm: performWelcomeLogout
+          });
+        } else {
+          performWelcomeLogout();
+        }
       });
     }
   }

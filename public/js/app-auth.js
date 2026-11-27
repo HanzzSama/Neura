@@ -192,13 +192,17 @@ function initAuthListeners() {
 }
 
 async function handleLogout() {
-  const confirmed = window.confirm('Apakah Anda yakin ingin keluar dari akun Neura AI?');
-  if (!confirmed) return;
-
+  let userLabel = 'Pengguna Neura';
   try {
-    if (typeof showToast === 'function') {
-      showToast('Sedang keluar dari akun...', 'info');
-    }
+    const rawUser = JSON.parse(localStorage.getItem('neura_auth_user') || '{}') || {};
+    userLabel = rawUser.displayName || rawUser.email || 'Pengguna Neura';
+  } catch (_) {}
+
+  const performLogout = async () => {
+    try {
+      if (typeof showToast === 'function') {
+        showToast('Sedang keluar dari akun...', 'info');
+      }
 
     // Invalidate server session & clear cookies
     try {
@@ -253,6 +257,19 @@ async function handleLogout() {
     }
 
     window.location.replace('/welcome?logged_out=true');
+    }
+  };
+
+  if (window.NeuraLogoutModal && typeof window.NeuraLogoutModal.open === 'function') {
+    window.NeuraLogoutModal.open({
+      title: 'Akhiri Sesi Akun?',
+      subtitle: `Masuk sebagai ${userLabel}`,
+      description: 'Anda akan keluar dari Neura AI dan sesi autentikasi lokal akan dihapus. Anda perlu masuk kembali untuk melanjutkan konsultasi.',
+      confirmLabel: 'Ya, Log Out',
+      onConfirm: performLogout
+    });
+  } else if (window.confirm('Apakah Anda yakin ingin keluar dari akun Neura AI?')) {
+    await performLogout();
   }
 }
 

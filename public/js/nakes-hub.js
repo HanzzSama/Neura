@@ -103,8 +103,23 @@
       } catch (_) { }
       window.location.replace('/welcome');
     };
-    document.getElementById('nh-logout-btn')?.addEventListener('click', doLogout);
-    document.getElementById('nh-sb-logout-btn')?.addEventListener('click', doLogout);
+    const openNakesLogoutModal = () => {
+      if (pop) pop.hidden = true;
+      const nakesName = state.nakes?.name || 'Tenaga Kesehatan';
+      if (window.NeuraLogoutModal && typeof window.NeuraLogoutModal.open === 'function') {
+        window.NeuraLogoutModal.open({
+          title: 'Akhiri Sesi Nakes?',
+          subtitle: `Masuk sebagai ${nakesName}`,
+          description: 'Anda akan keluar dari Neura Nakes Hub dan sesi autentikasi klinis lokal akan dihapus. Anda perlu masuk kembali untuk mengakses halaman nakes.',
+          confirmLabel: 'Ya, Log Out',
+          onConfirm: doLogout
+        });
+      } else if (window.confirm('Akhiri Sesi Nakes?')) {
+        doLogout();
+      }
+    };
+    document.getElementById('nh-logout-btn')?.addEventListener('click', openNakesLogoutModal);
+    document.getElementById('nh-sb-logout-btn')?.addEventListener('click', openNakesLogoutModal);
   }
 
   function isDocValidated(item) {
