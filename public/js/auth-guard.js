@@ -129,9 +129,6 @@
       targetUrl = '/welcome?unverified=true' + (email ? '&email=' + encodeURIComponent(email) : '');
     }
 
-    if (window.NeuraLoadscreen && typeof window.NeuraLoadscreen.show === 'function') {
-      window.NeuraLoadscreen.show('Memverifikasi sesi...');
-    }
     window.location.replace(targetUrl);
   }
 
@@ -158,16 +155,10 @@
     // Jika Nakes membuka /app (default entry), arahkan ke /nakes (Neura Nakes Hub).
     // /chat tetap dapat diakses langsung sebagai menu Neura Chat.
     if (path === '/app' && isAdminSessionActive()) {
-      if (window.NeuraLoadscreen && typeof window.NeuraLoadscreen.show === 'function') {
-        window.NeuraLoadscreen.show('Membuka Admin Hub...');
-      }
       window.location.replace('/admin');
       return;
     }
     if (path === '/app' && isNakesSessionActive() && !isAdminSessionActive()) {
-      if (window.NeuraLoadscreen && typeof window.NeuraLoadscreen.show === 'function') {
-        window.NeuraLoadscreen.show('Membuka Nakes Hub...');
-      }
       window.location.replace('/nakes');
       return;
     }
