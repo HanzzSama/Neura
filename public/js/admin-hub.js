@@ -70,8 +70,8 @@
       id: 'dataset-original',
       category: 'datasets',
       title: 'Dataset Original',
-      badge: 'CSV',
-      desc: 'alzheimers_disease_data.csv — Data klinis mentah lengkap sebelum pemecahan.',
+      badge: '2,149 rows',
+      desc: 'alzheimers_disease_data.csv · 35 kolom mentah (32 fitur + 1 label Diagnosis + 2 excluded).',
       icon: ICONS.db,
       accent: true,
       previewType: 'dataset',
@@ -82,8 +82,8 @@
       id: 'dataset-training',
       category: 'datasets',
       title: 'Dataset Training',
-      badge: '80% Split',
-      desc: 'Subset pelatihan model XGBoost & Neural Network (80% sampel awal).',
+      badge: '1,719 rows',
+      desc: 'alzheimers_training.csv · 80% Stratified Split (seed=2001, 33 kolom modelML.rmp).',
       icon: ICONS.train,
       accent: true,
       previewType: 'dataset',
@@ -94,8 +94,8 @@
       id: 'dataset-testing',
       category: 'datasets',
       title: 'Dataset Testing',
-      badge: '20% Split',
-      desc: 'Subset evaluasi akurasi & validasi generalisasi model (20% sampel uji).',
+      badge: '430 rows',
+      desc: 'alzheimers_testing.csv · 20% Stratified Split (seed=2001, 33 kolom modelML.rmp).',
       icon: ICONS.test,
       accent: true,
       previewType: 'dataset',
@@ -489,6 +489,9 @@
         const card = [...BENTO_DATASETS, ...DATASET_CARDS].find(d => d.id === key);
         if (card && info.columns) {
           card.badge = `${info.rows.toLocaleString()} rows`;
+          const sizeTxt = info.size_kb ? ` · ${info.size_kb} KB` : '';
+          const splitTxt = info.split ? ` · ${info.split}` : '';
+          card.desc = `${info.file} — ${info.rows.toLocaleString()} baris × ${info.columns} kolom${splitTxt}${sizeTxt}`;
         }
       });
       const orig = data.datasets['dataset-original'];

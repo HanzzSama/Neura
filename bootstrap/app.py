@@ -89,6 +89,33 @@ def create_app() -> Flask:
     from routes import register_routes
     register_routes(app)
 
+    @app.after_request
+    def _inject_global_loadscreen(response):
+        try:
+            from flask import request as _req
+            if (
+                response.mimetype == "text/html"
+                and not _req.path.startswith("/api/")
+            ):
+                response.direct_passthrough = False
+                html = response.get_data(as_text=True)
+                lower_html = html.lower()
+                head_idx = lower_html.rfind("</head>")
+                if "global-loadscreen.css" not in html and head_idx != -1:
+                    inject_head = (
+                        '  <link rel="stylesheet" href="/css/global-loadscreen.css?v=2.0" />\n'
+                        '  <script src="/js/global-loadscreen.js?v=2.0"></script>\n'
+                    )
+                    html = html[:head_idx] + inject_head + html[head_idx:]
+                elif "global-loadscreen.js" not in html:
+                    body_idx = html.lower().rfind("</body>")
+                    if body_idx != -1:
+                        html = html[:body_idx] + '  <script src="/js/global-loadscreen.js?v=2.0"></script>\n' + html[body_idx:]
+                response.set_data(html)
+        except Exception:
+            pass
+        return response
+
     # Run non-blocking background initialization
     threading.Thread(target=_run_background_checks, daemon=True).start()
 

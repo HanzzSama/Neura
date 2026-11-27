@@ -71,26 +71,24 @@ class XGBoostTrainerService:
         y = df_clean[target_col]
         feature_names = list(X.columns)
 
-        class_counts = y.value_counts().to_dict()
-        neg_count = class_counts.get(0, 1)
-        pos_count = class_counts.get(1, 1)
-        scale_pos_weight = float(neg_count / pos_count) if pos_count > 0 else 1.0
-
-        # Grid search over 10-fold CV
+        # Grid search persis modelML.rmp:
+        # learning_rate in [0.1; 0.2; 10; linear] (11 steps) & max_depth in [4, 5]
+        # 10-Fold Stratified Cross-Validation, rounds=25, gamma=0.0, min_child_weight=1.0,
+        # subsample=1.0, colsample_bytree=1.0, reg_lambda=1.0, reg_alpha=0.0
+        lr_values = [round(0.1 + 0.01 * i, 2) for i in range(11)]
         param_grid = [
-            {"learning_rate": 0.1, "max_depth": 4},
-            {"learning_rate": 0.15, "max_depth": 4},
-            {"learning_rate": 0.2, "max_depth": 4},
-            {"learning_rate": 0.1, "max_depth": 5},
-            {"learning_rate": 0.15, "max_depth": 5},
-            {"learning_rate": 0.2, "max_depth": 5},
+            {"learning_rate": lr, "max_depth": md}
+            for md in (4, 5)
+            for lr in lr_values
         ]
 
         skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=random_state)
+        best_acc = -1.0
         best_auc = -1.0
         best_params = param_grid[0]
 
         for p in param_grid:
+            fold_accs = []
             fold_aucs = []
             for train_idx, val_idx in skf.split(X, y):
                 X_tr, y_tr = X.iloc[train_idx], y.iloc[train_idx]
@@ -101,24 +99,34 @@ class XGBoostTrainerService:
                     max_depth=p["max_depth"],
                     learning_rate=p["learning_rate"],
                     booster="gbtree",
-                    scale_pos_weight=scale_pos_weight,
+                    min_child_weight=1.0,
+                    gamma=0.0,
+                    subsample=1.0,
+                    colsample_bytree=1.0,
+                    reg_lambda=1.0,
+                    reg_alpha=0.0,
+                    scale_pos_weight=1.0,
                     eval_metric="logloss",
                     random_state=random_state,
                     tree_method="hist",
                     device="cpu",
                 )
                 clf.fit(X_tr, y_tr)
+                val_preds = clf.predict(X_va)
                 val_probs = clf.predict_proba(X_va)[:, 1]
+                fold_accs.append(accuracy_score(y_va, val_preds))
                 fold_aucs.append(roc_auc_score(y_va, val_probs))
 
+            mean_acc = float(np.mean(fold_accs))
             mean_auc = float(np.mean(fold_aucs))
-            if mean_auc > best_auc:
+            if (mean_acc > best_acc) or (mean_acc == best_acc and mean_auc > best_auc):
+                best_acc = mean_acc
                 best_auc = mean_auc
                 best_params = p
 
-        logger.info(f"[XGBoostTrainer] Best params: {best_params} with 10-fold CV AUC: {best_auc:.4f}")
+        logger.info(f"[XGBoostTrainer] Best params: {best_params} | 10-fold CV Acc: {best_acc:.4f}, AUC: {best_auc:.4f}")
 
-        # Final Train/Test Split
+        # Final 80/20 Stratified Holdout Evaluation (random_state=2001)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.20, stratify=y, random_state=random_state
         )
@@ -128,7 +136,13 @@ class XGBoostTrainerService:
             max_depth=best_params["max_depth"],
             learning_rate=best_params["learning_rate"],
             booster="gbtree",
-            scale_pos_weight=scale_pos_weight,
+            min_child_weight=1.0,
+            gamma=0.0,
+            subsample=1.0,
+            colsample_bytree=1.0,
+            reg_lambda=1.0,
+            reg_alpha=0.0,
+            scale_pos_weight=1.0,
             eval_metric="logloss",
             random_state=random_state,
             tree_method="hist",
@@ -140,9 +154,9 @@ class XGBoostTrainerService:
         y_prob = final_model.predict_proba(X_test)[:, 1]
 
         acc = float(accuracy_score(y_test, y_pred))
-        prec = float(precision_score(y_test, y_pred))
-        rec = float(recall_score(y_test, y_pred))
-        f1 = float(f1_score(y_test, y_pred))
+        prec = float(precision_score(y_test, y_pred, zero_division=0))
+        rec = float(recall_score(y_test, y_pred, zero_division=0))
+        f1 = float(f1_score(y_test, y_pred, zero_division=0))
         auc = float(roc_auc_score(y_test, y_prob))
         cm = confusion_matrix(y_test, y_pred).tolist()
 
@@ -156,14 +170,16 @@ class XGBoostTrainerService:
             "n_estimators": 25,
             "max_depth": best_params["max_depth"],
             "learning_rate": best_params["learning_rate"],
-            "ten_fold_cv_auc": best_auc,
-            "test_accuracy": acc,
-            "test_precision": prec,
-            "test_recall": rec,
-            "test_f1": f1,
-            "test_roc_auc": auc,
+            "ten_fold_cv_accuracy": round(best_acc, 4),
+            "ten_fold_cv_auc": round(best_auc, 4),
+            "test_accuracy": round(acc, 4),
+            "test_precision": round(prec, 4),
+            "test_recall": round(rec, 4),
+            "test_f1": round(f1, 4),
+            "test_roc_auc": round(auc, 4),
             "confusion_matrix": cm,
             "feature_names": feature_names,
+            "excluded_columns": existing_drop,
             "model_path": str(model_out),
         }
 

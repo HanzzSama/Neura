@@ -55,7 +55,7 @@
 
     bodyEl().innerHTML = `${tabsHtml}${renderSkeleton(6)}`;
     try {
-      const res = await fetch(`/api/admin/datasets/${encodeURIComponent(key)}/preview?limit=25`);
+      const res = await fetch(`/api/admin/datasets/${encodeURIComponent(key)}/preview?limit=100`, { cache: 'no-store' });
       const data = await res.json();
       if (!data.success) {
         bodyEl().innerHTML = `${tabsHtml}<p style="color:#dc2626">${escHtml(data.error || 'Gagal memuat dataset.')}</p>`;
@@ -75,7 +75,10 @@
         ).join('') || '<tr><td colspan="4">Tidak ada baris yang cocok</td></tr>';
       };
 
-      const splitLabel = key === 'dataset-training' ? '80% Train' : (key === 'dataset-testing' ? '20% Test' : (meta.badge || '100% CSV'));
+      const splitLabel = data.split_label || (key === 'dataset-training' ? '80% Stratified' : (key === 'dataset-testing' ? '20% Stratified' : '100% Raw CSV'));
+      const fileLabel = key === 'dataset-training'
+        ? 'alzheimers_training.csv'
+        : (key === 'dataset-testing' ? 'alzheimers_testing.csv' : (key === 'dataset-original' ? 'alzheimers_disease_data.csv' : (meta.file || 'dataset.json')));
 
       bodyEl().innerHTML = `
         ${tabsHtml}
@@ -89,11 +92,15 @@
             <div class="drawer-kpi-val">${data.total_columns || 0}</div>
           </div>
           <div class="drawer-kpi-card">
-            <div class="drawer-kpi-label">Tipe Split</div>
-            <div class="drawer-kpi-val">${escHtml(splitLabel)}</div>
+            <div class="drawer-kpi-label">Tipe Split &amp; File</div>
+            <div class="drawer-kpi-val" style="font-size:12px">${escHtml(splitLabel)}</div>
+            <div style="font-size:11px;color:var(--hub-text-muted);margin-top:2px;font-family:var(--hub-font-mono)">${escHtml(fileLabel)}</div>
           </div>
         </div>
         <input type="text" class="drawer-filter-input" id="drawer-row-filter" placeholder="Filter nilai pada sampel baris..." autocomplete="off" />
+        <div style="font-size:11px;color:var(--hub-text-muted);margin:0 0 8px;font-family:var(--hub-font-mono)">
+          Menampilkan ${allRows.length} dari ${Number(data.total_rows || 0).toLocaleString()} baris · ${data.total_columns || 0} kolom (${escHtml(fileLabel)})
+        </div>
         <div class="drawer-table-wrap">
           <table class="drawer-table">
             <thead><tr>${headersHtml}</tr></thead>

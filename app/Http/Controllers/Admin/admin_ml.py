@@ -82,7 +82,7 @@ def api_train():
                 f1_score, roc_auc_score, confusion_matrix,
             )
 
-            df       = pd.read_csv("datasets/alzheimers_disease_data.csv")
+            df       = pd.read_csv(_datasets_dir() / "alzheimers_disease_data.csv")
             drop_cols = [c for c in ["PatientID", "DoctorInCharge"] if c in df.columns]
             df_clean = df.drop(columns=drop_cols)
             X        = df_clean.drop(columns=["Diagnosis"])
@@ -108,14 +108,16 @@ def api_train():
                     return False
 
             model = xgb.XGBClassifier(
-                n_estimators=epochs,
+                n_estimators=25 if epochs == 25 else epochs,
                 learning_rate=0.2,
                 max_depth=5,
-                min_child_weight=3,
-                subsample=0.85,
-                colsample_bytree=0.85,
-                scale_pos_weight=1.83,
-                gamma=0.2,
+                min_child_weight=1.0,
+                subsample=1.0,
+                colsample_bytree=1.0,
+                reg_lambda=1.0,
+                reg_alpha=0.0,
+                scale_pos_weight=1.0,
+                gamma=0.0,
                 eval_metric="logloss",
                 random_state=2001,
                 n_jobs=-1,
@@ -366,7 +368,7 @@ def api_admin_data_summary():
     """Mengembalikan ringkasan analitik dan distribusi dataset 2.149 rekam medis Alzheimer."""
     try:
         import pandas as pd
-        csv_path = Path("datasets/alzheimers_disease_data.csv")
+        csv_path = _datasets_dir() / "alzheimers_disease_data.csv"
         if csv_path.exists():
             df = pd.read_csv(csv_path)
             total = len(df)
@@ -375,8 +377,8 @@ def api_admin_data_summary():
 
             normal_cnt = int(diag.get(0, 0))
             alz_cnt    = int(diag.get(1, 0))
-            pria_cnt   = int(gender.get(1, 0))
-            wanita_cnt = int(gender.get(0, 0))
+            pria_cnt   = int(gender.get(0, 0))
+            wanita_cnt = int(gender.get(1, 0))
 
             age_mean  = round(float(df["Age"].mean()), 1) if "Age" in df.columns else 74.9
             mmse_mean = round(float(df["MMSE"].mean()), 1) if "MMSE" in df.columns else 14.8
@@ -387,7 +389,7 @@ def api_admin_data_summary():
                 "success": True,
                 "title": "Ringkasan Statistik Dataset Klinis 32 Biomarker",
                 "total_samples": total,
-                "features_count": df.shape[1] - 2,
+                "features_count": 32,
                 "diagnosis_distribution": {
                     "normal_non_dementia": normal_cnt,
                     "alzheimer_risk": alz_cnt,
@@ -485,12 +487,38 @@ def _read_csv_rows(csv_path: Path):
     return headers, rows
 
 
+def _stratified_rmp_split(headers, rows):
+    """Split stratified 80/20 persis seed=2001 (modelML.rmp) & buang PatientID/DoctorInCharge untuk fitur model."""
+    from sklearn.model_selection import train_test_split
+    if not rows or "Diagnosis" not in headers:
+        split_idx = int(len(rows) * 0.8)
+        return headers, rows[:split_idx], rows[split_idx:]
+
+    diag_idx = headers.index("Diagnosis")
+    excluded = {"PatientID", "DoctorInCharge"}
+    keep_indices = [i for i, h in enumerate(headers) if h not in excluded]
+    model_headers = [headers[i] for i in keep_indices]
+
+    labels = [str(r[diag_idx]) if diag_idx < len(r) else "0" for r in rows]
+    indices = list(range(len(rows)))
+    train_idx, test_idx = train_test_split(
+        indices, test_size=0.20, random_state=2001, stratify=labels
+    )
+
+    train_rows = [[rows[idx][i] for i in keep_indices] for idx in train_idx]
+    test_rows = [[rows[idx][i] for i in keep_indices] for idx in test_idx]
+    return model_headers, train_rows, test_rows
+
+
 @admin_ml_bp.route("/admin/datasets/summary", methods=["GET"])
 def api_admin_datasets_summary():
     """Mengembalikan ringkasan metadata dataset-original, dataset-training, dataset-testing, dan intents."""
     try:
         ds_dir = _datasets_dir()
         orig_csv = ds_dir / "alzheimers_disease_data.csv"
+        train_csv = ds_dir / "alzheimers_training.csv"
+        test_csv = ds_dir / "alzheimers_testing.csv"
+
         headers, rows = ([], [])
         orig_size_kb = 0.0
         if orig_csv.exists():
@@ -498,9 +526,20 @@ def api_admin_datasets_summary():
             orig_size_kb = round(orig_csv.stat().st_size / 1024, 1)
 
         total_rows = len(rows)
-        split_idx = int(total_rows * 0.8)
-        train_rows = split_idx
-        test_rows = total_rows - split_idx
+        if train_csv.exists() and test_csv.exists():
+            train_headers, train_subset = _read_csv_rows(train_csv)
+            test_headers, test_subset = _read_csv_rows(test_csv)
+            model_headers = train_headers
+            train_rows = len(train_subset)
+            test_rows = len(test_subset)
+            train_size_kb = round(train_csv.stat().st_size / 1024, 1)
+            test_size_kb = round(test_csv.stat().st_size / 1024, 1)
+        else:
+            model_headers, train_subset, test_subset = _stratified_rmp_split(headers, rows)
+            train_rows = len(train_subset)
+            test_rows = len(test_subset)
+            train_size_kb = round(orig_size_kb * 0.8, 1)
+            test_size_kb = round(orig_size_kb * 0.2, 1)
 
         chat_json = ds_dir / "chat_dataset.json"
         voice_json = ds_dir / "voice_dataset.json"
@@ -531,19 +570,21 @@ def api_admin_datasets_summary():
                 "dataset-training": {
                     "key": "dataset-training",
                     "name": "Dataset Training (80%)",
-                    "file": "alzheimers_disease_data.csv [0:80%]",
+                    "file": "alzheimers_training.csv",
                     "rows": train_rows,
-                    "columns": len(headers),
-                    "split": "80%",
+                    "columns": len(model_headers),
+                    "size_kb": train_size_kb,
+                    "split": "80% Stratified (seed=2001)",
                     "status": "Ready" if train_rows > 0 else "Missing",
                 },
                 "dataset-testing": {
                     "key": "dataset-testing",
                     "name": "Dataset Testing (20%)",
-                    "file": "alzheimers_disease_data.csv [80%:100%]",
+                    "file": "alzheimers_testing.csv",
                     "rows": test_rows,
-                    "columns": len(headers),
-                    "split": "20%",
+                    "columns": len(model_headers),
+                    "size_kb": test_size_kb,
+                    "split": "20% Stratified (seed=2001)",
                     "status": "Ready" if test_rows > 0 else "Missing",
                 },
                 "dataset-intents": {
@@ -565,30 +606,43 @@ def api_admin_datasets_summary():
 def api_admin_dataset_preview(dataset_key: str):
     """Mengembalikan header kolom dan sampel baris untuk preview drawer admin."""
     try:
-        limit = min(max(int(request.args.get("limit", 15)), 1), 50)
+        limit = min(max(int(request.args.get("limit", 50)), 1), 250)
         ds_dir = _datasets_dir()
 
         if dataset_key in ("dataset-original", "dataset-training", "dataset-testing"):
             orig_csv = ds_dir / "alzheimers_disease_data.csv"
+            train_csv = ds_dir / "alzheimers_training.csv"
+            test_csv = ds_dir / "alzheimers_testing.csv"
             if not orig_csv.exists():
                 return jsonify({"success": False, "error": "Dataset CSV tidak ditemukan"}), 404
-            headers, rows = _read_csv_rows(orig_csv)
-            split_idx = int(len(rows) * 0.8)
 
-            if dataset_key == "dataset-training":
-                subset = rows[:split_idx]
-            elif dataset_key == "dataset-testing":
-                subset = rows[split_idx:]
+            if dataset_key == "dataset-training" and train_csv.exists():
+                out_headers, subset = _read_csv_rows(train_csv)
+                split_label = "80% Stratified (seed=2001)"
+            elif dataset_key == "dataset-testing" and test_csv.exists():
+                out_headers, subset = _read_csv_rows(test_csv)
+                split_label = "20% Stratified (seed=2001)"
             else:
-                subset = rows
+                headers, rows = _read_csv_rows(orig_csv)
+                if dataset_key == "dataset-training":
+                    out_headers, subset, _ = _stratified_rmp_split(headers, rows)
+                    split_label = "80% Stratified (seed=2001)"
+                elif dataset_key == "dataset-testing":
+                    out_headers, _, subset = _stratified_rmp_split(headers, rows)
+                    split_label = "20% Stratified (seed=2001)"
+                else:
+                    out_headers = headers
+                    subset = rows
+                    split_label = "100% Raw CSV (32 Fitur + 1 Label + 2 Excluded)"
 
             return jsonify({
                 "success": True,
                 "key": dataset_key,
+                "split_label": split_label,
                 "total_rows": len(subset),
-                "total_columns": len(headers),
-                "headers": headers[:12],
-                "rows": [r[:12] for r in subset[:limit]],
+                "total_columns": len(out_headers),
+                "headers": out_headers,
+                "rows": subset[:limit],
             })
 
         if dataset_key == "dataset-intents":
